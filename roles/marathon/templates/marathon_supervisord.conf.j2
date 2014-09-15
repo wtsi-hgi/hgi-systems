@@ -1,0 +1,24 @@
+{#
+# Copyright (c) 2014 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#}
+[program:marathon]
+environment=MESOS_NATIVE_JAVA_LIBRARY="{{ marathon_libmesos_so }}",MESOS_NATIVE_LIBRARY="{{ marathon_libmesos_so }}"
+command={{ marathon_java_bin }} -jar {{ marathon_jar }} --master {{ marathon_mesos_zk_uri }} --ha --zk {{ marathon_zk_uri }} --failover_timeout 60 --hostname "%(host_node_name)s" --mesos_role marathon --local_port_min 50000 --local_port_max 50999

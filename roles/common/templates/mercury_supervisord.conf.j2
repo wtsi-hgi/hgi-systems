@@ -1,0 +1,63 @@
+{#
+# Copyright (c) 2014 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#}
+[unix_http_server]
+file = {{ supervisord_sock }}
+chmod = 0770
+chown = mercury:hgi
+username = {{ supervisord_username }}
+password = {{ supervisord_password }}
+
+[inet_http_server]
+port = *:{{ supervisord_port }}
+username = {{ supervisord_username }}
+password = {{ supervisord_password }}
+
+[supervisord]
+logfile = {{ supervisord_log_dir}}/mercury_supervisord.log
+logfile_maxbytes = 50MB
+logfile_backups = 5
+loglevel = warn
+pidfile = {{ supervisord_pid_dir }}/mercury_supervisord.pid
+umask = 022
+nodaemon = false
+minfds = 1024
+minprocs = 200
+nocleanup = false
+childlogdir = {{ supervisord_log_dir }}
+user = {{ supervisord_username }}
+directory = /tmp
+strip_ansi = false
+#environment = KEY1="value1",KEY2="value2"
+identifier = mercury_supervisor
+
+[supervisorctl]
+serverurl = unix://{{ supervisord_sock}}
+username = {{ supervisord_username }}
+password = {{ supervisord_password }}
+prompt = mercury_supervisor
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[include]
+files = {{ supervisord_conf_dir }}/*.conf
+
