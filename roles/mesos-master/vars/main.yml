@@ -20,7 +20,7 @@
 ---
 # file: roles/mesos-master/vars/main.yml
 
-mesos_master_bin: "/software/hgi/pkglocal/mesos-0.19.1/sbin/mesos-master"
+mesos_master_bin: "/software/hgi/pkglocal/mesos-0.20.0/sbin/mesos-master"
 mesos_work_dir: "{{ hgi_dir }}/mesos"
 mesos_log_dir: "{{ hgi_log_dir }}/mesos"
 mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
