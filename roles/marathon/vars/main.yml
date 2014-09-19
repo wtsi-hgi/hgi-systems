@@ -25,7 +25,7 @@ marathon_java_bin: "/usr/bin/java"
 marathon_jar: "/software/hgi/pkglocal/marathon-0.6.1/bin/../target/scala-2.10/marathon-assembly-0.6.1.jar"
 marathon_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
 marathon_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/marathon"
-marathon_mesos_role: "marathon"
+marathon_mesos_role: "*"
 marathon_local_port_min: 50100
 marathon_local_port_max: 50999
 marathon_failover_timeout_s: 604800
