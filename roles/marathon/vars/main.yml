@@ -28,6 +28,7 @@ marathon_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% i
 marathon_mesos_role: "marathon"
 marathon_local_port_min: 50100
 marathon_local_port_max: 50999
-marathon_failover_timeout_s: 60
+marathon_failover_timeout_s: 604800
 marathon_http_port: 50050
 marathon_https_port: 50051
+marathon_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
