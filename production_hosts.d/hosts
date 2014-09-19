@@ -23,13 +23,20 @@ hgs4a
 hgs4e
 hgs4i
 
-[zookeepers:children]
-mesos-masters
+[zookeepers]
+hgs4b
+hgs4f
+hgs4j
 
 [mesos-slaves]
 hgs4[a:k]
 
 [marathoners]
+hgs4c
+hgs4g
+hgs4k
+
+[chronosians]
 hgs4c
 hgs4g
 hgs4k

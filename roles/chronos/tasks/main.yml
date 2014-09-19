@@ -18,7 +18,16 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/mesos-master/meta/main.yml
+# file: roles/chronos/tasks/main.yml
 
-dependencies:
-  - { role: common }
+- name: create chronos supervisord configuration
+  template: src=chronos_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/chronos.conf owner=mercury group=hgi mode=0640
+  notify: reload supervisord
+  tags: chronos
+
+- name: add chronos supervisord configuration to supervisord conf
+  set_fact:
+     supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/chronos.conf"
+  notify: 
+    - reload supervisord
+  tags: chronos

@@ -1,3 +1,4 @@
+{#
 # Copyright (c) 2014 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
@@ -17,8 +18,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
----
-# file: roles/mesos-master/meta/main.yml
-
-dependencies:
-  - { role: common }
+#}
+[program:chronos]
+environment=MESOS_NATIVE_JAVA_LIBRARY="{{ chronos_libmesos_so }}",MESOS_NATIVE_LIBRARY="{{ chronos_libmesos_so }}"
+command={{ chronos_java_bin }} -cp {{ chronos_java_cp }} -server -Xmx"{{ chronos_java_heap }}" -Xms"{{ chronos_java_heap }}" -XX:+PrintClassHistogram {{ chronos_java_main }} --master {{ chronos_mesos_zk_uri }} --zk_hosts "{{ chronos_zk_hosts }}" --failover_timeout {{ chronos_failover_timeout_s }} --hostname "{{ chronos_hostname }}" --mesos_role "{{ chronos_mesos_role }}" --http_port {{ chronos_http_port }} --https_port {{ chronos_https_port }} --zk_path "{{ chronos_zk_path }}"

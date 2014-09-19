@@ -20,5 +20,7 @@
 ---
 # file: site.yml
 - include: mesos-masters.yml
-- include: mesos-slaves.yml
+- include: zookeepers.yml
 - include: marathoners.yml
+- include: chronosians.yml
+- include: mesos-slaves.yml
