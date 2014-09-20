@@ -21,4 +21,8 @@
 # file: roles/mesos-slave/vars/main.yml
 
 mesos_slave_bin: "/software/hgi/pkglocal/mesos-0.20.0/sbin/mesos-slave"
-mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
+mesos_slave_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
+mesos_slave_containerizers: "docker,mesos"
+mesos_slave_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
+mesos_slave_isolation: "cgroups/cpu,cgroups/mem"
+mesos_slave_work_dir: "{{ hgi_dir }}/tmp"

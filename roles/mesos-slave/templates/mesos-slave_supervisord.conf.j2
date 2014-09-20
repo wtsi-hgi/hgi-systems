@@ -20,4 +20,6 @@
 #
 #}
 [program:mesos-slave]
-command={{ mesos_slave_bin }} --master={{ mesos_zk_uri }}
+command={{ mesos_slave_bin }} --master="{{ mesos_slave_zk_uri }}" --containerizers="{{ mesos_slave_containerizers }}" --cgroups_enable_cfs --cgroups_hierarchy="/sys/fs/cgroup" --cgroups_root="mesos" --hostname="{{ mesos_slave_hostname }}" --isolation="{{ mesos_slave_isolation }}" --recover="reconnect" --checkpoint --work_dir="{{ mesos_slave_work_dir }}"
+
+

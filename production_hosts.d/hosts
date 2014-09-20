@@ -45,3 +45,10 @@ hgs4k
 mesos-masters
 mesos-slaves
 
+[hgi-credentials:children]
+mesos-masters
+mesos-slaves
+zookeepers
+marathoners
+chronosians
+

@@ -19,6 +19,7 @@
 #
 ---
 # file: site.yml
+
 - include: mesos-masters.yml
 - include: zookeepers.yml
 - include: marathoners.yml
