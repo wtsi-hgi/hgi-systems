@@ -22,8 +22,17 @@
 
 mesos_slave_bin: "/software/hgi/pkglocal/mesos-0.20.0/sbin/mesos-slave"
 mesos_slave_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
-mesos_slave_containerizers: "docker,mesos"
 mesos_slave_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
-mesos_slave_isolation: "cgroups/cpu,cgroups/mem"
 mesos_slave_work_dir: "{{ hgi_dir }}/tmp"
 mesos_slave_executor_registration_timeout: "5mins"
+
+# mesos_slave_containerizers:
+#  - "docker,mesos" (requires docker >= 1.0)
+#  - "mesos"
+mesos_slave_containerizers: "docker,mesos"
+
+# mesos_slave_isolation: 
+#  - "posix/cpu,posix/mem"
+#  - "cgroups/cpu,cgroups/mem" (requires root)
+#  - "external"
+mesos_slave_isolation: "posix/cpu,posix/mem"
