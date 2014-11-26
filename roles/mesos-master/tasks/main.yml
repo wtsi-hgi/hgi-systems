@@ -20,6 +20,12 @@
 ---
 # file: roles/mesos-master/tasks/main.yml
 
+- name: create mesos-master credentials file
+  template: src=mesos-master_credentials.j2 dest={{ mesos_master_credentials_file }} owner=mercury group=hgi mode=0640
+  notify: 
+    - restart mesos-master
+  tags: mesos-master
+
 - name: create mesos-master supervisord configuration
   template: src=mesos-master_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/mesos-master.conf owner=mercury group=hgi mode=0640
   notify: reload supervisord

@@ -20,11 +20,19 @@
 ---
 # file: roles/mesos-slave/vars/main.yml
 
-mesos_slave_bin: "/software/hgi/pkglocal/mesos-0.20.0/sbin/mesos-slave"
+mesos_slave_bin: "/software/hgi/pkglocal/mesos-0.20.1/sbin/mesos-slave"
 mesos_slave_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
 mesos_slave_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
 mesos_slave_work_dir: "{{ hgi_dir }}/tmp"
 mesos_slave_executor_registration_timeout: "5mins"
+
+# The supervisor name for this supervised program
+mesos_slave_supervisor_program: "mesos-slave"
+
+# Path to a file containing a single line with
+# the 'principal' and 'secret' separated by whitespace.
+# Path could be of the form 'file:///path/to/file' or '/path/to/file'
+mesos_slave_credential_file: "{{ hgi_conf_dir }}/mesos-slave.credential"
 
 # mesos_slave_containerizers:
 #  - "docker,mesos" (requires docker >= 1.0)

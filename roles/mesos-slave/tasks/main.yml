@@ -23,6 +23,12 @@
 - name: create local mesos slave work directory
   file: state=directory path={{ mesos_slave_work_dir }} owner=mercury group=hgi mode=2770
 
+- name: create mesos-slave credential file
+  template: src=mesos-slave_credential.j2 dest={{ mesos_slave_credential_file }} owner=mercury group=hgi mode=0640
+  notify: 
+    - restart mesos-slave
+  tags: mesos-slave
+
 - name: create mesos-slave supervisord configuration
   template: src=mesos-slave_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/mesos-slave.conf owner=mercury group=hgi mode=0640
   notify: reload supervisord

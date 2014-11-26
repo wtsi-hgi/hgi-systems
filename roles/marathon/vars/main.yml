@@ -20,9 +20,9 @@
 ---
 # file: roles/marathon/vars/main.yml
 
-marathon_libmesos_so: "/software/hgi/pkglocal/mesos-0.20.0/lib/libmesos.so"
+marathon_libmesos_so: "/software/hgi/pkglocal/mesos-0.20.1/lib/libmesos.so"
 marathon_java_bin: "/usr/bin/java"
-marathon_jar: "/software/hgi/pkglocal/marathon-0.7.0-RC4/target/marathon-runnable.jar"
+marathon_jar: "/software/hgi/pkglocal/marathon-0.7.1/target/marathon-runnable.jar"
 marathon_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
 marathon_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/marathon"
 marathon_mesos_role: "*"
