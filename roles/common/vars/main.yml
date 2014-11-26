@@ -34,4 +34,9 @@ supervisord_pid_dir: "{{ hgi_pid_dir }}"
 supervisord_log_dir: "{{ hgi_log_dir }}"
 supervisord_conf_dir: "{{ hgi_conf_dir }}/mercury_supervisord.d"
 
-cronic_bin: "/software/hgi/pkglocal/cronic-2/bin/cronic"
+cronic_bin: /software/hgi/pkglocal/cronic-3/bin/cronic
+cronic_mailx_bin: /usr/bin/mailx
+cronic_email_recipients: hgi@sanger.ac.uk
+cronic_email_sender: '\"From: mercury@sanger.ac.uk\"'
+cronic_email_subject: '\"Cronic report from $HOSTNAME\"'
+cronic_cmd: "{{ cronic_bin }} -p '{{ cronic_mailx_bin }} -s {{ cronic_email_subject }} -a {{ cronic_email_sender }} {{ cronic_email_recipients }}'"

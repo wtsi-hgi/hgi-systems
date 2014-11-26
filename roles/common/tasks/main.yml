@@ -46,6 +46,6 @@
   tags: supervisord
 
 - name: cron entry to start supervisord if not running (every 5 minutes)
-  cron: name="start supervisord if not running" minute="*/5" job="{{ cronic_bin }} bash -c \"{{ supervisord_ctl }} status || ({{ supervisord_ctl }} start && exit 1)\""
+  cron: name="start supervisord if not running" minute="*/5" job="{{ cronic_cmd }} bash -c \"{{ supervisord_ctl }} status || ({{ supervisord_ctl }} start && exit 1)\""
   tags: supervisord
 
