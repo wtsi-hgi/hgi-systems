@@ -20,11 +20,11 @@
 ---
 # file: roles/common/vars/main.yml
 
-supervisorctl_bin: "/software/hgi/pkglocal/supervisor-3.1.1/bin-wrap/supervisorctl"
+supervisorctl_bin: "{{ hgi_pkglocal_dir }}/supervisor-3.1.1/bin-wrap/supervisorctl"
 
 supervisord_ctl: "{{ hgi_conf_dir }}/mercury_supervisord"
-supervisord_bin: "/software/hgi/pkglocal/supervisor-3.1.1/bin/supervisord"
-supervisord_pythonpath: "/software/hgi/pkglocal/supervisor-3.1.1/lib/python2.7/site-packages"
+supervisord_bin: "{{ hgi_pkglocal_dir }}/supervisor-3.1.1/bin/supervisord"
+supervisord_pythonpath: "{{ hgi_pkglocal_dir }}/supervisor-3.1.1/lib/python2.7/site-packages"
 supervisord_conf: "{{ hgi_conf_dir }}/mercury_supervisord.conf"
 supervisord_port: "9999"
 supervisord_username: "{{ hgi_username }}"
@@ -34,7 +34,7 @@ supervisord_pid_dir: "{{ hgi_pid_dir }}"
 supervisord_log_dir: "{{ hgi_log_dir }}"
 supervisord_conf_dir: "{{ hgi_conf_dir }}/mercury_supervisord.d"
 
-cronic_bin: /software/hgi/pkglocal/cronic-3/bin/cronic
+cronic_bin: "{{ hgi_pkglocal_dir }}/cronic-3/bin/cronic"
 cronic_mailx_bin: /usr/bin/mailx
 cronic_email_recipients: hgi@sanger.ac.uk
 cronic_email_sender: '\"From: mercury@sanger.ac.uk\"'
