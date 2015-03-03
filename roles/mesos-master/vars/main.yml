@@ -20,7 +20,7 @@
 ---
 # file: roles/mesos-master/vars/main.yml
 
-mesos_master_prefix: "/software/hgi/pkglocal/mesos-0.20.1"
+mesos_master_prefix: "{{ mesos_prefix }}"
 mesos_master_bin: "{{ mesos_master_prefix }}/sbin/mesos-master"
 mesos_work_dir: "{{ hgi_dir }}/mesos"
 mesos_log_dir: "{{ hgi_log_dir }}/mesos"
