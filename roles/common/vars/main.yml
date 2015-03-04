@@ -20,11 +20,12 @@
 ---
 # file: roles/common/vars/main.yml
 
-supervisorctl_bin: "{{ hgi_pkglocal_dir }}/supervisor-3.1.1/bin-wrap/supervisorctl"
+supervisor_version: "3.1.3"
+supervisorctl_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin-wrap/supervisorctl"
 
 supervisord_ctl: "{{ hgi_conf_dir }}/mercury_supervisord"
-supervisord_bin: "{{ hgi_pkglocal_dir }}/supervisor-3.1.1/bin/supervisord"
-supervisord_pythonpath: "{{ hgi_pkglocal_dir }}/supervisor-3.1.1/lib/python2.7/site-packages"
+supervisord_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin/supervisord"
+supervisord_pythonpath: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/lib/python2.7/site-packages"
 supervisord_conf: "{{ hgi_conf_dir }}/mercury_supervisord.conf"
 supervisord_port: "9999"
 supervisord_username: "{{ hgi_username }}"
