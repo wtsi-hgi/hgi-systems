@@ -24,7 +24,8 @@ supervisor_version: "3.1.3"
 supervisorctl_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin-wrap/supervisorctl"
 
 supervisord_ctl: "{{ hgi_conf_dir }}/mercury_supervisord"
-supervisord_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin-wrap/supervisord"
+# supervisord_bin MUST point to the actual supervisord, not a wrapper script! 
+supervisord_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin/supervisord"
 supervisord_pythonpath: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/lib/python2.7/site-packages"
 supervisord_conf: "{{ hgi_conf_dir }}/mercury_supervisord.conf"
 supervisord_port: "9999"
