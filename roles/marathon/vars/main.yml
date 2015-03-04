@@ -32,3 +32,4 @@ marathon_failover_timeout_s: 604800
 marathon_http_port: 50050
 marathon_https_port: 50051
 marathon_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
+marathon_task_launch_timeout: "{{ mesos_docker_timeout_ms }}"
