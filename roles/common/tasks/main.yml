@@ -34,6 +34,7 @@
 
 - name: supervisord startup script 
   template: src=mercury_supervisord.j2 dest={{ supervisord_ctl }} owner=mercury group=hgi mode=0750
+  notify: restart supervisord
   tags: supervisord
 
 - name: supervisord configuration file

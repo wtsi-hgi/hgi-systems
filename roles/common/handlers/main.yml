@@ -28,3 +28,6 @@
 - name: reload supervisord
   shell: "({{ supervisord_ctl }} status && {{ supervisord_ctl }} reload ) || {{ supervisord_ctl }} start"
 
+- name: restart supervisord
+  shell: "{{ supervisord_ctl }} restart || {{ supervisord_ctl }} start"
+
