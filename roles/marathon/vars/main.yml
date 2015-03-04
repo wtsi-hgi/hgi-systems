@@ -21,8 +21,8 @@
 # file: roles/marathon/vars/main.yml
 
 marathon_libmesos_so: "{{ mesos_prefix }}/lib/libmesos.so"
-marathon_java_bin: "/usr/bin/java"
-marathon_jar: "{{ hgi_pkglocal_dir }}/marathon-0.7.1/target/marathon-runnable.jar"
+marathon_java_bin: "/software/jdk1.6.0_14/bin/java"
+marathon_jar: "{{ hgi_pkglocal_dir }}/marathon-0.8.0/target/marathon-runnable.jar"
 marathon_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
 marathon_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/marathon"
 marathon_mesos_role: "*"

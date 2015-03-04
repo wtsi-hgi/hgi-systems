@@ -21,12 +21,10 @@
 # file: roles/chronos/vars/main.yml
 
 chronos_libmesos_so: "{{ mesos_prefix }}/lib/libmesos.so"
-chronos_java_bin: "/usr/bin/java"
+chronos_java_bin: "/software/jdk1.7.0_71/bin/java"
 chronos_java_heap: "2048m"
-chronos_build_version: "git-2.2.0-gdc36912"
-chronos_version: "2.2.0"
-chronos_java_cp: "{{ hgi_pkglocal_dir }}/chronos-{{ chronos_build_version }}/target/chronos-{{ chronos_version }}_mesos-{{ mesos_version }}-SNAPSHOT.jar"
-chronos_java_main: "com.airbnb.scheduler.Main"
+chronos_java_cp: "{{ hgi_pkglocal_dir }}/chronos-git-2.3.2-fa85bbd4/target/chronos-2.3.2_mesos-0.20.1-SNAPSHOT.jar"
+chronos_java_main: "org.apache.mesos.chronos.scheduler.Main"
 chronos_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
 chronos_zk_hosts: "{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}"
 chronos_zk_path: "/chronos/state"
