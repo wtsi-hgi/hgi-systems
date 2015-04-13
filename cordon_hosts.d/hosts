@@ -17,15 +17,18 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
----
-# file: roles/marathon/vars/main.yml
 
-marathon_libmesos_so: "{{ mesos_prefix }}/lib/libmesos.so"
-marathon_java_bin: "/software/jdk1.6.0_14/bin/java"
-marathon_jar: "{{ hgi_pkglocal_dir }}/marathon-0.8.0/target/marathon-runnable.jar"
-marathon_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
-marathon_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/marathon"
-marathon_mesos_role: "*"
-marathon_failover_timeout_s: 604800
-marathon_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
-marathon_task_launch_timeout: "{{ mesos_docker_timeout_ms }}"
+[cordon]
+hgi-cordon-dev2
+hgi-cordon-web1
+hgi-cordon-web2
+hgi-cordon-cvmfs
+web-mii-iyg
+
+[cordon-noproxy]
+hgi-cordon-web-dev
+
+[cordon-shutdown]
+#hgi-cordon-dev
+#hgi-cordon-pm
+#hgi-cordon-eat

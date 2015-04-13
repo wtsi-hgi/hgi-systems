@@ -21,5 +21,4 @@
 # file: roles/mesos-slave/handlers/main.yml
 
 - name: restart mesos-slave
-  command: "{{ supervisord_ctl }} restart {{ mesos_slave_supervisor_program }}"
-
+  supervisorctl: config="{{ supervisord_conf }}" name="{{ mesos_slave_supervisor_program }}" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"

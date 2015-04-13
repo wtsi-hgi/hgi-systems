@@ -21,7 +21,7 @@
 # file: roles/mesos-slave/vars/main.yml
 
 mesos_slave_bin: "{{ mesos_prefix }}/sbin/mesos-slave"
-mesos_slave_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
+mesos_slave_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:{{ zookeeper_client_port }}{% if not loop.last %},{% endif %}{% endfor %}/mesos"
 mesos_slave_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
 mesos_slave_work_dir: "{{ hgi_dir }}/tmp"
 mesos_slave_executor_registration_timeout: "{{ mesos_docker_timeout_m }}mins"

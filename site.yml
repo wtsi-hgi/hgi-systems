@@ -25,3 +25,4 @@
 - include: marathoners.yml
 - include: chronosians.yml
 - include: mesos-slaves.yml
+- include: bamboosians.yml

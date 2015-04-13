@@ -1,4 +1,5 @@
-# Copyright (c) 2014 Genome Research Ltd.
+{#
+# Copyright (c) 2015 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -16,9 +17,30 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
-#
----
-# file: roles/mesos-master/handlers/main.yml
+#}
+{
+  "Marathon": {
+    "Endpoint": "{{ bamboo_marathon_http_endpoints }}"
+  },
 
-- name: restart mesos-master
-  supervisorctl: config="{{ supervisord_conf }}" name="{{ mesos_master_supervisor_program }}" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"
+  "Bamboo": {
+    "Endpoint": "http://{{ bamboo_http_host }}:{{ bamboo_http_port }}",
+    "Zookeeper": {
+      "Host": "{{ bamboo_zk_hosts }}",
+      "Path": "{{ bamboo_zk_path }}", 
+      "ReportingDelay": 5
+    }
+  },
+
+  "HAProxy": {
+    "TemplatePath": "{{ bamboo_haproxy_template_file }}",
+    "OutputPath": "{{ bamboo_haproxy_config_file }}",
+    "ReloadCommand": "{{ supervisorctl_bin }} restart {{ bamboo_haproxy_supervisor_program }}"
+  },
+
+  "StatsD": {
+    "Enabled": false,
+    "Host": "localhost:8125",
+    "Prefix": "bamboo-server.development."
+  }
+}

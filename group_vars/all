@@ -20,10 +20,22 @@
 ---
 # file: group_vars/all
 
-hgi_dir: "/local/scratch01/hgi"
 hgi_conf_dir: "{{ hgi_dir }}/etc"
 hgi_log_dir: "{{ hgi_dir }}/log"
 hgi_pid_dir: "{{ hgi_dir }}/pid"
+hgi_run_dir: "{{ hgi_dir }}/run"
 
 hgi_cluster_name: "hgs4"
 
+zookeeper_client_port: 2181
+
+marathon_local_port_min: 50100
+marathon_local_port_max: 50999
+
+bamboo_control_port: 50071
+bamboo_http_port: 50080
+
+marathon_http_port: 50050
+marathon_https_port: 50051
+chronos_http_port: 50060
+chronos_https_port: 50061

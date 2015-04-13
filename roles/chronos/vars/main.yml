@@ -29,8 +29,6 @@ chronos_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:218
 chronos_zk_hosts: "{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}"
 chronos_zk_path: "/chronos/state"
 chronos_mesos_role: "*"
-chronos_http_port: 50060
-chronos_https_port: 50061
 chronos_http_credentials: "{{ hgi_username }}:{{ hgi_password }}"
 chronos_failover_timeout_s: 1200
 chronos_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"

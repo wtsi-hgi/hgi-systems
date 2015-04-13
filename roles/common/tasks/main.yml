@@ -29,6 +29,9 @@
 - name: create local HGI pid directory
   file: state=directory path={{ hgi_pid_dir }} owner=mercury group=hgi mode=2770
 
+- name: create local HGI run directory
+  file: state=directory path={{ hgi_run_dir }} owner=mercury group=hgi mode=2770
+
 - name: create supervisord conf directory
   file: state=directory path={{ supervisord_conf_dir }} owner=mercury group=hgi mode=2770
 

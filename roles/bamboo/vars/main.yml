@@ -1,0 +1,45 @@
+# Copyright (c) 2015 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/bamboo/vars/main.yml
+
+bamboo_supervisor_program: bamboo
+bamboo_haproxy_supervisor_program: bamboo_haproxy
+
+bamboo_marathon_http_endpoints: "{% for host in groups['marathoners'] %}http://{{ hgi_username }}:{{ hgi_password }}@{{ host }}:{{ marathon_http_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+bamboo_zk_hosts: "{% for host in groups['zookeepers'] %}{{ host }}:{{ zookeeper_client_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+bamboo_zk_path: "/marathon-haproxy/state"
+
+bamboo_http_host: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
+
+bamboo_config_file: "{{ hgi_conf_dir }}/bamboo.conf"
+
+bamboo_version: "git-v0.2.9-33-gb645fbf"
+bamboo_bin: "{{ hgi_pkglocal_dir}}/bamboo-{{ bamboo_version }}/bin/bamboo"
+
+bamboo_haproxy_version: "1.5.11-linux-3.7"
+bamboo_haproxy_bin: "{{ hgi_pkglocal_dir }}/haproxy-{{ bamboo_haproxy_version }}/sbin/haproxy"
+bamboo_haproxy_conf_dir: "{{ hgi_run_dir }}/haproxy"
+bamboo_haproxy_config_file: "{{ bamboo_haproxy_conf_dir }}/haproxy.cfg"
+bamboo_haproxy_template_file: "{{ hgi_conf_dir }}/bamboo_haproxy_template.cfg"
+bamboo_haproxy_pid_file: "{{ hgi_pid_dir }}/haproxy.pid"
+bamboo_haproxy_admin_sock: "{{ hgi_run_dir }}/haproxy_admin.sock"
+bamboo_haproxy_stats_path: /haproxy_stats

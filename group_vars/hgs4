@@ -20,4 +20,5 @@
 ---
 # file: group_vars/hgs4
 
+hgi_dir: "/local/scratch01/hgi"
 hgi_pkglocal_dir: "/software/hgi/pkglocal"

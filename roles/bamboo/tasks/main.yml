@@ -1,0 +1,59 @@
+# Copyright (c) 2015 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/bamboo/tasks/main.yml
+
+- name: create haproxy generated conf dir
+  file: state=directory path={{ bamboo_haproxy_conf_dir }} owner=mercury group=hgi mode=2770
+
+- name: create bamboo configuration
+  template: src=bamboo.conf.j2 dest={{ bamboo_config_file }} owner=mercury group=hgi mode=0640
+  notify: restart bamboo
+  tags: bamboo
+
+- name: create bamboo haproxy configuration template
+  template: src=bamboo_haproxy_template.cfg.j2 dest={{ bamboo_haproxy_template_file }} owner=mercury group=hgi mode=0640
+  notify: restart bamboo
+  tags: bamboo
+
+- name: create bamboo supervisord configuration
+  template: src=bamboo_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/bamboo.conf owner=mercury group=hgi mode=0640
+  notify: reload supervisord
+  tags: bamboo
+
+- name: add bamboo supervisord configuration to supervisord conf
+  set_fact:
+     supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/bamboo.conf"
+  notify: 
+    - reload supervisord
+  tags: bamboo
+
+- name: create bamboo haproxy supervisord configuration
+  template: src=bamboo_haproxy_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/bamboo_haproxy.conf owner=mercury group=hgi mode=0640
+  notify: reload supervisord
+  tags: bamboo
+
+- name: add bamboo haproxy supervisord configuration to supervisord conf
+  set_fact:
+     supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/bamboo_haproxy.conf"
+  notify: 
+    - reload supervisord
+  tags: bamboo
+
