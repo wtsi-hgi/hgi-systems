@@ -21,7 +21,6 @@
 # file: roles/bamboo/vars/main.yml
 
 bamboo_supervisor_program: bamboo
-bamboo_haproxy_supervisor_program: bamboo_haproxy
 
 bamboo_marathon_http_endpoints: "{% for host in groups['marathoners'] %}http://{{ hgi_username }}:{{ hgi_password }}@{{ host }}:{{ marathon_http_port }}{% if not loop.last %},{% endif %}{% endfor %}"
 

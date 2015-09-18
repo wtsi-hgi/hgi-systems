@@ -24,7 +24,7 @@
   },
 
   "Bamboo": {
-    "Endpoint": "http://{{ bamboo_http_host }}:{{ bamboo_http_port }}",
+    "Endpoint": "http://{{ bamboo_http_host }}:{{ bamboo_control_port }}",
     "Zookeeper": {
       "Host": "{{ bamboo_zk_hosts }}",
       "Path": "{{ bamboo_zk_path }}", 
@@ -35,7 +35,8 @@
   "HAProxy": {
     "TemplatePath": "{{ bamboo_haproxy_template_file }}",
     "OutputPath": "{{ bamboo_haproxy_config_file }}",
-    "ReloadCommand": "{{ supervisorctl_bin }} restart {{ bamboo_haproxy_supervisor_program }}"
+    "ReloadCommand": "{{ bamboo_haproxy_bin }} -f {{ bamboo_haproxy_config_file }} -p {{ bamboo_haproxy_pid_file }} -D -sf $(cat {{ bamboo_haproxy_pid_file }})",
+    "ReloadValidationCommand": "{{ bamboo_haproxy_bin }} -c -f {{ '{{.}}' }}"
   },
 
   "StatsD": {
