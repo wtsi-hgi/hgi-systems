@@ -20,6 +20,7 @@
 ---
 # file: zookeepers.yml
 - hosts: zookeepers
+  strategy: free
   roles:
     - zookeeper
 

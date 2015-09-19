@@ -20,5 +20,6 @@
 ---
 # file: mesos-slaves.yml
 - hosts: mesos-slaves
+  strategy: free
   roles:
     - mesos-slave

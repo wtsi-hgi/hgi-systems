@@ -20,5 +20,6 @@
 ---
 # file: marathoners.yml
 - hosts: marathoners
+  strategy: free
   roles:
     - marathon
