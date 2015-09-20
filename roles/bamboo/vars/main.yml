@@ -22,9 +22,9 @@
 
 bamboo_supervisor_program: bamboo
 
-bamboo_marathon_http_endpoints: "{% for host in groups['marathoners'] %}http://{{ hgi_username }}:{{ hgi_password }}@{{ host }}:{{ marathon_http_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+bamboo_marathon_http_endpoints: "{% for host in groups['marathoners'] %}http://{{ hgi_username }}:{{ hgi_password }}@{{ hostvars[host]['ansible_fqdn'] }}:{{ marathon_http_port }}{% if not loop.last %},{% endif %}{% endfor %}"
 
-bamboo_zk_hosts: "{% for host in groups['zookeepers'] %}{{ host }}:{{ zookeeper_client_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+bamboo_zk_hosts: "{% for host in groups['zookeepers'] %}{{ hostvars[host]['ansible_fqdn'] }}:{{ zookeeper_client_port }}{% if not loop.last %},{% endif %}{% endfor %}"
 bamboo_zk_path: "/marathon-haproxy/state"
 
 bamboo_http_host: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
