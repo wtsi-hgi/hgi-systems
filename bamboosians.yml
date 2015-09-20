@@ -20,6 +20,5 @@
 ---
 # file: bamboosians.yml
 - hosts: bamboosians
-  strategy: free
   roles:
     - bamboo

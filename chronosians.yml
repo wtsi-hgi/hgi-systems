@@ -20,6 +20,5 @@
 ---
 # file: chronosians.yml
 - hosts: chronosians
-  strategy: free
   roles:
     - chronos

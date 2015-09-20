@@ -35,7 +35,9 @@
 
 - name: create bamboo supervisord configuration
   template: src=bamboo_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/bamboo.conf owner=mercury group=hgi mode=0640
-  notify: reload supervisord
+  notify: 
+    - reload supervisord
+    - restart bamboo
   tags: bamboo
 
 - name: add bamboo supervisord configuration to supervisord conf
@@ -43,5 +45,6 @@
      supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/bamboo.conf"
   notify: 
     - reload supervisord
+    - restart bamboo
   tags: bamboo
 

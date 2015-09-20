@@ -20,6 +20,5 @@
 ---
 # file: mesos-masters.yml
 - hosts: mesos-masters
-  strategy: free
   roles:
     - mesos-master
