@@ -120,6 +120,20 @@ backend chronos-cluster
 	server chronos-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ chronos_http_port }} check
 {% endfor %}
 
+# make bamboo http interface available on {{ bamboo_service_port }}
+listen bamboo-http :{{ bamboo_service_port }}
+        mode http
+	option http-keep-alive
+	use_backend bamboo-cluster if TRUE
+
+backend bamboo-cluster
+	balance leastconn
+	option http-keep-alive
+	option forwardfor
+{% for host in groups['bamboosians'] %}
+	server bamboo-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ bamboo_http_port }} check
+{% endfor %}
+
 {#
 # marathon app tcp rules
 #}
