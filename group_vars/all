@@ -29,13 +29,21 @@ hgi_cluster_name: "hgs4"
 
 zookeeper_client_port: 2181
 
+mesos_master_http_port: 5050
+mesos_slave_http_port: 5051
+mesos_master_service_port: 50040
+
 marathon_local_port_min: 50100
 marathon_local_port_max: 50999
 
-bamboo_control_port: 50071
-bamboo_http_port: 50080
+marathon_http_port: 40050
+marathon_service_port: 50050
 
-marathon_http_port: 50050
-marathon_https_port: 50051
-chronos_http_port: 50060
-chronos_https_port: 50061
+chronos_http_port: 40060
+chronos_service_port: 50060
+
+bamboo_http_port: 40071
+bamboo_service_port: 50071
+bamboo_frontend_http_port: 50080
+
+

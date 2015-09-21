@@ -20,4 +20,4 @@
 #
 #}
 [program:{{ bamboo_supervisor_program }}]
-command={{ bamboo_bin }} -bind="0.0.0.0:{{ bamboo_control_port }}" -config="{{ bamboo_config_file }}" 
+command={{ bamboo_bin }} -bind="0.0.0.0:{{ bamboo_http_port }}" -config="{{ bamboo_config_file }}" 

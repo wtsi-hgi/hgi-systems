@@ -1,5 +1,4 @@
-{#
-# Copyright (c) 2014 Genome Research Ltd.
+# Copyright (c) 2015 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -18,7 +17,8 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
-#}
-[program:chronos]
-environment=MESOS_NATIVE_JAVA_LIBRARY="{{ chronos_libmesos_so }}",MESOS_NATIVE_LIBRARY="{{ chronos_libmesos_so }}"
-command={{ chronos_java_bin }} -cp {{ chronos_java_cp }} -server -Xmx"{{ chronos_java_heap }}" -Xms"{{ chronos_java_heap }}" -XX:+PrintClassHistogram {{ chronos_java_main }} --master {{ chronos_mesos_zk_uri }} --zk_hosts "{{ chronos_zk_hosts }}" --failover_timeout {{ chronos_failover_timeout_s }} --hostname "{{ chronos_hostname }}" --mesos_role "{{ chronos_mesos_role }}" --http_port {{ chronos_http_port }} --http_credentials "{{ chronos_http_credentials }}" --zk_path "{{ chronos_zk_path }}"
+---
+# file: roles/marathon/handlers/main.yml
+
+- name: restart marathon
+  supervisorctl: config="{{ supervisord_conf }}" name="{{ marathon_supervisor_program }}" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"

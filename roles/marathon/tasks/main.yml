@@ -22,7 +22,9 @@
 
 - name: create marathon supervisord configuration
   template: src=marathon_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/marathon.conf owner=mercury group=hgi mode=0640
-  notify: reload supervisord
+  notify: 
+    - reload supervisord
+    - restart marathon
   tags: marathon
 
 - name: add marathon supervisord configuration to supervisord conf
@@ -30,4 +32,5 @@
      supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/marathon.conf"
   notify: 
     - reload supervisord
+    - restart marathon
   tags: marathon

@@ -31,7 +31,9 @@
 
 - name: create mesos-slave supervisord configuration
   template: src=mesos-slave_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/mesos-slave.conf owner=mercury group=hgi mode=0640
-  notify: reload supervisord
+  notify: 
+    - reload supervisord
+    - restart mesos-slave
   tags: mesos-slave
 
 - name: add mesos-slave supervisord configuration to supervisord conf
@@ -39,4 +41,5 @@
      supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/mesos-slave.conf"
   notify: 
     - reload supervisord
+    - restart mesos-slave
   tags: mesos-slave

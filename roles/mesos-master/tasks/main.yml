@@ -28,7 +28,9 @@
 
 - name: create mesos-master supervisord configuration
   template: src=mesos-master_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/mesos-master.conf owner=mercury group=hgi mode=0640
-  notify: reload supervisord
+  notify: 
+    - reload supervisord
+    - restart mesos-master
   tags: mesos-master
 
 - name: add mesos-master supervisord configuration to supervisord conf
@@ -36,4 +38,5 @@
      supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/mesos-master.conf"
   notify: 
     - reload supervisord
+    - restart mesos-master
   tags: mesos-master

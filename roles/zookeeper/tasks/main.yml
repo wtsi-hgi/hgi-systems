@@ -27,19 +27,20 @@
 - name: set myid for zookeeper
   copy: content="{{ zookeeper_host_id }}" dest="{{ zookeeper_snapshot_dir }}/myid"
   notify: 
-    - reload zookeeper
+    - restart zookeeper
   tags: zookeeper
 
 - name: generate zookeeper config
   template: src=zoo.cfg.j2 dest={{ hgi_conf_dir }}/zoo.cfg owner=mercury group=hgi mode=0640
   notify: 
-    - reload zookeeper
+    - restart zookeeper
   tags: zookeeper
 
 - name: generate zookeeper supervisord configuration
   template: src=zookeeper_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/zookeeper.conf owner=mercury group=hgi mode=0640
   notify: 
     - reload supervisord
+    - restart zookeeper
   tags: zookeeper
 
 - name: add zookeeper supervisord configuration to supervisord conf includes
@@ -47,4 +48,5 @@
      supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/zookeeper.conf"
   notify: 
     - reload supervisord
+    - restart zookeeper
   tags: zookeeper

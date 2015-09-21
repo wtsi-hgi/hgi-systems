@@ -54,7 +54,7 @@ defaults
 
 # Template Customization
 frontend http-in
-        bind *:{{ bamboo_http_port }}
+        bind *:{{ bamboo_frontend_http_port }}
 {#
 # marathon app http rules (acl can be host or path based)
 #}
@@ -75,6 +75,50 @@ frontend http-in
         stats enable
         stats auth {{ hgi_username }}:{{ hgi_password }}
         stats uri {{ bamboo_haproxy_stats_path }}
+
+# make mesos master available on {{ mesos_master_service_port }}
+listen mesos-master-http :{{ mesos_master_service_port }}
+        mode http
+        option http-keep-alive
+	use_backend mesos-master-cluster if TRUE
+
+backend mesos-master-cluster
+        balance leastconn
+        option http-keep-alive
+        option forwardfor
+        option httpchk /master/state.json
+        http-check expect rstring ^.*\"(leader|pid)\":\"(.*?)\",.*,?\"(leader|pid)\":\"\2\".*$
+{% for host in groups['mesos-masters'] %}
+        server mesos-master-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ mesos_master_http_port }} check
+{% endfor %}
+
+# make marathon http interface available on {{ marathon_service_port }}
+listen marathon-http :{{ marathon_service_port }}
+        mode http
+	option http-keep-alive
+	use_backend marathon-cluster if TRUE
+
+backend marathon-cluster
+	balance leastconn
+	option http-keep-alive
+	option forwardfor
+{% for host in groups['marathoners'] %}
+	server marathon-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ marathon_http_port }} check
+{% endfor %}
+
+# make chronos http interface available on {{ chronos_service_port }}
+listen chronos-http :{{ chronos_service_port }}
+        mode http
+	option http-keep-alive
+	use_backend chronos-cluster if TRUE
+
+backend chronos-cluster
+	balance leastconn
+	option http-keep-alive
+	option forwardfor
+{% for host in groups['chronosians'] %}
+	server chronos-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ chronos_http_port }} check
+{% endfor %}
 
 {#
 # marathon app tcp rules
