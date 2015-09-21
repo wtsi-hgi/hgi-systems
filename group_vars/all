@@ -42,8 +42,8 @@ marathon_service_port: 50050
 chronos_http_port: 40060
 chronos_service_port: 50060
 
-bamboo_http_port: 40071
-bamboo_service_port: 50071
+bamboo_http_port: 40070
+bamboo_service_port: 50070
 bamboo_frontend_http_port: 50080
 
 
