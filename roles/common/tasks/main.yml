@@ -32,6 +32,9 @@
 - name: create local HGI run directory
   file: state=directory path={{ hgi_run_dir }} owner=mercury group=hgi mode=2770
 
+- name: create local HGI certs directory
+  file: state=directory path={{ hgi_certs_dir }} owner=mercury group=hgi mode=2770
+
 - name: create supervisord conf directory
   file: state=directory path={{ supervisord_conf_dir }} owner=mercury group=hgi mode=2770
 
@@ -53,3 +56,16 @@
   cron: name="start supervisord if not running" minute="*/5" job="{{ cronic_cmd }} bash -c \"{{ supervisord_ctl }} status || ({{ supervisord_ctl }} start && exit 1)\""
   tags: supervisord
 
+- name: install *.hgi.internal.sanger.ac.uk TLS certificate
+  copy: content="{{ pem_WILDCARD_hgi_internal_sanger_ac_uk_cert }}" dest="{{ hgi_certs_dir }}/WILDCARD_hgi_internal_sanger_ac_uk-cert.pem"
+  tags: security
+
+- name: install *.hgi.internal.sanger.ac.uk TLS key
+  copy: content="{{ pem_WILDCARD_hgi_internal_sanger_ac_uk_key }}" dest="{{ hgi_certs_dir }}/WILDCARD_hgi_internal_sanger_ac_uk-key.pem" mode=0600
+  tags: security
+
+- name: generate hgi htpasswd file
+  shell: ( docker run --entrypoint htpasswd registry:2 -Bbn {{ hgi_username }} {{ hgi_password }} > htpasswd.new ) && diff htpasswd.new htpasswd && rm htpasswd.new || mv htpasswd.new htpasswd && chmod 640 htpasswd
+  args:
+    chdir: "{{ hgi_conf_dir }}"
+  tags: security

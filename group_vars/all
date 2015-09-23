@@ -24,6 +24,7 @@ hgi_conf_dir: "{{ hgi_dir }}/etc"
 hgi_log_dir: "{{ hgi_dir }}/log"
 hgi_pid_dir: "{{ hgi_dir }}/pid"
 hgi_run_dir: "{{ hgi_dir }}/run"
+hgi_certs_dir: "{{ hgi_conf_dir }}/certs"
 
 hgi_cluster_name: "hgs4"
 
@@ -46,4 +47,35 @@ bamboo_http_port: 40070
 bamboo_service_port: 50070
 bamboo_frontend_http_port: 50080
 
+
+pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
+    #
+    # X.509 Certificate
+    #
+    # C=GB, ST=Cambridgeshire, L=Hinxton, O=Genome Research Ltd., OU=Wellcome Trust Sanger Institute, CN=*.hgi.internal.sanger.ac.uk/emailAddress=hgi-team@sanger.ac.uk
+    #
+    -----BEGIN CERTIFICATE-----
+    MIID/jCCAuagAwIBAgICKnIwDQYJKoZIhvcNAQELBQAwgd0xCzAJBgNVBAYTAkdC
+    MRcwFQYDVQQIEw5DYW1icmlkZ2VzaGlyZTEQMA4GA1UEBxMHSGlueHRvbjEdMBsG
+    A1UEChMUR2Vub21lIFJlc2VhcmNoIEx0ZC4xKDAmBgNVBAsTH1dlbGxjb21lIFRy
+    dXN0IFNhbmdlciBJbnN0aXR1dGUxMzAxBgNVBAMTKkdlbm9tZSBSZXNlYXJjaCBM
+    dGQuIENlcnRpZmljYXRlIEF1dGhvcml0eTElMCMGCSqGSIb3DQEJARYWY2FtYW5h
+    Z2VyQHNhbmdlci5hYy51azAeFw0xNTA5MjMxMjIzMDJaFw0xNjEwMjIxMjIzMDJa
+    MIHNMQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEDAOBgNV
+    BAcTB0hpbnh0b24xHTAbBgNVBAoTFEdlbm9tZSBSZXNlYXJjaCBMdGQuMSgwJgYD
+    VQQLEx9XZWxsY29tZSBUcnVzdCBTYW5nZXIgSW5zdGl0dXRlMSQwIgYDVQQDFBsq
+    LmhnaS5pbnRlcm5hbC5zYW5nZXIuYWMudWsxJDAiBgkqhkiG9w0BCQEWFWhnaS10
+    ZWFtQHNhbmdlci5hYy51azCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAk9L3
+    ayD9ImfNrVFmfqTNKHvrLM7EYv9L4WfhCb7sMiNK3br5ovMtokjrFvF+vpuISc8b
+    /JklL32cuoI2y/koJBX27L4fipk4qbDms9dUq6m2B3AKuoLgTnO5uRqFg2vg/cdZ
+    NQgPP5KYCmfmf5EKLsOGiHcCOgIZqSRtVH0v/xsCAwEAAaNaMFgwCQYDVR0TBAIw
+    ADALBgNVHQ8EBAMCBeAwPgYDVR0fBDcwNTAzoDGgL4YtaHR0cDovL2NhLnNhbmdl
+    ci5hYy51ay9jYXRvb2wvcmV2b2NhdGlvbnMuY3JsMA0GCSqGSIb3DQEBCwUAA4IB
+    AQAyWp9nt1fIuGk+cXOEuK76sYswN5ljArKQGkVeUNxNm0KQ3k4CDg/Kp7SPnwFH
+    S5s3aCqZHG6S19uYLtMTokzasJSlghOZXpT655bjqVp7HdVD4Zk1AXXfA6775jcc
+    Icw05szoVd4M0fb2/C85X2kPwlPpq22iIVrMIgVLjsO3As8AHffcOCAMF6hwh8up
+    ankJxrAq8h4HTOVxU6yaRxBzzIpYpReuKlQe9zYfW9kR+6P4QbPB1VTJ+04OFjs6
+    rpoJg6f2BF2wxB+kKmlLvKFdYkRSw1OqL2ON+pmScMV0XrdYDSMv6sLuL5yqyhjx
+    LAUnpHIBWX1L/VrZtNd2npZC
+    -----END CERTIFICATE-----
 
