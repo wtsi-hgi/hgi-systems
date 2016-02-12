@@ -20,6 +20,6 @@
 #
 #}
 [program:{{ mesos_slave_supervisor_program }}]
-command={{ mesos_slave_bin }} --master="{{ mesos_slave_zk_uri }}" --hostname="{{ mesos_slave_hostname }}" --containerizers="{{ mesos_slave_containerizers }}" --cgroups_enable_cfs --cgroups_hierarchy="/sys/fs/cgroup" --cgroups_root="mesos" --isolation="{{ mesos_slave_isolation }}" --recover="reconnect" --checkpoint --work_dir="{{ mesos_slave_work_dir }}" --executor_registration_timeout="{{ mesos_slave_executor_registration_timeout }}" --credential="{{ mesos_slave_credential_file }}"
+command={{ mesos_slave_bin }} --master="{{ mesos_slave_zk_uri }}" --hostname="{{ mesos_slave_hostname }}" --containerizers="{{ mesos_slave_containerizers }}" --cgroups_enable_cfs --cgroups_hierarchy="/sys/fs/cgroup" --cgroups_root="mesos" --isolation="{{ mesos_slave_isolation }}" --recover="reconnect" --work_dir="{{ mesos_slave_work_dir }}" --executor_registration_timeout="{{ mesos_slave_executor_registration_timeout }}" --credential="{{ mesos_slave_credential_file }}"
 
 
