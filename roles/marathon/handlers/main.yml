@@ -21,4 +21,4 @@
 # file: roles/marathon/handlers/main.yml
 
 - name: restart marathon
-  supervisorctl: config="{{ supervisord_conf }}" name="{{ marathon_supervisor_program }}" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"
+  supervisorctl: config="{{ supervisord_conf }}" name="marathon" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"
