@@ -87,7 +87,7 @@ backend mesos-master-cluster
         option http-keep-alive
         option forwardfor
         option httpchk /master/state.json
-        http-check expect rstring ^.*\"(leader|pid)\":\"(.*?)\",.*,?\"(leader|pid)\":\"\2\".*$
+        http-check expect rstring ["](leader|pid)["][:]["]master[@]([0-9.:]+)["].*?["](leader|pid)["][:]["]master[@]\2["]
 {% for host in groups['mesos-masters'] %}
         server mesos-master-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ mesos_master_http_port }} check
 {% endfor %}
@@ -168,15 +168,15 @@ backend {{ $app.EscapedId }}-cluster{{ if $app.HealthCheckPath }}
 ## to haproxy frontend port
 ##
 {{ range $index, $app := .Apps }}
-listen {{ $app.EscapedId }}_{{ $app.ServicePort }}
-   bind *:{{ $app.ServicePort }}
-   mode http
+#listen {{ $app.EscapedId }}_{{ $app.ServicePort }}
+#   bind *:{{ $app.ServicePort }}
+#   mode http
    {{ if $app.HealthCheckPath }}
-   option httpchk GET {{ $app.HealthCheckPath }}
+#   option httpchk GET {{ $app.HealthCheckPath }}
    {{ end }}
-   balance leastconn
-   option forwardfor
+#   balance leastconn
+#   option forwardfor
          {{ range $page, $task := .Tasks }}
-         server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} {{ end }}
+#         server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} {{ end }}
 {{ end }}
 {% endraw %}
