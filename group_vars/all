@@ -20,6 +20,8 @@
 ---
 # file: group_vars/all
 
+ansible_python_interpreter: "/software/hgi/pkglocal/ansible-2.0.1.0-venv/bin/python"
+
 hgi_conf_dir: "{{ hgi_dir }}/etc"
 hgi_log_dir: "{{ hgi_dir }}/log"
 hgi_pid_dir: "{{ hgi_dir }}/pid"

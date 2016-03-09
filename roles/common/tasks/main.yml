@@ -65,7 +65,5 @@
   tags: security
 
 - name: generate hgi htpasswd file
-  shell: ( docker run --entrypoint htpasswd registry:2 -Bbn {{ hgi_username }} {{ hgi_password }} > htpasswd.new ) && diff htpasswd.new htpasswd && rm htpasswd.new || mv htpasswd.new htpasswd && chmod 640 htpasswd
-  args:
-    chdir: "{{ hgi_conf_dir }}"
+  htpasswd: path="{{ hgi_conf_dir }}/htpasswd" name="{{ hgi_username }}" password="{{ hgi_password }}" state=present
   tags: security
