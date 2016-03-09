@@ -1,5 +1,5 @@
 {#
-# Copyright (c) 2015 Genome Research Ltd.
+# Copyright (c) 2015, 2016 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -87,6 +87,8 @@ backend mesos-master-cluster
         option http-keep-alive
         option forwardfor
         option httpchk /master/state.json
+	# check for health with a regex against state.json
+	# such that only the leader will be healthy
         http-check expect rstring ["](leader|pid)["][:]["]master[@]([0-9.:]+)["].*?["](leader|pid)["][:]["]master[@]\2["]
 {% for host in groups['mesos-masters'] %}
         server mesos-master-{{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_fqdn'] }}:{{ mesos_master_http_port }} check
