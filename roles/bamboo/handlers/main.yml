@@ -22,4 +22,8 @@
 
 - name: restart bamboo
   supervisorctl: config="{{ supervisord_conf }}" name="{{ bamboo_supervisor_program }}" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"
+  #notify: restart bamboo haproxy
+
+- name: restart bamboo haproxy
+  shell: "{{ bamboo_haproxy_bin }} -f {{ bamboo_haproxy_config_file }} -p {{ bamboo_haproxy_pid_file }} -D -sf $(cat {{ bamboo_haproxy_pid_file }})"
 
