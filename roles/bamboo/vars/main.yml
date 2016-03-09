@@ -31,7 +31,7 @@ bamboo_http_host: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"
 
 bamboo_config_file: "{{ hgi_conf_dir }}/bamboo.conf"
 
-bamboo_version: "0.2.14"
+bamboo_version: "0.2.15"
 bamboo_bin: "{{ hgi_pkglocal_dir}}/bamboo-{{ bamboo_version }}/bin/bamboo"
 
 bamboo_haproxy_version: "1.5.11-linux-3.7"
