@@ -20,7 +20,7 @@
 ---
 # file: roles/mesos/vars/main.yml
 
-mesos_version: "0.27.0"
+mesos_version: "1.0.0"
 mesos_prefix: "{{ hgi_pkglocal_dir }}/mesos-{{ mesos_version }}"
 
 mesos_docker_timeout_m: 5
