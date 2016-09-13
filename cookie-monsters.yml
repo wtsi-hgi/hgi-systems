@@ -40,3 +40,19 @@
       - libssl-dev
       - jq
       - perl-doc
+
+  - name: Add Deadsnakes Python Repository
+    apt_repository: repo='ppa:fkrull/deadsnakes'
+
+  - name: Install Python 3.5
+    apt: pkg=python3.5 state=installed
+
+# TODO
+# Install iRODS 4.1.9
+# Set up iRODS
+# Install baton dependencies?
+# Install baton
+# Install HGI Cookie Monster
+# Create virtualenv?
+# Set up Cookie Monster
+# Run Cookie Monster
