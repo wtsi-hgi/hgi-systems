@@ -20,7 +20,7 @@
 # file: cookie-monsters.yml
 - hosts: hgi-cordon-cookie-monster
   tasks:
-  - name: Install baton dependencies
+  - name: Install iRODS dependencies
     apt: name={{item}} state=installed
     with_items:
       - wget
