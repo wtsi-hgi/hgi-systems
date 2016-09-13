@@ -42,10 +42,13 @@
       - perl-doc
 
   - name: Add Deadsnakes Python Repository
-    apt_repository: repo='ppa:fkrull/deadsnakes'
+    apt_repository: repo='ppa:fkrull/deadsnakes' state=present
+    register: deadsnakes_ppa
 
   - name: Install Python 3.5
     apt: pkg=python3.5 state=installed
+    when: deadsnakes_ppa|success
+    register: python_installed
 
 # TODO
 # Install iRODS 4.1.9
