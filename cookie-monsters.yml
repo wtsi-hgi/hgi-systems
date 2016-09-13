@@ -18,4 +18,25 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: cookie-monsters.yml
-- hosts: cookie-monsters
+- hosts: hgi-cordon-cookie-monster
+  tasks:
+  - name: Install baton dependencies
+    apt: name={{item}} state=installed
+    with_items:
+      - wget
+      - git
+      - gcc
+      - g++
+      - perl
+      - cpanminus
+      - make
+      - autoconf
+      - automake
+      - libtool
+      - pkg-config
+      - patch
+      - ca-certificates
+      - libboost-dev
+      - libssl-dev
+      - jq
+      - perl-doc
