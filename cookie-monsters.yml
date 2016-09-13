@@ -55,4 +55,7 @@
 # Install HGI Cookie Monster
 # Create virtualenv?
 # Set up Cookie Monster
-# Run Cookie Monster
+# Install nginx
+# Set up nginx reverse proxy for Cookie Monster
+# TLS stuff
+# Run Cookie Monster (n.b., dependency on cookie jars)
