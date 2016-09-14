@@ -55,6 +55,10 @@ chronosians
 [bamboosians:children]
 mesos-slaves
 
+# iRODS client machines
+[irodsians]
+hgi-cordon-cookie-monster
+
 # Cookie Monster application servers
 [cookie-monsters]
 hgi-cordon-cookie-monster

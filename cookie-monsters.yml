@@ -20,38 +20,39 @@
 # file: cookie-monsters.yml
 - hosts: cookie-monsters
   tasks:
-  - name: Install iRODS dependencies
-    apt: name={{item}} state=installed
-    with_items:
-      - wget
-      - git
-      - gcc
-      - g++
-      - perl
-      - cpanminus
-      - make
-      - autoconf
-      - automake
-      - libtool
-      - pkg-config
-      - patch
-      - ca-certificates
-      - libboost-dev
-      - libssl-dev
-      - jq
-      - perl-doc
+  # NOTE Do we need this? Can install from packages...
+  # - name: Install iRODS dependencies
+  #   apt: name={{item}} state=installed
+  #   with_items:
+  #     - wget
+  #     - git
+  #     - gcc
+  #     - g++
+  #     - perl
+  #     - cpanminus
+  #     - make
+  #     - autoconf
+  #     - automake
+  #     - libtool
+  #     - pkg-config
+  #     - patch
+  #     - ca-certificates
+  #     - libboost-dev
+  #     - libssl-dev
+  #     - jq
+  #     - perl-doc
 
   - name: Add Deadsnakes Python Repository
     apt_repository: repo='ppa:fkrull/deadsnakes' state=present
     register: deadsnakes_ppa
 
   - name: Install Python 3.5
-    apt: pkg=python3.5 state=installed
+    apt: pkg=python3.5 state=present update_cache=yes
     when: deadsnakes_ppa|success
     register: python_installed
 
 # TODO
-# Install iRODS 4.1.9
+# Install iRODS 4.1.9 -- Do we need this? Can install from packages
 # Set up iRODS
 # Install baton dependencies?
 # Install baton
