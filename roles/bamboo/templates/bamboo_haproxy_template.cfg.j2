@@ -137,17 +137,10 @@ backend bamboo-cluster
 {% endfor %}
 
 {#
-# marathon app tcp rules
+# marathon per-app backend
 #}
 {% raw %}
-{{ range $index, $app := .Apps }} {{ if $app.Env.BAMBOO_TCP_PORT }}
-listen {{ $app.EscapedId }}-cluster-tcp :{{ $app.Env.BAMBOO_TCP_PORT }}
-        mode tcp
-        option tcplog
-        balance roundrobin
-        {{ range $page, $task := .Tasks }}
-        server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} {{ end }}
-{{ end }}
+{{ range $index, $app := .Apps }}
 backend {{ $app.EscapedId }}-cluster{{ if $app.HealthCheckPath }}
         option httpchk GET {{ $app.HealthCheckPath }}
         {{ end }}
@@ -155,7 +148,30 @@ backend {{ $app.EscapedId }}-cluster{{ if $app.HealthCheckPath }}
         option httpclose
         option forwardfor
         {{ range $page, $task := .Tasks }}
-        server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} {{ end }}
+        server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} 
+	{{ end }}
+{{ end }}
+{% endraw %}
+
+{#
+# marathon per-port tcp rules
+#}
+{% raw %}
+{{ $apps := .Apps }}
+{{ range $port := ($apps | getAppEnvValues "BAMBOO_TCP_PORT") }}
+# Listener for TCP port {{ $port }}
+listen marathon-app-tcp-{{ $port }}-cluster-tcp :{{ $port }}
+        mode tcp
+        option tcplog
+        balance roundrobin
+        use_backend marathon-app-tcp-{{ $port }}-cluster if TRUE
+
+# Backend for TCP port {{ $port }}
+backend marathon-app-tcp-{{ $port }}-cluster
+        {{ range $appindex, $app := $apps }} {{ if $app.Env.BAMBOO_TCP_PORT }}{{ if eq $app.Env.BAMBOO_TCP_PORT $port }} {{ range $page, $task := .Tasks }}
+        server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }}
+        {{ end }} {{ end }} {{ end }} {{ end }}
+
 {{ end }}
 {% endraw %}
 
@@ -179,6 +195,7 @@ backend {{ $app.EscapedId }}-cluster{{ if $app.HealthCheckPath }}
 #   balance leastconn
 #   option forwardfor
          {{ range $page, $task := .Tasks }}
-#         server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} {{ end }}
+#         server {{ $app.EscapedId}}-{{ $task.Host }}-{{ $task.Port }} {{ $task.Host }}:{{ $task.Port }} {{ if $app.HealthCheckPath }} check inter 30000 {{ end }} 
+	 {{ end }}
 {{ end }}
 {% endraw %}
