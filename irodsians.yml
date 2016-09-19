@@ -20,13 +20,21 @@
 # file: irodsians.yml
 - hosts: irodsians
   tasks:
+  - name: Install iCommands
+    # FIXME This hardcodes Trusty as the target
+    apt: deb='ftp://ftp.renci.org/pub/irods/releases/4.1.9/ubuntu14/irods-icommands-4.1.9-ubuntu14-x86_64.deb'
+    environment:
+      ftp_proxy: http://wwwcache.sanger.ac.uk:3128
+    when: ansible_distribution == 'Ubuntu' and
+          ansible_distribution_release == 'trusty'
+    register: icommands
+
   - name: Install iRODS runtime libraries
     # FIXME This hardcodes Trusty as the target
     apt: deb='ftp://ftp.renci.org/pub/irods/releases/4.1.9/ubuntu14/irods-runtime-4.1.9-ubuntu14-x86_64.deb'
     environment:
       ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-    when: ansible_distribution == 'Ubuntu' and
-          ansible_distribution_release == 'trusty'
+    when: icommands|success
     register: irods_runtime
 
   - name: Install iRODS development tools
@@ -35,6 +43,4 @@
     apt: deb='ftp://ftp.renci.org/pub/irods/releases/4.1.9/ubuntu14/irods-dev-4.1.9-ubuntu14-x86_64.deb'
     environment:
       ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-    when: irods_runtime|success and
-          ansible_distribution == 'Ubuntu' and
-          ansible_distribution_release == 'trusty'
+    when: irods_runtime|success
