@@ -17,8 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: irodsians.yml
-- hosts: irodsians
+# file: batonistas.yml
+- hosts: batonistas
   tasks:
   - name: Install iCommands
     # FIXME This hardcodes Trusty as the target
