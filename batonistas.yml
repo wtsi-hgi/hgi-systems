@@ -48,3 +48,17 @@
       ftp_proxy: http://wwwcache.sanger.ac.uk:3128
     with_items: "{{ irods }}"
     register: irods
+
+  - name: Install build and development tools
+    apt: name={{ item }} state=present
+    register: build_tools
+    with_items:
+      - git
+      - perl
+      - make
+      - cpanminus
+      - autoconf
+      - automake
+      - gcc
+      - g++
+      - libtool
