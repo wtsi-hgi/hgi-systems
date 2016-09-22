@@ -19,28 +19,30 @@
 ---
 # file: batonistas.yml
 - hosts: batonistas
+
+  vars:
+    # Map Renci's distribution names to Ansible variables
+    platform_index:
+      Ubuntu:
+        quantal: ubuntu12
+        trusty: ubuntu14
+
+    irods_platform: "{{ platform_index[ansible_distribution][ansible_distribution_release] }}"
+    irods_arch: "{{ ansible_machine }}"
+    irods_version: 4.1.9
+
+    irods_ftp: ftp://ftp.renci.org/pub/irods/releases/{{ irods_version }}/{{ irods_platform }}
+    irods_suffix: "{{ irods_version }}-{{ irods_platform }}-{{ irods_arch }}.deb"
+
+    irods:
+      - "{{ irods_ftp }}/irods-icommands-{{irods_suffix}}"
+      - "{{ irods_ftp }}/irods-runtime-{{irods_suffix}}"
+      - "{{ irods_ftp }}/irods-dev-{{irods_suffix}}"
+
   tasks:
-  - name: Install iCommands
-    # FIXME This hardcodes Trusty as the target
-    apt: deb='ftp://ftp.renci.org/pub/irods/releases/4.1.9/ubuntu14/irods-icommands-4.1.9-ubuntu14-x86_64.deb'
+  - name: Install iRODS client
+    apt: deb={{ item }} state=present
     environment:
       ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-    when: ansible_distribution == 'Ubuntu' and
-          ansible_distribution_release == 'trusty'
-    register: icommands
-
-  - name: Install iRODS runtime libraries
-    # FIXME This hardcodes Trusty as the target
-    apt: deb='ftp://ftp.renci.org/pub/irods/releases/4.1.9/ubuntu14/irods-runtime-4.1.9-ubuntu14-x86_64.deb'
-    environment:
-      ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-    when: icommands|success
-    register: irods_runtime
-
-  - name: Install iRODS development tools
-    # TODO Is this even necessary?
-    # FIXME This hardcodes Trusty as the target
-    apt: deb='ftp://ftp.renci.org/pub/irods/releases/4.1.9/ubuntu14/irods-dev-4.1.9-ubuntu14-x86_64.deb'
-    environment:
-      ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-    when: irods_runtime|success
+    with_items: "{{ irods }}"
+    register: irods
