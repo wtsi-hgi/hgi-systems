@@ -17,10 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: irods.yml
-- name: Install minimal iRODS client
-  apt: deb={{ item }} state=present
-  environment:
-    # FIXME This should be some kind of global variable...
-    ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-  with_items: "{{ irods }}"
+# file: main.yml
+
+# Map Ansible variables to Renci's distribution names
+platform_index:
+  Ubuntu:
+    quantal: ubuntu12
+    trusty: ubuntu14
+
+irods_platform: "{{ platform_index[ansible_distribution][ansible_distribution_release] }}"
+irods_arch: "{{ ansible_machine }}"
+irods_version: 4.1.9
+
+# NOTE We need Ansible 2.1 (or later) for FTP support with apt
+irods_prefix: ftp://ftp.renci.org/pub/irods/releases/{{ irods_version }}/{{ irods_platform }}/irods
+irods_suffix: "{{ irods_version }}-{{ irods_platform }}-{{ irods_arch }}.deb"
+
+irods:
+  # NOTE This order should be preserved
+  - "{{ irods_prefix }}-icommands-{{irods_suffix}}"
+  - "{{ irods_prefix }}-runtime-{{irods_suffix}}"
+  - "{{ irods_prefix }}-dev-{{irods_suffix}}"

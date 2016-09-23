@@ -17,10 +17,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: irods.yml
-- name: Install minimal iRODS client
-  apt: deb={{ item }} state=present
-  environment:
-    # FIXME This should be some kind of global variable...
-    ftp_proxy: http://wwwcache.sanger.ac.uk:3128
-  with_items: "{{ irods }}"
+# file: main.yml
+- include: irods.yml
+  register: irods
+
+- include: baton.yml
+  when: irods|success
