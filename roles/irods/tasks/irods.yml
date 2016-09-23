@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: irods.yml
+# file: roles/irods/tasks/irods.yml
 - name: Install minimal iRODS client
   apt: deb={{ item }} state=present
   environment:

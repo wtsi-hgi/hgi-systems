@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: baton.yml
+# file: roles/irods/tasks/baton.yml
 - name: Install build and development tools
   apt: name={{ item }} state=present
   register: build_tools
