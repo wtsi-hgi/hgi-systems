@@ -21,7 +21,7 @@
 - hosts: batonistas
 
   vars:
-    # Map Renci's distribution names to Ansible variables
+    # Map Ansible variables to Renci's distribution names
     platform_index:
       Ubuntu:
         quantal: ubuntu12
