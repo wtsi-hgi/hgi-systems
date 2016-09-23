@@ -36,7 +36,7 @@
   # NOTE cpanm is part of Anisble's "Extras Modules", it may not be
   # available in vanilla installations
   cpanm: name={{ item }}
-  when: build_tools|success
+  when: build_tools|succeeded
   register: baton_perl_deps
   with_items:
     - JSON

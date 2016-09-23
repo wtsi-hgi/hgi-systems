@@ -22,4 +22,4 @@
   register: irods
 
 - include: baton.yml
-  when: irods|success
+  when: irods
