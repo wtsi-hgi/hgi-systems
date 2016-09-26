@@ -17,33 +17,30 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/irods/tasks/baton.yml
-- name: Install build and development tools
-  apt: name={{ item }} state=present
-  become: true
-  register: build_tools
+# file: roles/irods/tasks/jansson.yml
+- name: Download Jansson
+  get_url:
+    url: "{{ jansson_url }}"
+    dest: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}.tar.gz"
+  register: jansson_downloaded
+
+- name: Extract Jansson
+  unarchive:
+    src: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}.tar.gz"
+    dest: "{{ ansible_env.HOME }}"
+    creates: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}/LICENSE"
+    copy: no
+  when: jansson_downloaded|succeeded
+  register: jansson_extracted
+
+- name: Build Jansson
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}"
+    creates: /usr/local/lib/libjansson.so
   with_items:
-    - git
-    - perl
+    - ./configure
     - make
-    - cpanminus
-    - autoconf
-    - automake
-    - gcc
-    - g++
-    - libtool
-
-- name: Install Perl modules for baton
-  # NOTE cpanm is part of Anisble's "Extras Modules", it may not be
-  # available in vanilla installations
-  cpanm: name={{ item }}
+    - make install
   become: true
-  when: build_tools|succeeded
-  register: baton_perl_deps
-  with_items:
-    - JSON
-    - List::AllUtils
-
-- include: jansson.yml
-  register: baton_jansson_dep
-  when: build_tools|succeeded
+  when: jansson_extracted|succeeded

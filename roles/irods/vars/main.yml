@@ -38,3 +38,6 @@ irods:
   - "{{ irods_prefix }}-icommands-{{irods_suffix}}"
   - "{{ irods_prefix }}-runtime-{{irods_suffix}}"
   - "{{ irods_prefix }}-dev-{{irods_suffix}}"
+
+jansson_version: 2.9
+jansson_url: http://www.digip.org/jansson/releases/jansson-{{ jansson_version }}.tar.gz
