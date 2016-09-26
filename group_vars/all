@@ -1,6 +1,8 @@
-# Copyright (c) 2014 Genome Research Ltd.
+# Copyright (c) 2014, 2016 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+# * Christopher Harrison <ch12@sanger.ac.uk>
 #
 # This file is part of hgi-ansible.
 #
@@ -20,6 +22,7 @@
 ---
 # file: group_vars/all
 
+# FIXME This doesn't apply to cordon machines, as /software isn't mounted
 ansible_python_interpreter: "/software/hgi/pkglocal/ansible-2.0.1.0-venv/bin/python"
 
 hgi_conf_dir: "{{ hgi_dir }}/etc"
