@@ -17,35 +17,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/irods/tasks/baton.yml
-- name: Install build and development tools
-  apt: name={{ item }} state=present
-  become: true
-  register: build_tools
+# file: roles/irods/tasks/baton_from_source.yml
+- name: Download baton
+  get_url:
+    url: "{{ baton_url }}"
+    dest: "{{ ansible_env.HOME }}/baton-{{ baton_version }}.tar.gz"
+  register: baton_downloaded
+
+- name: Extract baton
+  unarchive:
+    src: "{{ ansible_env.HOME }}/baton-{{ baton_version }}.tar.gz"
+    dest: "{{ ansible_env.HOME }}"
+    creates: "{{ ansible_env.HOME }}/baton-{{ baton_version }}/README"
+    copy: no
+  when: baton_downloaded|succeeded
+  register: baton_extracted
+
+- name: Build baton
+  # FIXME Need to explicitly add /usr/local/lib to LD_LIBRARY_PATH afterwards
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
+    creates: /usr/local/bin/baton
   with_items:
-    - git
-    - perl
+    - ./configure --with-irods
     - make
-    - cpanminus
-    - autoconf
-    - automake
-    - gcc
-    - g++
-    - libtool
-
-- name: Install Perl modules for baton
-  # NOTE cpanm is part of Anisble's "Extras Modules", it may not be
-  # available in vanilla installations
-  cpanm: name={{ item }}
+    - make install
   become: true
-  when: build_tools|succeeded
-  register: baton_perl_deps
-  with_items:
-    - JSON
-    - List::AllUtils
-
-- include: jansson.yml
-  when: build_tools|succeeded
-
-- include: baton_from_source.yml
-  when: baton_perl_deps|succeeded
+  when: baton_extracted|succeeded
