@@ -49,6 +49,10 @@ bamboo_http_port: 40070
 bamboo_service_port: 50070
 bamboo_frontend_http_port: 50080
 
+# FIXME? Do these have any place being here?...
+sanger_http_proxy: http://wwwcache.sanger.ac.uk:3128
+sanger_https_proxy: http://wwwcache.sanger.ac.uk:3128
+sanger_ftp_proxy: http://wwwcache.sanger.ac.uk:3128
 
 pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     #

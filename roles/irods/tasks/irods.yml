@@ -20,7 +20,7 @@
 # file: roles/irods/tasks/irods.yml
 - name: Install minimal iRODS client
   apt: deb={{ item }} state=present
-  environment:
-    # FIXME This should be some kind of global variable...
-    ftp_proxy: http://wwwcache.sanger.ac.uk:3128
   with_items: "{{ irods }}"
+  become: true
+  environment:
+    ftp_proxy: "{{ sanger_ftp_proxy }}"
