@@ -20,4 +20,4 @@
 # file: batonistas.yml
 - hosts: batonistas
   roles:
-    - irods
+    - irods-client

@@ -17,30 +17,31 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/irods/tasks/jansson.yml
-- name: Download Jansson
+# file: roles/irods-client/tasks/baton_from_source.yml
+- name: Download baton
   get_url:
-    url: "{{ jansson_url }}"
-    dest: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}.tar.gz"
-  register: jansson_downloaded
+    url: "{{ baton_url }}"
+    dest: "{{ ansible_env.HOME }}/baton-{{ baton_version }}.tar.gz"
+  register: baton_downloaded
 
-- name: Extract Jansson
+- name: Extract baton
   unarchive:
-    src: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}.tar.gz"
+    src: "{{ ansible_env.HOME }}/baton-{{ baton_version }}.tar.gz"
     dest: "{{ ansible_env.HOME }}"
-    creates: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}/LICENSE"
+    creates: "{{ ansible_env.HOME }}/baton-{{ baton_version }}/README"
     copy: no
-  when: jansson_downloaded|succeeded
-  register: jansson_extracted
+  when: baton_downloaded|succeeded
+  register: baton_extracted
 
-- name: Build Jansson
+- name: Build baton
+  # FIXME Need to explicitly add /usr/local/lib to LD_LIBRARY_PATH afterwards
   command: "{{ item }}"
   args:
-    chdir: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}"
-    creates: /usr/local/lib/libjansson.so
+    chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
+    creates: /usr/local/bin/baton
   with_items:
-    - ./configure
+    - ./configure --with-irods
     - make
     - make install
   become: true
-  when: jansson_extracted|succeeded
+  when: baton_extracted|succeeded
