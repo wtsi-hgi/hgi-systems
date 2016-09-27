@@ -20,5 +20,6 @@
 # file: cookie-monsters.yml
 - hosts: cookie-monsters
   roles:
+    - cookie-common
     - irods-client
     - cookie-monster
