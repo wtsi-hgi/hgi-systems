@@ -21,3 +21,11 @@
 - name: Create cmonster home directory
   script: create_cmonster_home.sh creates=/home/cmonster
   become: true
+
+- name: Disable Ubuntu MOTD
+  file: path=/etc/update-motd.d recurse=true mode=0444
+  become: true
+
+- name: Copy Cookie Monster MOTD
+  copy: src=motd dest=/etc/motd owner=root group=root
+  become: true
