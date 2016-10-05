@@ -18,8 +18,14 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: roles/cookie-common/tasks/main.yml
-- name: Create cmonster home directory
-  script: create_cmonster_home.sh creates=/home/cmonster
+- name: Create hgi group
+  group: name=hgi gid=1313 state=present
+  become: true
+
+- name: Create cmonster user and home directory
+  user: name=cmonster uid=15700 group=1313
+        home=/home/cmonster createhome=yes
+        shell=/bin/bash update_password=on_create state=present
   become: true
 
 - name: Disable Ubuntu MOTD
