@@ -22,4 +22,5 @@
   roles:
     - cookie-common
     - irods-client
+    - nginx-cordon-rp
     - cookie-monster
