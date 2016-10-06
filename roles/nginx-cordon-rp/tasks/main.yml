@@ -27,5 +27,30 @@
   apt: pkg=nginx state=present
   become: true
   when: nginx_ppa|succeeded
+  register: nginx
   notify:
     - Start nginx
+
+# TODO Copy certificates and keys
+
+- name: Disable default config
+  when: nginx|succeeded
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  become: true
+
+- name: Setup reverse proxy config
+  template: src=https-reverse-proxy.conf.j2
+            dest=/etc/nginx/sites-available/https-reverse-proxy.conf
+            owner=root group=root
+  become: true
+  when: nginx|succeeded
+  register: rp_config
+
+- name: Enable reverse proxy config
+  when: rp_config|succeeded
+  file: src=/etc/nginx/sites-available/https-reverse-proxy.conf
+        dest=/etc/nginx/sites-enabled/https-reverse-proxy.conf
+        state=link
+  become: true
+  notify:
+    - Reload nginx
