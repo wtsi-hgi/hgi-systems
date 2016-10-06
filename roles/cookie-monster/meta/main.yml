@@ -17,7 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: cookie-monsters.yml
-- hosts: cookie-monsters
-  roles:
-    - cookie-monster
+# file: roles/cookie-monster/meta/main.yml
+dependencies:
+  - { role: cookie-common }
+  - { role: irods-client }
+  - { role: nginx-cordon-rp }
