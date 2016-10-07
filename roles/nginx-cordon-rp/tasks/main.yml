@@ -24,7 +24,7 @@
   register: nginx_ppa
 
 - name: Install nginx
-  apt: pkg=nginx state=present
+  apt: pkg=nginx state=present update_cache=true
   become: true
   when: nginx_ppa|succeeded
   register: nginx
