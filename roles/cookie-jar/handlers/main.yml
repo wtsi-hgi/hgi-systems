@@ -17,26 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/cookie-jar/tasks/main.yml
-- name: Add CouchDB PPA
-  apt_repository: repo='ppa:couchdb/stable' state=present
-  become: true
-  register: couchdb_ppa
+# file: roles/cookie-jar/handlers/main.yml
+- name: Start CouchDB
+  service: name=couchdb state=started enabled=yes
+  environment:
+    ERL_FLAGS: +A {{ erlang_threadpool }}
+    ERL_MAX_PORTS: "{{ erlang_maxports }}"
 
-- name: Install CouchDB
-  apt: pkg=couchdb state=present update_cache=true
-  become: true
-  when: couchdb_ppa|succeeded
-  register: couchdb
-  notify:
-    - Start CouchDB
-
-- name: Copy local config
-  when: couchdb|succeeded
-  file: src=couchdb.ini dest=/etc/couchdb/local.ini
-        owner=couchdb group=couchdb
-  become: true
-  notify:
-    - Reload CouchDB
-
-# TODO Setup CouchDB users
+- name: Reload CouchDB
+  service: name=couchdb state=reloaded enabled=yes
+  environment:
+    ERL_FLAGS: +A {{ erlang_threadpool }}
+    ERL_MAX_PORTS: "{{ erlang_maxports }}"

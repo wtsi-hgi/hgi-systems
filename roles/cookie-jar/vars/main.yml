@@ -17,26 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/cookie-jar/tasks/main.yml
-- name: Add CouchDB PPA
-  apt_repository: repo='ppa:couchdb/stable' state=present
-  become: true
-  register: couchdb_ppa
-
-- name: Install CouchDB
-  apt: pkg=couchdb state=present update_cache=true
-  become: true
-  when: couchdb_ppa|succeeded
-  register: couchdb
-  notify:
-    - Start CouchDB
-
-- name: Copy local config
-  when: couchdb|succeeded
-  file: src=couchdb.ini dest=/etc/couchdb/local.ini
-        owner=couchdb group=couchdb
-  become: true
-  notify:
-    - Reload CouchDB
-
-# TODO Setup CouchDB users
+# file: roles/cookie-jar/vars/main.yml
+erlang_threadpool: "{{ ansible_processor_count * ansible_processor_threads_per_core * 2}}"
+erlang_maxports: 8192
