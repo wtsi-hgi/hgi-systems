@@ -17,14 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/irods-client/tasks/main.yml
-- include: irods.yml
-  register: irods
-
-- include: baton.yml
-  when: irods
-
-# This is needed for Ansible to invoke iinit as an arbitrary user
-- name: Install setfacl support
-  apt: pkg=acl state=present
-  become: yes
+# file: roles/cookie-monster/tasks/main.yml
+- include: iinit.yml
+  register: iinit
