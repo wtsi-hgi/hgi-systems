@@ -31,7 +31,10 @@
 - name: create bamboo haproxy configuration template
   template: src=bamboo_haproxy_template.cfg.j2 dest={{ bamboo_haproxy_template_file }} owner=mercury group=hgi mode=0640
   notify: restart bamboo
-  tags: bamboo
+  tags: 
+    - bamboo
+    - haproxy
+  
 
 - name: create bamboo supervisord configuration
   template: src=bamboo_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/bamboo.conf owner=mercury group=hgi mode=0640
