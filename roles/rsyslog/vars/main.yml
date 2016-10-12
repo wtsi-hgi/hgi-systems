@@ -27,6 +27,7 @@ rsyslog_config_file: "{{ hgi_conf_dir }}/rsyslog.conf"
 rsyslog_version: "8.22.0"
 rsyslog_bin: "{{ hgi_pkglocal_dir}}/rsyslog-{{ rsyslog_version }}/sbin/rsyslogd"
 
+rsyslog_log_file: "{{ hgi_log_dir }}/syslog"
 rsyslog_pid_file: "{{ hgi_pid_dir }}/rsyslog.pid"
 
 rsyslog_port: 1514

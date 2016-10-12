@@ -20,4 +20,4 @@
 #
 #}
 [program:{{ rsyslog_supervisor_program }}]
-command={{ rsyslog_bin }} -f {{ rsyslog_config_file }} -i {{ rsyslog_pid_file }}
+command={{ rsyslog_bin }} -f {{ rsyslog_config_file }} -i {{ rsyslog_pid_file }} -n
