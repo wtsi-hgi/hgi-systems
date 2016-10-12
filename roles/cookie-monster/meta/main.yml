@@ -20,5 +20,6 @@
 # file: roles/cookie-monster/meta/main.yml
 dependencies:
   - { role: cookie-common }
+  - { role: dev-tools }
   - { role: irods-client }
   - { role: nginx-cordon-rp }

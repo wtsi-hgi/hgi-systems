@@ -17,18 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/irods-client/tasks/baton.yml
-- name: Install Perl modules for baton
-  # NOTE cpanm is part of Anisble's "Extras Modules", it may not be
-  # available in vanilla installations
-  cpanm: name={{ item }}
-  become: true
-  register: baton_perl_deps
-  with_items:
-    - JSON
-    - List::AllUtils
-
-- include: jansson.yml
-
-- include: baton_from_source.yml
-  when: baton_perl_deps|succeeded
+# file: roles/irods-client/meta/main.yml
+dependencies:
+  - { role: dev-tools }
