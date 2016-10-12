@@ -17,12 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
-# file: roles/cookie-monster/tasks/main.yml
-- include: iinit.yml
-  register: iinit
+# file: roles/cookie-monster/tasks/cookie-monster.yml
+- name: Clone HGI Cookie Monster
+  git: repo=https://github.com/wtsi-hgi/hgi-cookie-monster.git
+       dest=/home/cmonster/hgi-cookie-monster
+  become: true
+  become_user: cmonster
+  register: cmonster_clone
 
-- include: python.yml
-  register: python
-
-- include: cookie-monster.yml
-  register: cookie-monster
+- name: Install Cookie Monster requirements in a virtualenv
+  pip: requirements=/home/cmonster/hgi-cookie-monster/requirements.txt
+       virtualenv=/home/cmonster/hgi-cookie-monster/.venv
+  become: true
+  become_user: cmonster
+  when: cmonster_clone|succeeded
