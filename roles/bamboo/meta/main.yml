@@ -22,3 +22,5 @@
 
 dependencies:
   - { role: common }
+  - { role: rsyslog }
+

@@ -20,8 +20,8 @@
 #
 #}
 global
-        log /dev/log    local0
-        log /dev/log    local1 notice
+        log 127.0.0.1:{{ rsyslog_udp_port }}    local0
+        log 127.0.0.1:{{ rsyslog_udp_port }}    local1 notice
         stats socket {{ bamboo_haproxy_admin_sock }} mode 660 level admin
         stats timeout 30s
         daemon
