@@ -31,40 +31,43 @@ author:
   - Christopher Harrison <ch12@sanger.ac.uk>
 """
 
+import json
+import urllib2
 from ansible.module_utils.basic import AnsibleModule
 
-def request(method, url, payload=None, basic_auth=None):
+def json_request(method, url, payload=None, basic_auth=None):
     """
-    Make an HTTP request
+    Make an HTTP request under the presumption of JSON payload and
+    response
 
     @param   method      HTTP method (e.g., GET, PUT, etc.)
     @param   url         URL to request
     @param   payload     Request payload
     @param   basic_auth  Basic authentication tuple
-    @return  Response status code, body tuple
+    @return  Response status code, header/body JSON tuple
     """
     # TODO
     pass
 
 def wtf(module, status, body):
     """ Failure return """
-    module.fail_json(msg="Failure - HTTP %s: %s" % (status, body))
+    module.fail_json(msg="Unknown failure mode - HTTP %s" % status, meta=body)
 
 if __name__ == "__main__":
     # Create module with the following parameters
     module = AnsibleModule(argument_spec={
-        'base_url': {'required': False, 'type': 'str', 'default': 'http://localhost:5984'},
-        'username': {'required': True,  'type': 'str'},
-        'password': {'required': True,  'type': 'str'}
+        "base_url": {"default": "http://localhost:5984", "type": "str"},
+        "username": {"required": True,                   "type": "str"},
+        "password": {"required": True,                   "type": "str"}
     })
 
-    url = '%s/_config/admins/%s' % (module.params['base_url'], module.params['username'])
-    basic_auth = module.params['username'], module.params['password']
+    url = "%s/_config/admins/%s" % (module.params["base_url"], module.params["username"])
+    basic_auth = module.params["username"], module.params["password"]
 
-    status, body = request('GET', url)
+    status, body = json_request("GET", url)
     if status == 404:
         # Admin Party: Create first user
-        status, body = request('PUT', url, payload='"%s"' % module.params['password'])
+        status, body = json_request("PUT", url, payload="%s" % module.params["password"])
         if status == 200:
             module.exit_json(changed=True, message="User created successfully")
         else:
@@ -72,7 +75,7 @@ if __name__ == "__main__":
 
     elif status == 401:
         # Users already exist, so let's hope we're recreating ourselves
-        status, body = request('PUT', url, payload='"%s"' % module.params['password'], basic_auth=basic_auth)
+        status, body = json_request("PUT", url, payload="%s" % module.params["password"], basic_auth=basic_auth)
         if status == 200:
             module.exit_json(changed=False, message="User already exists")
         elif status == 401:
