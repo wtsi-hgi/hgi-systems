@@ -33,21 +33,52 @@ author:
 
 from ansible.module_utils.basic import AnsibleModule
 
-def main():
+def request(method, url, payload=None, basic_auth=None):
+    """
+    Make an HTTP request
+
+    @param   method      HTTP method (e.g., GET, PUT, etc.)
+    @param   url         URL to request
+    @param   payload     Request payload
+    @param   basic_auth  Basic authentication tuple
+    @return  Response status code, body tuple
+    """
+    # TODO
+    pass
+
+def wtf(module, status, body):
+    """ Failure return """
+    module.fail_json(msg="Failure - HTTP %s: %s" % (status, body))
+
+if __name__ == "__main__":
     # Create module with the following parameters
     module = AnsibleModule(argument_spec={
-        'host':     {'required': False, 'type': 'str', 'default': 'http://localhost:5984'},
+        'base_url': {'required': False, 'type': 'str', 'default': 'http://localhost:5984'},
         'username': {'required': True,  'type': 'str'},
         'password': {'required': True,  'type': 'str'}
     })
 
-    # TODO
-    # GET $HOST/_config/admins/$USERNAME (no auth)
-    # 404: PUT $HOST/_config/admins/$USERNAME (payload: $PASSWORD)
-    #      200: Successful
-    # 401: PUT $HOST/_config/admins/$USERNAME (payload: $PASSWORD; basic auth: $USERNAME:$PASSWORD)
-    #      200: Successful
-    #      401: Fail
+    url = '%s/_config/admins/%s' % (module.params['base_url'], module.params['username'])
+    basic_auth = module.params['username'], module.params['password']
 
-if __name__ == "__main__":
-    main()
+    status, body = request('GET', url)
+    if status == 404:
+        # Admin Party: Create first user
+        status, body = request('PUT', url, payload='"%s"' % module.params['password'])
+        if status == 200:
+            module.exit_json(changed=True, message="User created successfully")
+        else:
+            wtf(module, status, body)
+
+    elif status == 401:
+        # Users already exist, so let's hope we're recreating ourselves
+        status, body = request('PUT', url, payload='"%s"' % module.params['password'], basic_auth=basic_auth)
+        if status == 200:
+            module.exit_json(changed=False, message="User already exists")
+        elif status == 401:
+            module.fail.json(msg="Cannot authenticate to create user")
+        else:
+            wtf(module, status, body)
+
+    else:
+        wtf(module, status, body)
