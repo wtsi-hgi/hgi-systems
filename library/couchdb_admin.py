@@ -35,6 +35,11 @@ import json
 import urllib2
 from ansible.module_utils.basic import AnsibleModule
 
+class AnsibleModuleWithWTF(AnsibleModule):
+    def wtf_json(self, status, body):
+        """ Return for unknown failure modes """
+        self.fail_json(msg="Unknown failure mode - HTTP %s" % status, meta=body)
+
 def json_request(method, url, payload=None, basic_auth=None):
     """
     Make an HTTP request under the presumption of JSON payload and
@@ -49,13 +54,9 @@ def json_request(method, url, payload=None, basic_auth=None):
     # TODO
     pass
 
-def wtf(module, status, body):
-    """ Failure return """
-    module.fail_json(msg="Unknown failure mode - HTTP %s" % status, meta=body)
-
 if __name__ == "__main__":
     # Create module with the following parameters
-    module = AnsibleModule(argument_spec={
+    module = AnsibleModuleWithWTF(argument_spec={
         "base_url": {"default": "http://localhost:5984", "type": "str"},
         "username": {"required": True,                   "type": "str"},
         "password": {"required": True,                   "type": "str"}
@@ -71,7 +72,7 @@ if __name__ == "__main__":
         if status == 200:
             module.exit_json(changed=True, message="User created successfully")
         else:
-            wtf(module, status, body)
+            module.wtf_json(status, body)
 
     elif status == 401:
         # Users already exist, so let's hope we're recreating ourselves
@@ -81,7 +82,7 @@ if __name__ == "__main__":
         elif status == 401:
             module.fail.json(msg="Cannot authenticate to create user")
         else:
-            wtf(module, status, body)
+            module.wtf_json(status, body)
 
     else:
-        wtf(module, status, body)
+        module.wtf_json(status, body)
