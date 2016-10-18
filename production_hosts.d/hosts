@@ -68,3 +68,7 @@ hgi-cordon-cookie-monster
 # Cookie Monster database servers
 [cookie-jars]
 hgi-cordon-cookie-jar
+
+[cookie-crunchers:children]
+cookie-monsters
+cookie-jars
