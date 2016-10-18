@@ -42,9 +42,10 @@ def main():
     })
 
     # TODO
-    # GET $HOST/_config/admins/$USERNAME (basic auth: $USERNAME:$PASSWORD)
-    # 200: Successful (noop)
-    # 401: PUT $HOST/_config/admins/$USERNAME (payload: $PASSWORD)
+    # GET $HOST/_config/admins/$USERNAME (no auth)
+    # 404: PUT $HOST/_config/admins/$USERNAME (payload: $PASSWORD)
+    #      200: Successful
+    # 401: PUT $HOST/_config/admins/$USERNAME (payload: $PASSWORD; basic auth: $USERNAME:$PASSWORD)
     #      200: Successful
     #      401: Fail
 
