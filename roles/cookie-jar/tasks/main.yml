@@ -32,11 +32,14 @@
     - Start CouchDB
 
 - name: Copy local config
-  when: couchdb|succeeded
   file: src=couchdb.ini dest=/etc/couchdb/local.ini
         owner=couchdb group=couchdb
   become: true
+  when: couchdb|succeeded
+  register: couchdb_config
   notify:
     - Reload CouchDB
 
-# TODO Setup CouchDB users
+- name: Create CouchDB admin user
+  when: couchdb_config|succeeded
+  couchdb_admin: username=cmonster password={{ cmonster_couchdb_password }}
