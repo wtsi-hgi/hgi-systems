@@ -36,16 +36,17 @@ from ansible.module_utils.basic import AnsibleModule
 def main():
     # Create module with the following parameters
     module = AnsibleModule(argument_spec={
-        'username': {'required': True, 'type': 'str'},
-        'password': {'required': True, 'type': 'str'}
+        'host':     {'required': False, 'type': 'str', 'default': 'http://localhost:5984'},
+        'username': {'required': True,  'type': 'str'},
+        'password': {'required': True,  'type': 'str'}
     })
 
     # TODO
-    # Check if user exists
-    # Yes: Check passwords match
-    #      Yes: Successful
-    #      No:  Fail
-    # No: Create new user with password
+    # GET $HOST/_config/admins/$USERNAME (basic auth: $USERNAME:$PASSWORD)
+    # 200: Successful (noop)
+    # 401: PUT $HOST/_config/admins/$USERNAME (payload: $PASSWORD)
+    #      200: Successful
+    #      401: Fail
 
 if __name__ == "__main__":
     main()
