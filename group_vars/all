@@ -22,7 +22,8 @@
 ---
 # file: group_vars/all
 
-# FIXME This doesn't apply to cordon machines, as /software isn't mounted
+# NOTE This doesn't apply to machines where /software isn't mounted
+# (e.g., cordon); more specific group vars can be used to override
 ansible_python_interpreter: "/software/hgi/pkglocal/ansible-2.0.1.0-venv/bin/python"
 
 hgi_conf_dir: "{{ hgi_dir }}/etc"
