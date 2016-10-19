@@ -65,6 +65,10 @@ if __name__ == "__main__":
     url = "%s/_config/admins/%s" % (module.params["base_url"], module.params["username"])
     basic_auth = module.params["username"], module.params["password"]
 
+    # FIXME? This is very specific to our use case and it will fail in
+    # the general sense when alternative admin users have been defined.
+    # Is it worth making this more general? (It would be very easy.)
+
     status, body = json_request("GET", url)
     if status == 404:
         # Admin Party: Create first user
