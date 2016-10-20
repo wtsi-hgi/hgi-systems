@@ -20,12 +20,14 @@
 # file: roles/cookie-jar/handlers/main.yml
 - name: Start CouchDB
   service: name=couchdb state=started enabled=yes
+  become: true
   environment:
     ERL_FLAGS: +A {{ erlang_threadpool }}
     ERL_MAX_PORTS: "{{ erlang_maxports }}"
 
 - name: Reload CouchDB
   service: name=couchdb state=reloaded enabled=yes
+  become: true
   environment:
     ERL_FLAGS: +A {{ erlang_threadpool }}
     ERL_MAX_PORTS: "{{ erlang_maxports }}"

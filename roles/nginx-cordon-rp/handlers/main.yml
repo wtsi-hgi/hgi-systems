@@ -20,6 +20,8 @@
 # file: roles/nginx-cordon-rp/handlers/main.yml
 - name: Start nginx
   service: name=nginx state=started enabled=yes
+  become: true
 
 - name: Reload nginx
   service: name=nginx state=reloaded enabled=yes
+  become: true

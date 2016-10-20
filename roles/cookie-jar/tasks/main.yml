@@ -32,6 +32,8 @@
     - Start CouchDB
 
 - name: Copy local config
+  # NOTE This will always be done because the admin users (created in
+  # the next step) are stored in local.ini, which thus changes
   copy: src=couchdb.ini dest=/etc/couchdb/local.ini
         owner=couchdb group=couchdb mode=0640
   become: true
