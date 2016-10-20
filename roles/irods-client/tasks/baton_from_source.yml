@@ -34,7 +34,6 @@
   register: baton_extracted
 
 - name: Build baton
-  # FIXME Need to explicitly add /usr/local/lib to LD_LIBRARY_PATH afterwards
   command: "{{ item }}"
   args:
     chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
@@ -45,3 +44,11 @@
     - make install
   become: true
   when: baton_extracted|succeeded
+  register: baton_installed
+
+- name: Set LD_LIBRARY_PATH
+  # FIXME? Is this a good idea?...
+  lineinfile: dest=/etc/environment state=present
+              line="LD_LIBRARY_PATH=\"/usr/local/lib:/usr/lib:/lib\""
+  become: true
+  when: baton_installed|succeeded
