@@ -58,7 +58,7 @@ def json_request(method, url, payload=None, basic_auth=None):
     if url_parts.scheme == "http":
         connection = httplib.HTTPConnection(url_parts.netloc)
     elif url_parts.scheme == "https":
-        connection = httplib.HTTPConnection(url_parts.netloc)
+        connection = httplib.HTTPSConnection(url_parts.netloc)
     else:
         raise httplib.InvalidURL("I don't understand \"%s\"" % url)
 
