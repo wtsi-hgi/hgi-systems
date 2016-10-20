@@ -32,8 +32,8 @@
     - Start CouchDB
 
 - name: Copy local config
-  file: src=couchdb.ini dest=/etc/couchdb/local.ini
-        owner=couchdb group=couchdb
+  copy: src=couchdb.ini dest=/etc/couchdb/local.ini
+        owner=couchdb group=couchdb mode=0640
   become: true
   when: couchdb|succeeded
   register: couchdb_config
