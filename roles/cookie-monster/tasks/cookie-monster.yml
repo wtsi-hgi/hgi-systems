@@ -20,7 +20,7 @@
 # file: roles/cookie-monster/tasks/cookie-monster.yml
 - name: Clone HGI Cookie Monster
   git: repo=https://github.com/wtsi-hgi/hgi-cookie-monster.git
-       dest=/home/cmonster/hgi-cookie-monster
+       version=master dest=/home/cmonster/hgi-cookie-monster
   become: true
   become_user: cmonster
   register: cmonster_clone
@@ -31,3 +31,16 @@
   become: true
   become_user: cmonster
   when: cmonster_clone|succeeded
+
+- name: Create ~/.cookie-monster
+  file: path=/home/cmonster/.cookie-monster state=directory
+        owner=cmonster group=hgi mode=0755
+  become: true
+  register: cmonster_dir
+
+- name: Copy Cookie Monster setup.conf
+  template: src=cookie-monster.conf.j2 dest=/home/cmonster/.cookie-monster/setup.conf
+            owner=cmonster group=hgi
+  become: true
+  when: cmonster_dir|succeeded
+  register: cmonster_setup
