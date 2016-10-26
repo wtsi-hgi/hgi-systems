@@ -28,6 +28,8 @@
   become: true
   when: couchdb_ppa|succeeded
   register: couchdb
+  notify:
+    - Start CouchDB
 
 - name: Ensure /opt/couchdb is owned by couchdb:couchdb recursively
   file: path=/opt/couchdb state=directory
@@ -37,14 +39,14 @@
 
 - name: Copy local config
   # NOTE This will always be done because the admin users (created in
-  # the next step) are stored in local.ini, which thus changes
+  # the last step) are stored in local.ini, which thus changes
   copy: src=couchdb.ini dest=/etc/couchdb/local.ini
         owner=couchdb group=couchdb mode=0640
   become: true
   when: couchdb|succeeded
   register: couchdb_config
   notify:
-    - Start CouchDB
+    - Reload CouchDB
 
 # Force CouchDB to start before attempting to interact with it
 - meta: flush_handlers
