@@ -1,0 +1,56 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/cookie-jar/tasks/main.yml
+- name: Add CouchDB PPA
+  apt_repository: repo='ppa:couchdb/stable' state=present
+  become: true
+  register: couchdb_ppa
+
+- name: Install CouchDB
+  apt: pkg=couchdb state=present update_cache=true
+  become: true
+  when: couchdb_ppa|succeeded
+  register: couchdb
+  notify:
+    - Start CouchDB
+
+- name: Ensure /opt/couchdb is owned by couchdb:couchdb recursively
+  file: path=/opt/couchdb state=directory
+        owner=couchdb group=couchdb recurse=true
+  when: couchdb|succeeded
+  become: true
+
+- name: Copy local config
+  # NOTE This will always be done because the admin users (created in
+  # the last step) are stored in local.ini, which thus changes
+  copy: src=couchdb.ini dest=/etc/couchdb/local.ini
+        owner=couchdb group=couchdb mode=0640
+  become: true
+  when: couchdb|succeeded
+  register: couchdb_config
+  notify:
+    - Reload CouchDB
+
+# Force CouchDB to start before attempting to interact with it
+- meta: flush_handlers
+
+- name: Create CouchDB admin user
+  when: couchdb_config|succeeded
+  couchdb_admin: username=cmonster password={{ cmonster_couchdb_password }}

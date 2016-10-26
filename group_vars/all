@@ -1,6 +1,8 @@
-# Copyright (c) 2014 Genome Research Ltd.
+# Copyright (c) 2014, 2016 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+# * Christopher Harrison <ch12@sanger.ac.uk>
 #
 # This file is part of hgi-ansible.
 #
@@ -20,6 +22,8 @@
 ---
 # file: group_vars/all
 
+# NOTE This doesn't apply to machines where /software isn't mounted
+# (e.g., cordon); more specific group vars can be used to override
 ansible_python_interpreter: "/software/hgi/pkglocal/ansible-2.0.1.0-venv/bin/python"
 
 hgi_conf_dir: "{{ hgi_dir }}/etc"
@@ -49,6 +53,10 @@ bamboo_http_port: 40070
 bamboo_service_port: 50070
 bamboo_frontend_http_port: 50080
 
+# FIXME? Do these have any place being here?...
+sanger_http_proxy: http://wwwcache.sanger.ac.uk:3128
+sanger_https_proxy: http://wwwcache.sanger.ac.uk:3128
+sanger_ftp_proxy: http://wwwcache.sanger.ac.uk:3128
 
 pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     #

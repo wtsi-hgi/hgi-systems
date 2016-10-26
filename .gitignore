@@ -1,2 +1,2 @@
-site.retry
+*.retry
 fact_cache

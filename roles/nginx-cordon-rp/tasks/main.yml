@@ -1,0 +1,79 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/nginx-cordon-rp/tasks/main.yml
+
+# FIXME Ansible bug stops this from working properly
+# See https://github.com/ansible/ansible/issues/9966
+# Workaround: Install PPA manually
+- name: Add nginx PPA
+  apt_repository: repo='ppa:nginx/stable' state=present
+  become: true
+  register: nginx_ppa
+
+- name: Install nginx
+  apt: pkg=nginx state=present update_cache=true
+  become: true
+  when: nginx_ppa|succeeded
+  register: nginx
+  notify:
+    - Start nginx
+
+- name: Create certificate directory
+  file: path=/certs state=directory owner=root group=root mode=0500
+  register: tls_dir
+  become: true
+
+- name: Copy TLS key
+  copy: src={{ ansible_host }}.key.vault
+        dest=/certs/{{ ansible_host }}.key
+        owner=root group=root mode=0400
+  when: tls_dir|succeeded
+  register: tls_key
+  become: true
+
+- name: Copy TLS certificate
+  copy: src={{ ansible_host }}.casigned.pem.vault
+        dest=/certs/{{ ansible_host }}.casigned.pem
+        owner=root group=root mode=0400
+  when: tls_dir|succeeded
+  register: tls_cert
+  become: true
+
+- name: Disable default config
+  when: nginx|succeeded
+  file: dest=/etc/nginx/sites-enabled/default state=absent
+  become: true
+
+- name: Copy reverse proxy config
+  template: src=https-reverse-proxy.conf.j2
+            dest=/etc/nginx/sites-available/https-reverse-proxy.conf
+            owner=root group=root
+  become: true
+  when: nginx|succeeded
+  register: rp_config
+
+- name: Enable reverse proxy config
+  when: rp_config|succeeded and tls_key|succeeded and tls_cert|succeeded
+  file: src=/etc/nginx/sites-available/https-reverse-proxy.conf
+        dest=/etc/nginx/sites-enabled/https-reverse-proxy.conf
+        state=link
+  become: true
+  notify:
+    - Reload nginx

@@ -1,6 +1,8 @@
-# Copyright (c) 2014 Genome Research Ltd.
+# Copyright (c) 2014, 2016 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+# * Christopher Harrison <ch12@sanger.ac.uk>
 #
 # This file is part of hgi-ansible.
 #
@@ -16,7 +18,6 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
-#
 
 [mesos-masters]
 hgs4a
@@ -55,3 +56,19 @@ chronosians
 [bamboosians:children]
 mesos-slaves
 
+# iRODS client machines with baton
+[batonistas]
+# None yet...
+
+# Cookie Monster application servers
+# n.b., Includes iRODS client configuration
+[cookie-monsters]
+hgi-cordon-cookie-monster
+
+# Cookie Monster database servers
+[cookie-jars]
+hgi-cordon-cookie-jar
+
+[cookie-crunchers:children]
+cookie-monsters
+cookie-jars
