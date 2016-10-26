@@ -20,9 +20,12 @@
 # file: roles/cookie-monster/tasks/cookie-monster.yml
 - name: Clone HGI Cookie Monster
   git: repo=https://github.com/wtsi-hgi/hgi-cookie-monster.git
-       version=master dest=/home/cmonster/hgi-cookie-monster
+       version=master dest=/home/cmonster/hgi-cookie-monster accept_hostkey=yes
   become: true
   become_user: cmonster
+  environment:
+    http_proxy: "{{ sanger_http_proxy }}"
+    https_proxy: "{{ sanger_https_proxy }}"
   register: cmonster_clone
 
 - name: Install Cookie Monster requirements in a virtualenv
@@ -30,6 +33,9 @@
        virtualenv=/home/cmonster/hgi-cookie-monster/.venv
   become: true
   become_user: cmonster
+  environment:
+    http_proxy: "{{ sanger_http_proxy }}"
+    https_proxy: "{{ sanger_https_proxy }}"
   when: cmonster_clone|succeeded
 
 - name: Create ~/.cookie-monster
