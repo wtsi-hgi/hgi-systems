@@ -28,8 +28,12 @@
   become: true
   when: couchdb_ppa|succeeded
   register: couchdb
-  notify:
-    - Start CouchDB
+
+- name: Ensure /opt/couchdb is owned by couchdb:couchdb recursively
+  file: path=/opt/couchdb state=directory
+        owner=couchdb group=couchdb recurse=true
+  when: couchdb|succeeded
+  become: true
 
 - name: Copy local config
   # NOTE This will always be done because the admin users (created in
@@ -40,7 +44,10 @@
   when: couchdb|succeeded
   register: couchdb_config
   notify:
-    - Reload CouchDB
+    - Start CouchDB
+
+# Force CouchDB to start before attempting to interact with it
+- meta: flush_handlers
 
 - name: Create CouchDB admin user
   when: couchdb_config|succeeded
