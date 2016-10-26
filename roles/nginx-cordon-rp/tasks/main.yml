@@ -18,13 +18,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: roles/nginx-cordon-rp/tasks/main.yml
+
+# FIXME Ansible bug stops this from working properly
+# See https://github.com/ansible/ansible/issues/9966
+# Workaround: Install PPA manually
 - name: Add nginx PPA
   apt_repository: repo='ppa:nginx/stable' state=present
   become: true
   register: nginx_ppa
 
-# FIXME Ansible bug stops this from working properly (https://github.com/ansible/ansible/issues/9966)
-# Workaround: Install PPA manually
 - name: Install nginx
   apt: pkg=nginx state=present update_cache=true
   become: true
