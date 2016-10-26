@@ -32,3 +32,11 @@ buffer_latency = {{ config.influxdb.buffer_latency }}
 
 [output]
 rule_log = {{ config.output.rule_log }}
+
+# This isn't currently used, but needs to
+# exist to avoid upsetting the parser
+[message_queue]
+host = foo
+part = 123
+username = bar
+password = quux
