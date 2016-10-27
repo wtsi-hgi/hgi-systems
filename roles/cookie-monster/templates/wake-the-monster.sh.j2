@@ -5,7 +5,7 @@ if [[ $USER != "cmonster" ]]; then
   exit 1
 fi
 
-HGI_COOKIEMONSTER=$(echo ~/hgi-cookie-monster)
+HGI_COOKIEMONSTER="$(echo ~/hgi-cookie-monster)"
 
 export http_proxy="{{ sanger_http_proxy }}"
 export https_proxy="{{ sanger_https_proxy }}"
