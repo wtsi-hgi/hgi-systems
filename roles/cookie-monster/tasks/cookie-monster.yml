@@ -50,6 +50,11 @@
   become: true
   when: cmonster_dir|succeeded
 
+- name: Create Cookie Monster logging directory
+  file: path={{ cmonster_log_dir }} state=directory
+        owner=cmonster group=hgi mode=0755
+  become: true
+
 - name: Copy Cookie Monster invocation script
   template: src=wake-the-monster.sh.j2 dest=/home/cmonster/wake-the-monster.sh
             owner=cmonster group=hgi mode=0744
