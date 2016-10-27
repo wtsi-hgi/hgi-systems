@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [[ $USER != "cmonster" ]]; then
+  echo "This must be run as cmonster!"
+  exit 1
+fi
+
+HGI_COOKIEMONSTER=$(echo ~/hgi-cookie-monster)
+
+export http_proxy="{{ sanger_http_proxy }}"
+export https_proxy="{{ sanger_https_proxy }}"
+
+export PYTHONPATH="${HGI_COOKIEMONSTER}:$PYTHONPATH"
+
+source "${HGI_COOKIEMONSTER}/.venv/bin/activate"
+nohup python "${HGI_COOKIEMONSTER}/hgicookiemonster/run.py" &> {{ config.output.log_file }} &

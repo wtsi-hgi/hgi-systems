@@ -49,4 +49,8 @@
             owner=cmonster group=hgi
   become: true
   when: cmonster_dir|succeeded
-  register: cmonster_setup
+
+- name: Copy Cookie Monster invocation script
+  template: src=wake-the-monster.sh.j2 dest=/home/cmonster/wake-the-monster.sh
+            owner=cmonster group=hgi mode=0744
+  become: true
