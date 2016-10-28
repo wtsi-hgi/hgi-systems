@@ -4,6 +4,7 @@ period = {{ config.retrieval.period }}
 [cookiejar]
 url = {{ config.couchdb.url }}
 database = cookie-monster
+cacert = /certs/cacert.pem
 
 max_requests_per_second = {{ config.cookiejar.max_requests_per_second }}
 buffer_capacity = {{ config.cookiejar.buffer_capacity }}
