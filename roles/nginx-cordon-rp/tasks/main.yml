@@ -36,7 +36,7 @@
     - Start nginx
 
 - name: Create certificate directory
-  file: path=/certs state=directory owner=root group=root mode=0500
+  file: path=/certs state=directory owner=root group=root mode=0555
   register: tls_dir
   become: true
 
@@ -59,7 +59,7 @@
 - name: Copy CA certificate
   copy: src=cacert.pem.vault
         dest=/certs/cacert.pem
-        owner=root group=root mode=0400
+        owner=root group=root mode=0444
   when: tls_dir|succeeded
   become: true
 
