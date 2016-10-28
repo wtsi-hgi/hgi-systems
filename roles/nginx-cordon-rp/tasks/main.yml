@@ -56,6 +56,13 @@
   register: tls_cert
   become: true
 
+- name: Copy CA certificate
+  copy: src=cacert.pem.vault
+        dest=/certs/cacert.pem
+        owner=root group=root mode=0400
+  when: tls_dir|succeeded
+  become: true
+
 - name: Disable default config
   when: nginx|succeeded
   file: dest=/etc/nginx/sites-enabled/default state=absent
