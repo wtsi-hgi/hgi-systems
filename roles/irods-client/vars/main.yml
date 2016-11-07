@@ -27,7 +27,7 @@ platform_index:
 
 irods_platform: "{{ platform_index[ansible_distribution][ansible_distribution_release] }}"
 irods_arch: "{{ ansible_machine }}"
-irods_version: 4.1.9
+irods_version: 4.1.10
 
 # NOTE We need Ansible 2.1 (or later) for FTP support with apt
 irods_prefix: ftp://ftp.renci.org/pub/irods/releases/{{ irods_version }}/{{ irods_platform }}/irods
@@ -42,5 +42,5 @@ irods:
 jansson_version: 2.9
 jansson_url: http://www.digip.org/jansson/releases/jansson-{{ jansson_version }}.tar.gz
 
-baton_version: 0.16.4
+baton_version: 0.17.0
 baton_url: https://github.com/wtsi-npg/baton/releases/download/{{ baton_version }}/baton-{{ baton_version }}.tar.gz
