@@ -37,10 +37,16 @@
   command: "{{ item }}"
   args:
     chdir: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}"
-    creates: /usr/local/lib/libjansson.so
+    creates: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}/src/.libs/libjansson.so*"
   with_items:
     - ./configure
     - make
-    - make install
-  become: true
   when: jansson_extracted|succeeded
+  register: jansson_built
+
+- name: Install Jansson
+  command: make install
+  args:
+    chdir: "{{ ansible_env.HOME }}/jansson-{{ jansson_version }}"
+  when: jansson_built|changed
+  become: true

@@ -37,18 +37,22 @@
   command: "{{ item }}"
   args:
     chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
-    creates: /usr/local/bin/baton
+    creates: "{{ ansible_env.HOME }}/baton-{{ baton_version }}/src/baton"
   with_items:
     - ./configure --with-irods
     - make
-    - make install
-  become: true
   when: baton_extracted|succeeded
-  register: baton_installed
+  register: baton_built
+
+- name: Install baton
+  command: make install
+  args:
+    chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
+  when: baton_built|changed
+  become: true
 
 - name: Set LD_LIBRARY_PATH
   # FIXME? Is this a good idea?...
   lineinfile: dest=/etc/environment state=present
               line="LD_LIBRARY_PATH=\"/usr/local/lib:/usr/lib:/lib\""
   become: true
-  when: baton_installed|succeeded
