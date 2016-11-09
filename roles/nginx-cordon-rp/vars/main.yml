@@ -19,6 +19,5 @@
 ---
 # file: roles/nginx-cordon-rp/vars/main.yml
 proxy_pass:
-  localhost: 'http://localhost:1234' # NOTE For testing
   hgi-cordon-cookie-monster: http://localhost:5000
   hgi-cordon-cookie-jar: http://localhost:5984
