@@ -38,3 +38,8 @@
 - name: Copy Cookie Monster MOTD
   copy: src=motd dest=/etc/motd owner=root group=root
   become: true
+
+- name: Install logrotate
+  apt: pkg=logrotate state=present
+  become: true
+  register: logrotate
