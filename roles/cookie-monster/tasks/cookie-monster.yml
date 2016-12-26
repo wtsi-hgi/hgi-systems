@@ -59,3 +59,7 @@
   template: src=wake-the-monster.sh.j2 dest=/home/cmonster/wake-the-monster.sh
             owner=cmonster group=hgi mode=0744
   become: true
+
+- name: Copy Cookie Monster logrotate configuration
+  copy: src=logrotate.conf dest=/etc/logrotate.d/cookie-monster
+  become: true

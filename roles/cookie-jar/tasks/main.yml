@@ -54,3 +54,7 @@
 - name: Create CouchDB admin user
   when: couchdb_config|succeeded
   couchdb_admin: username=cmonster password={{ cmonster_couchdb_password }}
+
+- name: Copy CouchDB logrotate configuration
+  copy: src=logrotate.conf dest=/etc/logrotate.d/couchdb
+  become: true
