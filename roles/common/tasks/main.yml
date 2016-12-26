@@ -49,7 +49,7 @@
   tags: supervisord
 
 - name: cron entry to start supervisord on boot
-  cron: name="start supervisord on boot" special_time=reboot job="{{ supervisord_ctl }} start"
+  cron: name="start supervisord on boot" special_time=reboot job="bash -c \"{{ supervisord_ctl }} force-stop && {{ supervisord_ctl }} start\""
   tags: supervisord
 
 - name: cron entry to start supervisord if not running (every 5 minutes)
