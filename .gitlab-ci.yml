@@ -1,0 +1,26 @@
+# For Gitlab CI to function, you must set the following Secret Variables in the
+# Gitlab project settings:
+#  DOCKER_REGISTRY_URL (e.g. "https://index.docker.io/v1/")
+#  DOCKER_REGISTRY_USERNAME
+#  DOCKER_REGISTRY_PASSWORD
+#  OS_AUTH_URL (e.g. "https://delta.internal.sanger.ac.uk:5001/v2.0/")
+#  OS_TENANT_NAME (the tenant name to use for CI instances)
+#  OS_USERNAME (OpenStack user with an account at the above auth and access to above tenant)
+#  OS_PASSWORD (password for OpenStack user)
+stages:
+  - docker_build
+
+build_docker:
+  stage: docker_build
+  image: docker:git
+  services: 
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+  tags:
+    - docker
+    - overlay
+  script:
+    - docker build -t $DOCKER_REGISTRY_USERNAME/packer docker/pao-gitlab
+    - docker login -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD $DOCKER_REGISTRY_URL
+    - docker push $DOCKER_REGISTRY_USERNAME/pao-gitlab
