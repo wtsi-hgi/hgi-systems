@@ -30,7 +30,7 @@
 - name: add gitlab apt repos
   tags: gitlab-runner
   apt_repository:
-    repo: {{ item }}
+    repo: "{{ item }}"
     state: present
   with_items: "{{ gitlab_repos }}"
   when: ansible_os_family == 'Debian'
