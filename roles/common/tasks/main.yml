@@ -22,8 +22,8 @@
 
 - name: common configuration for nonroot hosts
   include: nonroot.yml
-  when: 'nonroot' in group_names
+  when: "'nonroot' in group_names"
 
 - name: common configuration for root hosts
   include: root.yml
-  when: not 'nonroot' in group_names
+  when: "not 'nonroot' in group_names"
