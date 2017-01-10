@@ -18,10 +18,27 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: group_vars/os_Ubuntu
+# file: roles/gitlab-runner/tasks/main.yml
 
-docker_repo: deb https://apt.dockerproject.org/repo ubuntu-{{ ubuntu_dist_name }} main
-gitlab_repos: 
-  - deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ {{ ubuntu_dist_name }} main
-  - deb-src https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ {{ ubuntu_dist_name }} main
+- name: add gitlab signing key
+  tags: gitlab-runner
+  apt_key: 
+    url: "https://packages.gitlab.com/gpg.key"
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: add gitlab apt repos
+  tags: gitlab-runner
+  apt_repository:
+    repo: {{ item }}
+    state: present
+  with_items: "{{ gitlab_repos }}"
+  when: ansible_os_family == 'Debian'
+
+- name: install gitlab-runner (apt)
+  tags: gitlab-runner
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - gitlab-ci-multi-runner
+  when: ansible_os_family == 'Debian'
 
