@@ -31,3 +31,6 @@
 - name: restart supervisord
   shell: "{{ supervisord_ctl }} restart || {{ supervisord_ctl }} start"
 
+- name: update ca certificates
+  become: yes
+  shell: /usr/sbin/update-ca-certificates

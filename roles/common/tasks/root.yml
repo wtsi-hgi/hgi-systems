@@ -18,12 +18,27 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/common/tasks/main.yml
+# file: roles/common/tasks/root.yml
 
-- name: common configuration for nonroot hosts
-  include: nonroot.yml
-  when: 'nonroot' in group_names
+- name: ensure we have essential Debian/Ubuntu packages
+  become: yes
+  apt: name={{ items }} state=presnet update_cache=yes cache_valid_time{{ apt_cache_valid_time }}
+  tags:
+    - package
+    - common
+  with_items:
+    - aptitude
+    - apt-transport-https
+    - ca-certificates
+    - gnupg2
+  when: ansible_os_family == 'Debian'
 
-- name: common configuration for root hosts
-  include: root.yml
-  when: not 'nonroot' in group_names
+- name: install GRL CA cert
+  become: yes
+  copy:
+    src: grl-cacert.pem
+    dest: /usr/local/share/ca-certificates/grl-cacert.crt
+  tags:
+    - common
+  notify: update ca certificates
+

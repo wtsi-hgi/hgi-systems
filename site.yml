@@ -20,9 +20,24 @@
 ---
 # file: site.yml
 
+# create dynamic groups based on OS
+- hosts: all
+  tasks:
+    - group_by: key=os_{{ ansible_distribution }}-{{ ansible_distribution_version }} # e.g. "os_Ubuntu_14.04"
+    - group_by: key=os_{{ ansible_distribution }} # e.g. "os_Ubuntu"
+    - group_by: key=os_family_{{ ansible_os_family }} # e.g. "os_Debian"
+
+# run common role on all hosts
+- hosts: all
+  roles:
+    - common
+
+# call additional playbooks
 - include: mesos-masters.yml
 - include: zookeepers.yml
 - include: marathoners.yml
 - include: chronosians.yml
 - include: mesos-slaves.yml
 - include: bamboosians.yml
+- include: gitlab-runners.yml
+- include: dockerers.yml

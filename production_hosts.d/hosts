@@ -46,6 +46,9 @@ hgs4k
 mesos-masters
 mesos-slaves
 
+[nonroot:children]
+hgs4
+
 [hgi-credentials:children]
 mesos-masters
 mesos-slaves

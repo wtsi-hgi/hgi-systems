@@ -18,12 +18,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/common/tasks/main.yml
+# file: roles/docker/handlers/main.yml
 
-- name: common configuration for nonroot hosts
-  include: nonroot.yml
-  when: 'nonroot' in group_names
-
-- name: common configuration for root hosts
-  include: root.yml
-  when: not 'nonroot' in group_names
+- name: systemd restart docker
+  systemd: name="docker" state="restarted"

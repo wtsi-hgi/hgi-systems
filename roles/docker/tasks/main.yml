@@ -1,0 +1,57 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/docker/tasks/main.yml
+
+- name: add docker signing key
+  apt_key: 
+    keyserver: hkp://ha.pool.sks-keyservers.net:80
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+  tags: docker 
+  when: ansible_os_family == 'Debian'
+
+- name: add docker apt repo
+  apt_repository:
+    repo: {{ docker_repo }}
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: install docker prerequisites on Ubuntu
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - linux-image-extra-{{ ansible_kernel }}
+    - linux-image-extra-virtual
+  tags: docker
+  when: ansible_distribution == 'Ubuntu'
+
+- name: install docker (apt)
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - docker-engine
+  tags: docker
+  when: ansible_os_family == 'Debian'
+
+- name: configure docker service (systemd)
+  template:
+    src: dockerd-exec.conf.j2
+    dest: /etc/systemd/system/docker.service.d/dockerd-exec.conf
+  tags: docker
+  notify: systemd restart docker
+  when: ansible_service_mgr == 'systemd'
