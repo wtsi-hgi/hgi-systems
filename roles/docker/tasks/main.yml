@@ -29,7 +29,7 @@
 
 - name: add docker apt repo
   apt_repository:
-    repo: {{ docker_repo }}
+    repo: "{{ docker_repo }}"
     state: present
   when: ansible_os_family == 'Debian'
 
