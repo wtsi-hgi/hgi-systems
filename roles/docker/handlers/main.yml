@@ -21,4 +21,4 @@
 # file: roles/docker/handlers/main.yml
 
 - name: systemd restart docker
-  systemd: name="docker" state="restarted"
+  service: name="docker" state="restarted"
