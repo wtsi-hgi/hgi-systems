@@ -45,3 +45,25 @@
     - gitlab-ci-multi-runner
   when: ansible_os_family == 'Debian'
 
+- name: create gitlab runner configuration fragment directory
+  tags: gitlab-runner
+  become: yes
+  file: path=/etc/gitlab-runner.d state=directory owner=ubuntu
+
+- name: create gitlab runner configuration header fragment
+  tags: gitlab-runner
+  template: src=00config.toml.j2 dest=/etc/gitlab-runner.d/00config.toml
+
+- name: register gitlab runner
+  tags: gitlab-runner
+  script: gitlab-ci-multi-runner-register.sh "{{ item.url }}" "{{ item.token }}" "{{ item.executor }}" "{{ item.name }}" "{{ group_names | join(',') }}" "{{ item.extraargs }}"
+  args:
+    creates: "/etc/gitlab-runner.d/token-{{ item.token }}.toml"
+  with_items: "{{ gitlab_runner_registrations }}"
+  when: "not 'image-building' in group_names"
+
+- name: assemble gitlab runner configuration
+  tags: gitlab-runner
+  assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"
+  when: "not 'image-building' in group_names"
+
