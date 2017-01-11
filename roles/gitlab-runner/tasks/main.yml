@@ -22,6 +22,7 @@
 
 - name: add gitlab signing key
   tags: gitlab-runner
+  become: yes
   apt_key: 
     url: "https://packages.gitlab.com/gpg.key"
     state: present
@@ -29,6 +30,7 @@
 
 - name: add gitlab apt repos
   tags: gitlab-runner
+  become: yes
   apt_repository:
     repo: "{{ item }}"
     state: present
@@ -37,6 +39,7 @@
 
 - name: install gitlab-runner (apt)
   tags: gitlab-runner
+  become: yes
   apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
   with_items:
     - gitlab-ci-multi-runner
