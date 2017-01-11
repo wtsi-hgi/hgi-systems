@@ -22,7 +22,7 @@
 
 - name: ensure we have essential Debian/Ubuntu packages
   become: yes
-  apt: name={{ items }} state=presnet update_cache=yes cache_valid_time{{ apt_cache_valid_time }}
+  apt: name={{ item }} state=presnet update_cache=yes cache_valid_time{{ apt_cache_valid_time }}
   tags:
     - package
     - common
