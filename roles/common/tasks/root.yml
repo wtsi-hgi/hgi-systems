@@ -68,3 +68,14 @@
     owner: root
     group: root
     mode: 0440
+
+- name: set authorized keys for mercury
+  tags: common
+  become: yes
+  authorized_key:
+    user: mercury
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_file:
+    - public_keys/mercury-farm3
