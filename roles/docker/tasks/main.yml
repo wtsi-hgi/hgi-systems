@@ -51,6 +51,12 @@
     - docker-engine
   when: ansible_os_family == 'Debian'
 
+- name: ensure docker systemd service directory exists
+  tags: docker
+  become: yes
+  file: path=/etc/systemd/system/docker.service.d state=directory
+  when: ansible_service_mgr == 'systemd'
+
 - name: configure docker service (systemd)
   tags: docker
   become: yes
