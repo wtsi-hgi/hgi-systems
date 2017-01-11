@@ -42,3 +42,29 @@
     - common
   notify: update ca certificates
 
+- name: create hgi group
+  tags: common
+  become: yes
+  group:
+    name: hgi
+    gid: 1313
+
+- name: create mercury user account
+  tags: common
+  become: yes
+  user: 
+    name: mercury
+    uid: 13912
+    group: hgi
+    
+
+- name: give mercury NOPASSWD sudo access
+  tags: common
+  become: yes
+  template:
+    src: mercury_sudoers.j2
+    dest: /etc/sudoers.d/mercury.sudoers
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440
