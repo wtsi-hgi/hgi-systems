@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -18,10 +19,23 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/gitlab-runner/defaults/main.yml
+# file: group_vars/gitlab-runners-hgi
 
 gitlab_runner_registrations: 
-  - url: ""
-    token: ""
-    executor: ""
-    name: ""
+  - name: "docker-privileged"
+    executor: docker
+    extra_tags: 
+      - docker
+      - docker-privileged
+    extra_args: "--docker-privileged --docker-image docker:latest"
+  - name: "docker"
+    executor: docker
+    extra_tags: 
+      - docker
+    extra_args: "--docker-image docker:latest"
+  - name: "shell-bash"
+    executor: shell
+    extra_tags: 
+      - shell
+      - bash
+    extra_args: "--shell bash"

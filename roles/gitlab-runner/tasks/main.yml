@@ -48,22 +48,31 @@
 - name: create gitlab runner configuration fragment directory
   tags: gitlab-runner
   become: yes
-  file: path=/etc/gitlab-runner.d state=directory owner=ubuntu
+  file: path=/etc/gitlab-runner.d state=directory
 
 - name: create gitlab runner configuration header fragment
   tags: gitlab-runner
+  become: yes
   template: src=00config.toml.j2 dest=/etc/gitlab-runner.d/00config.toml
 
 - name: register gitlab runner
   tags: gitlab-runner
-  script: gitlab-ci-multi-runner-register.sh "{{ item.url }}" "{{ item.token }}" "{{ item.executor }}" "{{ item.name }}" "{{ group_names | join(',') }}" "{{ item.extraargs }}"
-  args:
-    creates: "/etc/gitlab-runner.d/token-{{ item.token }}.toml"
-  with_items: "{{ gitlab_runner_registrations }}"
+  become: yes
+  gitlab_ci_multi_runner_register:
+    registration_url: "{{ item[1].url }}"
+    registration_token: "{{ item[1].token }}"
+    executor: "{{ item[0].executor }}"
+    name: "{{ item[0].name }}-{{ item[1].project }}-{{ ansible_hostname }}"
+    tags: "{{ group_names | union(item[0].extra_tags) | join(',') }}"
+    extra_args: "{{ item[0].extra_args | default('') }}"
+  with_nested: 
+    - "{{ gitlab_runner_registrations }}"
+    - "{{ hgi_gitlab_tokens }}"
   when: "not 'image-building' in group_names"
-
+  
 - name: assemble gitlab runner configuration
   tags: gitlab-runner
+  become: yes
   assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"
   when: "not 'image-building' in group_names"
 
