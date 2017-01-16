@@ -56,6 +56,7 @@
     name: mercury
     uid: 13912
     group: hgi
+    shell: /bin/bash
     
 
 - name: give mercury NOPASSWD sudo access
