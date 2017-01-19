@@ -21,7 +21,13 @@
 # file: roles/gitlab-runner/defaults/main.yml
 
 gitlab_runner_registrations: 
-  - url: ""
+  - name: "docker"
+    executor: docker
+    extra_tags: 
+      - docker
+    extra_args: "--docker-image docker:latest"
+
+hgi_gitlab_tokens:
+  - project: ""
+    url: ""
     token: ""
-    executor: ""
-    name: ""

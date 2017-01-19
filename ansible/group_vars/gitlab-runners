@@ -19,7 +19,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: group_vars/gitlab-runners-hgi
+# file: group_vars/gitlab-runners
 
 gitlab_runner_registrations: 
   - name: "docker-privileged"
