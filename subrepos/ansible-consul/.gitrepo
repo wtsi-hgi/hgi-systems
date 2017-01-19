@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/savagegus/ansible-consul.git
+	branch = master
+	commit = 4fd976c0b9bb9241b3bd662ea97d89be316fd030
+	parent = e4078befaa5f73331f48e0c5d08f8afd8c7b72e0
+	cmdver = 0.3.1
