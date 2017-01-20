@@ -20,9 +20,17 @@
 ---
 # file: roles/common/tasks/root.yml
 
-- name: ensure we have essential Debian/Ubuntu packages and that existing packages are upgraded
+- name: upgrade existing APT packages 
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }} upgrade=yes
+  apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }} upgrade=yes
+  tags:
+    - package
+    - common
+  when: ansible_os_family == 'Debian'
+
+- name: ensure we have essential Debian/Ubuntu packages
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
   tags:
     - package
     - common
