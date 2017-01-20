@@ -9,9 +9,9 @@ marathon_template="/nfs/humgen01/teams/hgi/conf/marathon/lustretree.json.templat
 marathon_config="/home/mercury/marathonctl.config"
 marathonctl="marathonctl -c ${marathon_config} -f json"
 
-volumes=(108 109 110 111 112 113 114 115 116)
+volumes=(108 109 110 111 112 113 114 115 116 117 118)
+declare -A mem_gb=([108]=72 [109]=72 [110]=96 [111]=96 [112]=72 [113]=72 [114]=72 [115]=72 [116]=160 [117]=96 [118]=96)
 #declare -A mem_gb=([108]=125 [109]=63 [110]=65 [111]=45 [113]=46 [114]=16 [115]=46 [116]=54)
-declare -A mem_gb=([108]=72 [109]=72 [110]=96 [111]=96 [112]=72 [113]=72 [114]=72 [115]=72 [116]=160)
 # dat file sizes associated with these memory requirements
 # $ ls -lhS /lustre/scratch114/teams/hgi/lustre_reports/mpistat/data/20160301_1*
 # -rw-r--r-- 1 root hgi 888M Mar  1 03:28 /lustre/scratch114/teams/hgi/lustre_reports/mpistat/data/20160301_109.dat.gz
