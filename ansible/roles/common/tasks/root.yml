@@ -20,14 +20,6 @@
 ---
 # file: roles/common/tasks/root.yml
 
-- name: upgrade existing APT packages 
-  become: yes
-  apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }} upgrade=yes
-  tags:
-    - package
-    - common
-  when: ansible_os_family == 'Debian'
-
 - name: ensure we have essential Debian/Ubuntu packages
   become: yes
   apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
@@ -39,6 +31,14 @@
     - apt-transport-https
     - ca-certificates
     - gnupg2
+  when: ansible_os_family == 'Debian'
+
+- name: upgrade existing APT packages 
+  become: yes
+  apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }} upgrade=yes
+  tags:
+    - package
+    - common
   when: ansible_os_family == 'Debian'
 
 - name: install GRL CA cert
