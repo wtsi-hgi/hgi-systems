@@ -18,10 +18,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: group_vars/os_Ubuntu-16.04
+# file: roles/consul-server/meta/main.yml
 
-ubuntu_dist_name: xenial
-
-consul_use_systemd: true
-consul_use_upstart: false
-consul_use_initd: false
+dependencies:
+  - { role: ansible-consul }

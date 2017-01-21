@@ -43,3 +43,4 @@
 # playbooks that only support root hosts
 - include: dockerers.yml
 - include: gitlab-runners.yml
+- include: consul-servers.yml
