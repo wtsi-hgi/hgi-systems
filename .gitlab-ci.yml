@@ -1,0 +1,18 @@
+# This script excepts the following Secret Variables to be defined in
+# Gitlab project settings:
+#  SSH_PRIVATE_KEY (e.g. "-----BEGIN RSA PRIVATE KEY-----
+#                         ...
+#                         -----END RSA PRIVATE KEY-----)"
+variables:
+  GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
+
+stages:
+  - sync
+
+github-sync:
+  stage: sync
+  tags:
+    - docker
+  image: mercury/gitlab-ci-git-push
+  script:
+    - subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO}
