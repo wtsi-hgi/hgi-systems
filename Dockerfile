@@ -14,6 +14,7 @@ RUN apt-get update \
          g++ \
          gcc \
          git \
+         graphviz \
          libc6-dev \
          make \
          pkg-config \
