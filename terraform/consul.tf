@@ -7,6 +7,6 @@ resource "openstack_compute_instance_v2" "consul-servers" {
   count = 3
 }
 
-output "consul-addresses" {
-  value = ["${openstack_compute_instance_v2.consul-servers.*.ip}"]
+output "consul_ips" {
+  value = ["${openstack_compute_instance_v2.consul-servers.*.access_ip_v4}"]
 }
