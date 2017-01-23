@@ -4,6 +4,8 @@ set -euf -o pipefail
 
 branch=$1
 
+git config user.name "Mercury"
+git config user.email "mercury@sanger.ac.uk"
 git checkout -b ${branch}
 git add terraform/terraform.tfstate
 
