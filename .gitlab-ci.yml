@@ -97,6 +97,7 @@ tfstate-commit:
   stage: commit
   tags:
     - docker
+  image: mercury/gitlab-ci-git-push
   script:
     - terraform/scripts/commit-tfstate.sh "ci-tfstate-$(cat version.txt)"
   dependencies:
