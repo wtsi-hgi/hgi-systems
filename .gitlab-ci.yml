@@ -98,7 +98,7 @@ tfstate-commit:
   tags:
     - docker
   script:
-    - git checkout -b ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && status=$(git status --porcelain | awk '$1!="??"') && (test -n "${status}" && (git commit -m "Changes to terraform.tfstate made by terraform" && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME} && subrepos/gitlab-ci-git-push/git-push ${CI_BUILD_REPO} ${CI_BUILD_REF_NAME} || echo "Failed to commit and push changes" && exit 1) || echo "No changes to terraform state")
+    - terraform/scripts/commit-tfstate.sh "ci-tfstate-$(cat version.txt)"
   dependencies:
     - terraform-refresh
     - terraform-apply
