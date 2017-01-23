@@ -7,13 +7,20 @@ variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
 
 stages:
+  - sync
   - version
   - prepare
-  - commit-refresh
   - plan
   - apply
-  - commit-apply
-  - sync
+  - commit
+
+github-sync:
+  stage: sync
+  tags:
+    - docker
+  image: mercury/gitlab-ci-git-push
+  script:
+    - subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
 
 version:
   stage: version
@@ -56,27 +63,6 @@ terraform-refresh:
     paths:
       - terraform/terraform.tfstate
 
-create-branch:
-  stage: prepare
-  tags:
-    - docker
-  script:
-    - git branch ci-tfstate-$(cat version.txt)
-  dependencies:
-    - version
-  when: always
-
-tfstate-commit-refresh:
-  stage: commit-refresh
-  tags:
-    - docker
-  script:
-    - git checkout ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform refresh" || true
-  dependencies:
-    - terraform-refresh
-    - version
-  when: always
-
 terraform-plan:
   stage: plan
   tags:
@@ -89,6 +75,8 @@ terraform-plan:
       - terraform/plan.dot
       - terraform/plan.png
       - terraform/plan
+  dependencies:
+    - terraform-refresh
 
 terraform-apply:
   stage: apply
@@ -105,32 +93,16 @@ terraform-apply:
   dependencies:
     - terraform-plan
 
-tfstate-commit-apply:
-  stage: commit-apply
+tfstate-commit:
+  stage: commit
   tags:
     - docker
   script:
-    - git checkout ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform apply" || true
+    - git checkout -b ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform" && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME} && subrepos/gitlab-ci-git-push/git-push ${CI_BUILD_REPO} ${CI_BUILD_REF_NAME}
   dependencies:
     - terraform-refresh
     - terraform-apply
     - version
+  allow_failure: true
   when: always
 
-gitlab-sync:
-  stage: sync
-  tags:
-    - docker
-  image: mercury/gitlab-ci-git-push
-  script:
-    - git checkout ci-tfstate-$(cat version.txt) && subrepos/gitlab-ci-git-push/git-push ${GITLAB_REPO} ${CI_BUILD_REF_NAME}
-  when: always
-
-github-sync:
-  stage: sync
-  tags:
-    - docker
-  image: mercury/gitlab-ci-git-push
-  script:
-    - git checkout ci-tfstate-$(cat version.txt) && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
-  when: always
