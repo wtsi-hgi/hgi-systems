@@ -19,7 +19,7 @@ terraform-validate:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform validate
+    - "cd terraform && terraform validate"
 
 openstack-vars-validate:
   stage: validate
@@ -38,9 +38,9 @@ terraform-plan:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform plan -out plan
+    - "cd terraform && terraform plan -out plan"
   artifacts:
-    - terraform/plan
+    - "terraform/plan"
 
 terraform-apply:
   stage: apply
@@ -48,20 +48,20 @@ terraform-apply:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform apply plan
+    - "cd terraform && terraform apply plan"
   artifacts:
-    - terraform/terraform.tfstate
+    - "terraform/terraform.tfstate"
   dependencies:
-    - terraform-plan
+    - "terraform-plan"
 
 tfstate-commit:
   stage: commit
   tags:
     - docker
   script:
-    - git add terraform/terraform.tfstate && git commit -m "Changes to terraform.tfstate made by terraform apply"
+    - 'git add terraform/terraform.tfstate && git commit -m "Changes to terraform.tfstate made by terraform apply"'
   dependencies:
-    - terraform-apply
+    - "terraform-apply"
 
 github-sync:
   stage: sync
@@ -69,4 +69,4 @@ github-sync:
     - docker
   image: mercury/gitlab-ci-git-push
   script:
-    - subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO}
+    - "subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO}"
