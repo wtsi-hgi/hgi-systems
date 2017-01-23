@@ -103,7 +103,6 @@ tfstate-commit:
   script:
     - terraform/scripts/commit-tfstate.sh "ci-tfstate-$(cat version.txt)"
   dependencies:
-    - terraform-refresh
     - terraform-apply
     - version
   when: always
