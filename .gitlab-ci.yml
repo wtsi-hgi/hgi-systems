@@ -105,8 +105,8 @@ terraform-apply:
   dependencies:
     - terraform-plan
 
-tfstate-commit:
-  stage: commit
+tfstate-commit-apply:
+  stage: commit-apply
   tags:
     - docker
   script:
