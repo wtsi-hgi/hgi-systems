@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install Go/Packer prerequisite, ansible, and openstack packages
+# Install Go prerequisite, ansible, and openstack packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          apt-utils \
@@ -33,11 +33,11 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 WORKDIR $GOPATH
 
-# Build packer
+# Build terraform
 ENV PACKER_DEV=1
 RUN go get github.com/mitchellh/gox
-RUN go get github.com/mitchellh/packer
-WORKDIR $GOPATH/src/github.com/mitchellh/packer
+RUN go get github.com/hashicorp/terraform
+WORKDIR $GOPATH/src/github.com/hashicorp/terraform
 RUN /bin/bash scripts/build.sh
 
 # Set workdir and entrypoint

@@ -1,6 +1,5 @@
-Packer, Ansible, and Openstack (PAO)
-------------------------------------
+Terraform, Ansible, and Openstack (TAO)
+---------------------------------------
 
-Docker container image to use for packer-based provisioning, with support for running ansible and openstack CLI on the provisioning machine. 
-
+Docker container image to use for [Terraform](https://www.terraform.io/), with support for running ansible and openstack CLI within the same container.
 
