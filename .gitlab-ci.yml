@@ -85,12 +85,13 @@ terraform-apply:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply plan
+    - cd terraform && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply plan && (terraform output  > terraform/output)
   artifacts:
     paths:
       - terraform/apply.dot
       - terraform/apply.png
       - terraform/terraform.tfstate
+      - terraform/output
   dependencies:
     - terraform-plan
 
