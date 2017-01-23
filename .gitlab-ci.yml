@@ -61,7 +61,7 @@ create-branch:
   tags:
     - docker
   script:
-    - git branch -b ci-tfstate-$(cat version.txt)
+    - git branch ci-tfstate-$(cat version.txt)
   dependencies:
     - version
   when: always
@@ -71,7 +71,7 @@ tfstate-commit-refresh:
   tags:
     - docker
   script:
-    - git branch ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform refresh" || true
+    - git checkout ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform refresh" || true
   dependencies:
     - terraform-refresh
     - version
@@ -110,7 +110,7 @@ tfstate-commit-apply:
   tags:
     - docker
   script:
-    - git branch ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform apply" || true
+    - git checkout ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform apply" || true
   dependencies:
     - terraform-refresh
     - terraform-apply
