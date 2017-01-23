@@ -40,7 +40,8 @@ terraform-plan:
   script:
     - "cd terraform && terraform plan -out plan"
   artifacts:
-    - "terraform/plan"
+    paths:
+      - "terraform/plan"
 
 terraform-apply:
   stage: apply
@@ -50,7 +51,8 @@ terraform-apply:
   script:
     - "cd terraform && terraform apply plan"
   artifacts:
-    - "terraform/terraform.tfstate"
+    paths:
+      - "terraform/terraform.tfstate"
   dependencies:
     - "terraform-plan"
 
