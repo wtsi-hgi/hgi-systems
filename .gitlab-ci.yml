@@ -7,14 +7,27 @@ variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
 
 stages:
-  - validate
+  - version
+  - prepare
+  - commit-refresh
   - plan
   - apply
-  - commit
+  - commit-apply
   - sync
 
+version:
+  stage: version
+  tags:
+    - docker
+  image: mercury/tao
+  script:
+    - git describe --tags --dirty --always --abbrev=8 > version.txt
+  artifacts:
+    paths:
+      - "version.txt"
+
 terraform-validate:
-  stage: validate
+  stage: prepare
   tags:
     - docker
   image: mercury/tao
@@ -22,7 +35,7 @@ terraform-validate:
     - cd terraform && terraform validate
 
 openstack-vars-validate:
-  stage: validate
+  stage: prepare
   tags:
     - docker
   script:
@@ -32,15 +45,49 @@ openstack-vars-validate:
     - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
 
+terraform-refresh:
+  stage: prepare
+  tags:
+    - docker
+  image: mercury/tao
+  script:
+    - cd terraform && terraform refresh -backup=- 
+  artifacts:
+    paths:
+      - terraform/terraform.tfstate
+
+create-branch:
+  stage: prepare
+  tags:
+    - docker
+  script:
+    - git branch -b ci-tfstate-$(cat version.txt)
+  dependencies:
+    - version
+  when: always
+
+tfstate-commit-refresh:
+  stage: commit-refresh
+  tags:
+    - docker
+  script:
+    - git branch ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform refresh" || true
+  dependencies:
+    - terraform-refresh
+    - version
+  when: always
+
 terraform-plan:
   stage: plan
   tags:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform plan -out plan
+    - cd terraform && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -out plan
   artifacts:
     paths:
+      - terraform/plan.dot
+      - terraform/plan.png
       - terraform/plan
 
 terraform-apply:
@@ -49,9 +96,11 @@ terraform-apply:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform apply plan
+    - cd terraform && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply plan
   artifacts:
     paths:
+      - terraform/apply.dot
+      - terraform/apply.png
       - terraform/terraform.tfstate
   dependencies:
     - terraform-plan
@@ -61,9 +110,21 @@ tfstate-commit:
   tags:
     - docker
   script:
-    - git add terraform/terraform.tfstate && git commit -m "Changes to terraform.tfstate made by terraform apply"
+    - git branch ci-tfstate-$(cat version.txt) && git add terraform/terraform.tfstate && git status --porcelain && git commit -m "Changes to terraform.tfstate made by terraform apply" || true
   dependencies:
+    - terraform-refresh
     - terraform-apply
+    - version
+  when: always
+
+gitlab-sync:
+  stage: sync
+  tags:
+    - docker
+  image: mercury/gitlab-ci-git-push
+  script:
+    - git checkout ci-tfstate-$(cat version.txt) && subrepos/gitlab-ci-git-push/git-push ${GITLAB_REPO} ${CI_BUILD_REF_NAME}
+  when: always
 
 github-sync:
   stage: sync
@@ -71,4 +132,5 @@ github-sync:
     - docker
   image: mercury/gitlab-ci-git-push
   script:
-    - subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO}
+    - git checkout ci-tfstate-$(cat version.txt) && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
+  when: always
