@@ -53,8 +53,6 @@
     regexp: "^manage_etc_hosts:"
     line: "manage_etc_hosts: true"
 
-- name: 
-
 - name: upgrade existing APT packages 
   become: yes
   apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }} upgrade=yes
