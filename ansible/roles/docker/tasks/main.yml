@@ -64,6 +64,6 @@
   become: yes
   apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
   with_items:
-    - docker-engine
+    - docker-engine={{ docker_apt_version }}
   when: ansible_os_family == 'Debian'
 

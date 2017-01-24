@@ -21,3 +21,4 @@
 # file: roles/docker/defaults/main.yml
 
 docker_bip: 10.10.0.1/16
+docker_apt_version: 1.13.0-0~ubuntu-xenial
