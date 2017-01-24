@@ -33,13 +33,13 @@
     repo: "{{ docker_repo }}"
     state: present
   when: ansible_os_family == 'Debian'
-  register: docker-apt-repo
+  register: docker_apt_repo
 
 - name: update apt
   tags: docker
   become: yes
   apt: update_cache=yes
-  when: docker-apt-repo|changed
+  when: docker_apt_repo|changed
 
 - name: install docker prerequisites on Ubuntu
   tags: docker
