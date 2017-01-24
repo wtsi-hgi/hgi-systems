@@ -1,3 +1,3 @@
 variable docker_image_name {
-  default = "hgi-docker-ubuntu-xenial-15a8f819"
+  default = "hgi-docker-ubuntu-xenial-65439049"
 }
