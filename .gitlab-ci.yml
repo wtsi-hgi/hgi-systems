@@ -6,6 +6,7 @@
 variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
+  TF_LOG: "TRACE"
 
 stages:
   - sync
