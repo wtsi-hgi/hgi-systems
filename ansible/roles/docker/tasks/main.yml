@@ -50,14 +50,6 @@
     - linux-image-extra-virtual
   when: ansible_distribution == 'Ubuntu'
 
-- name: install docker (apt)
-  tags: docker
-  become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
-  with_items:
-    - docker-engine
-  when: ansible_os_family == 'Debian'
-
 - name: ensure docker systemd service directory exists
   tags: docker
   become: yes
@@ -72,3 +64,12 @@
     dest: /etc/systemd/system/docker.service.d/dockerd-exec.conf
   notify: systemd restart docker
   when: ansible_service_mgr == 'systemd'
+
+- name: install docker (apt)
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - docker-engine
+  when: ansible_os_family == 'Debian'
+
