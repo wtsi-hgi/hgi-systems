@@ -30,8 +30,18 @@
     - aptitude
     - apt-transport-https
     - ca-certificates
+    - cloud-init
     - gnupg2
   when: ansible_os_family == 'Debian'
+
+- name: setup cloud-init to manage /etc/hosts
+  tags: common
+  become: yes
+  lineinfile:
+    path: /etc/cloud/cloud.cfg
+    state: present
+    regexp: "^manage_etc_hosts:"
+    line: "manage_etc_hosts: true"
 
 - name: upgrade existing APT packages 
   become: yes
@@ -88,3 +98,4 @@
     key: "{{ item }}"
   with_file:
     - public_keys/mercury-farm3
+
