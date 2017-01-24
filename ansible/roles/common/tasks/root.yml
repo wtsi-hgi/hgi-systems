@@ -34,14 +34,26 @@
     - gnupg2
   when: ansible_os_family == 'Debian'
 
+- name: ensure unwanted Debian/Ubuntu packages are absent
+  become: yes
+  apt: name={{ item }} state=absent update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  tags:
+    - package
+    - common
+  with_items:
+    - unattended-upgrades
+  when: ansible_os_family == 'Debian'
+
 - name: setup cloud-init to manage /etc/hosts
   tags: common
   become: yes
   lineinfile:
-    path: /etc/cloud/cloud.cfg
+    dest: /etc/cloud/cloud.cfg
     state: present
     regexp: "^manage_etc_hosts:"
     line: "manage_etc_hosts: true"
+
+- name: 
 
 - name: upgrade existing APT packages 
   become: yes

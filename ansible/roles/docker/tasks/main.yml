@@ -32,6 +32,7 @@
   apt_repository:
     repo: "{{ docker_repo }}"
     state: present
+    update_cache: yes
   when: ansible_os_family == 'Debian'
 
 - name: install docker prerequisites on Ubuntu
@@ -42,14 +43,6 @@
     - linux-image-extra-{{ ansible_kernel }}
     - linux-image-extra-virtual
   when: ansible_distribution == 'Ubuntu'
-
-- name: install docker (apt)
-  tags: docker
-  become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
-  with_items:
-    - docker-engine
-  when: ansible_os_family == 'Debian'
 
 - name: ensure docker systemd service directory exists
   tags: docker
@@ -65,3 +58,12 @@
     dest: /etc/systemd/system/docker.service.d/dockerd-exec.conf
   notify: systemd restart docker
   when: ansible_service_mgr == 'systemd'
+
+- name: install docker (apt)
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - docker-engine={{ docker_apt_version }}
+  when: ansible_os_family == 'Debian'
+
