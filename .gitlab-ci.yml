@@ -101,7 +101,7 @@ tfstate-commit:
     - docker
   image: mercury/gitlab-ci-git-push
   script:
-    - terraform/scripts/commit-tfstate.sh "ci-tfstate-$(cat version.txt)"
+    - terraform/scripts/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]"
   dependencies:
     - terraform-apply
     - version
