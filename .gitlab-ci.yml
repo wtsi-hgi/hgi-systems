@@ -59,10 +59,11 @@ terraform-refresh:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform refresh -backup=- 
+    - cd terraform && terraform refresh -backup=- && (terraform show --no-color > terraform.tfstate.txt)
   artifacts:
     paths:
       - terraform/terraform.tfstate
+      - terraform/terraform.tfstate.txt
 
 terraform-plan:
   stage: plan
@@ -70,12 +71,13 @@ terraform-plan:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -out plan
+    - cd terraform && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -out plan && (terraform show --no-color plan > plan.txt)
   artifacts:
     paths:
       - terraform/plan.dot
       - terraform/plan.png
       - terraform/plan
+      - terraform/plan.txt
   dependencies:
     - terraform-refresh
 
@@ -85,13 +87,14 @@ terraform-apply:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply plan && (terraform output  > output.txt)
+    - cd terraform && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply plan && (terraform output  > output.txt) && (terraform show --no-color > terraform.tfstate.txt)
   artifacts:
     paths:
       - terraform/apply.dot
       - terraform/apply.png
       - terraform/terraform.tfstate
       - terraform/output.txt
+      - terraform/terraform.tfstate.txt
   dependencies:
     - terraform-plan
 
