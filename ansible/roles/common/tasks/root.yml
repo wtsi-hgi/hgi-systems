@@ -38,7 +38,7 @@
   tags: common
   become: yes
   lineinfile:
-    path: /etc/cloud/cloud.cfg
+    dest: /etc/cloud/cloud.cfg
     state: present
     regexp: "^manage_etc_hosts:"
     line: "manage_etc_hosts: true"
