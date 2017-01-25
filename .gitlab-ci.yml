@@ -110,3 +110,4 @@ github-sync:
   image: mercury/gitlab-ci-git-push
   script:
     - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
+  dependencies: []
