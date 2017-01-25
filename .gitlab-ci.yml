@@ -9,23 +9,15 @@ variables:
   TF_LOG: "TRACE"
 
 stages:
-  - sync
-  - version
   - prepare
+  - refresh
   - plan
   - apply
   - commit
-
-github-sync:
-  stage: sync
-  tags:
-    - docker
-  image: mercury/gitlab-ci-git-push
-  script:
-    - subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
+  - sync
 
 version:
-  stage: version
+  stage: prepare
   tags:
     - docker
   image: mercury/tao
@@ -55,7 +47,7 @@ openstack-vars-validate:
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
 
 terraform-refresh:
-  stage: prepare
+  stage: refresh
   tags:
     - docker
   image: mercury/tao
@@ -111,3 +103,10 @@ tfstate-commit:
     - version
   when: always
 
+github-sync:
+  stage: sync
+  tags:
+    - docker
+  image: mercury/gitlab-ci-git-push
+  script:
+    - git pull && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
