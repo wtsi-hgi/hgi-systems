@@ -1,4 +1,5 @@
 resource "openstack_compute_instance_v2" "consul-servers" {
+  provider = "openstack_hgiarvados"
   name = "consul-server-${count.index}"
   image_name = "${var.docker_image_name}"
   flavor_name = "m1.small"
