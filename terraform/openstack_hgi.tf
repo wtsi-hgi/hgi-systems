@@ -5,19 +5,19 @@ provider "openstack" {
 
 resource "openstack_compute_keypair_v2" "mercury_hgi" {
   provider = "openstack.hgi"
-  name = "mercury"
+  name = "mercury_hgi"
   public_key = "${var.mercury_keypair}"
 }
 
 resource "openstack_compute_keypair_v2" "jr17_hgi" {
   provider = "openstack.hgi"
-  name = "jr17"
+  name = "jr17_hgi"
   public_key = "${var.jr17_keypair}"
 }
 
 resource "openstack_compute_secgroup_v2" "ssh_hgi" {
   provider = "openstack.hgi"
-  name = "ssh"
+  name = "ssh_hgi"
   description = "Incoming ssh access"
   rule {
     from_port = 22

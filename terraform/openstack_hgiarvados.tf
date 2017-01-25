@@ -5,19 +5,19 @@ provider "openstack" {
 
 resource "openstack_compute_keypair_v2" "mercury_hgiarvados" {
   provider = "openstack.hgiarvados"
-  name = "mercury"
+  name = "mercury_hgiarvados"
   public_key = "${var.mercury_keypair}"
 }
 
 resource "openstack_compute_keypair_v2" "jr17_hgiarvados" {
   provider = "openstack.hgiarvados"
-  name = "jr17"
+  name = "jr17_hgiarvados"
   public_key = "${var.jr17_keypair}"
 }
 
 resource "openstack_compute_secgroup_v2" "ssh_hgiarvados" {
   provider = "openstack.hgiarvados"
-  name = "ssh"
+  name = "ssh_hgiarvados"
   description = "Incoming ssh access"
   rule {
     from_port = 22
