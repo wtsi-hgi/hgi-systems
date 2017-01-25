@@ -6,7 +6,7 @@
 variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
-  TF_LOG: "TRACE"
+  TF_LOG: "" # anything other than "" to trace
 
 stages:
   - prepare
