@@ -8,7 +8,6 @@ resource "openstack_compute_instance_v2" "consul-servers" {
   security_groups = ["${openstack_compute_secgroup_v2.ssh_hgiarvados.id}"]
   network {
     uuid = "${openstack_networking_network_v2.main_hgiarvados.id}"
-    access_network = true
   }
 
   # wait for host to be available via ssh
