@@ -15,7 +15,7 @@ resource "openstack_compute_instance_v2" "consul-servers" {
   }
   # provision using ansible
   provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG ../ansible/ansible-minimal.cfg ansible-playbook -i ../ansible/production_hosts.d -l ${name} ../ansible/site.yml"
+    command = "ANSIBLE_CONFIG ../ansible/ansible-minimal.cfg ansible-playbook -i ../ansible/production_hosts.d -l consul-server-${count.index} ../ansible/site.yml"
   }
 }
 
