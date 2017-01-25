@@ -3,19 +3,19 @@ provider "openstack" {
   tenant_name = "hgi"
 }
 
-resource "openstack_compute_keypair_v2" "mercury" {
+resource "openstack_compute_keypair_v2" "mercury_hgi" {
   provider = "openstack.hgi"
   name = "mercury"
   public_key = "${var.mercury_keypair}"
 }
 
-resource "openstack_compute_keypair_v2" "jr17" {
+resource "openstack_compute_keypair_v2" "jr17_hgi" {
   provider = "openstack.hgi"
   name = "jr17"
   public_key = "${var.jr17_keypair}"
 }
 
-resource "openstack_compute_secgroup_v2" "ssh" {
+resource "openstack_compute_secgroup_v2" "ssh_hgi" {
   provider = "openstack.hgi"
   name = "ssh"
   description = "Incoming ssh access"
