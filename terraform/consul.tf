@@ -16,6 +16,9 @@ resource "openstack_compute_instance_v2" "consul-servers" {
     inline = [
       "hostname"
     ]
+    connection {
+      timeout = "1m"
+    }
   }
   # provision using ansible
   provisioner "local-exec" {
