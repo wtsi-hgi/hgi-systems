@@ -1,5 +1,5 @@
 resource "openstack_compute_instance_v2" "consul-servers" {
-  count = 3
+  count = 0
   provider = "openstack.hgiarvados"
   name = "consul-server-${count.index}"
   image_name = "${var.docker_image_name}"
