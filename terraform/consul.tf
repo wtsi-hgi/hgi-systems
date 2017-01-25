@@ -6,7 +6,9 @@ resource "openstack_compute_instance_v2" "consul-servers" {
   flavor_name = "m1.small"
   key_pair = "${openstack_compute_keypair_v2.mercury_hgiarvados.id}"
   security_groups = ["${openstack_compute_secgroup_v2.ssh_hgiarvados.id}"]
-  network = ["${openstack_networking_network_v2.main_hgiarvados}"]
+  network {
+    id = "${openstack_networking_network_v2.main_hgiarvados.id}"]
+  }
 
   # wait for host to be available via ssh
   provisioner "remote-exec" {
