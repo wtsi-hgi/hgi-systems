@@ -27,3 +27,28 @@ resource "openstack_compute_secgroup_v2" "ssh_hgi" {
   }
 }
 
+resource "openstack_networking_network_v2" "main_hgi" {
+  provider = "openstack.hgi"
+  name = "main_hgi"
+  admin_state_up = "true"
+}
+
+resource "openstack_networking_subnet_v2" "main_hgi" {
+  provider = "openstack.hgi"
+  name = "main_hgi"
+  network_id = "${openstack_networking_network_v2.main_hgi.id}"
+  cidr = "10.101.0.0/24"
+  ip_version = 4
+}
+
+resource "openstack_networking_router_v2" "main_public_hgi" {
+  provider = "openstack.hgi"
+  name = "main_public_hgi"
+  external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
+}
+
+resource "openstack_networking_router_interface_v2" "main_public_hgi" {
+  provider = "openstack.hgi"
+  router_id = "${openstack_networking_router_v2.main_public_hgi.id}"
+  subnet_id = "${openstack_networking_subnet_v2.main_hgi.id}"
+}
