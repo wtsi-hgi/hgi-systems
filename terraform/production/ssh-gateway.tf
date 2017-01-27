@@ -25,13 +25,13 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgiarvados" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = "${var.ssh_private_key}"
+      private_key = "${var.ssh_private_key_file}"
       timeout = "1m"
     }
   }
   # provision using ansible
   provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG ../ansible/ansible-minimal.cfg ansible-playbook -i ../ansible/production_hosts.d -l ssh-gateway-hgiarvados ../ansible/site.yml"
+    command = "ANSIBLE_CONFIG=../ansible/ansible-minimal.cfg ansible-playbook --private-key=\"${var.ssh_private_key_file}\" -i ../ansible/production_hosts.d -l ssh-gateway-hgiarvados ../ansible/site.yml"
   }
 }
 

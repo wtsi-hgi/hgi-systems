@@ -7,7 +7,6 @@ variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
-  TF_VAR_ssh_private_key: "${SSH_PRIVATE_KEY}"
 
 stages:
   - prepare
@@ -82,7 +81,7 @@ terraform-apply-production:
     - docker
   image: mercury/tao
   script:
-    - cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - cd terraform/production && (echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa) && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
     paths:
       - terraform/production/apply.dot

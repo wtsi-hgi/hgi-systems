@@ -1,3 +1,3 @@
 variable "ssh_private_key" {
-  default = ""
+  default = pathexpand("~/.ssh/id_rsa")
 }
