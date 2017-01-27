@@ -65,7 +65,7 @@ terraform-plan-production:
     - docker
   image: mercury/tao
   script:
-    - cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
+    - mkdir -p ~/.ssh && (echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa) && cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
   artifacts:
     paths:
       - terraform/production/plan.dot
@@ -81,7 +81,7 @@ terraform-apply-production:
     - docker
   image: mercury/tao
   script:
-    - mkdir -p ~/.ssh && (echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa) && cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
     paths:
       - terraform/production/apply.dot
