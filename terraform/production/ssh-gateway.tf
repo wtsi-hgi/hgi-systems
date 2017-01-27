@@ -66,12 +66,15 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgi" {
       "hostname"
     ]
     connection {
+      type = "ssh"
+      user = "ubuntu"
+      private_key = "${pathexpand("~/.ssh/id_rsa")}"
       timeout = "1m"
     }
   }
   # provision using ansible
   provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG ../ansible/ansible-minimal.cfg ansible-playbook -i ../ansible/production_hosts.d -l ssh-gateway-hgi ../ansible/site.yml"
+    command = "ANSIBLE_CONFIG=../ansible/ansible-minimal.cfg ansible-playbook -i ../ansible/production_hosts.d -l ssh-gateway-hgi ../ansible/site.yml"
   }
 }
 
