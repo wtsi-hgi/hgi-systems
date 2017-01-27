@@ -20,7 +20,7 @@ version:
   stage: prepare
   tags:
     - docker
-  image: mercury/tao
+  image: mercury/gitlab-ci-git-push
   script:
     - git describe --tags --dirty --always --abbrev=8 > version.txt
   artifacts:
