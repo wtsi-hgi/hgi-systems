@@ -23,6 +23,9 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgiarvados" {
       "hostname"
     ]
     connection {
+      type = "ssh"
+      user = "ubuntu"
+      private_key = "${var.ssh_private_key}"
       timeout = "1m"
     }
   }
