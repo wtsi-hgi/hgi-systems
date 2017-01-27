@@ -42,6 +42,15 @@ ENV XC_ARCH="amd64"
 ENV XC_OS="linux"
 RUN /bin/bash scripts/build.sh
 
+# Build terragrunt
+RUN mkdir -p $GOPATH/src/github.com/gruntwork-io
+WORKDIR $GOPATH/src/github.com/gruntwork-io
+RUN git clone https://github.com/gruntwork-io/terragrunt.git \
+    && cd terragrunt \
+    && git checkout v0.9.4 \
+    && go get \
+    && go install
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
