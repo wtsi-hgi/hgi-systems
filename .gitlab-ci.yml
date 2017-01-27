@@ -27,13 +27,13 @@ version:
     paths:
       - "version.txt"
 
-terraform-validate:
+terraform-validate-production:
   stage: prepare
   tags:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform validate
+    - cd terraform/production && terraform validate
 
 openstack-vars-validate:
   stage: prepare
@@ -46,52 +46,52 @@ openstack-vars-validate:
     - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
 
-terraform-refresh:
+terraform-refresh-production:
   stage: refresh
   tags:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && terraform refresh -backup=- && (terraform show -no-color > terraform.tfstate.txt)
+    - cd terraform/production && terraform refresh -backup=- && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
     paths:
-      - terraform/terraform.tfstate
-      - terraform/terraform.tfstate.txt
+      - terraform/production/terraform.tfstate
+      - terraform/production/terraform.tfstate.txt
     when: always
 
-terraform-plan:
+terraform-plan-production:
   stage: plan
   tags:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
+    - cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
   artifacts:
     paths:
-      - terraform/plan.dot
-      - terraform/plan.png
-      - terraform/plan
-      - terraform/plan.txt
+      - terraform/production/plan.dot
+      - terraform/production/plan.png
+      - terraform/production/plan
+      - terraform/production/plan.txt
   dependencies:
-    - terraform-refresh
+    - terraform-refresh-production
 
-terraform-apply:
+terraform-apply-production:
   stage: apply
   tags:
     - docker
   image: mercury/tao
   script:
-    - cd terraform && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
     paths:
-      - terraform/apply.dot
-      - terraform/apply.png
-      - terraform/terraform.tfstate
-      - terraform/output.json
-      - terraform/terraform.tfstate.txt
+      - terraform/production/apply.dot
+      - terraform/production/apply.png
+      - terraform/production/terraform.tfstate
+      - terraform/production/output.json
+      - terraform/production/terraform.tfstate.txt
     when: always
   dependencies:
-    - terraform-plan
+    - terraform-plan-production
 
 tfstate-commit:
   stage: commit
@@ -99,9 +99,9 @@ tfstate-commit:
     - docker
   image: mercury/gitlab-ci-git-push
   script:
-    - terraform/scripts/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]"
+    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]" "terraform/production/terraform.tfstate"
   dependencies:
-    - terraform-apply
+    - terraform-apply-production
     - version
   when: always
   
