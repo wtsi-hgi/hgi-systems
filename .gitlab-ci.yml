@@ -8,6 +8,20 @@ variables:
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
 
+before_script:
+  # Run ssh-agent (inside the build environment)
+  - eval $(ssh-agent -s)
+
+  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+  - ssh-add <(echo "$SSH_PRIVATE_KEY")
+
+  # For Docker builds disable host key checking. Be aware that by adding that
+  # you are suspectible to man-in-the-middle attacks.
+  # WARNING: Use this only with the Docker executor, if you use it with shell
+  # you will overwrite your user's SSH config.
+  - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
 stages:
   - prepare
   - refresh
@@ -65,7 +79,7 @@ terraform-plan-production:
     - docker
   image: mercury/tao
   script:
-    - mkdir -p ~/.ssh && (echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa) && cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
+    - cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
   artifacts:
     paths:
       - terraform/production/plan.dot
@@ -81,7 +95,7 @@ terraform-apply-production:
     - docker
   image: mercury/tao
   script:
-    - mkdir -p ~/.ssh && (echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa) && chmod 600 ~/.ssh/id_rsa && test -s ~/.ssh/id_rsa && echo "id_rsa:" && head ~/.ssh/id_rsa && cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
     paths:
       - terraform/production/apply.dot
