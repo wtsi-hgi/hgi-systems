@@ -53,6 +53,7 @@ openstack-vars-validate:
   stage: prepare
   tags:
     - docker
+  image: mercury/gitlab-ci-git-push
   script:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_TENANT_NAME}" || test -n "${OS_TENANT_ID}" || (echo "OS_TENANT_NAME or OS_TENANT_ID must be set!"; exit 1)'
