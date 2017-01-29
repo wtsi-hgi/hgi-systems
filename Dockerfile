@@ -52,6 +52,9 @@ RUN git clone https://github.com/gruntwork-io/terragrunt.git \
     && go get \
     && go install
 
+# Install terraform-inventory ansible dynamic inventory scripts
+RUN go get github.com/adammck/terraform-inventory
+ 
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
