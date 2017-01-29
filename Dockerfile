@@ -19,6 +19,7 @@ RUN apt-get update \
          make \
          pkg-config \
          python3-openstackclient \
+         ssh-agent \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
