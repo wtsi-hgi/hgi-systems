@@ -17,9 +17,9 @@ RUN apt-get update \
          graphviz \
          libc6-dev \
          make \
+         openssh-client \
          pkg-config \
          python3-openstackclient \
-         ssh-agent \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
