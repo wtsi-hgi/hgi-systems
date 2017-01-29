@@ -17,6 +17,7 @@ RUN apt-get update \
          libc6-dev \
          make \
          pkg-config \
+         python-openstackclient \
          python3-openstackclient \
          ssh-agent \
     && rm -rf /var/lib/apt/lists/*
