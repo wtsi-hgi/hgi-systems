@@ -35,6 +35,16 @@
     - sudo
   when: ansible_os_family == 'Debian'
 
+- name: ensure unwanted Debian/Ubuntu packages are absent
+  become: yes
+  apt: name={{ item }} state=absent update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  tags:
+    - package
+    - common
+  with_items:
+    - unattended-upgrades
+  when: ansible_os_family == 'Debian'
+
 #- name: ensure unwanted Ubuntu 16.04 packages are absent
 #  become: yes
 #  apt: name={{ item }} state=absent update_cache=yes cache_valid_time={{ apt_cache_valid_time }}

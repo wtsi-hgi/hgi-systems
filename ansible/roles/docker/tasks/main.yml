@@ -44,13 +44,20 @@
     - linux-image-extra-virtual
   when: ansible_distribution == 'Ubuntu'
 
-- name: configure docker daemon
+- name: ensure docker systemd service directory exists
+  tags: docker
+  become: yes
+  file: path=/etc/systemd/system/docker.service.d state=directory
+  when: ansible_service_mgr == 'systemd'
+
+- name: configure docker service (systemd)
   tags: docker
   become: yes
   template:
-    src: daemon.json.j2
-    dest: /etc/docker/daemon.json
+    src: dockerd-exec.conf.j2
+    dest: /etc/systemd/system/docker.service.d/dockerd-exec.conf
   notify: systemd restart docker
+  when: ansible_service_mgr == 'systemd'
 
 - name: install docker (apt)
   tags: docker
