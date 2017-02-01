@@ -20,6 +20,7 @@ RUN apt-get update \
          pkg-config \
          python-openstackclient \
          python3-openstackclient \
+         python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
@@ -45,7 +46,7 @@ RUN /bin/bash scripts/build.sh
 # Install glancecp
 RUN cd /tmp \
     && git clone https://github.com/wtsi-hgi/openstack-tools.git \
-    && cp openstack-tools/glancecp /usr/local/bin/glancecp
+    && python3 setup.py install
 
 # Set workdir and entrypoint
 WORKDIR /tmp
