@@ -46,6 +46,7 @@ RUN /bin/bash scripts/build.sh
 # Install glancecp
 RUN cd /tmp \
     && git clone https://github.com/wtsi-hgi/openstack-tools.git \
+    && cd openstack-tools \
     && python3 setup.py install
 
 # Set workdir and entrypoint
