@@ -42,6 +42,11 @@ RUN go get github.com/mitchellh/packer
 WORKDIR $GOPATH/src/github.com/mitchellh/packer
 RUN /bin/bash scripts/build.sh
 
+# Install glancecp
+RUN cd /tmp \
+    && git clone https://github.com/wtsi-hgi/openstack-tools.git \
+    && cp openstack-tools/glancecp /usr/local/bin/glancecp
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
