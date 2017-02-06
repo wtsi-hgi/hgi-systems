@@ -1,9 +1,9 @@
-variable docker_image_name {
-  default = "hgi-docker-ubuntu-xenial-65439049"
+variable base_image_name {
+  default = "hgi-base-xenial-latest"
 }
 
-variable base_image_name {
-  default = "hgi-base-ubuntu-xenial-1e033c83"
+variable docker_image_name {
+  default = "hgi-docker-ubuntu-xenial-65439049"
 }
 
 variable gitlab_runner_image_name {
