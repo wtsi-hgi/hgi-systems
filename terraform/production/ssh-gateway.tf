@@ -68,7 +68,6 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgi" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      private_key = "${pathexpand("~/.ssh/id_rsa")}"
       timeout = "1m"
     }
   }
