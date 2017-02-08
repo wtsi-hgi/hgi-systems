@@ -12,7 +12,7 @@ Ansible calls dynamic inventory scripts with either the `--list` or `--host` opt
 * TF_STATE: a path to a local terraform.tfstate file (default: terraform.tfstate in the current directory)
 * TF_ANSIBLE_INVENTORY_NAME_TEMPLATE: a [Jinja2][jinja2] template string that is applied to each Terraform resource to generate the ansible inventory name (default: `{{ resource_name }}` which is the resource name (TYPE+NAME) from Terraform is guaranteed to be unique).
 * TF_ANSIBLE_GROUPS_TEMPLATE: a [Jinja2][jinja2] template string that is applied to each Terraform resource to generate a comma-delimited list of ansible groups to which the resource should belong (default: `all` which simply assigns all hosts to the `all` group)
-* TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE: a [Jinja2][jinja2] template string that is applied to each Terraform resource and should produce either `True` (to include the resource) or `False` (to exclude the resource). (default: `{{ resource.type in ["aws_instance","azure_instance","clc_server","digitalocean_droplet","google_compute_instance","openstack_compute_instance_v2","softlayer_virtualserver","triton_machine","ucs_service_profile","vsphere_virtual_machine"] }}` which is suitable to limit to instance/machine resources from a variety of Terraform providers.
+* TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE: a [Jinja2][jinja2] template string that is applied to each Terraform resource and should produce either `True` (to include the resource) or `False` (to exclude the resource). (default: `{{ type in ["aws_instance","azure_instance","clc_server","digitalocean_droplet","google_compute_instance","openstack_compute_instance_v2","softlayer_virtualserver","triton_machine","ucs_service_profile","vsphere_virtual_machine"] }}` which is suitable to limit to instance/machine resources from a variety of Terraform providers.
 * TF_ANSIBLE_HOST_VARS_TEMPLATE: a [Jinja2][jinja2] template string that is applied to each Terraform resource and should generate a comma-delimited list of host_var settings in the format `<host_var>=<value>`. (default: a template that will set `host_name` to the IP of the instance/machine as well as setting all resource attributes prefixed with `tf_` - see source code for details).
 
 If you are happy with the defaults, and can arrange for the TF_STATE environment variable to be set to the path to the terraform.tfstate file, then you can just install the yatadis.py script in the ansible inventory directory, make sure it is executable, and that all of the python modules it depends on are installed on the machine on which you run ansible.
@@ -52,7 +52,7 @@ For example, to add all instances to a group named after the resource provider a
 
 ```
 #!/bin/bash
-export TF_ANSIBLE_GROUPS_TEMPLATE='{{ ["all", "tf_provider_"+resource.provider] | join(",") }}'
+export TF_ANSIBLE_GROUPS_TEMPLATE='{{ ["all", "tf_provider_"+provider] | join(",") }}'
 export TF_STATE=/path/to/terraform.tfstate
 /path/to/yatadis.py $@
 ```

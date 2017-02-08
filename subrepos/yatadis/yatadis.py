@@ -32,7 +32,7 @@ from jinja2 import exceptions as jinja_exc
 # names the ansible `inventory_name` after the (guaranteed unique) Terraform
 # `resource_name`
 ###############################################################################
-DEFAULT_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ resource_name }}'
+DEFAULT_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
 
 ###############################################################################
 # Default groups template:
@@ -61,7 +61,7 @@ DEFAULT_ANSIBLE_GROUPS_TEMPLATE='all'
 # triton_machine: https://www.terraform.io/docs/providers/triton/r/triton_machine.html
 # vsphere_virtual_machine: https://www.terraform.io/docs/providers/vsphere/r/virtual_machine.html
 ###############################################################################
-DEFAULT_ANSIBLE_RESOURCE_FILTER_TEMPLATE="""{{ resource.type in [
+DEFAULT_ANSIBLE_RESOURCE_FILTER_TEMPLATE="""{{ type in [
                                                "alicloud_instance",
                                                "aws_instance",
                                                "clc_server",
@@ -101,28 +101,28 @@ DEFAULT_ANSIBLE_RESOURCE_FILTER_TEMPLATE="""{{ resource.type in [
 # triton_machine: primaryip
 # vsphere_virtual_machine: network_interface/ipv6_address, network_interface/ipv4_address
 ###############################################################################
-DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE="""host_name={{ resource.primary.attributes.access_ip_v6
-                                                | default(resource.primary.attributes.ipv6_address, true)
-                                                | default(resource.primary.attributes.access_ip_v4, true)
-                                                | default(resource.primary.attributes["network.0.floating_ip"], true)
-                                                | default(resource.primary.attributes["network_interface.0.access_config.0.assigned_nat_ip"], true)
-                                                | default(resource.primary.attributes.ipv4_address, true)
-                                                | default(resource.primary.attributes.public_ip, true)
-                                                | default(resource.primary.attributes.ipaddress, true)
-                                                | default(resource.primary.attributes.vip_address, true)
-                                                | default(resource.primary.attributes.primaryip, true)
-                                                | default(resource.primary.attributes.ip_address, true)
-                                                | default(resource.primary.attributes["network_interface.0.ipv6_address"], true)
-                                                | default(resource.primary.attributes.ipv6_address_private, true)
-                                                | default(resource.primary.attributes.private_ip, true)
-                                                | default(resource.primary.attributes["network_interface.0.ipv4_address"], true)
-                                                | default(resource.primary.attributes.private_ip_address, true)
-                                                | default(resource.primary.attributes.ipv4_address_private, true)
-                                                | default(resource.primary.attributes["network_interface.0.address"], true)
-                                                | default(resource.primary.attributes["network.0.fixed_ip_v6"], true)
-                                                | default(resource.primary.attributes["network.0.fixed_ip_v4"], true)}},
+DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE="""host_name={{ primary.attributes.access_ip_v6
+                                                | default(primary.attributes.ipv6_address, true)
+                                                | default(primary.attributes.access_ip_v4, true)
+                                                | default(primary.attributes["network.0.floating_ip"], true)
+                                                | default(primary.attributes["network_interface.0.access_config.0.assigned_nat_ip"], true)
+                                                | default(primary.attributes.ipv4_address, true)
+                                                | default(primary.attributes.public_ip, true)
+                                                | default(primary.attributes.ipaddress, true)
+                                                | default(primary.attributes.vip_address, true)
+                                                | default(primary.attributes.primaryip, true)
+                                                | default(primary.attributes.ip_address, true)
+                                                | default(primary.attributes["network_interface.0.ipv6_address"], true)
+                                                | default(primary.attributes.ipv6_address_private, true)
+                                                | default(primary.attributes.private_ip, true)
+                                                | default(primary.attributes["network_interface.0.ipv4_address"], true)
+                                                | default(primary.attributes.private_ip_address, true)
+                                                | default(primary.attributes.ipv4_address_private, true)
+                                                | default(primary.attributes["network_interface.0.address"], true)
+                                                | default(primary.attributes["network.0.fixed_ip_v6"], true)
+                                                | default(primary.attributes["network.0.fixed_ip_v4"], true)}},
                                       {% set comma = joiner(",") %}
-                                      {% for attr, value in resource.primary.attributes.items() %}
+                                      {% for attr, value in primary.attributes.items() %}
                                         {{ comma() }}tf_{{ attr }}={{ value }}
                                       {% endfor %}
                                       """
@@ -142,10 +142,7 @@ def process_tfstate(args, tf_state):
         for resource_name in resources:
             args.debug and print("Processing resource name %s" % (resource_name), file=sys.stderr)
             host_vars = {}
-            resource = {
-                'resource_name': resource_name,
-                'resource': resources[resource_name],
-            }
+            resource = Resource(resource_name, resources[resource_name])
             filter_value = args.ansible_resource_filter_template.render(resource)
             if filter_value == "False":
                 continue
@@ -203,6 +200,12 @@ def main(args):
     else:
         sys.exit("nothing to do (please specify either '--list' or '--host <INVENTORY_NAME>')")
     print(json.dumps(ansible_data))
+
+
+class Resource(dict):
+    def __init__(self, resource_name, resource_dict):
+        super().__init__(resource_dict)
+        self['name'] = resource_name
 
 class TemplateWithSource(Template):
     def __new__(cls, source, **kwargs):
