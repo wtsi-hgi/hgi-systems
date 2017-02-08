@@ -200,6 +200,8 @@ def main(args):
         ansible_data = list_groups(tf_state_data)
     elif args.host is not None:
         ansible_data = get_host(tf_state_data, args.host)
+    else:
+        sys.exit("nothing to do (please specify either '--list' or '--host <INVENTORY_NAME>')")
     print(json.dumps(ansible_data))
 
 class TemplateWithSource(Template):
