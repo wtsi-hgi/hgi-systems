@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/wtsi-hgi/yatadis.git
+	branch = master
+	commit = 5f7afe28ec627a07b5ccc3b8fada790e41baf4fd
+	parent = 8022ca9397ba1486a83383d7fed302342e76c433
+	cmdver = 0.3.1
