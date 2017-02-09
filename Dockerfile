@@ -20,6 +20,7 @@ RUN apt-get update \
          openssh-client \
          pkg-config \
          python3-openstackclient \
+         python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
