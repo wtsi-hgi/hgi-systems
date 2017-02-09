@@ -41,14 +41,14 @@ resource "openstack_networking_subnet_v2" "main_hgiarvados" {
   ip_version = 4
 }
 
-resource "openstack_networking_router_v2" "main_public_hgiarvados" {
+resource "openstack_networking_router_v2" "main_nova_hgiarvados" {
   provider = "openstack.hgiarvados"
-  name = "main_public_hgiarvados"
+  name = "main_nova_hgiarvados"
   external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
 }
 
-resource "openstack_networking_router_interface_v2" "main_public_hgiarvados" {
+resource "openstack_networking_router_interface_v2" "main_nova_hgiarvados" {
   provider = "openstack.hgiarvados"
-  router_id = "${openstack_networking_router_v2.main_public_hgiarvados.id}"
+  router_id = "${openstack_networking_router_v2.main_nova_hgiarvados.id}"
   subnet_id = "${openstack_networking_subnet_v2.main_hgiarvados.id}"
 }

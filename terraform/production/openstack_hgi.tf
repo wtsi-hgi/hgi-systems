@@ -41,14 +41,14 @@ resource "openstack_networking_subnet_v2" "main_hgi" {
   ip_version = 4
 }
 
-resource "openstack_networking_router_v2" "main_public_hgi" {
+resource "openstack_networking_router_v2" "main_nova_hgi" {
   provider = "openstack.hgi"
-  name = "main_public_hgi"
+  name = "main_nova_hgi"
   external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
 }
 
-resource "openstack_networking_router_interface_v2" "main_public_hgi" {
+resource "openstack_networking_router_interface_v2" "main_nova_hgi" {
   provider = "openstack.hgi"
-  router_id = "${openstack_networking_router_v2.main_public_hgi.id}"
+  router_id = "${openstack_networking_router_v2.main_nova_hgi.id}"
   subnet_id = "${openstack_networking_subnet_v2.main_hgi.id}"
 }
