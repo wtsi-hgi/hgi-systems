@@ -34,7 +34,7 @@ version:
   stage: prepare
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - git describe --tags --dirty --always --abbrev=8 > version.txt
   artifacts:
@@ -45,7 +45,7 @@ terraform-validate-production:
   stage: prepare
   tags:
     - docker
-  image: mercury/tao
+  image: quay.io/wtsi-hgi/tao
   script:
     - cd terraform/production && terraform validate
 
@@ -53,7 +53,7 @@ openstack-vars-validate:
   stage: prepare
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_TENANT_NAME}" || test -n "${OS_TENANT_ID}" || (echo "OS_TENANT_NAME or OS_TENANT_ID must be set!"; exit 1)'
@@ -65,7 +65,7 @@ terraform-refresh-production:
   stage: refresh
   tags:
     - docker
-  image: mercury/tao
+  image: quay.io/wtsi-hgi/tao
   script:
     - cd terraform/production && terraform refresh -backup=- && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
@@ -78,7 +78,7 @@ terraform-plan-production:
   stage: plan
   tags:
     - docker
-  image: mercury/tao
+  image: quay.io/wtsi-hgi/tao
   script:
     - cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
   artifacts:
@@ -94,7 +94,7 @@ terraform-apply-production:
   stage: apply
   tags:
     - docker
-  image: mercury/tao
+  image: quay.io/wtsi-hgi/tao
   script:
     - cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
@@ -112,7 +112,7 @@ tfstate-commit:
   stage: commit
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - gitlab/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]" "terraform/production/terraform.tfstate"
   dependencies:
@@ -124,7 +124,7 @@ github-sync:
   stage: sync
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
   dependencies: []
