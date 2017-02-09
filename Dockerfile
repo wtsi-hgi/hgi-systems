@@ -52,8 +52,11 @@ RUN git clone https://github.com/gruntwork-io/terragrunt.git \
     && go get \
     && go install
 
-# Install terraform-inventory ansible dynamic inventory scripts
-RUN go get github.com/adammck/terraform-inventory
+# Install yatadis 
+RUN cd /tmp \
+    && git clone https://github.com/wtsi-hgi/yatadis.git \
+    && cd yatadis \
+    && python3 setup.py install
  
 # Set workdir and entrypoint
 WORKDIR /tmp
