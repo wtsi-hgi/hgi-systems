@@ -16,4 +16,4 @@ export TF_ANSIBLE_GROUPS_TEMPLATE='{{ ["all",
 
 export TF_STATE=../../terraform/production/terraform.tfstate
 
-../../subrepos/yatadis/yatadis.py $@
+yatadis $@
