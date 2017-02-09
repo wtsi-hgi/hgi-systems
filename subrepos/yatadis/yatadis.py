@@ -19,10 +19,12 @@
 ################################################################################
 
 import argparse
+import ast
 import json
 import os
 import re
 import sys
+import types
 
 from jinja2 import Template
 from jinja2 import exceptions as jinja_exc
@@ -121,10 +123,10 @@ DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE="""host_name={{ primary.attributes.access_ip_
                                                 | default(primary.attributes["network_interface.0.address"], true)
                                                 | default(primary.attributes["network.0.fixed_ip_v6"], true)
                                                 | default(primary.attributes["network.0.fixed_ip_v4"], true)}},
-                                      {% set comma = joiner(",") %}
-                                      {% for attr, value in primary.attributes.items() %}
-                                        {{ comma() }}tf_{{ attr }}={{ value }}
-                                      {% endfor %}
+                                      {% set newline = joiner("\n") -%}
+                                      {% for attr, value in primary.expanded_attributes.items() -%}
+                                        {{ newline() }}tf_{{ attr }}={{ value }}
+                                      {%- endfor -%}
                                       """
 
 TEMPLATE_KWARGS={'trim_blocks': True, 'lstrip_blocks': True, 'autoescape': False}
@@ -150,7 +152,7 @@ def process_tfstate(args, tf_state):
                 raise ValueError("Unexpected value returned from ansible_resource_filter_template: %s (template was [%s])" % (filter_value, args.ansible_resource_filter_template.source()))
             inventory_name = args.ansible_inventory_name_template.render(resource)
             args.debug and print("Rendered ansible_inventory_name_template as '%s' for %s" % (inventory_name, resource_name), file=sys.stderr)
-            group_names = re.split(',\s*', args.ansible_groups_template.render(resource))
+            group_names = re.split('\s*\n\s*', args.ansible_groups_template.render(resource))
             args.debug and print("Rendered ansible_groups_template as '%s' for %s" % (group_names, resource_name), file=sys.stderr)
             for group_name in group_names:
                 if group_name not in groups:
@@ -158,15 +160,23 @@ def process_tfstate(args, tf_state):
                     groups[group_name]['hosts'] = []
                 args.debug and print("'%s' added to group '%s' for %s" % (inventory_name, group_name, resource_name), file=sys.stderr)
                 groups[group_name]['hosts'].append(inventory_name)
-            host_var_key_values = re.split(',\s*', args.ansible_host_vars_template.render(resource))
+            host_var_key_values = re.split('\s*\n\s*', args.ansible_host_vars_template.render(resource))
             args.debug and print("Rendered ansible_host_vars_template as '%s' for %s" % (host_var_key_values, resource_name), file=sys.stderr)
             for key_value in host_var_key_values:
                 key_value = key_value.strip()
                 if key_value == "":
                     continue
-                key, value = key_value.split('=')
-                key = key.strip()
-                value = value.strip()
+                key_value = key_value.split('=', 1)
+                key = key_value[0].strip()
+                if len(key_value) < 2:
+                    print("WARNING: no '=' in assignment '%s' rendered from ansible_host_vars_template [%s]" % (key_value, args.ansible_host_vars_template.source()), file=sys.stderr)
+                    value = ""
+                else:
+                    value = key_value[1].strip()
+                    if value.startswith('['):
+                        value = ast.literal_eval(value)
+                    elif value.startswith('{'):
+                        value = ast.literal_eval(value)
                 host_vars[key] = value
                 args.debug and print("host_var '%s' set to '%s' for %s" % (key, value, resource_name), file=sys.stderr)
             if inventory_name not in hosts:
@@ -202,14 +212,96 @@ def main(args):
     print(json.dumps(ansible_data))
 
 
+# A python implementation of the flatmap.Expand function in terraform:
+# https://github.com/hashicorp/terraform/blob/master/flatmap/expand.go
+def flatmap_expand(flatmap, key):
+    if key in flatmap.keys():
+        v = flatmap[key]
+        if v == "true":
+            return True
+        elif v == "false":
+            return False
+        return v
+
+    if key+'.#' in flatmap.keys():
+        return flatmap_expand_array(flatmap, key)
+
+    prefix = key+'.'
+    for k in flatmap.keys():
+        if k.startswith(prefix):
+            return flatmap_expand_dict(flatmap, prefix)
+
+    return None
+
+def flatmap_expand_array(flatmap, prefix):
+    num = int(flatmap[prefix+'.#'])
+    key_set = set()
+    for k in flatmap.keys():
+        if not k.startswith(prefix+'.'):
+            continue
+
+        key = k[len(prefix)+1:]
+        idx = key.find('.')
+        if idx != -1:
+            key = key[:idx]
+
+        if key == '#':
+            continue
+
+        k = int(key)
+        key_set.add(k)
+
+    keys_list = []
+    for key in key_set:
+        keys_list.append(key)
+
+    keys_list.sort()
+
+    result = []
+    for key in keys_list:
+        pk = "%s.%d" % (prefix, key)
+        result.append(flatmap_expand(flatmap, pk))
+
+    return result
+
+def flatmap_expand_dict(flatmap, prefix):
+    result = {}
+    for k in flatmap.keys():
+        if not k.startswith(prefix):
+            continue
+
+        key = k[len(prefix):]
+        idx = key.find(".")
+        if idx != -1:
+            key = key[:idx]
+        if key in result:
+            continue
+
+        if key == '%':
+            continue
+
+        result[key] = flatmap_expand(flatmap, k[:len(prefix)+len(key)])
+
+    return result
+
 class Resource(dict):
     def __init__(self, resource_name, resource_dict):
         super().__init__(resource_dict)
         self['name'] = resource_name
+        self._expand_primary_attributes()
+
+    def _expand_primary_attributes(self):
+        attributes = self['primary']['attributes']
+        self['primary']['expanded_attributes'] = {}
+        for prefix in set([attr.split('.')[0] for attr in attributes.keys()]):
+            self['primary']['expanded_attributes'][prefix] = flatmap_expand(attributes, prefix)
 
 class TemplateWithSource(Template):
     def __new__(cls, source, **kwargs):
-        rv = super().__new__(cls, source, **kwargs)
+        try:
+            rv = super().__new__(cls, source, **kwargs)
+        except jinja_exc.TemplateSyntaxError as e:
+            sys.exit("Syntax error in template: %s (template string was '%s')" % (e, source))
         rv._source = source
         return rv
 
@@ -246,8 +338,8 @@ if __name__ == '__main__':
     parser.add_argument('--debug', help='Print additional debugging information to stderr', action='store_true', default=False)
     parser.add_argument('--state', help="Location of Terraform .tfstate file (default: environment variable TF_STATE or 'terraform.tfstate' in the current directory)", type=argparse.FileType('r'), default=os.getenv('TF_STATE', 'terraform.tfstate'), dest='terraform_state')
     parser.add_argument('--ansible-inventory-name-template', help="A jinja2 template used to generate the ansible `host` (i.e. the inventory name) from a terraform resource. (default: environment variable TF_ANSIBLE_INVENTORY_NAME_TEMPLATE or `%s`)" % (DEFAULT_ANSIBLE_INVENTORY_NAME_TEMPLATE), default=get_template_default('TF_ANSIBLE_INVENTORY_NAME_TEMPLATE', default=DEFAULT_ANSIBLE_INVENTORY_NAME_TEMPLATE), action=JinjaTemplateAction)
-    parser.add_argument('--ansible-host-vars-template', help="A jinja2 template used to generate a comma-separated list (with optional whitespace after the comma, which will be stripped) of ansible host_vars settings (as '<key>=<value>' pairs) from a terraform resource. (default: environment variable TF_ANSIBLE_HOST_VARS_TEMPLATE or `%s`)" % (DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE), default=get_template_default('TF_ANSIBLE_HOST_VARS_TEMPLATE', default=DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE), action=JinjaTemplateAction)
-    parser.add_argument('--ansible-groups-template', help="A jinja2 template used to generate a comma-separated list (with optional whitespace after the comma, which will be stripped) of ansible `group` names to which the resource should belong. (default: environment variable TF_ANSIBLE_GROUPS_TEMPLATE or `%s`])" % (DEFAULT_ANSIBLE_GROUPS_TEMPLATE), default=get_template_default('TF_ANSIBLE_GROUPS_TEMPLATE', default=DEFAULT_ANSIBLE_GROUPS_TEMPLATE), action=JinjaTemplateAction)
+    parser.add_argument('--ansible-host-vars-template', help="A jinja2 template used to generate a newline separated list (with optional whitespace before or after the newline, which will be stripped) of ansible host_vars settings (as '<key>=<value>' pairs) from a terraform resource. (default: environment variable TF_ANSIBLE_HOST_VARS_TEMPLATE or `%s`)" % (DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE), default=get_template_default('TF_ANSIBLE_HOST_VARS_TEMPLATE', default=DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE), action=JinjaTemplateAction)
+    parser.add_argument('--ansible-groups-template', help="A jinja2 template used to generate a newline separated list (with optional whitespace before or after the newline, which will be stripped) of ansible `group` names to which the resource should belong. (default: environment variable TF_ANSIBLE_GROUPS_TEMPLATE or `%s`])" % (DEFAULT_ANSIBLE_GROUPS_TEMPLATE), default=get_template_default('TF_ANSIBLE_GROUPS_TEMPLATE', default=DEFAULT_ANSIBLE_GROUPS_TEMPLATE), action=JinjaTemplateAction)
     parser.add_argument('--ansible-resource-filter-template', help="A jinja2 template used to filter terraform resources. This template is rendered for each resource and should evaluate to either the string 'True' to include the resource or 'False' to exclude it from the output.", default=get_template_default('TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE', default=DEFAULT_ANSIBLE_RESOURCE_FILTER_TEMPLATE), action=JinjaTemplateAction)
     args = parser.parse_args()
     main(args)
