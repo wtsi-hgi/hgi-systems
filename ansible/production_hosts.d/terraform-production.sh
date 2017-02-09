@@ -1,5 +1,7 @@
 #!/bin/bash
 
+terraform_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../terraform"
+
 export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
 
 export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
@@ -17,6 +19,6 @@ export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 EOF
 )
 
-export TF_STATE=../../terraform/production/terraform.tfstate
+export TF_STATE="${terraform_dir}/production/terraform.tfstate"
 
 yatadis $@
