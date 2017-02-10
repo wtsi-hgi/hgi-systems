@@ -61,17 +61,6 @@ version:
     paths:
       - "artifacts/version.txt"
 
-openstack-vars-validate:
-  stage: prepare
-  tags:
-    - docker
-  image: quay.io/wtsi-hgi/gitlab-ci-git-push
-  script:
-    - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
-    - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
-    - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
-    - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
-
 .production-delta-hgi: &production-delta-hgi-def
   variables:
     ENV: "production"
@@ -120,6 +109,17 @@ openstack-vars-validate:
     - develop
     - staging-emedlab-arvados
   
+.openstack-vars-validate: &openstack-vars-validate-def
+  stage: prepare
+  tags:
+    - docker
+  image: quay.io/wtsi-hgi/gitlab-ci-git-push
+  script:
+    - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
+    - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
+    - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
+    - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
+
 .terraform-validate: &terraform-validate-def
   stage: prepare
   tags:
@@ -128,6 +128,30 @@ openstack-vars-validate:
   script:
     - cd terraform/${ENV}-${REGION} && terraform validate
 
+openstack-vars-validate-production-delta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *production-delta-hgi-def
+    
+openstack-vars-validate-staging-delta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *staging-delta-hgi-def
+    
+openstack-vars-validate-production-delta-hgiarvados:
+  <<: *openstack-vars-validate-def
+  <<: *production-delta-hgiarvados-def
+    
+openstack-vars-validate-staging-delta-hgiarvados:
+  <<: *openstack-vars-validate-def
+  <<: *staging-delta-hgiarvados-def
+    
+openstack-vars-validate-production-emedlab-arvados:
+  <<: *openstack-vars-validate-def
+  <<: *production-emedlab-arvados-def
+    
+openstack-vars-validate-staging-emedlab-arvados:
+  <<: *openstack-vars-validate-def
+  <<: *staging-emedlab-arvados-def
+    
 terraform-validate-production-delta-hgi:
   <<: *terraform-validate-def
   <<: *production-delta-hgi-def
