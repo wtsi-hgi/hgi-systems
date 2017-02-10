@@ -126,7 +126,7 @@ version:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cd terraform/${ENV}-${REGION} && terraform validate
+    - cd terraform/${REGION} && terraform validate
 
 openstack-vars-validate-production-delta-hgi:
   <<: *openstack-vars-validate-def
@@ -182,10 +182,10 @@ terraform-validate-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cd "terraform/${ENV}-${REGION}" && terraform refresh -state="${ENV}.tfstate" -backup=- && (terraform show -no-color "${ENV}.tfstate" > "${ENV}.tfstate.txt")
+    - cd "terraform/${REGION}" && terraform refresh -state="${ENV}.tfstate" -backup=- && (terraform show -no-color "${ENV}.tfstate" > "${ENV}.tfstate.txt")
     - mkdir "${CI_PROJECT_DIR}/artifacts/"
-    - cp "terraform/${ENV}-${REGION}/${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
-    - cp "terraform/${ENV}-${REGION}/${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/"
+    - cp "terraform/${REGION}/${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
+    - cp "terraform/${REGION}/${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/"
   artifacts:
     paths:
       - artifacts
@@ -221,13 +221,13 @@ terraform-refresh-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${ENV}-${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts"
-    - cd terraform/${ENV}-${REGION} && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -state="${ENV}.tfstate" -input=false -out plan && (terraform show -no-color plan > plan.txt)
+    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts"
+    - cd terraform/${REGION} && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -state="${ENV}.tfstate" -input=false -out plan && (terraform show -no-color plan > plan.txt)
     - mkdir "${CI_PROJECT_DIR}/artifacts"
-    - cp terraform/${ENV}-${REGION}/plan.dot "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/plan.png "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/plan "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/plan.txt "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/plan.dot "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/plan.png "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/plan "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/plan.txt "${CI_PROJECT_DIR}/artifacts/"
   artifacts:
     paths:
       - artifacts
@@ -274,14 +274,14 @@ terraform-plan-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${ENV}-${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts"
-    - (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd "terraform/${ENV}-${REGION}" && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -state="${ENV}.tfstate" -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > "${ENV}.tfstate.txt")
+    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts"
+    - (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd "terraform/${REGION}" && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -state="${ENV}.tfstate" -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > "${ENV}.tfstate.txt")
     - mkdir "${CI_PROJECT_DIR}/artifacts"
-    - cp terraform/${ENV}-${REGION}/apply.dot "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/apply.png "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/${ENV}.tfstate "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/output.json "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${ENV}-${REGION}/${ENV}.tfstate.txt "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/apply.dot "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/apply.png "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/${ENV}.tfstate "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/output.json "${CI_PROJECT_DIR}/artifacts/"
+    - cp terraform/${REGION}/${ENV}.tfstate.txt "${CI_PROJECT_DIR}/artifacts/"
   artifacts:
     paths:
       - artifacts
@@ -328,8 +328,8 @@ terraform-apply-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
-    - cp "${CI_PROJECT_DIR}/artifacts/${ENV}.tfstate" "terraform/${ENV}-${REGION}/${ENV}.tfstate"
-    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat ${CI_PROJECT_DIR}/artifacts/version.txt)" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${ENV}-${REGION}/${ENV}.tfstate"
+    - cp "${CI_PROJECT_DIR}/artifacts/${ENV}.tfstate" "terraform/${REGION}/${ENV}.tfstate"
+    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat ${CI_PROJECT_DIR}/artifacts/version.txt)" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${REGION}/${ENV}.tfstate"
   when: always
 
 terraform-commit-production-delta-hgi:
