@@ -26,7 +26,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgiarvados" {
       type = "ssh"
       user = "ubuntu"
       agent = "true"
-      timeout = "1m"
+      timeout = "2m"
     }
   }
   # provision using ansible
@@ -68,7 +68,8 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgi" {
     connection {
       type = "ssh"
       user = "ubuntu"
-      timeout = "1m"
+      agent = "true"
+      timeout = "2m"
     }
   }
   # provision using ansible
