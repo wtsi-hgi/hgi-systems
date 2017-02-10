@@ -57,7 +57,7 @@ RUN git clone https://github.com/gruntwork-io/terragrunt.git \
 RUN cd /tmp \
     && git clone https://github.com/wtsi-hgi/yatadis.git \
     && cd yatadis \
-    && git checkout 0.3.0 \
+    && git checkout 0.4.0 \
     && python3 setup.py install
  
 # Set workdir and entrypoint
