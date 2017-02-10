@@ -97,7 +97,7 @@ terraform-apply-production:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
   artifacts:
     paths:
       - terraform/production/apply.dot

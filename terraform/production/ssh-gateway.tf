@@ -31,7 +31,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway-hgiarvados" {
   }
   # provision using ansible
   provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG=../../ansible/ansible-minimal.cfg ansible-playbook -i ../../ansible/production_hosts.d -l 'openstack_compute_instance_v2.ssh-gateway-hgiarvados' --vault-password-file=<(echo $${ANSIBLE_VAULT_PASSWORD}) ../../ansible/site.yml"
+    command = "ANSIBLE_CONFIG=../../ansible/ansible-minimal.cfg ansible-playbook -i ../../ansible/production_hosts.d -l 'openstack_compute_instance_v2.ssh-gateway-hgiarvados' ../../ansible/site.yml"
   }
 }
 
