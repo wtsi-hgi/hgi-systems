@@ -4,6 +4,13 @@
 #  SSH_PRIVATE_KEY (e.g. "-----BEGIN RSA PRIVATE KEY-----
 #                         ...
 #                         -----END RSA PRIVATE KEY-----)"
+#  DELTA_OS_AUTH_URL
+#  DELTA_OS_USERNAME
+#  DELTA_OS_PASSWORD
+#  EMEDLAB_OS_AUTH_URL
+#  EMEDLAB_OS_USERNAME
+#  EMEDLAB_OS_PASSWORD
+#  EMEDLAB_HTTP_PROXY
 variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
@@ -23,12 +30,23 @@ before_script:
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
+  - 'export TF_VAR_env=$ENV'
+  - 'export TF_VAR_region=$REGION'
+  - '[[ "$REGION" == "delta-hgi" ]] && export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}'
+  - '[[ "$REGION" == "delta-hgiarvados" ]] && export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}'
+  - '[[ "$REGION" == "emedlab-arvados" ]] && export OS_USERNAME=${EMEDLAB_OS_USERNAME}; export OS_PASSWORD=${EMEDLAB_OS_PASSWORD}; export OS_AUTH_URL=${EMEDLAB_OS_AUTH_URL}; export HTTP_PROXY=${EMEDLAB_HTTP_PROXY}; export HTTPS_PROXY=${EMEDLAB_HTTP_PROXY}'
+
 stages:
   - prepare
   - refresh
   - plan
   - apply
-  - commit
+  - commit-production-delta-hgi
+  - commit-staging-delta-hgi
+  - commit-production-delta-hgiarvados
+  - commit-staging-delta-hgiarvados
+  - commit-production-emedlab-arvados
+  - commit-staging-emedlab-arvados
   - sync
 
 version:
@@ -42,14 +60,6 @@ version:
     paths:
       - "version.txt"
 
-terraform-validate-production:
-  stage: prepare
-  tags:
-    - docker
-  image: quay.io/wtsi-hgi/tao
-  script:
-    - cd terraform/production && terraform validate
-
 openstack-vars-validate:
   stage: prepare
   tags:
@@ -62,65 +72,293 @@ openstack-vars-validate:
     - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
 
-terraform-refresh-production:
+.production-delta-hgi: &production-delta-hgi-def
+  variables:
+    ENV: "production"
+    REGION: "delta-hgi"
+  only:
+    - master
+    - production-delta-hgi
+  
+.staging-delta-hgi: &staging-delta-hgi-def
+  variables:
+    ENV: "staging"
+    REGION: "delta-hgi"
+  only:
+    - develop
+    - staging-delta-hgi
+  
+.production-delta-hgiarvados: &production-delta-hgiarvados-def
+  variables:
+    ENV: "production"
+    REGION: "delta-hgiarvados"
+  only:
+    - master
+    - production-delta-hgiarvados
+  
+.staging-delta-hgiarvados: &staging-delta-hgiarvados-def
+  variables:
+    ENV: "staging"
+    REGION: "delta-hgiarvados"
+  only:
+    - develop
+    - staging-delta-hgiarvados
+  
+.production-emedlab-arvados: &production-emedlab-arvados-def
+  variables:
+    ENV: "production"
+    REGION: "emedlab-arvados"
+  only:
+    - master
+    - production-emedlab-arvados
+  
+.staging-emedlab-arvados: &staging-emedlab-arvados-def
+  variables:
+    ENV: "staging"
+    REGION: "emedlab-arvados"
+  only:
+    - develop
+    - staging-emedlab-arvados
+  
+.terraform-validate: &terraform-validate-def
+  stage: prepare
+  tags:
+    - docker
+  image: quay.io/wtsi-hgi/tao
+  script:
+    - cd terraform/${ENV}-${REGION} && terraform validate
+
+terraform-validate-production-delta-hgi:
+  <<: *terraform-validate-def
+  <<: *production-delta-hgi-def
+    
+terraform-validate-staging-delta-hgi:
+  <<: *terraform-validate-def
+  <<: *staging-delta-hgi-def
+    
+terraform-validate-production-delta-hgiarvados:
+  <<: *terraform-validate-def
+  <<: *production-delta-hgiarvados-def
+    
+terraform-validate-staging-delta-hgiarvados:
+  <<: *terraform-validate-def
+  <<: *staging-delta-hgiarvados-def
+    
+terraform-validate-production-emedlab-arvados:
+  <<: *terraform-validate-def
+  <<: *production-emedlab-arvados-def
+    
+terraform-validate-staging-emedlab-arvados:
+  <<: *terraform-validate-def
+  <<: *staging-emedlab-arvados-def
+    
+.terraform-refresh: &terraform-refresh-def
   stage: refresh
   tags:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cd terraform/production && terraform refresh -backup=- && (terraform show -no-color > terraform.tfstate.txt)
+    - cd terraform/${ENV}-${REGION} && terraform refresh -backup=- && (terraform show -no-color > terraform.tfstate.txt)
+    - cp terraform/${ENV}-${REGION}/terraform.tfstate artifacts/
+    - cp terraform/${ENV}-${REGION}/terraform.tfstate.txt artifacts/
   artifacts:
     paths:
-      - terraform/production/terraform.tfstate
-      - terraform/production/terraform.tfstate.txt
+      - artifacts/terraform.tfstate
+      - artifacts/terraform.tfstate.txt
     when: always
 
-terraform-plan-production:
+terraform-refresh-production-delta-hgi:
+  <<: *terraform-refresh-def
+  <<: *production-delta-hgi-def
+
+terraform-refresh-staging-delta-hgi:
+  <<: *terraform-refresh-def
+  <<: *staging-delta-hgi-def
+
+terraform-refresh-production-delta-hgiarvados:
+  <<: *terraform-refresh-def
+  <<: *production-delta-hgiarvados-def
+
+terraform-refresh-staging-delta-hgiarvados:
+  <<: *terraform-refresh-def
+  <<: *staging-delta-hgiarvados-def
+
+terraform-refresh-production-emedlab-arvados:
+  <<: *terraform-refresh-def
+  <<: *production-emedlab-arvados-def
+
+terraform-refresh-staging-emedlab-arvados:
+  <<: *terraform-refresh-def
+  <<: *staging-emedlab-arvados-def
+
+.terraform-plan: &terraform-plan-def
   stage: plan
   tags:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cd terraform/production && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
+    - cd terraform/${ENV}-${REGION} && (terraform graph > plan.dot) && (dot -Tpng < plan.dot > plan.png) && terraform plan -input=false -out plan && (terraform show -no-color plan > plan.txt)
+    - cp terraform/${ENV}-${REGION}/plan.dot artifacts/
+    - cp terraform/${ENV}-${REGION}/plan.png artifacts/
+    - cp terraform/${ENV}-${REGION}/plan artifacts/
+    - cp terraform/${ENV}-${REGION}/plan.txt artifacts/
   artifacts:
     paths:
-      - terraform/production/plan.dot
-      - terraform/production/plan.png
-      - terraform/production/plan
-      - terraform/production/plan.txt
-  dependencies:
-    - terraform-refresh-production
+      - artifacts/plan.dot
+      - artifacts/plan.png
+      - artifacts/plan
+      - artifacts/plan.txt
 
-terraform-apply-production:
+terraform-plan-production-delta-hgi:
+  <<: *terraform-plan-def
+  <<: *production-delta-hgi-def
+  dependencies:
+    - terraform-refresh-production-delta-hgi
+
+terraform-plan-staging-delta-hgi:
+  <<: *terraform-plan-def
+  <<: *staging-delta-hgi-def
+  dependencies:
+    - terraform-refresh-staging-delta-hgi
+
+terraform-plan-production-delta-hgiarvados:
+  <<: *terraform-plan-def
+  <<: *production-delta-hgiarvados-def
+  dependencies:
+    - terraform-refresh-production-delta-hgiarvados
+
+terraform-plan-staging-delta-hgiarvados:
+  <<: *terraform-plan-def
+  <<: *staging-delta-hgiarvados-def
+  dependencies:
+    - terraform-refresh-staging-delta-hgiarvados
+
+terraform-plan-production-emedlab-arvados:
+  <<: *terraform-plan-def
+  <<: *production-emedlab-arvados-def
+  dependencies:
+    - terraform-refresh-production-emedlab-arvados
+
+terraform-plan-staging-emedlab-arvados:
+  <<: *terraform-plan-def
+  <<: *staging-emedlab-arvados-def
+  dependencies:
+    - terraform-refresh-staging-emedlab-arvados
+
+.terraform-apply: &terraform-apply-def
   stage: apply
   tags:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd terraform/production && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd terraform/${ENV}-${REGION} && (terraform graph plan > apply.dot) && (dot -Tpng < apply.dot > apply.png) && terraform apply -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > terraform.tfstate.txt)
+    - cp terraform/${ENV}-${REGION}/apply.dot artifacts/
+    - cp terraform/${ENV}-${REGION}/apply.png artifacts/
+    - cp terraform/${ENV}-${REGION}/terraform.tfstate artifacts/
+    - cp terraform/${ENV}-${REGION}/output.json artifacts/
+    - cp terraform/${ENV}-${REGION}/terraform.tfstate.txt artifacts/
   artifacts:
     paths:
-      - terraform/production/apply.dot
-      - terraform/production/apply.png
-      - terraform/production/terraform.tfstate
-      - terraform/production/output.json
-      - terraform/production/terraform.tfstate.txt
+      - artifacts/apply.dot
+      - artifacts/apply.png
+      - artifacts/terraform.tfstate
+      - artifacts/output.json
+      - artifacts/terraform.tfstate.txt
     when: always
-  dependencies:
-    - terraform-plan-production
 
-tfstate-commit:
-  stage: commit
+terraform-apply-production-delta-hgi:
+  <<: *terraform-apply-def
+  <<: *production-delta-hgi-def
+  dependencies:
+    - terraform-plan-production-delta-hgi
+
+terraform-apply-staging-delta-hgi:
+  <<: *terraform-apply-def
+  <<: *staging-delta-hgi-def
+  dependencies:
+    - terraform-plan-staging-delta-hgi
+
+terraform-apply-production-delta-hgiarvados:
+  <<: *terraform-apply-def
+  <<: *production-delta-hgiarvados-def
+  dependencies:
+    - terraform-plan-production-delta-hgiarvados
+
+terraform-apply-staging-delta-hgiarvados:
+  <<: *terraform-apply-def
+  <<: *staging-delta-hgiarvados-def
+  dependencies:
+    - terraform-plan-staging-delta-hgiarvados
+
+terraform-apply-production-emedlab-arvados:
+  <<: *terraform-apply-def
+  <<: *production-emedlab-arvados-def
+  dependencies:
+    - terraform-plan-production-emedlab-arvados
+
+terraform-apply-staging-emedlab-arvados:
+  <<: *terraform-apply-def
+  <<: *staging-emedlab-arvados-def
+  dependencies:
+    - terraform-plan-staging-emedlab-arvados
+
+.tfstate-commit: &terraform-commit-def
   tags:
     - docker
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
-    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]" "terraform/production/terraform.tfstate"
-  dependencies:
-    - terraform-apply-production
-    - version
+    - cp artifacts/terraform.tfstate terraform/${ENV}-${REGION}/
+    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]" "terraform/${ENV}-${REGION}/terraform.tfstate"
   when: always
-  
+
+terraform-commit-production-delta-hgi:
+  <<: *terraform-commit-def
+  <<: *production-delta-hgi-def
+  stage: commit-production-delta-hgi
+  dependencies:
+    - version
+    - terraform-apply-production-delta-hgi
+
+terraform-commit-staging-delta-hgi:
+  <<: *terraform-commit-def
+  <<: *staging-delta-hgi-def
+  stage: commit-staging-delta-hgi
+  dependencies:
+    - version
+    - terraform-apply-staging-delta-hgi
+
+terraform-commit-production-delta-hgiarvados:
+  <<: *terraform-commit-def
+  <<: *production-delta-hgiarvados-def
+  stage: commit-production-delta-hgiarvados
+  dependencies:
+    - version
+    - terraform-apply-production-delta-hgiarvados
+
+terraform-commit-staging-delta-hgiarvados:
+  <<: *terraform-commit-def
+  <<: *staging-delta-hgiarvados-def
+  stage: commit-staging-delta-hgiarvados
+  dependencies:
+    - version
+    - terraform-apply-staging-delta-hgiarvados
+
+terraform-commit-production-emedlab-arvados:
+  <<: *terraform-commit-def
+  <<: *production-emedlab-arvados-def
+  stage: commit-production-emedlab-arvados
+  dependencies:
+    - version
+    - terraform-apply-production-emedlab-arvados
+
+terraform-commit-staging-emedlab-arvados:
+  <<: *terraform-commit-def
+  <<: *staging-emedlab-arvados-def
+  stage: commit-staging-emedlab-arvados
+  dependencies:
+    - version
+    - terraform-apply-staging-emedlab-arvados
+
 github-sync:
   stage: sync
   tags:
