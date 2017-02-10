@@ -75,3 +75,7 @@ hgi-cordon-cookie-jar
 [cookie-crunchers:children]
 cookie-monsters
 cookie-jars
+
+[ssh-gateways]
+openstack_compute_instance_v2.ssh-gateway-hgi ansible_user=ubuntu
+openstack_compute_instance_v2.ssh-gateway-hgiarvados ansible_user=ubuntu
