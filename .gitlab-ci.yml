@@ -1,5 +1,6 @@
 # This script excepts the following Secret Variables to be defined in
 # Gitlab project settings:
+#  ANSIBLE_VAULT_PASSWORD
 #  SSH_PRIVATE_KEY (e.g. "-----BEGIN RSA PRIVATE KEY-----
 #                         ...
 #                         -----END RSA PRIVATE KEY-----)"
