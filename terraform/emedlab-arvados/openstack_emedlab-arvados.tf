@@ -1,6 +1,6 @@
 provider "openstack" {
   alias = "emedlab-arvados"
-  tenant_name = "${var.emedlab-arvados_tenant_name}"
+  tenant_name = "arvados"
 }
 
 resource "openstack_compute_keypair_v2" "mercury_emedlab-arvados" {
