@@ -265,12 +265,7 @@ terraform-plan-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts"
-    - (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd "terraform/${REGION}" && terraform apply -state="${ENV}.tfstate" -input=false plan && (terraform output -json > output.json) && (terraform show -no-color > "${ENV}.tfstate.txt")
-    - mkdir -p "${CI_PROJECT_DIR}/artifacts"
-    - cp terraform/${REGION}/${ENV}.tfstate "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${REGION}/output.json "${CI_PROJECT_DIR}/artifacts/"
-    - cp terraform/${REGION}/${ENV}.tfstate.txt "${CI_PROJECT_DIR}/artifacts/"
+    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts" && mkdir -p "${CI_PROJECT_DIR}/artifacts" && (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw) && cd "terraform/${REGION}" && terraform apply -input=false plan && cp "${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/" && (terraform output -json -state "${ENV}.tfstate" > output.json) && cp output.json "${CI_PROJECT_DIR}/artifacts/" && (terraform show -no-color > "${ENV}.tfstate.txt") && cp "${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/"
   artifacts:
     paths:
       - artifacts
