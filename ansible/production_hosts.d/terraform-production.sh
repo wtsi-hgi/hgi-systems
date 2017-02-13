@@ -1,5 +1,12 @@
 #!/bin/bash
 
+YATADIS_BIN=$(which yatadis)
+if [[ -z "${YATADIS_BIN}" ]]; then
+    >&2 echo "No yatadis binary in path, cannot include Terraform dynamic inventory!"
+    echo "{}"
+    exit 0
+fi
+
 terraform_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../terraform"
 
 export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
