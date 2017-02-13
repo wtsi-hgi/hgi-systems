@@ -9,9 +9,7 @@ mkdir -p "${artifacts_dir}"
 echo "Changing to terraform/${REGION} directory"
 cd "terraform/${REGION}"
 
-if [[ \! -e "${ENV}.tfstate" ]]; then
-    echo "${ENV}.tfstate does not exist, skipping terraform refresh!"
-else
+if [[ -e "${ENV}.tfstate" ]]; then
     echo "Calling terraform refresh on ${ENV}.tfstate"
     terraform refresh -state="${ENV}.tfstate" -backup=-
     terraform_exit_status=$?
@@ -24,4 +22,6 @@ else
         >&2 echo "Terraform refresh failed: ${terraform_exit_status}"
         exit ${terraform_exit_status}
     fi
+else
+    echo "${ENV}.tfstate does not exist, skipping terraform refresh!"
 fi
