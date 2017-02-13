@@ -7,8 +7,10 @@ echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
 
 if [[ -n "${artifacts}" ]]; then
-    echo "Copying ${artifacts} to terraform/${REGION}/"
-    cp ${artifacts} "terraform/${REGION}/"
+    for artifact in ${artifacts}; do
+        echo "Copying ${artifacts_dir}/${artifact} to terraform/${REGION}/"
+        cp "${artifacts_dir}/${artifact}" "terraform/${REGION}/"
+    done
 else
     echo "No artifacts to copy"
 fi
