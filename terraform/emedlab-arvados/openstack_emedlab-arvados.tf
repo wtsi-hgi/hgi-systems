@@ -44,7 +44,7 @@ resource "openstack_networking_subnet_v2" "main_emedlab-arvados" {
 resource "openstack_networking_router_v2" "main_arvados-net_emedlab-arvados" {
   provider = "openstack.emedlab-arvados"
   name = "main_arvados-net_emedlab-arvados"
-  external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
+  external_gateway = "74af2c0a-46c6-4f69-8d17-819a721b4b5c"
 }
 
 resource "openstack_networking_router_interface_v2" "main_arvados-net_emedlab-arvados" {

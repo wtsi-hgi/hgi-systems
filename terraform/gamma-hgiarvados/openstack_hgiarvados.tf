@@ -44,7 +44,7 @@ resource "openstack_networking_subnet_v2" "main_gamma-hgiarvados" {
 resource "openstack_networking_router_v2" "main_nova_gamma-hgiarvados" {
   provider = "openstack.gamma-hgiarvados"
   name = "main_nova_gamma-hgiarvados"
-  external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
+  external_gateway = "1c682a8a-bed3-4354-9098-60d11fc608af"
 }
 
 resource "openstack_networking_router_interface_v2" "main_nova_gamma-hgiarvados" {

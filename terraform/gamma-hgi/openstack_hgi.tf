@@ -44,7 +44,7 @@ resource "openstack_networking_subnet_v2" "main_gamma-hgi" {
 resource "openstack_networking_router_v2" "main_nova_gamma-hgi" {
   provider = "openstack.gamma-hgi"
   name = "main_nova_gamma-hgi"
-  external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
+  external_gateway = "1c682a8a-bed3-4354-9098-60d11fc608af"
 }
 
 resource "openstack_networking_router_interface_v2" "main_nova_gamma-hgi" {
