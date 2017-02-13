@@ -2,7 +2,7 @@
 
 set -euf -o pipefail
 
-artifacts_dir="${CI_PROJECT_DIR}/artifacts/"
+artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
 
