@@ -8,7 +8,7 @@ mkdir -p "${CI_PROJECT_DIR}/artifacts"
 
 cd "terraform/${REGION}"
 
-terraform apply -input=false plan
+terraform apply -input=false plan -state-out="${ENV}.tfstate.txt"
 success=$?
 cp "${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
 
