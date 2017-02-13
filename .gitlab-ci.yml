@@ -218,7 +218,7 @@ terraform-refresh-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts" && cd terraform/${REGION} && terraform plan -state="${ENV}.tfstate" -input=false -out plan && (terraform show -no-color plan > plan.txt) && (terraform graph plan > plan.dot) && (dot -Tpng < plan.dot > plan.png) && mkdir -p "${CI_PROJECT_DIR}/artifacts" && cp terraform/${REGION}/plan.dot "${CI_PROJECT_DIR}/artifacts/" && cp terraform/${REGION}/plan.png "${CI_PROJECT_DIR}/artifacts/" && cp terraform/${REGION}/plan "${CI_PROJECT_DIR}/artifacts/" && cp terraform/${REGION}/plan.txt "${CI_PROJECT_DIR}/artifacts/"
+    - cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/" && rm -rf "${CI_PROJECT_DIR}/artifacts" && mkdir -p "${CI_PROJECT_DIR}/artifacts" && cd terraform/${REGION} && terraform plan -state="${ENV}.tfstate" -input=false -out plan && cp plan "${CI_PROJECT_DIR}/artifacts/" && (terraform show -no-color plan > plan.txt) && cp plan.txt "${CI_PROJECT_DIR}/artifacts/" && (terraform graph plan > plan.dot) && cp plan.dot "${CI_PROJECT_DIR}/artifacts/" && (dot -Tpng < plan.dot > plan.png) && cp plan.png "${CI_PROJECT_DIR}/artifacts/" 
   artifacts:
     paths:
       - artifacts
