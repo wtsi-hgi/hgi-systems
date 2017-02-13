@@ -6,8 +6,12 @@ artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
 
-echo "Copying ${artifacts} to terraform/${REGION}/"
-cp ${artifacts} "terraform/${REGION}/"
+if [[ -n "${artifacts}" ]]; then
+    echo "Copying ${artifacts} to terraform/${REGION}/"
+    cp ${artifacts} "terraform/${REGION}/"
+else
+    echo "No artifacts to copy"
+fi
 
 echo "Emptying artifacts directory"
 rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
