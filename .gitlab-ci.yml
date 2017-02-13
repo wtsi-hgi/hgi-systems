@@ -182,10 +182,7 @@ terraform-validate-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/tao
   script:
-    - cd "terraform/${REGION}" && ((test \! -e "${ENV}.tfstate" && echo "${ENV}.tfstate does not exist, skipping terraform refresh!") || (terraform refresh -state="${ENV}.tfstate" -backup=- && (terraform show -no-color "${ENV}.tfstate" > "${ENV}.tfstate.txt")))
-    - mkdir -p "${CI_PROJECT_DIR}/artifacts/"
-    - cp "terraform/${REGION}/${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
-    - cp "terraform/${REGION}/${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/"
+    - cd "terraform/${REGION}" && ((test \! -e "${ENV}.tfstate" && echo "${ENV}.tfstate does not exist, skipping terraform refresh!") || (terraform refresh -state="${ENV}.tfstate" -backup=- && (terraform show -no-color "${ENV}.tfstate" > "${ENV}.tfstate.txt")) && mkdir -p "${CI_PROJECT_DIR}/artifacts/" && cp "terraform/${REGION}/${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/" && cp "terraform/${REGION}/${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/")
   artifacts:
     paths:
       - artifacts
