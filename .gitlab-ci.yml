@@ -32,9 +32,9 @@ before_script:
 
   - 'export TF_VAR_env=$ENV'
   - 'export TF_VAR_region=$REGION'
-  - 'test "$REGION" == "delta-hgi" && (export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}; echo "OS vars for delta-hgi set")'
-  - 'test "$REGION" == "delta-hgiarvados" && (export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}; echo "OS vars for delta-hgiarvados set")'
-  - 'test "$REGION" == "emedlab-arvados" && (export OS_USERNAME=${EMEDLAB_OS_USERNAME}; export OS_PASSWORD=${EMEDLAB_OS_PASSWORD}; export OS_AUTH_URL=${EMEDLAB_OS_AUTH_URL}; export HTTP_PROXY=${EMEDLAB_HTTP_PROXY}; export HTTPS_PROXY=${EMEDLAB_HTTP_PROXY}; echo "OS vars for emedlab-arvados set")'
+  - 'if [[ "$REGION" == "delta-hgi" ]]; then export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}; echo "OS vars for delta-hgi set"; fi'
+  - 'if [[ "$REGION" == "delta-hgiarvados" ]]; then export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}; echo "OS vars for delta-hgiarvados set"; fi'
+  - 'if [[ "$REGION" == "emedlab-arvados" ]]; then export OS_USERNAME=${EMEDLAB_OS_USERNAME}; export OS_PASSWORD=${EMEDLAB_OS_PASSWORD}; export OS_AUTH_URL=${EMEDLAB_OS_AUTH_URL}; export HTTP_PROXY=${EMEDLAB_HTTP_PROXY}; export HTTPS_PROXY=${EMEDLAB_HTTP_PROXY}; echo "OS vars for emedlab-arvados set"; fi'
 
 stages:
   - prepare
