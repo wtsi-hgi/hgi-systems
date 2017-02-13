@@ -1,6 +1,6 @@
 resource "openstack_compute_floatingip_v2" "ssh-gateway-emedlab-arvados" {
   provider = "openstack.emedlab-arvados"
-  pool = "nova"
+  pool = "arvados-net"
 }
 
 resource "openstack_compute_instance_v2" "ssh-gateway-emedlab-arvados" {

@@ -41,14 +41,14 @@ resource "openstack_networking_subnet_v2" "main_emedlab-arvados" {
   ip_version = 4
 }
 
-resource "openstack_networking_router_v2" "main_nova_emedlab-arvados" {
+resource "openstack_networking_router_v2" "main_arvados-net_emedlab-arvados" {
   provider = "openstack.emedlab-arvados"
-  name = "main_nova_emedlab-arvados"
+  name = "main_arvados-net_emedlab-arvados"
   external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
 }
 
-resource "openstack_networking_router_interface_v2" "main_nova_emedlab-arvados" {
+resource "openstack_networking_router_interface_v2" "main_arvados-net_emedlab-arvados" {
   provider = "openstack.emedlab-arvados"
-  router_id = "${openstack_networking_router_v2.main_nova_emedlab-arvados.id}"
+  router_id = "${openstack_networking_router_v2.main_arvados-net_emedlab-arvados.id}"
   subnet_id = "${openstack_networking_subnet_v2.main_emedlab-arvados.id}"
 }
