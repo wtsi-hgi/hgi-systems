@@ -69,6 +69,7 @@ version:
   artifacts:
     paths:
       - "artifacts/version.txt"
+  dependencies: []
 
 .production-gamma-hgi: &production-gamma-hgi-def
   variables:
@@ -160,6 +161,7 @@ version:
     - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
     - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
+  dependencies: []
 
 .terraform-validate: &terraform-validate-def
   stage: prepare
@@ -168,6 +170,7 @@ version:
   image: quay.io/wtsi-hgi/tao
   script:
     - cd terraform/${REGION} && terraform validate
+  dependencies: []
 
 openstack-vars-validate-production-gamma-hgi:
   <<: *openstack-vars-validate-def
@@ -260,6 +263,7 @@ terraform-validate-staging-emedlab-arvados:
     paths:
       - artifacts
     when: always
+  dependencies: []
 
 terraform-refresh-production-gamma-hgi:
   <<: *terraform-refresh-def
