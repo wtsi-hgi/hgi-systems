@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cp ${CI_PROJECT_DIR}/artifacts/* "terraform/${REGION}/"
 rm -rf "${CI_PROJECT_DIR}/artifacts"
 mkdir -p "${CI_PROJECT_DIR}/artifacts"
