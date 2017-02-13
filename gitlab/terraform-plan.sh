@@ -16,8 +16,12 @@ fi
 echo "Emptying artifacts directory"
 rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
 
-echo "Copying ${ENV}.tfstate (from refresh job) into output artifacts"
-cp "${ENV}.tfstate" "${artifacts_dir}/"
+if [[ -e "${ENV}.tfstate" ]]; then
+    echo "Copying ${ENV}.tfstate (from refresh job) into output artifacts"
+    cp "${ENV}.tfstate" "${artifacts_dir}/"
+else
+    echo "No existing ${ENV}.tfstate to pass along in artifacts"
+fi
 
 echo "Changing to terraform/${REGION} directory"
 cd terraform/${REGION}
