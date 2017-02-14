@@ -39,6 +39,7 @@
 - include: chronosians.yml
 - include: mesos-slaves.yml
 - include: bamboosians.yml
+- include: gitlab-builders.yml
 
 # playbooks that only support root hosts
 - include: dockerers.yml
