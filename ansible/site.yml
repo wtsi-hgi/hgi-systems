@@ -41,6 +41,8 @@
 - include: bamboosians.yml
 
 # playbooks that only support root hosts
+- include: cookie-jars.yml
+- include: cookie-monsters.yml
 - include: dockerers.yml
 - include: gitlab-runners.yml
 - include: consul-servers.yml
