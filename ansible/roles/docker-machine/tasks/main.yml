@@ -18,18 +18,34 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/gitlab-runner/defaults/main.yml
+# file: roles/docker-machine/tasks/main.yml
 
-gitlab_runner_concurrent: 1
+- name: ensure we have build prerequisites
+  tags: docker-machine
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - git
+    - make
 
-gitlab_runner_registrations:
-  - name: "docker"
-    executor: docker
-    extra_tags:
-      - docker
-    extra_args: "--docker-image docker:latest"
+- name: clone docker-machine source
+  tags: docker-machine
+  become: yes
+  git: 
+    repo: https://github.com/docker/machine.git
+    dest: /usr/src/docker-machine
+    version: v0.9.0
 
-hgi_gitlab_tokens:
-  - project: ""
-    url: ""
-    token: ""
+- name: build docker-machine
+  tags: docker-machine
+  become: yes
+  command: make
+  args:
+    chdir: /usr/src/docker-machine
+  environment: 
+    USE_CONTAINER: true
+

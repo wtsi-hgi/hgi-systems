@@ -18,18 +18,9 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/gitlab-runner/defaults/main.yml
+# file: roles/docker-machine/meta/main.yml
 
-gitlab_runner_concurrent: 1
+dependencies:
+  - { role: common }
+  - { role: docker }
 
-gitlab_runner_registrations:
-  - name: "docker"
-    executor: docker
-    extra_tags:
-      - docker
-    extra_args: "--docker-image docker:latest"
-
-hgi_gitlab_tokens:
-  - project: ""
-    url: ""
-    token: ""

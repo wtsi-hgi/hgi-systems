@@ -23,7 +23,7 @@
 - name: add gitlab signing key
   tags: gitlab-runner
   become: yes
-  apt_key: 
+  apt_key:
     url: "https://packages.gitlab.com/gpg.key"
     state: present
   when: ansible_os_family == 'Debian'
@@ -62,17 +62,16 @@
     registration_url: "{{ item[1].url }}"
     registration_token: "{{ item[1].token }}"
     executor: "{{ item[0].executor }}"
-    name: "{{ item[0].name }}-{{ item[1].project }}-{{ ansible_hostname }}"
-    tags: "{{ group_names | union(item[0].extra_tags) | join(',') }}"
-    extra_args: "{{ item[0].extra_args | default('') }}"
-  with_nested: 
+    name: "{{ item[0].name }}-{{ item[1].project }}-{{ inventory_hostname_short }}"
+    tags: "{{ group_names | union(item[0].extratags | default([])) | join(',') }}"
+    extra_args: "{{ item[0].extraargs | default('') }}"
+  with_nested:
     - "{{ gitlab_runner_registrations }}"
     - "{{ hgi_gitlab_tokens }}"
   when: "not 'image-building' in group_names"
-  
+
 - name: assemble gitlab runner configuration
   tags: gitlab-runner
   become: yes
   assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"
   when: "not 'image-building' in group_names"
-

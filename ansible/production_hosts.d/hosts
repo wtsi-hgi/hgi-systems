@@ -76,6 +76,28 @@ hgi-cordon-cookie-jar
 cookie-monsters
 cookie-jars
 
+[gitlab-runners:children]
+openstack-gitlab-runners
+
+[dockerers:children]
+gitlab-runners
+
+# OpenStack instances to be created by Ansible
+[openstack-instances]
+gitlab-runner-docker-machine-gamma-hgi-01
+gitlab-runner-docker-machine-delta-hgi-ci-01
+
+[openstack-gitlab-runners]
+gitlab-runner-docker-machine-gamma-hgi-01
+gitlab-runner-docker-machine-delta-hgi-ci-01
+
+[openstack-gamma-hgi]
+gitlab-runner-docker-machine-gamma-hgi-01
+
+[openstack-delta-hgi-ci]
+gitlab-runner-docker-machine-delta-hgi-ci-01
+
+# Groups of dynamic inventory hosts managed by Terraform
 [ssh-gateways]
 openstack_compute_instance_v2.ssh-gateway-hgi ansible_user=ubuntu
 openstack_compute_instance_v2.ssh-gateway-hgiarvados ansible_user=ubuntu

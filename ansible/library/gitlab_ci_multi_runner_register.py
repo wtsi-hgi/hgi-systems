@@ -26,8 +26,8 @@ DOCUMENTATION = """
 module: gitlab_ci_multi_runner_register
 short_description: Register a runner with Gitlab CI
 description:
-  - Registers Gitlab CI Multi Runner with one or more Gitlab servers (identified by token and URL), and 
-    saves runner configuration to a config.toml fragment located in a config_dir suitable for passing into 
+  - Registers Gitlab CI Multi Runner with one or more Gitlab servers (identified by token and URL), and
+    saves runner configuration to a config.toml fragment located in a config_dir suitable for passing into
     a subsequent `assemble` task.
 author:
   - Joshua C. Randall <jcrandall@alum.mit.edu>
@@ -54,7 +54,7 @@ def main():
 
     configuration_path = "%s/name-%s.json" % (module.params["config_dir"], module.params["name"])
     output_toml_path = "%s/name-%s-token-%s-url-%s.toml" % (module.params["config_dir"], module.params["name"], module.params["registration_token"], b64encode(module.params["registration_url"]))
-    
+
     config = dict()
     config["name"] = module.params["name"]
     config["registration_url"] = module.params["registration_url"]
@@ -101,10 +101,10 @@ def main():
     if "extra_args" in config:
         register_command.extend(shlex.split(config["extra_args"]))
     register_command.extend(["-c", config["output_toml_path"]])
-    register_process = subprocess.Popen(register_command, shell=False, stdout=subprocess.PIPE)
-    register_process.wait()
-    if register_process.returncode != 0:
-        module.exit_json(failed=True, changed=changed, message="Failed to register configuration", config=config)
+    try:
+        register_output = subprocess.check_output(register_command, shell=False, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as e:
+        module.exit_json(failed=True, changed=changed, message="Failed to register configuration (call to '%s' failed with status %s): %s" % (e.cmd, e.returncode, e.output), config=config)
     changed=True
 
     sed_command = ["sed", "-ni", "/^\[\[runners\]\]/ { p; :a; n; p; ba; }", config["output_toml_path"]]
@@ -118,7 +118,7 @@ def main():
             json.dump(config, f)
             f.close()
             module.atomic_move(f.name, configuration_path)
-            
+
     except IOError as e:
         module.exit_json(failed=True, changed=changed, message="Failed to write config JSON to %s: %s" % (configuration_path, e))
 
@@ -126,4 +126,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

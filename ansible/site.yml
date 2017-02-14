@@ -20,6 +20,9 @@
 ---
 # file: site.yml
 
+# bring up openstack instances
+- include: openstack-instances.yml
+
 # create dynamic groups based on OS
 - hosts: all
   tasks:

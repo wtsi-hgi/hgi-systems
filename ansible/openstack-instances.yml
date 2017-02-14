@@ -18,18 +18,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/gitlab-runner/defaults/main.yml
-
-gitlab_runner_concurrent: 1
-
-gitlab_runner_registrations:
-  - name: "docker"
-    executor: docker
-    extra_tags:
-      - docker
-    extra_args: "--docker-image docker:latest"
-
-hgi_gitlab_tokens:
-  - project: ""
-    url: ""
-    token: ""
+# file: openstack-instances.yml
+- hosts: openstack-instances
+  gather_facts: no
+  roles:
+    - openstack-instance

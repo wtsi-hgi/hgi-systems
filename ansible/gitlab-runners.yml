@@ -21,4 +21,5 @@
 # file: gitlab-runners.yml
 - hosts: gitlab-runners
   roles:
+    - docker-machine
     - gitlab-runner

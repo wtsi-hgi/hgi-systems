@@ -1,0 +1,151 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/openstack-instance/tasks/main.yml
+
+- name: create key pair
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_keypair:
+    auth: "{{ openstack_instance_auth }}"
+    state: present
+    name: "{{ openstack_instance_key_name }}"
+    public_key_file: "{{ openstack_instance_public_key_file }}"
+
+- name: gather facts about openstack network
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_networks_facts:
+    auth: "{{ openstack_instance_auth }}"
+    name: "{{ openstack_instance_network }}"
+
+- name: create an openstack network
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_network:
+    auth: "{{ openstack_instance_auth }}"
+    state: present
+    name: "{{ openstack_instance_network }}"
+  when: (openstack_networks | length == 0)
+
+- name: gather facts about openstack subnet
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_subnets_facts:
+    auth: "{{ openstack_instance_auth }}"
+    name: "{{ openstack_instance_subnet }}"
+
+- name: create an openstack subnet
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_subnet:
+    auth: "{{ openstack_instance_auth }}"
+    state: present
+    name: "{{ openstack_instance_subnet }}"
+    network_name: "{{ openstack_instance_network }}"
+    dns_nameservers: "{{ openstack_instance_dns_servers }}"
+    cidr: "{{ openstack_instance_cidr }}"
+  when: (openstack_subnets | length == 0)
+
+- name: create openstack router
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_router:
+    auth: "{{ openstack_instance_auth }}"
+    state: present
+    name: "{{ openstack_instance_router }}"
+    network: "{{ openstack_instance_external_network }}"
+    interfaces:
+      - "{{ openstack_instance_subnet }}"
+
+- name: create ssh security group 
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_security_group:
+    auth: "{{ openstack_instance_auth }}"
+    state: present
+    name: "{{ openstack_instance_ssh_security_group_name }}"
+
+- name: add rule to ssh security group
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_security_group_rule:
+    auth: "{{ openstack_instance_auth }}"
+    state: present
+    security_group: "{{ openstack_instance_ssh_security_group_name }}"
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 0.0.0.0/0
+  
+- name: gather facts about openstack instance
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_server_facts:
+    auth: "{{ openstack_instance_auth }}"
+    server: "{{ inventory_hostname }}"
+    detailed: yes
+
+- name: create an openstack instance
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_server: 
+    state: present
+    auth: "{{ openstack_instance_auth }}"
+    image: "{{ openstack_instance_image }}"
+    name: "{{ inventory_hostname }}"
+    wait: yes
+    auto_ip: yes
+    reuse_ips: no
+    flavor: "{{ openstack_instance_flavor }}"
+    key_name: "{{ openstack_instance_key_name }}"
+    network: "{{ openstack_instance_network }}"
+    security_groups: 
+      - "{{ openstack_instance_ssh_security_group_name }}"
+  tags: 
+      - openstack-instance
+  when: (openstack_servers | length == 0)
+  register: create_instance
+
+- name: gather facts again
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_server_facts:
+    auth: "{{ openstack_instance_auth }}"
+    server: "{{ inventory_hostname }}"
+    detailed: yes
+  when: create_instance|changed
+
+- name: set ansible_host and ansible_user
+  set_fact:
+    ansible_host: "{{ openstack_servers[0].accessIPv4 }}"
+    ansible_user: "{{ openstack_instance_ssh_user }}"
+
+- name: wait for instance to come up
+  local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} search_regex=OpenSSH timeout=120
+
+- name: scan for ssh fingerprint from instance
+  delegate_to: localhost
+  command: ssh-keyscan -H {{ ansible_host }} 
+  register: ssh_keyscan_results
+  when: create_instance|changed 
+
+- name: store ssh fingerprint in known_hosts
+  delegate_to: localhost
+  known_hosts:
+    name: "{{ ansible_host }}"
+    key: "{{ ssh_keyscan_results.stdout }}"
+    state: present
+  when: ssh_keyscan_results|changed 
+
+- name: install python
+  become: yes
+  raw: apt-get update && apt-get install -qqy python
+  args:
+    executable: /bin/bash
