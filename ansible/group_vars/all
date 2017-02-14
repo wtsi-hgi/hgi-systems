@@ -87,3 +87,6 @@ pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     LAUnpHIBWX1L/VrZtNd2npZC
     -----END CERTIFICATE-----
 
+
+hgi_docker_os_image_name: hgi-docker-
+hgi_docker_os_image_user: ubuntu

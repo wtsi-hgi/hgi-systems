@@ -22,6 +22,18 @@
 # file: group_vars/gitlab-runners
 
 gitlab_runner_concurrent: 30
+gitlab_runner_idle_machines: 5
+gitlab_runner_idle_time: 900
+gitlab_runner_max_builds: 0
+
+gitlab_runner_os_flavor_name: "m1.small"
+gitlab_runner_os_auth_url: "{{ openstack_instance_auth.auth_url }}"
+gitlab_runner_os_project_name: "{{ openstack_instance_auth.project_name }}"
+gitlab_runner_os_username: "{{ openstack_instance_auth.username }}"
+gitlab_runner_os_password: "{{ openstack_instance_auth.password }}"
+
+gitlab_runner_os_image_name: "{{ hgi_docker_os_image_name }}"
+gitlab_runner_os_ssh_user: "{{ hgi_docker_os_image_user }}"
 
 gitlab_runner_registrations:
   - name: "docker-privileged"
@@ -30,13 +42,8 @@ gitlab_runner_registrations:
       - docker
       - docker-privileged
     extraargs: "--docker-privileged --docker-image docker:latest"
-  - name: "docker"
-    executor: docker
-    extratags:
-      - docker
-    extraargs: "--docker-image docker:latest"
   - name: "docker-machine"
-    executor: docker-machine
+    executor: docker+machine
     extratags:
       - docker
-    extraargs: "--docker-image docker:latest"
+    extraargs: "--docker-image docker:latest --machine-idle-nodes {{ gitlab_runner_idle_machines }} --machine-idle-time {{ gitlab_runner_idle_time }} --machine-max-builds {{ gitlab_runner_max_builds }} --machine-machine-driver 'openstack' --machine-machine-name 'gitlab-runner-%s' --machine-machine-options 'openstack-auth-url={{ gitlab_runner_os_auth_url }}' --machine-machine-options 'openstack-project-name={{ gitlab_runner_os_project_name }}' --machine-machine-options 'openstack-username={{ gitlab_runner_os_username }}' --machine-machine-options 'openstack-password={{ gitlab_runner_os_password }}' --machine-machine-options 'openstack-flavor-name={{ gitlab_runner_os_flavor_name }}' --machine-machine-options 'openstack-image-name={{ gitlab_runner_os_image_name }}' --machine-machine-options 'openstack-ssh-user={{ gitlab_runner_os_ssh_user }}'"

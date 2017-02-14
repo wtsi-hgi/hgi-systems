@@ -55,6 +55,9 @@
   become: yes
   template: src=00config.toml.j2 dest=/etc/gitlab-runner.d/00config.toml
 
+#- name: install gitlab runner docker machine openstack image from S3
+#  tags: gitlab-runner
+
 - name: register gitlab runner
   tags: gitlab-runner
   become: yes
