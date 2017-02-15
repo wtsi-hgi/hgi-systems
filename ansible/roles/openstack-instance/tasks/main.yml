@@ -23,63 +23,22 @@
 - name: create key pair
   delegate_to: "{{ openstack_instance_delegate }}"
   os_keypair:
-    auth: "{{ openstack_instance_auth }}"
+    auth: "{{ openstack_auth }}"
     state: present
     name: "{{ openstack_instance_key_name }}"
     public_key_file: "{{ openstack_instance_public_key_file }}"
 
-- name: gather facts about openstack network
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_networks_facts:
-    auth: "{{ openstack_instance_auth }}"
-    name: "{{ openstack_instance_network }}"
-
-- name: create an openstack network
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_network:
-    auth: "{{ openstack_instance_auth }}"
-    state: present
-    name: "{{ openstack_instance_network }}"
-  when: (openstack_networks | length == 0)
-
-- name: gather facts about openstack subnet
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_subnets_facts:
-    auth: "{{ openstack_instance_auth }}"
-    name: "{{ openstack_instance_subnet }}"
-
-- name: create an openstack subnet
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_subnet:
-    auth: "{{ openstack_instance_auth }}"
-    state: present
-    name: "{{ openstack_instance_subnet }}"
-    network_name: "{{ openstack_instance_network }}"
-    dns_nameservers: "{{ openstack_instance_dns_servers }}"
-    cidr: "{{ openstack_instance_cidr }}"
-  when: (openstack_subnets | length == 0)
-
-- name: create openstack router
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_router:
-    auth: "{{ openstack_instance_auth }}"
-    state: present
-    name: "{{ openstack_instance_router }}"
-    network: "{{ openstack_instance_external_network }}"
-    interfaces:
-      - "{{ openstack_instance_subnet }}"
-
 - name: create ssh security group 
   delegate_to: "{{ openstack_instance_delegate }}"
   os_security_group:
-    auth: "{{ openstack_instance_auth }}"
+    auth: "{{ openstack_auth }}"
     state: present
     name: "{{ openstack_instance_ssh_security_group_name }}"
 
 - name: add rule to ssh security group
   delegate_to: "{{ openstack_instance_delegate }}"
   os_security_group_rule:
-    auth: "{{ openstack_instance_auth }}"
+    auth: "{{ openstack_auth }}"
     state: present
     security_group: "{{ openstack_instance_ssh_security_group_name }}"
     protocol: tcp
@@ -90,7 +49,7 @@
 - name: gather facts about openstack instance
   delegate_to: "{{ openstack_instance_delegate }}"
   os_server_facts:
-    auth: "{{ openstack_instance_auth }}"
+    auth: "{{ openstack_auth }}"
     server: "{{ inventory_hostname }}"
     detailed: yes
 
@@ -98,7 +57,7 @@
   delegate_to: "{{ openstack_instance_delegate }}"
   os_server: 
     state: present
-    auth: "{{ openstack_instance_auth }}"
+    auth: "{{ openstack_auth }}"
     image: "{{ openstack_instance_image }}"
     name: "{{ inventory_hostname }}"
     wait: yes
@@ -117,7 +76,7 @@
 - name: gather facts again
   delegate_to: "{{ openstack_instance_delegate }}"
   os_server_facts:
-    auth: "{{ openstack_instance_auth }}"
+    auth: "{{ openstack_auth }}"
     server: "{{ inventory_hostname }}"
     detailed: yes
   when: create_instance|changed
@@ -128,24 +87,37 @@
     ansible_user: "{{ openstack_instance_ssh_user }}"
 
 - name: wait for instance to come up
-  local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} search_regex=OpenSSH timeout=120
+  local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} timeout=240 connect_timeout=15 state=started
+  become: no
+  when: create_instance|changed
 
-- name: scan for ssh fingerprint from instance
-  delegate_to: localhost
-  command: ssh-keyscan -H {{ ansible_host }} 
-  register: ssh_keyscan_results
-  when: create_instance|changed 
+- name: wait for cloud-init to finish
+  become: no
+  raw: timeout 120 /bin/bash -c 'until stat /var/lib/cloud/instance/boot-finished &>/dev/null; do echo -n "."; sleep 1; done'
+  args:
+    executable: /bin/bash
+  when: create_instance|changed
 
-- name: store ssh fingerprint in known_hosts
-  delegate_to: localhost
-  known_hosts:
-    name: "{{ ansible_host }}"
-    key: "{{ ssh_keyscan_results.stdout }}"
-    state: present
-  when: ssh_keyscan_results|changed 
+# - name: scan for ssh fingerprint from instance
+#   delegate_to: localhost
+#   command: ssh-keyscan -H {{ ansible_host }} 
+#   register: ssh_keyscan_results
+#   when: create_instance|changed 
+
+# - name: store ssh fingerprint in known_hosts
+#   delegate_to: localhost
+#   known_hosts:
+#     name: "{{ ansible_host }}"
+#     key: "{{ ssh_keyscan_results.stdout }}"
+#     state: present
+#   when: ssh_keyscan_results|changed 
 
 - name: install python
   become: yes
   raw: apt-get update && apt-get install -qqy python
   args:
     executable: /bin/bash
+  when: create_instance|changed
+
+# - name: gather facts for new instance
+#   setup:

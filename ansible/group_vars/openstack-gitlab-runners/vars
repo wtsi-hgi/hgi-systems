@@ -1,2 +1,1 @@
-openstack_instance_network: gitlab_runners_net
-openstack_instance_cidr: 192.168.200.0/24
+openstack_instance_network: "{{ hostvars[network]['openstack_network_name'] }}"

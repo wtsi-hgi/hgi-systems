@@ -1,0 +1,70 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: openstack-destory-networks.yml
+
+- hosts: openstack-tenants
+  gather_facts: no
+  tasks:
+    - name: gather facts about openstack router interfaces
+      delegate_to: 127.0.0.1
+      os_port_facts:
+        auth: "{{ openstack_auth }}"
+        filters: 
+          device_owner: "network:router_interface"
+          tenant_id: "{{ openstack_tenant_id }}"
+
+    - name: destroy openstack routers
+      delegate_to: 127.0.0.1
+      os_router:
+        auth: "{{ openstack_auth }}"
+        state: absent
+        name: "{{ item.device_id }}"
+      with_items: "{{ openstack_ports | list }}"
+
+    - name: gather facts about openstack subnets
+      delegate_to: 127.0.0.1
+      os_subnets_facts:
+        auth: "{{ openstack_auth }}"
+
+    - name: destroy openstack subnets
+      delegate_to: 127.0.0.1
+      os_subnet:
+        auth: "{{ openstack_auth }}"
+        state: absent
+        name: "{{ item.id }}"
+      with_items: "{{ openstack_subnets | list }}"
+
+    - name: gather facts about openstack networks
+      delegate_to: 127.0.0.1
+      os_networks_facts:
+        auth: "{{ openstack_auth }}"
+        filters:
+          tenant_id: "{{ openstack_tenant_id }}"
+    
+    - name: destroy openstack networks
+      delegate_to: 127.0.0.1
+      os_network:
+        auth: "{{ openstack_auth }}"
+        state: absent
+        name: "{{ item.id }}"
+      with_items: "{{ openstack_networks | list }}"
+
+

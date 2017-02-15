@@ -1,7 +1,2 @@
 openstack_instance_public_key_file: "{{ playbook_dir }}/files/public_keys/mercury-farm3"
 
-openstack_instance_dns_servers: 
-  - 172.18.255.1
-  - 172.18.255.2
-  - 172.18.255.3
-

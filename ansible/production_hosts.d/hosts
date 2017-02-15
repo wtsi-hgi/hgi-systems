@@ -84,8 +84,8 @@ gitlab-runners
 
 # OpenStack instances to be created by Ansible
 [openstack-instances]
-gitlab-runner-docker-machine-gamma-hgi-01
-gitlab-runner-docker-machine-delta-hgi-ci-01
+gitlab-runner-docker-machine-gamma-hgi-01 network="gamma-gitlab-runners-network"
+gitlab-runner-docker-machine-delta-hgi-ci-01 network="delta-gitlab-runners-network"
 
 [openstack-gitlab-runners]
 gitlab-runner-docker-machine-gamma-hgi-01

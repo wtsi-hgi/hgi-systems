@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -16,10 +17,17 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
-#
----
-# file: openstack-instances.yml
-- hosts: openstack-instances
-  gather_facts: no
-  roles:
-    - openstack-instance
+
+[openstack-networks]
+delta-hgi-ci-network openstack_network_name=hgi-ci openstack_network_cidr=192.168.100.0/24
+delta-gitlab-runners-network openstack_network_name=gitlab-runners openstack_network_cidr=192.168.101.0/24
+gamma-hgi-ci-network openstack_network_name=hgi-ci openstack_network_cidr=192.168.200.0/24
+gamma-gitlab-runners-network openstack_network_name=gitlab-runners openstack_network_cidr=192.168.201.0/24
+
+[openstack-delta-hgi-ci]
+delta-hgi-ci-network
+delta-gitlab-runners-network
+
+[openstack-gamma-hgi]
+gamma-hgi-ci-network
+gamma-gitlab-runners-network 
