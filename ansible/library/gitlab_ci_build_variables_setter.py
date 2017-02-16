@@ -8,9 +8,10 @@ from gitlabbuildvariables.update import DictBasedProjectVariablesUpdaterBuilder
 DOCUMENTATION = """
 ---
 module: gitlab_ci_build_variables_setter
-short_description: TODO
+short_description: Updates a project's GitLab CI build variables
 description:
-  - TODO
+  - Updates a project's GitLab CI build variables to a given configuration, which defines which variable groups the
+  project should have its variables set from.
 author:
   - Colin Nolan <colin.nolan@sanger.ac.uk>
 """
