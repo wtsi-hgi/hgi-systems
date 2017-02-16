@@ -4,6 +4,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         python-openstackclient \
         s3cmd \
+        git \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir and entrypoint
