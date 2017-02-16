@@ -80,9 +80,8 @@ cookie-jars
 openstack_compute_instance_v2.ssh-gateway-hgi ansible_user=ubuntu
 openstack_compute_instance_v2.ssh-gateway-hgiarvados ansible_user=ubuntu
 
-
 [gitlab-builders]
 gitlab-builders
 
-[sanger-gitlab]
+[gitlab-credentials]
 gitlab-builders

@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-from typing import Dict, Any
-
+import simplejson
 from ansible.module_utils.basic import *
 
 from gitlabbuildvariables.common import GitLabConfig
-from gitlabbuildvariables.updater import ProjectVariablesUpdater, ProjectsVariablesUpdater
+from gitlabbuildvariables.update import DictBasedProjectVariablesUpdaterBuilder
 
 DOCUMENTATION = """
 ---
@@ -19,9 +18,8 @@ author:
 GITLAB_URL_KEY = "gitlab_url"
 GITLAB_TOKEN_KEY = "gitlab_token"
 GITLAB_PROJECT_KEY = "gitlab_project"
-CONFIGURATION_PATH = "configuration_path"
-SETTING_REPOSITORIES = "settings_repositories"
-DEFAULT_SETTING_EXTENSIONS = "default_setting_extensions"
+REQUIRED_VARIABLE_GROUPS = "required_variable_groups"
+VARIABLE_GROUPS = "variable_groups"
 
 # See: https://docs.ansible.com/ansible/dev_guide/developing_modules_python3.html#reading-and-writing-to-files
 DEFAULT_ENCODING = "utf-8"
@@ -36,42 +34,23 @@ def main():
             GITLAB_URL_KEY.encode(DEFAULT_ENCODING): {"required": True, type: "bytes"},
             GITLAB_TOKEN_KEY.encode(DEFAULT_ENCODING): {"required": True, type: "bytes"},
             GITLAB_PROJECT_KEY.encode(DEFAULT_ENCODING): {"required": False, "default": None, type: "bytes"},
-            CONFIGURATION_PATH.encode(DEFAULT_ENCODING): {"required": True, type: "bytes"},
-            SETTING_REPOSITORIES.encode(DEFAULT_ENCODING): {"required": True, "type": "list"},
-            DEFAULT_SETTING_EXTENSIONS.encode(DEFAULT_ENCODING): {"required": False, "default": [], "type": "list"}
+            REQUIRED_VARIABLE_GROUPS.encode(DEFAULT_ENCODING): {"required": True, type: "bytes"},
+            VARIABLE_GROUPS.encode(DEFAULT_ENCODING): {"required": True, "type": "dict"},
         },
         supports_check_mode=True
     )
 
+    # Converts bytes to strings, even if they are nested in dicts and lists.
     # Bother thanks to the long outdated Python 2 being the ruler of this world...
-    string_params = {}  # type: Dict[str, Any]
-    for key, value in module.params.items():
-        key = key.decode(DEFAULT_ENCODING)
-        if isinstance(value, bytes):
-            value = value.decode(DEFAULT_ENCODING)
-        elif isinstance(value, list):
-            items = []
-            for item in value:
-                items.append(item.decode(DEFAULT_ENCODING) if isinstance(item, bytes) else value)
-            value = items
-
-        string_params[key] = value
+    string_params = simplejson.loads(simplejson.dumps(module.params))
 
     gitlab_config = GitLabConfig(string_params[GITLAB_URL_KEY], string_params[GITLAB_TOKEN_KEY])
     gitlab_project = string_params[GITLAB_PROJECT_KEY]
-    config_path = string_params[CONFIGURATION_PATH]
-    shared_kwargs = dict(setting_repositories=string_params[SETTING_REPOSITORIES],
-                         default_setting_extensions=string_params[DEFAULT_SETTING_EXTENSIONS])
+    required_variable_groups = string_params[REQUIRED_VARIABLE_GROUPS]
+    project_updater_builder = DictBasedProjectVariablesUpdaterBuilder(string_params[VARIABLE_GROUPS])
 
-    if gitlab_project is not None:
-        with open(config_path, "r") as config_file:
-            config = config_file.read()
-        if gitlab_project not in config:
-            module.exit_json(failed=True, changed=False, message="No known configuration for project: \"%s\""
-                                                                 % gitlab_project)
-        updater = ProjectVariablesUpdater(gitlab_project, config[gitlab_project], gitlab_config, **shared_kwargs)
-    else:
-        updater = ProjectsVariablesUpdater(config_path, gitlab_config, **shared_kwargs)
+    updater = project_updater_builder.build(project=gitlab_project, groups=required_variable_groups,
+                                            gitlab_config=gitlab_config)
 
     update_required = updater.update_required()
     if module.check_mode:

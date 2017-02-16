@@ -22,11 +22,9 @@
 - name: Set GitLab CI Build Variables
   tags: gitlab-builder
   gitlab_ci_build_variables_setter:
-    gitlab_url: "{{ item[0].url }}"
-    gitlab_token: "{{ item[0].token }}"
-    configuration_path: "{{ item[1].configuration_path }}"
-    settings_repositories: "{{ item[1].setting_repositories }}"
-    default_setting_extensions: "{{ item[1].default_setting_extensions }}"
-  with_nested:
-    - "{{ sanger_gitlab }}"
-    - "{{ gitlab_builders }}"
+    gitlab_url: "{{ sanger_gitlab.url }}"
+    gitlab_token: "{{ sanger_gitlab.token }}"
+    gitlab_project: "{{ item.key }}"
+    required_variable_groups: "{{ item.value }}"
+    variable_groups: "{{ variable_groups }}"
+  with_dict: "{{ project_configurations }}"
