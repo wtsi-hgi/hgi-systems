@@ -13,6 +13,7 @@ os_source_image_artifact = ENV['GITLAB_OS_SOURCE_IMAGE_ARTIFACT']
 os_source_image_artifact_dir = File.dirname(os_source_image_artifact)
 FileUtils.mkdir_p(os_source_image_artifact_dir)
 
+written = false
 os_source_images.split(OS_SOURCE_IMAGE_SEPARATOR).each do |image|
     std_out, std_err, status = Open3.capture3("openstack image show -c id -f value '#{image}'")
     if status.exitstatus != 0
@@ -25,4 +26,8 @@ os_source_images.split(OS_SOURCE_IMAGE_SEPARATOR).each do |image|
         puts("Written source image ID \"#{image_id}\" to \"#{os_source_image_artifact}\"")
         break
     end
+end
+
+unless written
+    raise "No matching images found in OpenStack: #{os_source_images}"
 end
