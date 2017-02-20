@@ -5,6 +5,7 @@ RUN apt-get update \
         python-openstackclient \
         s3cmd \
         git \
+        ruby \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir and entrypoint
