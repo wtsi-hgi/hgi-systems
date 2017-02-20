@@ -24,6 +24,7 @@ os_source_images.split(OS_SOURCE_IMAGE_SEPARATOR).each do |image|
         image_id = std_out.strip!
         File.write(os_source_image_artifact, image_id)
         puts("Written source image ID \"#{image_id}\" to \"#{os_source_image_artifact}\"")
+        written = true
         break
     end
 end
