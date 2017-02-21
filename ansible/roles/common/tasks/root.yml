@@ -32,6 +32,7 @@
     - ca-certificates
     - cloud-init
     - gnupg2
+    - sudo
   when: ansible_os_family == 'Debian'
 
 - name: ensure unwanted Debian/Ubuntu packages are absent
