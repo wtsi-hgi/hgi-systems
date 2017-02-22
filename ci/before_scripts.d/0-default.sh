@@ -1,0 +1,1 @@
+export VERSION_COMMAND="git describe --tags --dirty --always --abbrev=${VERSION_ABBREV_LEN}"

@@ -23,30 +23,18 @@ variables:
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
 
-before_script:
-  # Run ssh-agent (inside the build environment)
-  - eval $(ssh-agent -s)
-
-  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-
-  # For Docker builds disable host key checking. Be aware that by adding that
-  # you are suspectible to man-in-the-middle attacks.
-  # WARNING: Use this only with the Docker executor, if you use it with shell
-  # you will overwrite your user's SSH config.
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-
-  - 'export TF_VAR_env=$ENV'
-  - 'export TF_VAR_region=$REGION'
-  - 'if [[ "$REGION" == "gamma-hgi" ]]; then export OS_USERNAME=${GAMMA_OS_USERNAME}; export OS_PASSWORD=${GAMMA_OS_PASSWORD}; export OS_AUTH_URL=${GAMMA_OS_AUTH_URL}; echo "OS vars for gamma-hgi set"; fi'
-  - 'if [[ "$REGION" == "gamma-hgiarvados" ]]; then export OS_USERNAME=${GAMMA_OS_USERNAME}; export OS_PASSWORD=${GAMMA_OS_PASSWORD}; export OS_AUTH_URL=${GAMMA_OS_AUTH_URL}; echo "OS vars for gamma-hgiarvados set"; fi'
-  - 'if [[ "$REGION" == "delta-hgi" ]]; then export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}; echo "OS vars for delta-hgi set"; fi'
-  - 'if [[ "$REGION" == "delta-hgiarvados" ]]; then export OS_USERNAME=${DELTA_OS_USERNAME}; export OS_PASSWORD=${DELTA_OS_PASSWORD}; export OS_AUTH_URL=${DELTA_OS_AUTH_URL}; echo "OS vars for delta-hgiarvados set"; fi'
-  - 'if [[ "$REGION" == "emedlab-arvados" ]]; then export OS_USERNAME=${EMEDLAB_OS_USERNAME}; export OS_PASSWORD=${EMEDLAB_OS_PASSWORD}; export OS_AUTH_URL=${EMEDLAB_OS_AUTH_URL}; export HTTP_PROXY=${EMEDLAB_HTTP_PROXY}; export HTTPS_PROXY=${EMEDLAB_HTTP_PROXY}; echo "OS vars for emedlab-arvados set"; fi'
+# In general, additional variables should *not* be defined above unless they are 
+# required to process .gitlab-ci.yml itself (i.e. they are used in this file outside 
+# of the job scripts). 
+# 
+# To set or override a variable, create or edit a script in the before_scripts.d directory at 
+# either the repo level or in the hgi image creation subrepo. The contents of those 
+# two directories will be combined and the scripts sourced in "version" order (sort -V).
+before_script: 
+  - 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
 
 stages:
-  - prepare
+  - validate
   - refresh
   - plan
   - apply
@@ -62,18 +50,15 @@ stages:
   - commit-staging-emedlab-arvados
   - sync
 
-version:
-  stage: prepare
+validate_s3:
+  stage: validate
   tags:
-    - docker
-  image: quay.io/wtsi-hgi/gitlab-ci-git-push
+   - docker
+  image: quay.io/wtsi-hgi/os3
   script:
-    - mkdir -p artifacts
-    - git describe --tags --dirty --always --abbrev=8 > "artifacts/version.txt"
-  artifacts:
-    paths:
-      - "artifacts/version.txt"
-  dependencies: []
+    - "${GITLAB_HGI_CI_DIR}/validate-s3.sh"
+  only:
+    - master
 
 .production-gamma-hgi: &production-gamma-hgi-def
   variables:
@@ -458,7 +443,7 @@ terraform-apply-staging-emedlab-arvados:
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - cp "${CI_PROJECT_DIR}/artifacts/${ENV}.tfstate" "terraform/${REGION}/${ENV}.tfstate"
-    - ci/commit-tfstate.sh "ci-tfstate-$(cat ${CI_PROJECT_DIR}/artifacts/version.txt)" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${REGION}/${ENV}.tfstate"
+    - ci/commit-tfstate.sh "ci-tfstate-${VERSION}" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${REGION}/${ENV}.tfstate"
   when: always
 
 terraform-commit-production-gamma-hgi:
