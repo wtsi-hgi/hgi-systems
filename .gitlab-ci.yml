@@ -451,7 +451,6 @@ terraform-commit-production-gamma-hgi:
   <<: *production-gamma-hgi-def
   stage: commit-production-gamma-hgi
   dependencies:
-    - version
     - terraform-apply-production-gamma-hgi
 
 terraform-commit-staging-gamma-hgi:
@@ -459,7 +458,6 @@ terraform-commit-staging-gamma-hgi:
   <<: *staging-gamma-hgi-def
   stage: commit-staging-gamma-hgi
   dependencies:
-    - version
     - terraform-apply-staging-gamma-hgi
 
 terraform-commit-production-gamma-hgiarvados:
@@ -467,7 +465,6 @@ terraform-commit-production-gamma-hgiarvados:
   <<: *production-gamma-hgiarvados-def
   stage: commit-production-gamma-hgiarvados
   dependencies:
-    - version
     - terraform-apply-production-gamma-hgiarvados
 
 terraform-commit-staging-gamma-hgiarvados:
@@ -475,7 +472,6 @@ terraform-commit-staging-gamma-hgiarvados:
   <<: *staging-gamma-hgiarvados-def
   stage: commit-staging-gamma-hgiarvados
   dependencies:
-    - version
     - terraform-apply-staging-gamma-hgiarvados
 
 terraform-commit-production-delta-hgi:
@@ -483,7 +479,6 @@ terraform-commit-production-delta-hgi:
   <<: *production-delta-hgi-def
   stage: commit-production-delta-hgi
   dependencies:
-    - version
     - terraform-apply-production-delta-hgi
 
 terraform-commit-staging-delta-hgi:
@@ -491,7 +486,6 @@ terraform-commit-staging-delta-hgi:
   <<: *staging-delta-hgi-def
   stage: commit-staging-delta-hgi
   dependencies:
-    - version
     - terraform-apply-staging-delta-hgi
 
 terraform-commit-production-delta-hgiarvados:
@@ -499,7 +493,6 @@ terraform-commit-production-delta-hgiarvados:
   <<: *production-delta-hgiarvados-def
   stage: commit-production-delta-hgiarvados
   dependencies:
-    - version
     - terraform-apply-production-delta-hgiarvados
 
 terraform-commit-staging-delta-hgiarvados:
@@ -507,7 +500,6 @@ terraform-commit-staging-delta-hgiarvados:
   <<: *staging-delta-hgiarvados-def
   stage: commit-staging-delta-hgiarvados
   dependencies:
-    - version
     - terraform-apply-staging-delta-hgiarvados
 
 terraform-commit-production-emedlab-arvados:
@@ -515,7 +507,6 @@ terraform-commit-production-emedlab-arvados:
   <<: *production-emedlab-arvados-def
   stage: commit-production-emedlab-arvados
   dependencies:
-    - version
     - terraform-apply-production-emedlab-arvados
 
 terraform-commit-staging-emedlab-arvados:
@@ -523,7 +514,6 @@ terraform-commit-staging-emedlab-arvados:
   <<: *staging-emedlab-arvados-def
   stage: commit-staging-emedlab-arvados
   dependencies:
-    - version
     - terraform-apply-staging-emedlab-arvados
 
 github-sync:
