@@ -29,6 +29,9 @@ terraform apply -input=false -state-out="${ENV}.tfstate.txt" plan
 apply_exit_code=$?
 set -e
 
+echo "Listing directory"
+ls -l 
+
 echo "Copying ${ENV}.tfstate to artifacts"
 cp "${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
 
