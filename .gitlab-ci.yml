@@ -56,7 +56,7 @@ validate_s3:
    - docker
   image: quay.io/wtsi-hgi/taos
   script:
-    - "${GITLAB_HGI_CI_DIR}/validate-s3.sh"
+    - "ci/validate-s3.sh"
   only:
     - master
 
