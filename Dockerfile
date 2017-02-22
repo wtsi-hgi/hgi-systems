@@ -1,5 +1,17 @@
-FROM alpine:3.4
+FROM ubuntu:16.04
 
-RUN apk add --no-cache bash git openssh-client
+ENV DEBIAN_FRONTEND noninteractive
+
+# Install git-push prerequisites
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+         apt-utils \
+         software-properties-common \
+    && apt-get install -y --no-install-recommends \
+         bash \
+         coreutils \
+         git \
+         openssh-client \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD git-push /usr/local/bin/
