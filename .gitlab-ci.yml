@@ -262,7 +262,7 @@ terraform-validate-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/taos
   script:
-    - gitlab/terraform-refresh.sh
+    - ci/terraform-refresh.sh
   artifacts:
     paths:
       - artifacts
@@ -315,7 +315,7 @@ terraform-refresh-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/taos
   script:
-    - gitlab/terraform-plan.sh
+    - ci/terraform-plan.sh
   artifacts:
     paths:
       - artifacts
@@ -386,7 +386,7 @@ terraform-plan-staging-emedlab-arvados:
     - docker
   image: quay.io/wtsi-hgi/taos
   script:
-    - gitlab/terraform-apply.sh
+    - ci/terraform-apply.sh
   artifacts:
     paths:
       - artifacts
@@ -458,7 +458,7 @@ terraform-apply-staging-emedlab-arvados:
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - cp "${CI_PROJECT_DIR}/artifacts/${ENV}.tfstate" "terraform/${REGION}/${ENV}.tfstate"
-    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat ${CI_PROJECT_DIR}/artifacts/version.txt)" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${REGION}/${ENV}.tfstate"
+    - ci/commit-tfstate.sh "ci-tfstate-$(cat ${CI_PROJECT_DIR}/artifacts/version.txt)" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${REGION}/${ENV}.tfstate"
   when: always
 
 terraform-commit-production-gamma-hgi:
