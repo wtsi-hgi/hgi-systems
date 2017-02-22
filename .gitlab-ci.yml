@@ -141,7 +141,7 @@ validate_s3:
     - staging-emedlab-arvados
   
 .openstack-vars-validate: &openstack-vars-validate-def
-  stage: prepare
+  stage: validate
   tags:
     - docker
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
@@ -153,7 +153,7 @@ validate_s3:
   dependencies: []
 
 .terraform-validate: &terraform-validate-def
-  stage: prepare
+  stage: validate
   tags:
     - docker
   image: quay.io/wtsi-hgi/taos
