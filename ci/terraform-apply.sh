@@ -24,8 +24,10 @@ echo "Generating /tmp/ansible_vault.pw"
 cd "terraform/${REGION}"
 
 echo "Calling terraform apply"
+set +e
 terraform apply -input=false -state-out="${ENV}.tfstate.txt" plan
 apply_exit_code=$?
+set -e
 
 echo "Copying ${ENV}.tfstate to artifacts"
 cp "${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
