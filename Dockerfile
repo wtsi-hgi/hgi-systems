@@ -2,7 +2,7 @@ FROM ubuntu:16.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install Go prerequisite, ansible, and openstack packages
+# Install Go prerequisite, ansible, openstack, and s3 packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          apt-utils \
@@ -21,6 +21,7 @@ RUN apt-get update \
          pkg-config \
          python3-openstackclient \
          python3-setuptools \
+         s3cmd \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
