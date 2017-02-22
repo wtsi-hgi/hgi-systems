@@ -14,6 +14,10 @@
 #  EMEDLAB_OS_USERNAME
 #  EMEDLAB_OS_PASSWORD
 #  EMEDLAB_HTTP_PROXY
+#  S3_ACCESS_KEY
+#  S3_HOST
+#  S3_SECRET_KEY
+#  S3_IMAGE_BUCKET
 variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
@@ -167,7 +171,7 @@ version:
   stage: prepare
   tags:
     - docker
-  image: quay.io/wtsi-hgi/tao
+  image: quay.io/wtsi-hgi/taos
   script:
     - cd terraform/${REGION} && terraform validate
   dependencies: []
@@ -256,7 +260,7 @@ terraform-validate-staging-emedlab-arvados:
   stage: refresh
   tags:
     - docker
-  image: quay.io/wtsi-hgi/tao
+  image: quay.io/wtsi-hgi/taos
   script:
     - gitlab/terraform-refresh.sh
   artifacts:
@@ -309,7 +313,7 @@ terraform-refresh-staging-emedlab-arvados:
   stage: plan
   tags:
     - docker
-  image: quay.io/wtsi-hgi/tao
+  image: quay.io/wtsi-hgi/taos
   script:
     - gitlab/terraform-plan.sh
   artifacts:
@@ -380,7 +384,7 @@ terraform-plan-staging-emedlab-arvados:
   stage: apply
   tags:
     - docker
-  image: quay.io/wtsi-hgi/tao
+  image: quay.io/wtsi-hgi/taos
   script:
     - gitlab/terraform-apply.sh
   artifacts:
