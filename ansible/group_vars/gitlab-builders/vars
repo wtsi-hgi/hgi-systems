@@ -1,0 +1,18 @@
+gitlab_builder_project_configurations:
+  hgi/hgi-base-image-builder:
+    - hgi_ci_openstack
+    - s3_images
+
+gitlab_builder_variable_groups:
+  hgi_ci_openstack:
+    OS_AUTH_URL: "{{ openstack_credentials_logins['delta-hgi-ci']['auth_url'] }}"
+    OS_USERNAME: "{{ openstack_credentials_logins['delta-hgi-ci']['username'] }}"
+    OS_PASSWORD: "{{ openstack_credentials_logins['delta-hgi-ci']['password'] }}"
+    OS_NETWORKS: hgi-ci
+    OS_SECURITY_GROUPS: ssh
+    OS_TENANT_NAME: hgi-ci
+  s3_images:
+    S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+    S3_HOST: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+    S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+    S3_IMAGE_BUCKET: hgi-openstack-images
