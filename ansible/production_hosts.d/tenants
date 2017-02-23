@@ -27,3 +27,6 @@ delta-hgi-ci
 
 [openstack-gamma-hgi]
 gamma-hgi
+
+[openstack-credentials:children]
+openstack-tenants

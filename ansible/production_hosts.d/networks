@@ -31,3 +31,6 @@ delta-gitlab-runners-network
 [openstack-gamma-hgi]
 gamma-hgi-ci-network
 gamma-gitlab-runners-network 
+
+[openstack-credentials:children]
+openstack-networks
