@@ -6,6 +6,7 @@ branch=$1
 commit_message=$2
 tfstate_paths=$3
 
+git pull
 git config user.name "Mercury"
 git config user.email "mercury@sanger.ac.uk"
 git checkout -b ${branch}
