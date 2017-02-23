@@ -101,3 +101,9 @@ gitlab-runner-docker-machine-delta-hgi-ci-01
 [ssh-gateways]
 openstack_compute_instance_v2.ssh-gateway-hgi ansible_user=ubuntu
 openstack_compute_instance_v2.ssh-gateway-hgiarvados ansible_user=ubuntu
+
+[gitlab-builders]
+gitlab-builders
+
+[gitlab-credentials]
+gitlab-builders
