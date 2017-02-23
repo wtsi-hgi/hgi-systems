@@ -7,13 +7,6 @@ require('json')
 OS_SOURCE_IMAGE_SEPARATOR = ','
 RESOURCE_NOT_FOUND_ERROR = 'Could not find resource'
 IMAGE_DOWNLOAD_DIRECTORY = '/tmp'
-S3CMD_FLAGS = " \
-    --access_key='#{ENV['S3_ACCESS_KEY']}' \
-    --secret_key='#{ENV['S3_SECRET_KEY']}' \
-    --ssl \
-    --host='#{ENV['S3_HOST']}' \
-    --host-bucket='#{ENV['S3_HOST_BUCKET']}' \
-"
 
 def write_image_artifact(image_id)
     os_source_image_artifact = ENV['GITLAB_OS_SOURCE_IMAGE_ARTIFACT']
@@ -43,7 +36,7 @@ def validate_object_store_access
 end
 
 def find_in_object_store(possible_images)
-    std_out, std_err, status = Open3.capture3("s3cmd ls #{S3CMD_FLAGS} 's3://#{ENV['S3_IMAGE_BUCKET']}/'")
+    std_out, std_err, status = Open3.capture3("s3cmd ls 's3://#{ENV['S3_IMAGE_BUCKET']}/'")
     if status.exitstatus != 0
         abort("Could not connect to the object store: #{std_err}")
     end
@@ -60,7 +53,7 @@ end
 
 def load_from_object_store(image)
     STDERR.puts("downloading #{image} from the object store to #{IMAGE_DOWNLOAD_DIRECTORY}")
-    system("s3cmd get #{S3CMD_FLAGS} --force 's3://#{ENV['S3_IMAGE_BUCKET']}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}'") or abort
+    system("s3cmd get --force 's3://#{ENV['S3_IMAGE_BUCKET']}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}'") or abort
     STDERR.puts('Uploading image to OpenStack...')
     std_out, std_err, status = Open3.capture3(
         "openstack image create --file '#{IMAGE_DOWNLOAD_DIRECTORY}/#{image}' -c id -f value '#{image}'")
