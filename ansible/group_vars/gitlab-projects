@@ -39,8 +39,8 @@ gitlab_project_settings_sanger_s3_images:
     S3_IMAGE_BUCKET: hgi-openstack-images
 
 gitlab_project_settings_terragrunt_locks:
-    TERRAGRUNT_LOCKS_AWS_ACCESS_KEY_ID: "{{ terragrunt_locks_aws_access_key_id }}"
-    TERRAGRUNT_LOCKS_AWS_SECRET_ACCESS_KEY: "{{ terragrunt_locks_aws_secret_access_key }}"
+    TERRAGRUNT_LOCKS_AWS_ACCESS_KEY: "{{ terragrunt_locks_aws_access_key }}"
+    TERRAGRUNT_LOCKS_AWS_SECRET_KEY: "{{ terragrunt_locks_aws_secret_key }}"
 
 gitlab_project_settings_terraform_openstack:
     DELTA_OS_AUTH_URL: "{{ openstack_credentials_logins['delta-jr17']['auth_url'] }}"
