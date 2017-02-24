@@ -1,12 +1,13 @@
-#[sanger-gitlab]
-#gitlab-sanger-hgi-hgi-systems
-
-[sanger-gitlab:children]
-sanger-image-builder-gitlab
+[hgi-systems-gitlab]
+gitlab-sanger-hgi-hgi-systems gitlab_project=hgi/hgi-systems
 
 [sanger-image-builder-gitlab]
 gitlab-sanger-hgi-hgi-base-image-builder gitlab_project=hgi/hgi-base-image-builder
 gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-builder
+
+[sanger-gitlab:children]
+sanger-image-builder-gitlab
+hgi-systems-gitlab
 
 [openstack-credentials:children]
 sanger-gitlab
@@ -16,6 +17,12 @@ sanger-gitlab
 
 [gitlab-projects:children]
 sanger-gitlab
+
+[hgi-credentials:children]
+hgi-systems-gitlab
+
+[terragrunt-locks-credentials:children]
+hgi-systems-gitlab
 
 [non-hosts:children]
 gitlab-projects

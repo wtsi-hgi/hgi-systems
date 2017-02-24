@@ -1,3 +1,4 @@
-gitlab_project_settings_groups:
-  - hgi_ci_openstack
-  - s3_images
+gitlab_project_settings:
+  - "{{ gitlab_project_settings_hgi_ci_openstack }}"
+  - "{{ gitlab_project_settings_sanger_s3 }}"
+  - "{{ gitlab_project_settings_sanger_s3_images }}"

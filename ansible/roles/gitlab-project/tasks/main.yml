@@ -30,5 +30,5 @@
     gitlab_url: "{{ gitlab_url }}"
     gitlab_token: "{{ gitlab_token }}"
     gitlab_project: "{{ gitlab_project }}"
-    variables: "{{ {}|combine(*gitlab_project_settings_groups|map('extract', gitlab_project_settings)) }}"
+    variables: "{{ {}|combine(*gitlab_project_settings) }}"
 

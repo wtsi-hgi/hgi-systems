@@ -1,7 +1,8 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
 # Authors:
-# * Colin Nolan <colin.nolan@sanger.ac.uk>
+#   Colin Nolan <colin.nolan@sanger.ac.uk>
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -21,16 +22,40 @@
 ---
 # file: group_vars/gitlab-projects
 
-gitlab_project_settings:
-  hgi_ci_openstack:
+gitlab_project_settings_hgi_ci_openstack:
     OS_AUTH_URL: "{{ openstack_credentials_logins['delta-hgi-ci']['auth_url'] }}"
     OS_USERNAME: "{{ openstack_credentials_logins['delta-hgi-ci']['username'] }}"
     OS_PASSWORD: "{{ openstack_credentials_logins['delta-hgi-ci']['password'] }}"
     OS_NETWORKS: hgi-ci
     OS_SECURITY_GROUPS: ssh
     OS_TENANT_NAME: hgi-ci
-  s3_images:
+
+gitlab_project_settings_sanger_s3:
     S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
     S3_HOST: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
     S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+
+gitlab_project_settings_sanger_s3_images:
     S3_IMAGE_BUCKET: hgi-openstack-images
+
+gitlab_project_settings_terragrunt_locks:
+    TERRAGRUNT_LOCKS_AWS_ACCESS_KEY_ID: "{{ terragrunt_locks_aws_access_key_id }}"
+    TERRAGRUNT_LOCKS_AWS_SECRET_ACCESS_KEY: "{{ terragrunt_locks_aws_secret_access_key }}"
+
+gitlab_project_settings_terraform_openstack:
+    DELTA_OS_AUTH_URL: "{{ openstack_credentials_logins['delta-jr17']['auth_url'] }}"
+    DELTA_OS_USERNAME: "{{ openstack_credentials_logins['delta-jr17']['username'] }}"
+    DELTA_OS_PASSWORD: "{{ openstack_credentials_logins['delta-jr17']['password'] }}"
+    GAMMA_OS_AUTH_URL: "{{ openstack_credentials_logins['gamma-jr17']['auth_url'] }}"
+    GAMMA_OS_USERNAME: "{{ openstack_credentials_logins['gamma-jr17']['username'] }}"
+    GAMMA_OS_PASSWORD: "{{ openstack_credentials_logins['gamma-jr17']['password'] }}"
+    EMEDLAB_OS_AUTH_URL: "{{ openstack_credentials_logins['emedlab-jrandall']['auth_url'] }}"
+    EMEDLAB_OS_USERNAME: "{{ openstack_credentials_logins['emedlab-jrandall']['username'] }}"
+    EMEDLAB_OS_PASSWORD: "{{ openstack_credentials_logins['emedlab-jrandall']['password'] }}"
+    EMEDLAB_HTTP_PROXY: "{{ hgi_username }}:{{ hgi_password }}@hgs4a.internal.sanger.ac.uk:3306/"
+
+gitlab_project_settings_ansible_credentials:
+    ANSIBLE_VAULT_PASSWORD: "{{ ansible_vault_password }}"
+
+gitlab_project_settings_mercury_ssh_credentials:
+    SSH_PRIVATE_KEY: "{{ mercury_ssh_key }}"
