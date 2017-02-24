@@ -15,3 +15,9 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 ADD git-push /usr/local/bin/
+
+# Install GRL CA
+ADD grl-ca.pem /etc/ssl/certs/grl-ca.pem
+RUN \
+  ln -s /etc/ssl/certs/grl-ca.pem /usr/lib/ssl/certs/91155464.0 && \
+  cat /etc/ssl/certs/grl-ca.pem >> /etc/ssl/certs/ca-certificates.crt
