@@ -50,7 +50,7 @@ RUN mkdir -p $GOPATH/src/github.com/gruntwork-io
 WORKDIR $GOPATH/src/github.com/gruntwork-io
 RUN git clone https://github.com/gruntwork-io/terragrunt.git \
     && cd terragrunt \
-    && git checkout v0.9.4 \
+    && git checkout v0.10.3 \
     && go get \
     && go install
 
