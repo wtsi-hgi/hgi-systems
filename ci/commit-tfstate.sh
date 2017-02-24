@@ -6,12 +6,15 @@ branch=$1
 commit_message=$2
 tfstate_paths=$3
 
+echo "Pulling from git repo"
 git pull
 git config user.name "Mercury"
 git config user.email "mercury@sanger.ac.uk"
+echo "Checking out new branch ${branch}"
 git checkout -b ${branch}
 git add "${tfstate_paths}"
 
+echo "Getting git status"
 status=$(git status --porcelain | awk '$1!="??"')
 
 if [ -n "${status}" ]; then
