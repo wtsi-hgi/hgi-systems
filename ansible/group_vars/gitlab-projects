@@ -31,8 +31,8 @@ gitlab_project_settings_hgi_ci_openstack:
     OS_TENANT_NAME: hgi-ci
 
 gitlab_project_settings_sanger_s3:
-    S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
     S3_HOST: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+    S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
     S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
 
 gitlab_project_settings_sanger_s3_images:
@@ -59,3 +59,9 @@ gitlab_project_settings_ansible_credentials:
 
 gitlab_project_settings_mercury_ssh_credentials:
     SSH_PRIVATE_KEY: "{{ mercury_ssh_key }}"
+
+gitlab_project_settings_terraform_s3:
+    TERRAFORM_S3_ENDPOINT: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+    TERRAFORM_S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+    TERRAFORM_S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+    TERRAFORM_S3_BUCKET: "terraform-remote-state"
