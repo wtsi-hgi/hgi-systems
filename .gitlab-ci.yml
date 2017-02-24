@@ -439,12 +439,12 @@ terraform-apply-staging-delta-hgiarvados:
 #   dependencies:
 #     - terraform-plan-staging-emedlab-arvados
 
-.tfstate-commit: &terraform-commit-def
+.terraform-commit: &terraform-commit-def
   tags:
     - docker
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
-    - ci/tfstate-commit.sh
+    - ci/terraform-commit.sh
   when: always
 
 terraform-commit-production-gamma-hgi:
