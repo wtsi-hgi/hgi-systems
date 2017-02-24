@@ -1,5 +1,6 @@
-Terraform, Ansible, and Openstack (TAO)
+Terraform, Ansible, Openstack and S3 (TAOS)
 ---------------------------------------
 
-Docker container image to use for [Terraform](https://www.terraform.io/), with support for running ansible and openstack CLI within the same container.
+Docker container image to use for [Terraform](https://www.terraform.io/), with support for running ansible, openstack
+CLI and s3cmd within the same container.
 
