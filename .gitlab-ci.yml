@@ -48,8 +48,8 @@ stages:
   - commit-staging-delta-hgi
   - commit-production-delta-hgiarvados
   - commit-staging-delta-hgiarvados
-  - commit-production-emedlab-arvados
-  - commit-staging-emedlab-arvados
+#  - commit-production-emedlab-arvados
+#  - commit-staging-emedlab-arvados
   - sync
 
 validate_s3:
@@ -126,23 +126,23 @@ validate_s3:
     - develop
     - staging-delta-hgiarvados
   
-.production-emedlab-arvados: &production-emedlab-arvados-def
-  variables:
-    ENV: "production"
-    REGION: "emedlab-arvados"
-  only:
-    - master
-    - production-emedlab-arvados
+# .production-emedlab-arvados: &production-emedlab-arvados-def
+#   variables:
+#     ENV: "production"
+#     REGION: "emedlab-arvados"
+#   only:
+#     - master
+#     - production-emedlab-arvados
   
-.staging-emedlab-arvados: &staging-emedlab-arvados-def
-  variables:
-    ENV: "staging"
-    REGION: "emedlab-arvados"
-  only:
-    - develop
-    - staging-emedlab-arvados
+# .staging-emedlab-arvados: &staging-emedlab-arvados-def
+#   variables:
+#     ENV: "staging"
+#     REGION: "emedlab-arvados"
+#   only:
+#     - develop
+#     - staging-emedlab-arvados
   
-.openstack-vars-validate: &openstack-vars-validate-def
+.Openstack-vars-validate: &openstack-vars-validate-def
   stage: validate
   tags:
     - docker
@@ -195,13 +195,13 @@ openstack-vars-validate-staging-delta-hgiarvados:
   <<: *openstack-vars-validate-def
   <<: *staging-delta-hgiarvados-def
     
-openstack-vars-validate-production-emedlab-arvados:
-  <<: *openstack-vars-validate-def
-  <<: *production-emedlab-arvados-def
+# openstack-vars-validate-production-emedlab-arvados:
+#   <<: *openstack-vars-validate-def
+#   <<: *production-emedlab-arvados-def
     
-openstack-vars-validate-staging-emedlab-arvados:
-  <<: *openstack-vars-validate-def
-  <<: *staging-emedlab-arvados-def
+# openstack-vars-validate-staging-emedlab-arvados:
+#   <<: *openstack-vars-validate-def
+#   <<: *staging-emedlab-arvados-def
     
 terraform-validate-production-gamma-hgi:
   <<: *terraform-validate-def
@@ -235,13 +235,13 @@ terraform-validate-staging-delta-hgiarvados:
   <<: *terraform-validate-def
   <<: *staging-delta-hgiarvados-def
     
-terraform-validate-production-emedlab-arvados:
-  <<: *terraform-validate-def
-  <<: *production-emedlab-arvados-def
+# terraform-validate-production-emedlab-arvados:
+#   <<: *terraform-validate-def
+#   <<: *production-emedlab-arvados-def
     
-terraform-validate-staging-emedlab-arvados:
-  <<: *terraform-validate-def
-  <<: *staging-emedlab-arvados-def
+# terraform-validate-staging-emedlab-arvados:
+#   <<: *terraform-validate-def
+#   <<: *staging-emedlab-arvados-def
     
 .terraform-refresh: &terraform-refresh-def
   stage: refresh
@@ -288,13 +288,13 @@ terraform-refresh-staging-delta-hgiarvados:
   <<: *terraform-refresh-def
   <<: *staging-delta-hgiarvados-def
 
-terraform-refresh-production-emedlab-arvados:
-  <<: *terraform-refresh-def
-  <<: *production-emedlab-arvados-def
+# terraform-refresh-production-emedlab-arvados:
+#   <<: *terraform-refresh-def
+#   <<: *production-emedlab-arvados-def
 
-terraform-refresh-staging-emedlab-arvados:
-  <<: *terraform-refresh-def
-  <<: *staging-emedlab-arvados-def
+# terraform-refresh-staging-emedlab-arvados:
+#   <<: *terraform-refresh-def
+#   <<: *staging-emedlab-arvados-def
 
 .terraform-plan: &terraform-plan-def
   stage: plan
@@ -355,17 +355,17 @@ terraform-plan-staging-delta-hgiarvados:
   dependencies:
     - terraform-refresh-staging-delta-hgiarvados
 
-terraform-plan-production-emedlab-arvados:
-  <<: *terraform-plan-def
-  <<: *production-emedlab-arvados-def
-  dependencies:
-    - terraform-refresh-production-emedlab-arvados
+# terraform-plan-production-emedlab-arvados:
+#   <<: *terraform-plan-def
+#   <<: *production-emedlab-arvados-def
+#   dependencies:
+#     - terraform-refresh-production-emedlab-arvados
 
-terraform-plan-staging-emedlab-arvados:
-  <<: *terraform-plan-def
-  <<: *staging-emedlab-arvados-def
-  dependencies:
-    - terraform-refresh-staging-emedlab-arvados
+# terraform-plan-staging-emedlab-arvados:
+#   <<: *terraform-plan-def
+#   <<: *staging-emedlab-arvados-def
+#   dependencies:
+#     - terraform-refresh-staging-emedlab-arvados
 
 .terraform-apply: &terraform-apply-def
   stage: apply
@@ -427,17 +427,17 @@ terraform-apply-staging-delta-hgiarvados:
   dependencies:
     - terraform-plan-staging-delta-hgiarvados
 
-terraform-apply-production-emedlab-arvados:
-  <<: *terraform-apply-def
-  <<: *production-emedlab-arvados-def
-  dependencies:
-    - terraform-plan-production-emedlab-arvados
+# terraform-apply-production-emedlab-arvados:
+#   <<: *terraform-apply-def
+#   <<: *production-emedlab-arvados-def
+#   dependencies:
+#     - terraform-plan-production-emedlab-arvados
 
-terraform-apply-staging-emedlab-arvados:
-  <<: *terraform-apply-def
-  <<: *staging-emedlab-arvados-def
-  dependencies:
-    - terraform-plan-staging-emedlab-arvados
+# terraform-apply-staging-emedlab-arvados:
+#   <<: *terraform-apply-def
+#   <<: *staging-emedlab-arvados-def
+#   dependencies:
+#     - terraform-plan-staging-emedlab-arvados
 
 .tfstate-commit: &terraform-commit-def
   tags:
@@ -504,19 +504,19 @@ terraform-commit-staging-delta-hgiarvados:
   dependencies:
     - terraform-apply-staging-delta-hgiarvados
 
-terraform-commit-production-emedlab-arvados:
-  <<: *terraform-commit-def
-  <<: *production-emedlab-arvados-def
-  stage: commit-production-emedlab-arvados
-  dependencies:
-    - terraform-apply-production-emedlab-arvados
+# terraform-commit-production-emedlab-arvados:
+#   <<: *terraform-commit-def
+#   <<: *production-emedlab-arvados-def
+#   stage: commit-production-emedlab-arvados
+#   dependencies:
+#     - terraform-apply-production-emedlab-arvados
 
-terraform-commit-staging-emedlab-arvados:
-  <<: *terraform-commit-def
-  <<: *staging-emedlab-arvados-def
-  stage: commit-staging-emedlab-arvados
-  dependencies:
-    - terraform-apply-staging-emedlab-arvados
+# terraform-commit-staging-emedlab-arvados:
+#   <<: *terraform-commit-def
+#   <<: *staging-emedlab-arvados-def
+#   stage: commit-staging-emedlab-arvados
+#   dependencies:
+#     - terraform-apply-staging-emedlab-arvados
 
 github-sync:
   stage: sync
