@@ -444,8 +444,7 @@ terraform-apply-staging-delta-hgiarvados:
     - docker
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
-    - cp "${CI_PROJECT_DIR}/artifacts/${ENV}.tfstate" "terraform/${REGION}/${ENV}.tfstate"
-    - ci/commit-tfstate.sh "ci-tfstate-${VERSION}" "Changes to ${ENV}.tfstate made by terraform [ci skip]" "terraform/${REGION}/${ENV}.tfstate"
+    - ci/tfstate-commit.sh
   when: always
 
 terraform-commit-production-gamma-hgi:
