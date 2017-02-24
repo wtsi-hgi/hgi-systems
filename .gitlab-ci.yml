@@ -40,16 +40,6 @@ stages:
   - refresh
   - plan
   - apply
-  - commit-production-gamma-hgi
-  - commit-staging-gamma-hgi
-  - commit-production-gamma-hgiarvados
-  - commit-staging-gamma-hgiarvados
-  - commit-production-delta-hgi
-  - commit-staging-delta-hgi
-  - commit-production-delta-hgiarvados
-  - commit-staging-delta-hgiarvados
-#  - commit-production-emedlab-arvados
-#  - commit-staging-emedlab-arvados
   - sync
 
 validate_s3:
@@ -160,7 +150,7 @@ validate_s3:
     - docker
   image: quay.io/wtsi-hgi/taos
   script:
-    - cd terraform/${REGION} && terraform validate
+    - ci/terraform-validate.sh
   dependencies: []
 
 openstack-vars-validate-production-gamma-hgi:
@@ -438,84 +428,6 @@ terraform-apply-staging-delta-hgiarvados:
 #   <<: *staging-emedlab-arvados-def
 #   dependencies:
 #     - terraform-plan-staging-emedlab-arvados
-
-.terraform-commit: &terraform-commit-def
-  tags:
-    - docker
-  image: quay.io/wtsi-hgi/gitlab-ci-git-push
-  script:
-    - ci/terraform-commit.sh
-  when: always
-
-terraform-commit-production-gamma-hgi:
-  <<: *terraform-commit-def
-  <<: *production-gamma-hgi-def
-  stage: commit-production-gamma-hgi
-  dependencies:
-    - terraform-apply-production-gamma-hgi
-
-terraform-commit-staging-gamma-hgi:
-  <<: *terraform-commit-def
-  <<: *staging-gamma-hgi-def
-  stage: commit-staging-gamma-hgi
-  dependencies:
-    - terraform-apply-staging-gamma-hgi
-
-terraform-commit-production-gamma-hgiarvados:
-  <<: *terraform-commit-def
-  <<: *production-gamma-hgiarvados-def
-  stage: commit-production-gamma-hgiarvados
-  dependencies:
-    - terraform-apply-production-gamma-hgiarvados
-
-terraform-commit-staging-gamma-hgiarvados:
-  <<: *terraform-commit-def
-  <<: *staging-gamma-hgiarvados-def
-  stage: commit-staging-gamma-hgiarvados
-  dependencies:
-    - terraform-apply-staging-gamma-hgiarvados
-
-terraform-commit-production-delta-hgi:
-  <<: *terraform-commit-def
-  <<: *production-delta-hgi-def
-  stage: commit-production-delta-hgi
-  dependencies:
-    - terraform-apply-production-delta-hgi
-
-terraform-commit-staging-delta-hgi:
-  <<: *terraform-commit-def
-  <<: *staging-delta-hgi-def
-  stage: commit-staging-delta-hgi
-  dependencies:
-    - terraform-apply-staging-delta-hgi
-
-terraform-commit-production-delta-hgiarvados:
-  <<: *terraform-commit-def
-  <<: *production-delta-hgiarvados-def
-  stage: commit-production-delta-hgiarvados
-  dependencies:
-    - terraform-apply-production-delta-hgiarvados
-
-terraform-commit-staging-delta-hgiarvados:
-  <<: *terraform-commit-def
-  <<: *staging-delta-hgiarvados-def
-  stage: commit-staging-delta-hgiarvados
-  dependencies:
-    - terraform-apply-staging-delta-hgiarvados
-
-# terraform-commit-production-emedlab-arvados:
-#   <<: *terraform-commit-def
-#   <<: *production-emedlab-arvados-def
-#   stage: commit-production-emedlab-arvados
-#   dependencies:
-#     - terraform-apply-production-emedlab-arvados
-
-# terraform-commit-staging-emedlab-arvados:
-#   <<: *terraform-commit-def
-#   <<: *staging-emedlab-arvados-def
-#   stage: commit-staging-emedlab-arvados
-#   dependencies:
-#     - terraform-apply-staging-emedlab-arvados
 
 github-sync:
   stage: sync
