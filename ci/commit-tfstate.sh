@@ -6,10 +6,16 @@ branch=$1
 commit_message=$2
 tfstate_paths=$3
 
-echo "Pulling from git repo"
-git pull
+echo "Current git remotes are:"
+git remote -v
+
+echo "Pulling ${CI_BUILD_REF_NAME} from git"
+git pull origin ${CI_BUILD_REF_NAME}
+
+echo "Setting git config"
 git config user.name "Mercury"
 git config user.email "mercury@sanger.ac.uk"
+
 echo "Checking out new branch ${branch}"
 git checkout -b ${branch}
 git add "${tfstate_paths}"
