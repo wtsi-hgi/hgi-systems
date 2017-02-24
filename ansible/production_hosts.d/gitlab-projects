@@ -1,5 +1,12 @@
-[sanger-gitlab]
-gitlab-sanger-hgi-hgi-base-image-builder
+#[sanger-gitlab]
+#gitlab-sanger-hgi-hgi-systems
+
+[sanger-gitlab:children]
+sanger-image-builder-gitlab
+
+[sanger-image-builder-gitlab]
+gitlab-sanger-hgi-hgi-base-image-builder gitlab_project=hgi/hgi-base-image-builder
+gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-builder
 
 [openstack-credentials:children]
 sanger-gitlab
