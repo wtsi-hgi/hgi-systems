@@ -18,8 +18,8 @@
 #  S3_HOST
 #  S3_SECRET_KEY
 #  S3_IMAGE_BUCKET
-#  TERRAGRUNT_LOCKS_AWS_ACCESS_KEY_ID
-#  TERRAGRUNT_LOCKS_AWS_SECRET_ACCESS_KEY
+#  TERRAGRUNT_LOCKS_AWS_ACCESS_KEY
+#  TERRAGRUNT_LOCKS_AWS_SECRET_ACCESS
 variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
