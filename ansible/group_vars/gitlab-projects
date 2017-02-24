@@ -1,0 +1,36 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors:
+# * Colin Nolan <colin.nolan@sanger.ac.uk>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: group_vars/gitlab-projects
+
+gitlab_project_settings:
+  hgi_ci_openstack:
+    OS_AUTH_URL: "{{ openstack_credentials_logins['delta-hgi-ci']['auth_url'] }}"
+    OS_USERNAME: "{{ openstack_credentials_logins['delta-hgi-ci']['username'] }}"
+    OS_PASSWORD: "{{ openstack_credentials_logins['delta-hgi-ci']['password'] }}"
+    OS_NETWORKS: hgi-ci
+    OS_SECURITY_GROUPS: ssh
+    OS_TENANT_NAME: hgi-ci
+  s3_images:
+    S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+    S3_HOST: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+    S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+    S3_IMAGE_BUCKET: hgi-openstack-images

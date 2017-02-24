@@ -34,3 +34,6 @@ gamma-gitlab-runners-network
 
 [openstack-credentials:children]
 openstack-networks
+
+[non-hosts:children]
+openstack-networks

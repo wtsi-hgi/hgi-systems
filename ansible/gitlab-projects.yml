@@ -1,7 +1,6 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Authors:
-# * Joshua C. Randall <jcrandall@alum.mit.edu>
+# Author: Colin Nolan <colin.nolan@sanger.ac.uk>
 #
 # This file is part of hgi-ansible.
 #
@@ -17,19 +16,12 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: gitlab-projects.yml
 
-[openstack-tenants]
-delta-hgi-ci openstack_tenant_id=e95a9c47113a4a1499e6c51c04d4d15e
-gamma-hgi openstack_tenant_id=0fb6b8ad81f54a84a80b0e8a96a525f2
+- hosts: gitlab-projects
+  gather_facts: no
+  roles:
+    - gitlab-project
 
-[openstack-delta-hgi-ci]
-delta-hgi-ci
-
-[openstack-gamma-hgi]
-gamma-hgi
-
-[openstack-credentials:children]
-openstack-tenants
-
-[non-hosts:children]
-openstack-tenants

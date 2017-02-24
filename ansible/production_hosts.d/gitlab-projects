@@ -1,0 +1,14 @@
+[sanger-gitlab]
+gitlab-sanger-hgi-hgi-base-image-builder
+
+[openstack-credentials:children]
+sanger-gitlab
+
+[s3-credentials:children]
+sanger-gitlab
+
+[gitlab-projects:children]
+sanger-gitlab
+
+[non-hosts:children]
+gitlab-projects

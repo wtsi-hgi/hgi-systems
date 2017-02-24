@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Colin Nolan <colin.nolan@sanger.ac.uk>
+# Authors:
+# * Colin Nolan <colin.nolan@sanger.ac.uk>
 #
 # This file is part of hgi-ansible.
 #
@@ -18,7 +19,10 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
+# file: group_vars/sanger-gitlab/vars
 
-- hosts: gitlab-builders
-  roles:
-    - gitlab-builder
+# Vault contains:
+# gitlab_token: xxx
+
+gitlab_username: mercury
+gitlab_url: https://gitlab.internal.sanger.ac.uk

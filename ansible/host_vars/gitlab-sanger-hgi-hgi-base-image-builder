@@ -1,0 +1,4 @@
+gitlab_project: hgi/hgi-base-image-builder
+gitlab_project_settings_groups:
+  - hgi_ci_openstack
+  - s3_images
