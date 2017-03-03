@@ -39,7 +39,10 @@ WORKDIR $GOPATH
 # Build packer
 ENV PACKER_DEV=1
 RUN go get github.com/mitchellh/gox
-RUN go get github.com/mitchellh/packer
+RUN cd $GOPATH/src/github.com/mitchellh && \
+    git clone https://github.com/mitchellh/packer.git && \
+    cd packer && \
+    git checkout v0.12.3
 WORKDIR $GOPATH/src/github.com/mitchellh/packer
 RUN /bin/bash scripts/build.sh
 
