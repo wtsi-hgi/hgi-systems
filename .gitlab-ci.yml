@@ -46,7 +46,7 @@ validate_s3:
   stage: validate
   tags:
    - docker
-  image: quay.io/wtsi-hgi/taos
+  image: quay.io/wtsi-hgi/taos:experimental
   script:
     - "ci/validate-s3.sh"
   only:
@@ -148,7 +148,7 @@ validate_s3:
   stage: validate
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: quay.io/wtsi-hgi/taos:experimental
   script:
     - ci/terraform-validate.sh
   dependencies: []
@@ -237,7 +237,7 @@ terraform-validate-staging-delta-hgiarvados:
   stage: refresh
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: quay.io/wtsi-hgi/taos:experimental
   script:
     - ci/terraform-refresh.sh
   artifacts:
@@ -290,7 +290,7 @@ terraform-refresh-staging-delta-hgiarvados:
   stage: plan
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: quay.io/wtsi-hgi/taos:experimental
   script:
     - ci/terraform-plan.sh
   artifacts:
@@ -361,7 +361,7 @@ terraform-plan-staging-delta-hgiarvados:
   stage: apply
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: quay.io/wtsi-hgi/taos:experimental
   script:
     - ci/terraform-apply.sh
   artifacts:
