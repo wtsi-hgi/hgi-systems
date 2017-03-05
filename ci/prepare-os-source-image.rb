@@ -4,6 +4,7 @@ require('fileutils')
 require('open3')
 require('json')
 
+OS_IMAGE_LIMIT = 1000
 OS_SOURCE_IMAGE_SEPARATOR = ','
 RESOURCE_NOT_FOUND_ERROR = 'Could not find resource'
 IMAGE_DOWNLOAD_DIRECTORY = '/tmp'
@@ -17,11 +18,15 @@ def write_image_artifact(image_id)
 end
 
 def find_in_openstack(possible_images)
-    std_out, std_err, status = Open3.capture3('openstack image list -f json')
+    std_out, std_err, status = Open3.capture3('openstack image list --limit #{OS_IMAGE_LIMIT} -f json')
     if status.exitstatus != 0
         abort("Error getting images from OpenStack: #{std_err}")
     end
-    images = JSON.parse(std_out).select {|item| possible_images.include?(item['Name'])}
+    image_list = JSON.parse(std_out)
+    if image_list.size >= OS_IMAGE_LIMIT
+      abort("Received too many images from OpenStack, cannot continue (suggest raising OS_IMAGE_LIMIT or delete some images)")
+    end
+    images = image_list.select {|item| possible_images.include?(item['Name'])}
     if images.size > 0
         return images.last['ID']
     end
