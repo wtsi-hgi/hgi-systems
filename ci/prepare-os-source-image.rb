@@ -18,7 +18,7 @@ def write_image_artifact(image_id)
 end
 
 def find_in_openstack(possible_images)
-    std_out, std_err, status = Open3.capture3('openstack image list --limit #{OS_IMAGE_LIMIT} -f json')
+    std_out, std_err, status = Open3.capture3("openstack image list --limit #{OS_IMAGE_LIMIT} -f json")
     if status.exitstatus != 0
         abort("Error getting images from OpenStack: #{std_err}")
     end
