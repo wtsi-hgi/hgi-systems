@@ -25,46 +25,32 @@ variables:
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
 
-before_script:
-  # Run ssh-agent (inside the build environment)
-  - eval $(ssh-agent -s)
-
-  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-
-  # For Docker builds disable host key checking. Be aware that by adding that
-  # you are suspectible to man-in-the-middle attacks.
-  # WARNING: Use this only with the Docker executor, if you use it with shell
-  # you will overwrite your user's SSH config.
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+# In general, additional variables should *not* be defined above unless they are 
+# required to process .gitlab-ci.yml itself (i.e. they are used in this file outside 
+# of the job scripts). 
+# 
+# To set or override a variable, create or edit a script in the before_scripts.d directory at 
+# either the repo level or in the hgi image creation subrepo. The contents of those 
+# two directories will be combined and the scripts sourced in "version" order (sort -V).
+before_script: 
+  - 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
 
 stages:
-  - prepare
+  - validate
   - refresh
   - plan
   - apply
-  - commit
   - sync
 
-version:
-  stage: prepare
-  tags:
-    - docker
-  image: mercury/gitlab-ci-git-push
-  script:
-    - git describe --tags --dirty --always --abbrev=8 > version.txt
-  artifacts:
-    paths:
-      - "version.txt"
-
-terraform-validate-production:
-  stage: prepare
+validate_s3:
+  stage: validate
   tags:
    - docker
   image: quay.io/wtsi-hgi/taos:experimental
   script:
-    - cd terraform/production && terraform validate
+    - "ci/validate-s3.sh"
+  only:
+    - master
 
 .production-gamma-hgi: &production-gamma-hgi-def
   variables:
@@ -150,7 +136,7 @@ terraform-validate-production:
   stage: validate
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
@@ -238,17 +224,6 @@ github-sync:
     - docker
   image: quay.io/wtsi-hgi/gitlab-ci-git-push
   script:
-    - gitlab/commit-tfstate.sh "ci-tfstate-$(cat version.txt)" "Changes to terraform.tfstate made by terraform [ci skip]" "terraform/production/terraform.tfstate"
-  dependencies:
-    - terraform-apply-production
-    - version
-  when: always
-  
-github-sync:
-  stage: sync
-  tags:
-    - docker
-  image: mercury/gitlab-ci-git-push
-  script:
     - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
   dependencies: []
+
