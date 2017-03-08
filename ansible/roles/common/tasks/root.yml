@@ -46,8 +46,10 @@
 #  when: (ansible_distribution == 'Ubuntu') and (ansible_distribution_version == '16.04') 
 
 - name: disable unattended upgrades (systemd)
+  tags: common
+  become: yes
   lineinfile: 
-    path: /etc/apt/apt.conf.d/10periodic
+    dest: '/etc/apt/apt.conf.d/10periodic'
     line: 'APT::Periodic::Enable "0";'
     regexp: 'APT::Periodic::Enable'
   when: ansible_service_mgr == 'systemd'
