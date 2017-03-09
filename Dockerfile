@@ -2,25 +2,30 @@ FROM ubuntu:16.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Install Go/Packer prerequisite, ansible, and openstack packages
+# Install Go/Packer prerequisite and openstack packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          apt-utils \
          software-properties-common \
     && apt-get install -y --no-install-recommends \
-         ansible \
          bash \
+         build-essential \
          curl \
          g++ \
          gcc \
          git \
          libc6-dev \
+         libffi-dev \
+         libssl-dev \
          make \
          openssh-client \
          pkg-config \
          python-openstackclient \
+         python3-dev \
          python3-openstackclient \
+         python3-pip \
          python3-setuptools \
+         python3-wheel \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
@@ -51,6 +56,12 @@ RUN cd /tmp \
     && git clone https://github.com/wtsi-hgi/openstack-tools.git \
     && cd openstack-tools \
     && python3 setup.py install
+
+# Install ansible and friends using pip3
+RUN pip3 install --no-cache-dir git+https://github.com/ansible/ansible.git@7f352207 \
+    && pip3 install --no-cache-dir shade==1.16.0 \
+    && pip3 install --no-cache-dir git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git@v1.0.0 \
+    && pip3 install --no-cache-dir boto==2.46.1
 
 # Set workdir and entrypoint
 WORKDIR /tmp
