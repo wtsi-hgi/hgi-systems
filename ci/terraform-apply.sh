@@ -23,9 +23,9 @@ echo "Generating /tmp/ansible_vault.pw"
 
 cd "terraform/${REGION}"
 
-echo "Calling terragrunt apply"
+echo "Calling terraform apply"
 set +e
-terragrunt apply -input=false -state-out="${ENV}.tfstate" plan
+terraform apply -input=false -state-out="${ENV}.tfstate" plan
 apply_exit_code=$?
 set -e
 
@@ -33,12 +33,12 @@ echo "Copying ${ENV}.tfstate to artifacts"
 cp "${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
 
 if [[ ${apply_exit_code} -eq 0 ]]; then
-    echo "terragrunt apply succeeded, generating output state artifacts"
-    terragrunt output -json -state "${ENV}.tfstate" > output.json
+    echo "terraform apply succeeded, generating output state artifacts"
+    terraform output -json -state "${ENV}.tfstate" > output.json
     cp output.json "${CI_PROJECT_DIR}/artifacts/"
-    terragrunt show -no-color > "${ENV}.tfstate.txt"
+    terraform show -no-color > "${ENV}.tfstate.txt"
     cp "${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/"
 else
-    >&2 echo "terragrunt apply failed: ${apply_exit_code}"
+    >&2 echo "terraform apply failed: ${apply_exit_code}"
     exit ${apply_exit_code}
 fi
