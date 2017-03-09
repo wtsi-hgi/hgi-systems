@@ -55,6 +55,7 @@ mesos-slaves
 zookeepers
 marathoners
 chronosians
+openstack-gitlab-runners
 
 [bamboosians:children]
 mesos-slaves
@@ -84,18 +85,21 @@ gitlab-runners
 
 # OpenStack instances to be created by Ansible
 [openstack-instances]
-gitlab-runner-docker-machine-gamma-hgi-01 network="gamma-gitlab-runners-network"
+#gitlab-runner-docker-machine-gamma-hgi-01 network="gamma-gitlab-runners-network"
 gitlab-runner-docker-machine-delta-hgi-ci-01 network="delta-gitlab-runners-network"
 
 [openstack-credentials:children]
 openstack-instances
 
+[s3-credentials:children]
+openstack-instances
+
 [openstack-gitlab-runners]
-gitlab-runner-docker-machine-gamma-hgi-01
+#gitlab-runner-docker-machine-gamma-hgi-01
 gitlab-runner-docker-machine-delta-hgi-ci-01
 
 [openstack-gamma-hgi]
-gitlab-runner-docker-machine-gamma-hgi-01
+#gitlab-runner-docker-machine-gamma-hgi-01
 
 [openstack-delta-hgi-ci]
 gitlab-runner-docker-machine-delta-hgi-ci-01

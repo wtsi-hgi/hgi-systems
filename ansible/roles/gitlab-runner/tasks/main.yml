@@ -45,21 +45,33 @@
     - gitlab-ci-multi-runner
   when: ansible_os_family == 'Debian'
 
-- name: create gitlab runner configuration fragment directory
+- name: install gitlab runner ssh key (for docker machine)
   tags: gitlab-runner
+  become: yes
+  template: 
+    src: gitlab_runner_ssh_private_key.j2
+    dest: "{{ gitlab_runner_ssh_private_key_file }}"
+    owner: root
+    mode: 0600
+
+- name: create gitlab runner configuration fragment directory
+  tags: 
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
   file: path=/etc/gitlab-runner.d state=directory
 
 - name: create gitlab runner configuration header fragment
-  tags: gitlab-runner
+  tags: 
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
   template: src=00config.toml.j2 dest=/etc/gitlab-runner.d/00config.toml
 
-#- name: install gitlab runner docker machine openstack image from S3
-#  tags: gitlab-runner
-
 - name: register gitlab runner
-  tags: gitlab-runner
+  tags: 
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
   gitlab_ci_multi_runner_register:
     registration_url: "{{ item[1].url }}"
@@ -74,7 +86,9 @@
   when: "not 'image-building' in group_names"
 
 - name: assemble gitlab runner configuration
-  tags: gitlab-runner
+  tags: 
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
   assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"
   when: "not 'image-building' in group_names"

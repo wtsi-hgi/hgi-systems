@@ -43,13 +43,13 @@ from ansible.module_utils.basic import AnsibleModule
 
 def main():
     module = AnsibleModule(argument_spec={
-	"name": {"required": True, "type": "str"},
+        "name": {"required": True, "type": "str"},
         "registration_url": {"required": True, "type": "str"},
         "registration_token": {"required": True, "type": "str"},
-	"config_dir": {"default": "/etc/gitlab-runner.d", "type": "str"},
-	"executor": {"required": False, "type": "str"},
-	"tags": {"required": False, "type": "str"},
-	"extra_args": {"required": False, "type": "str"},
+        "config_dir": {"default": "/etc/gitlab-runner.d", "type": "str"},
+        "executor": {"required": False, "type": "str"},
+        "tags": {"required": False, "type": "str"},
+        "extra_args": {"required": False, "type": "str"},
     })
 
     configuration_path = "%s/name-%s.json" % (module.params["config_dir"], module.params["name"])
@@ -71,7 +71,7 @@ def main():
     changed=False
 
     if os.path.isfile(configuration_path):
-	with open(configuration_path) as f:
+        with open(configuration_path) as f:
             existing_config = json.load(f)
             if cmp(existing_config, config) == 0:
                 # configuration has not changed from existing, no changes required

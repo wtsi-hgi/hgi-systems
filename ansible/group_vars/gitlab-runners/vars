@@ -22,28 +22,29 @@
 # file: group_vars/gitlab-runners
 
 gitlab_runner_concurrent: 30
-gitlab_runner_idle_machines: 5
+gitlab_runner_idle_machines: 1
 gitlab_runner_idle_time: 900
 gitlab_runner_max_builds: 0
 
 gitlab_runner_os_flavor_name: "m1.small"
-gitlab_runner_os_auth_url: "{{ openstack_instance_auth.auth_url }}"
-gitlab_runner_os_project_name: "{{ openstack_instance_auth.project_name }}"
-gitlab_runner_os_username: "{{ openstack_instance_auth.username }}"
-gitlab_runner_os_password: "{{ openstack_instance_auth.password }}"
+gitlab_runner_os_auth_url: "{{ openstack_auth.auth_url }}"
+gitlab_runner_os_project_name: "{{ openstack_auth.project_name }}"
+gitlab_runner_os_username: "{{ openstack_auth.username }}"
+gitlab_runner_os_password: "{{ openstack_auth.password }}"
 
 gitlab_runner_os_image_name: "{{ hgi_docker_os_image_name }}"
 gitlab_runner_os_ssh_user: "{{ hgi_docker_os_image_user }}"
+gitlab_runner_ssh_private_key_file: "/etc/gitlab-runner-ssh-private-key"
+gitlab_runner_ssh_keypair_name: "{{ openstack_instance_key_name }}"
 
 gitlab_runner_registrations:
-  - name: "docker-privileged"
-    executor: docker
+  - name: "docker-machine"
+    executor: "docker+machine"
     extratags:
       - docker
+    extraargs: "--docker-image docker:latest --machine-idle-nodes {{ gitlab_runner_idle_machines }} --machine-idle-time {{ gitlab_runner_idle_time }} --machine-max-builds {{ gitlab_runner_max_builds }} --machine-machine-driver 'openstack' --machine-machine-name 'gitlab-runner-%s' --machine-machine-options 'openstack-auth-url={{ gitlab_runner_os_auth_url }}' --machine-machine-options 'openstack-tenant-name={{ gitlab_runner_os_project_name }}' --machine-machine-options 'openstack-username={{ gitlab_runner_os_username }}' --machine-machine-options 'openstack-password={{ gitlab_runner_os_password }}' --machine-machine-options 'openstack-flavor-name={{ gitlab_runner_os_flavor_name }}' --machine-machine-options 'openstack-image-name={{ gitlab_runner_os_image_name }}' --machine-machine-options 'openstack-ssh-user={{ gitlab_runner_os_ssh_user }}' --machine-machine-options 'openstack-net-name={{ hostvars[network].openstack_network_name }}' --machine-machine-options 'openstack-sec-groups={{ openstack_instance_ssh_security_group_name }},{{ openstack_instance_docker_machine_security_group_name }}'"
+  - name: "docker-privileged"
+    executor: "docker"
+    extratags:
       - docker-privileged
     extraargs: "--docker-privileged --docker-image docker:latest"
-  - name: "docker-machine"
-    executor: docker+machine
-    extratags:
-      - docker
-    extraargs: "--docker-image docker:latest --machine-idle-nodes {{ gitlab_runner_idle_machines }} --machine-idle-time {{ gitlab_runner_idle_time }} --machine-max-builds {{ gitlab_runner_max_builds }} --machine-machine-driver 'openstack' --machine-machine-name 'gitlab-runner-%s' --machine-machine-options 'openstack-auth-url={{ gitlab_runner_os_auth_url }}' --machine-machine-options 'openstack-project-name={{ gitlab_runner_os_project_name }}' --machine-machine-options 'openstack-username={{ gitlab_runner_os_username }}' --machine-machine-options 'openstack-password={{ gitlab_runner_os_password }}' --machine-machine-options 'openstack-flavor-name={{ gitlab_runner_os_flavor_name }}' --machine-machine-options 'openstack-image-name={{ gitlab_runner_os_image_name }}' --machine-machine-options 'openstack-ssh-user={{ gitlab_runner_os_ssh_user }}'"

@@ -23,6 +23,9 @@
 # set up non-host infrastructure
 - include: gitlab-projects.yml
 
+# make sure openstack instances are bootstrapped and facts are set
+- include: openstack-instances-bootstrap.yml
+
 # create dynamic groups for hosts based on OS
 - hosts: all:!non-hosts
   tasks:

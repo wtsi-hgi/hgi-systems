@@ -1,1 +1,3 @@
 openstack_instance_network: "{{ hostvars[network]['openstack_network_name'] }}"
+openstack_instance_image: "{{ hgi_docker_os_image_name }}"
+
