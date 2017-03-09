@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from ansible.module_utils.basic import *
+import json
 
 try:
     from gitlab import Gitlab
@@ -55,27 +56,34 @@ EXAMPLES = """
 def main():
     module = AnsibleModule(
         argument_spec={
-            "gitlab_url": {"required": True, type: "bytes"},
-            "gitlab_token": {"required": True, type: "bytes"},
-            "gitlab_project": {"required": True, type: "bytes"},
-            "gitlab_runners": {"required": True, "type": "list"}
+            "gitlab_url": {"required": True, type: "str"},
+            "gitlab_token": {"required": True, type: "str"},
+            "gitlab_project": {"required": True, type: "str"},
+            "gitlab_runners": {"required": True, type: "list"}
         },
         supports_check_mode=True
     )
 
+    # TODO: Ansible keeps stringifying the list! Going to hack my way through this issue for now...
+    runner_descriptions = module.params["gitlab_runners"]
+    if isinstance(runner_descriptions, str):
+        runner_descriptions = json.loads(runner_descriptions.replace("'", "\""))
+        assert isinstance(runner_descriptions, list)
+
     if not _HAS_DEPENDENCIES:
-        module.fail_json(msg="A required dependency is not installed: %s" % _IMPORT_ERROR)
+        module.fail_json(msg="A required Python module is not installed: %s" % _IMPORT_ERROR)
 
     connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
     project = connector.projects.get(module.params["gitlab_project"])
-    required_runners = {runner.description: runner.id for runner in connector.runners.list(all=True)}
-    required_runner_ids = {required_runners[runner_description] for runner_description in module.params["gitlab_project"]}
-    current_runner_ids = {runner.id for runner in project.runners.list(all=True)}
+    runners = {runner.description: runner.id for runner in connector.runners.list(all=True)}
+    required_runner_ids = {runners[runner_description] for runner_description in runner_descriptions}
+    current_runner_ids = {runner.id for runner in project.runners.list(all=True, scope="specific")}
 
     to_remove = current_runner_ids - required_runner_ids
     to_add = required_runner_ids - current_runner_ids
+    disable_shared_runners = project.shared_runners_enabled
 
-    update_required = len(to_add) + len(to_remove) > 0
+    update_required = len(to_add) + len(to_remove) > 0 or disable_shared_runners
     if module.check_mode:
         module.exit_json(changed=update_required)
     else:
@@ -86,8 +94,12 @@ def main():
             for runner_id in to_remove:
                 project.runners.delete(runner_id)
             for runner_id in to_add:
-                project.runners.create(runner_id)
-            assert {runner.id for runner in project.runners.list(all=True)} == required_runner_ids
+                project.runners.create({"runner_id": runner_id})
+            if disable_shared_runners:
+                project.shared_runners_enabled = False
+                project.save()
+            assert {runner.id for runner in project.runners.list(all=True, scope="specific")} == required_runner_ids
+            module.exit_json(changed=True, message="Gitlab runners set for %s" % project.path_with_namespace)
 
 
 if __name__ == "__main__":
