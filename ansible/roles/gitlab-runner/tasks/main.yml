@@ -82,7 +82,7 @@
     extra_args: "{{ item[0].extraargs | default('') }}"
   with_nested:
     - "{{ gitlab_runner_registrations }}"
-    - "{{ hgi_gitlab_tokens }}"
+    - "{{ gitlab_runner_tokens }}"
   when: "not 'image-building' in group_names"
 
 - name: assemble gitlab runner configuration
