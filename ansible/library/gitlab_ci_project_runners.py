@@ -84,12 +84,25 @@ def main():
     disable_shared_runners = project.shared_runners_enabled
 
     update_required = len(to_add) + len(to_remove) > 0 or disable_shared_runners
+    information = {
+        "setup": {
+            "shared_runners_enabled": project.shared_runners_enabled,
+            "required": list(required_runner_ids),
+            "existing": list(current_runner_ids)
+        },
+        "changes": {
+            "remove": list(to_remove),
+            "add": list(to_add),
+            "disable_shared_runners": disable_shared_runners
+        }
+    }
     if module.check_mode:
-        module.exit_json(changed=update_required)
+        module.exit_json(changed=update_required, meta=information)
     else:
         if not update_required:
             module.exit_json(
-                changed=False, message="Project runners for %s already set correctly" % project.path_with_namespace)
+                changed=False, message="Project runners for %s already set correctly" % project.path_with_namespace,
+                meta=information)
         else:
             for runner_id in to_remove:
                 project.runners.delete(runner_id)
@@ -99,7 +112,8 @@ def main():
                 project.shared_runners_enabled = False
                 project.save()
             assert {runner.id for runner in project.runners.list(all=True, scope="specific")} == required_runner_ids
-            module.exit_json(changed=True, message="Gitlab runners set for %s" % project.path_with_namespace)
+            module.exit_json(
+                changed=True, message="Gitlab runners set for %s" % project.path_with_namespace, meta=information)
 
 
 if __name__ == "__main__":
