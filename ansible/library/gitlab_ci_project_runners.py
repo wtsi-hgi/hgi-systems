@@ -31,7 +31,7 @@ options:
   gitlab_project:
     description:
       - Project name, usually of the form <group>/<project>
-    required: false
+    required: true
   runners:
     description:
       - List of runners, identified by their descriptions (NOT their ids!)
