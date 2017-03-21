@@ -42,3 +42,5 @@ cronic_email_recipients: hgi@sanger.ac.uk
 cronic_email_sender: '"From: mercury@sanger.ac.uk"'
 cronic_email_subject: '"Cronic report from $HOSTNAME"'
 cronic_cmd: "{{ cronic_bin }} -p '{{ cronic_mailx_bin }} -s {{ cronic_email_subject }} -a {{ cronic_email_sender }} {{ cronic_email_recipients }}'"
+
+non_root_compatibility: false

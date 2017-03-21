@@ -27,3 +27,7 @@
 - name: common configuration for root hosts
   include: root.yml
   when: "not 'nonroot' in group_names"
+
+- name: make root host compatible with roles designed for non-root hosts
+  include: non-root-on-root-compatibility.yml
+  when: "non_root_compatibility and not 'nonroot' in group_names"

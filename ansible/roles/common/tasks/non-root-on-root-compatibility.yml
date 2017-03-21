@@ -1,0 +1,31 @@
+---
+
+- name: Install supervisor
+  pip:
+    name: supervisor
+    version: "{{ supervisor_version }}"
+
+- name: Update supervisor location
+  set_fact:
+     supervisorctl_bin: /usr/local/bin/supervisorctl
+
+- name: Install packages required by non-root host setup
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  become: yes
+  with_items:
+    - cron
+
+- name: Setup certificate related variables
+  set_fact:
+    pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: grl-cacert.pem
+    pem_WILDCARD_hgi_internal_sanger_ac_uk_key: /usr/local/share/ca-certificates/grl-cacert.crt
+
+- name: Install requirements for running `htpasswd` ansible module
+  pip:
+    name: passlib
+
+- name: Run common configuration for nonroot hosts
+  include: nonroot.yml
