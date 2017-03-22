@@ -5,6 +5,7 @@ import json
 
 try:
     from gitlab import Gitlab
+    from gitlab import exceptions as Gitlab_exc
     _HAS_DEPENDENCIES = True
 except ImportError as e:
     _IMPORT_ERROR = e
@@ -74,8 +75,16 @@ def main():
         module.fail_json(msg="A required Python module is not installed: %s" % _IMPORT_ERROR)
 
     connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
-    project = connector.projects.get(module.params["gitlab_project"])
-    runners = {runner.description: runner.id for runner in connector.runners.list(all=True)}
+    try:
+        project = connector.projects.get(module.params["gitlab_project"])
+    except Gitlab_exc.GitlabGetError as e:
+        module.fail_json(msg="Failed to get project %s from gitlab API endpoint %s: %s" % (module.params["gitlab_project"], module.params["gitlab_url"], e))
+
+    try:
+        runners = {runner.description: runner.id for runner in connector.runners.list(all=True)}
+    except Gitlab_exc.GitlabGetError as e:
+        module.fail_json(msg="Failed to get runners from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
+
     required_runner_ids = {runners[runner_description] for runner_description in runner_descriptions}
     current_runner_ids = {runner.id for runner in project.runners.list(all=True, scope="specific")}
 
@@ -105,7 +114,17 @@ def main():
                 meta=information)
         else:
             for runner_id in to_remove:
-                project.runners.delete(runner_id)
+                try:                
+                    project.runners.delete(runner_id)
+                except Gitlab_exc.GitlabDeleteError as e:
+                    # could not remove from project, try deleting the runner entirely
+                    # TODO: should probably check this is the only project associated with the runner 
+                    # and possibly require an argument such as delete_runners = True
+                    try:
+                        connector.runners.delete(runner_id)
+                    except Gitlab_exc.GitlabDeleteError as e:
+                        module.fail_json(msg="Failed to delete runner %s: %s" % (runner_id, e), information=information)
+
             for runner_id in to_add:
                 project.runners.create({"runner_id": runner_id})
             if disable_shared_runners:

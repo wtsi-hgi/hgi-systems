@@ -5,18 +5,18 @@ gitlab-sanger-hgi-hgi-systems gitlab_project=hgi/hgi-systems
 gitlab-sanger-hgi-hgi-base-image-builder gitlab_project=hgi/hgi-base-image-builder
 gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-builder
 
-[sanger-gitlab:children]
+[gitlab-projects:children]
 sanger-image-builder-gitlab
 hgi-systems-gitlab
 
 [openstack-credentials:children]
-sanger-gitlab
+gitlab-projects
 
 [s3-credentials:children]
-sanger-gitlab
+gitlab-projects
 
-[gitlab-projects:children]
-sanger-gitlab
+[sanger-gitlab:children]
+gitlab-projects
 
 [hgi-credentials:children]
 hgi-systems-gitlab

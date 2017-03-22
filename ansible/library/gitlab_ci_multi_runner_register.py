@@ -48,6 +48,7 @@ def main():
         "registration_token": {"required": True, "type": "str"},
         "config_dir": {"default": "/etc/gitlab-runner.d", "type": "str"},
         "executor": {"required": False, "type": "str"},
+        "limit": {"required": False, "type": "str"},
         "tags": {"required": False, "type": "str"},
         "extra_args": {"required": False, "type": "str"},
     })
@@ -63,6 +64,8 @@ def main():
     config["output_toml_path"] = output_toml_path
     if "executor" in module.params:
         config["executor"] = module.params["executor"]
+    if "limit" in module.params:
+        config["limit"] = module.params["limit"]
     if "tags" in module.params:
         config["tags"] = ",".join(sorted(module.params["tags"].split(","))) # canonicalize order of tags
     if "extra_args" in module.params:
@@ -96,6 +99,8 @@ def main():
     register_command = ["gitlab-ci-multi-runner", "register", "-n", "--url", config["registration_url"], "--registration-token", config["registration_token"], "--description", config["name"]]
     if "executor" in config:
         register_command.extend(["--executor", config["executor"]])
+    if "limit" in config:
+        register_command.extend(["--limit", config["limit"]])
     if "tags" in config:
         register_command.extend(["--tag-list", config["tags"]])
     if "extra_args" in config:

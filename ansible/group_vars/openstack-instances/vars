@@ -2,3 +2,4 @@ openstack_instance_public_key_file: "{{ playbook_dir }}/files/public_keys/mercur
 openstack_instance_key_name: ansible_mercury_key
 openstack_instance_ssh_security_group_name: ssh
 openstack_instance_docker_machine_security_group_name: docker-machine
+openstack_instance_docker_registry_security_group_name: docker-registry

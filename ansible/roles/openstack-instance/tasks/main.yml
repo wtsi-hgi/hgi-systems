@@ -64,6 +64,24 @@
     port_range_max: 2376
     remote_ip_prefix: 0.0.0.0/0
   
+- name: create docker-registry security group 
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_security_group:
+    auth: "{{ openstack_auth }}"
+    state: present
+    name: "{{ openstack_instance_docker_registry_security_group_name }}"
+
+- name: add rule to docker-registry security group
+  delegate_to: "{{ openstack_instance_delegate }}"
+  os_security_group_rule:
+    auth: "{{ openstack_auth }}"
+    state: present
+    security_group: "{{ openstack_instance_docker_registry_security_group_name }}"
+    protocol: tcp
+    port_range_min: 6000
+    port_range_max: 6000
+    remote_ip_prefix: 0.0.0.0/0
+  
 - name: gather facts about openstack image
   delegate_to: "{{ openstack_instance_delegate }}"
   os_image_facts:
@@ -119,8 +137,7 @@
     flavor: "{{ openstack_instance_flavor }}"
     key_name: "{{ openstack_instance_key_name }}"
     network: "{{ openstack_instance_network }}"
-    security_groups: 
-      - "{{ openstack_instance_ssh_security_group_name }}"
+    security_groups: "{{ openstack_instance_security_groups }}"
   tags: 
       - openstack-instance
   when: (openstack_servers | length == 0)
