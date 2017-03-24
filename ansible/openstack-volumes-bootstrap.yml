@@ -18,14 +18,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
-
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
-
-# create openstack volumes
-- include: openstack-volumes-bootstrap.yml
-
-# bring up openstack instances
-- include: openstack-instances-bootstrap.yml
-
+# file: openstack-volumes-bootstrap.yml
+- hosts: openstack-volumes
+  gather_facts: no
+  roles:
+    - openstack-volume

@@ -18,14 +18,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
+# file: roles/openstack-volume/tasks/main.yml
 
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
-
-# create openstack volumes
-- include: openstack-volumes-bootstrap.yml
-
-# bring up openstack instances
-- include: openstack-instances-bootstrap.yml
+- name: create an openstack volume
+  delegate_to: "{{ openstack_volume_delegate }}"
+  os_volume:
+    auth: "{{ openstack_auth }}"
+    state: present
+    display_name: "{{ openstack_volume_name }}"
+    size: "{{ openstack_volume_size_gb }}"
 
