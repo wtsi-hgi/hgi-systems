@@ -20,6 +20,6 @@
 ---
 # file: roles/openstack-volume/defaults/main.yml
 
-openstack_network_delegate: 127.0.0.1
+openstack_volume_delegate: 127.0.0.1
 openstack_volume_name: ""
 openstack_vole_size_gb: 1
