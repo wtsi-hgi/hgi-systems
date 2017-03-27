@@ -80,6 +80,9 @@ cookie-jars
 [gitlab-runners:children]
 openstack-gitlab-runners
 
+#[consul-servers:children]
+#openstack-consul-servers
+
 [dockerers:children]
 gitlab-runners
 
@@ -91,11 +94,19 @@ gitlab-runners
 #gitlab-runner-gamma-hgi-01 network="gamma-gitlab-runners-network"
 gitlab-runner-delta-hgi-ci-01 network="delta-gitlab-runners-network"
 
+#[openstack-instances:children]
+#openstack-consul-servers network="delta-hgi-network"
+
 [openstack-credentials:children]
 openstack-instances
 
 [s3-credentials:children]
 openstack-instances
+
+#[openstack-consul-servers]
+#consul-server-delta-hgi-01
+#consul-server-delta-hgi-02
+#consul-server-delta-hgi-03
 
 [openstack-gitlab-runners]
 #gitlab-runner-gamma-hgi-01
@@ -106,6 +117,9 @@ gitlab-runner-delta-hgi-ci-01
 
 [openstack-delta-hgi-ci]
 gitlab-runner-delta-hgi-ci-01
+
+#[openstack-delta-hgi:children]
+#openstack-consul-servers
 
 # Groups of dynamic inventory hosts managed by Terraform
 [ssh-gateways]

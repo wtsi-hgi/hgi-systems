@@ -19,9 +19,9 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 [openstack-volumes]
-delta-hgi-consul01-volume openstack_volume_name=consul01 openstack_volume_size_gb=100
-delta-hgi-consul02-volume openstack_volume_name=consul02 openstack_volume_size_gb=100
-delta-hgi-consul03-volume openstack_volume_name=consul03 openstack_volume_size_gb=100
+delta-hgi-consul01-volume openstack_volume_name=consul01 openstack_volume_size_gb=10
+delta-hgi-consul02-volume openstack_volume_name=consul02 openstack_volume_size_gb=10
+delta-hgi-consul03-volume openstack_volume_name=consul03 openstack_volume_size_gb=10
 
 [openstack-delta-hgi]
 delta-hgi-consul01-volume
