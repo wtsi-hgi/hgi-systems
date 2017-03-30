@@ -20,7 +20,7 @@
 ---
 # file: openstack-destroy-instances.yml
 
-- hosts: openstack-tenants
+- hosts: openstack-destroy-tenants
   gather_facts: no
   tasks:
     - name: gather facts about openstack instances

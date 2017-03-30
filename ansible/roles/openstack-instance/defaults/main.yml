@@ -20,10 +20,9 @@
 ---
 # file: roles/openstack-instance/defaults/main.yml
 
-openstack_image_tmp_dir: /lustre/scratch115/teams/hgi/users/mercury/tmp
+openstack_instance_volumes: []
 
 openstack_instance_delegate: 127.0.0.1
-openstack_instance_image: "Ubuntu Xenial"
 openstack_instance_ssh_user: ubuntu
 openstack_instance_flavor: m1.small
 openstack_instance_router: "{{ openstack_instance_network }}_{{ openstack_instance_external_network }}_router"
@@ -31,9 +30,4 @@ openstack_instance_subnet: "{{ openstack_instance_network }}_subnet"
 
 openstack_instance_security_groups:
  - "{{ openstack_instance_ssh_security_group_name }}"
-
-openstack_image_s3_bucket: "hgi-openstack-images"
-openstack_image_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
-openstack_image_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
-openstack_image_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
 

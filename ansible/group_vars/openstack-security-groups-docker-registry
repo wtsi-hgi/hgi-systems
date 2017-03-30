@@ -1,0 +1,4 @@
+openstack_security_group_name: docker-registry
+openstack_security_group_rules:
+  - protocol: tcp
+    port_range_min: 6000

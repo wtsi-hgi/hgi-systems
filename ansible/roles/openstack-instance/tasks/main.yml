@@ -28,93 +28,6 @@
     name: "{{ openstack_instance_key_name }}"
     public_key_file: "{{ openstack_instance_public_key_file }}"
 
-- name: create ssh security group 
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_security_group:
-    auth: "{{ openstack_auth }}"
-    state: present
-    name: "{{ openstack_instance_ssh_security_group_name }}"
-
-- name: add rule to ssh security group
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_security_group_rule:
-    auth: "{{ openstack_auth }}"
-    state: present
-    security_group: "{{ openstack_instance_ssh_security_group_name }}"
-    protocol: tcp
-    port_range_min: 22
-    port_range_max: 22
-    remote_ip_prefix: 0.0.0.0/0
-  
-- name: create docker-machine security group 
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_security_group:
-    auth: "{{ openstack_auth }}"
-    state: present
-    name: "{{ openstack_instance_docker_machine_security_group_name }}"
-
-- name: add rule to docker-machine security group
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_security_group_rule:
-    auth: "{{ openstack_auth }}"
-    state: present
-    security_group: "{{ openstack_instance_docker_machine_security_group_name }}"
-    protocol: tcp
-    port_range_min: 2376
-    port_range_max: 2376
-    remote_ip_prefix: 0.0.0.0/0
-  
-- name: create docker-registry security group 
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_security_group:
-    auth: "{{ openstack_auth }}"
-    state: present
-    name: "{{ openstack_instance_docker_registry_security_group_name }}"
-
-- name: add rule to docker-registry security group
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_security_group_rule:
-    auth: "{{ openstack_auth }}"
-    state: present
-    security_group: "{{ openstack_instance_docker_registry_security_group_name }}"
-    protocol: tcp
-    port_range_min: 6000
-    port_range_max: 6000
-    remote_ip_prefix: 0.0.0.0/0
-  
-- name: gather facts about openstack image
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_image_facts:
-    auth: "{{ openstack_auth }}"
-    image: "{{ openstack_instance_image }}"
-
-- name: fetch image from s3
-  tags: s3
-  delegate_to: "{{ openstack_instance_delegate }}"
-  s3:
-    mode: get
-    rgw: true
-    bucket: "{{ openstack_image_s3_bucket }}"
-    region: ""
-    s3_url: "{{ openstack_image_s3_endpoint }}"
-    aws_access_key: "{{ openstack_image_s3_access_key }}"    
-    aws_secret_key: "{{ openstack_image_s3_secret_key }}"    
-    object: "{{ openstack_instance_image }}"
-    dest: "{{ openstack_image_tmp_dir }}/{{ openstack_instance_image }}"
-  when: not openstack_image
-
-- name: ensure image is present in glance
-  tags: s3
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_image: 
-    state: present
-    auth: "{{ openstack_auth }}"
-    container_format: bare
-    disk_format: qcow2
-    name: "{{ openstack_instance_image }}"
-    filename: "{{ openstack_image_tmp_dir }}/{{ openstack_instance_image }}"
-  when: not openstack_image
-
 - name: gather facts about openstack instance
   tags:
     - openstack-facts
@@ -138,6 +51,7 @@
     key_name: "{{ openstack_instance_key_name }}"
     network: "{{ openstack_instance_network }}"
     security_groups: "{{ openstack_instance_security_groups }}"
+    volumes: "{{ openstack_instance_volumes }}"
   tags: 
       - openstack-instance
   when: (openstack_servers | length == 0)

@@ -57,7 +57,7 @@
     auth: "{{ openstack_auth }}"
     state: present
     name: "{{ openstack_network_router_name }}"
-    network: "{{ openstack_network_external_network_id }}"
+    network: "{{ openstack_external_network_id }}"
     interfaces:
       - "{{ openstack_network_subnet_name }}"
 

@@ -26,6 +26,12 @@
 # create openstack volumes
 - include: openstack-volumes-bootstrap.yml
 
+# create openstack security groups
+- include: openstack-security-groups-bootstrap.yml
+
+# create openstack images
+- include: openstack-images-bootstrap.yml
+
 # bring up openstack instances
 - include: openstack-instances-bootstrap.yml
 

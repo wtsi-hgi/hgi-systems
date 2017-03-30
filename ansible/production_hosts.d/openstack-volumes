@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -16,10 +17,14 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
-#
----
-# file: roles/openstack-network/defaults/main.yml
 
-openstack_network_delegate: 127.0.0.1
-openstack_network_router_name: "{{ openstack_network_name }}_{{ openstack_external_network_id }}_router"
-openstack_network_subnet_name: "{{ openstack_network_name }}_subnet"
+[openstack-volumes]
+delta-hgi-consul01-volume tenant=delta-hgi-tenant openstack_volume_name=consul01 openstack_volume_size_gb=10
+delta-hgi-consul02-volume tenant=delta-hgi-tenant openstack_volume_name=consul02 openstack_volume_size_gb=10
+delta-hgi-consul03-volume tenant=delta-hgi-tenant openstack_volume_name=consul03 openstack_volume_size_gb=10
+
+[openstack:children]
+openstack-volumes
+
+[non-hosts:children]
+openstack-volumes

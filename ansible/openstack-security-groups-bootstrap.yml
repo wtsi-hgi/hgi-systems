@@ -18,8 +18,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/openstack-network/defaults/main.yml
-
-openstack_network_delegate: 127.0.0.1
-openstack_network_router_name: "{{ openstack_network_name }}_{{ openstack_external_network_id }}_router"
-openstack_network_subnet_name: "{{ openstack_network_name }}_subnet"
+# file: openstack-security-groups-bootstrap.yml
+- hosts: openstack-security-groups
+  gather_facts: no
+  roles:
+    - openstack-security-group

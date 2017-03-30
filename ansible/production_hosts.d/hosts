@@ -55,7 +55,7 @@ mesos-slaves
 zookeepers
 marathoners
 chronosians
-openstack-gitlab-runners
+openstack-instance-gitlab-runners
 
 [bamboosians:children]
 mesos-slaves
@@ -78,10 +78,10 @@ cookie-monsters
 cookie-jars
 
 [gitlab-runners:children]
-openstack-gitlab-runners
+openstack-instance-gitlab-runners
 
-#[consul-servers:children]
-#openstack-consul-servers
+[consul-servers:children]
+openstack-instance-consul-servers
 
 [dockerers:children]
 gitlab-runners
@@ -89,37 +89,25 @@ gitlab-runners
 [sanger-gitlab:children]
 gitlab-runners
 
-# OpenStack instances to be created by Ansible
-[openstack-instances]
-#gitlab-runner-gamma-hgi-01 network="gamma-gitlab-runners-network"
-gitlab-runner-delta-hgi-ci-01 network="delta-gitlab-runners-network"
-
-#[openstack-instances:children]
-#openstack-consul-servers network="delta-hgi-network"
-
-[openstack-credentials:children]
-openstack-instances
-
 [s3-credentials:children]
+gitlab-runners
+
+# OpenStack instances to be created by Ansible
+[openstack-instances:children]
+openstack-instance-gitlab-runners
+openstack-instance-consul-servers
+
+[openstack:children]
 openstack-instances
 
-#[openstack-consul-servers]
-#consul-server-delta-hgi-01
-#consul-server-delta-hgi-02
-#consul-server-delta-hgi-03
+[openstack-instance-consul-servers]
+consul-server-delta-hgi-01 tenant=delta-hgi-tenant volume=delta-hgi-consul01-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image
+consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image
+consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image
 
-[openstack-gitlab-runners]
-#gitlab-runner-gamma-hgi-01
-gitlab-runner-delta-hgi-ci-01
-
-[openstack-gamma-hgi]
-#gitlab-runner-gamma-hgi-01
-
-[openstack-delta-hgi-ci]
-gitlab-runner-delta-hgi-ci-01
-
-#[openstack-delta-hgi:children]
-#openstack-consul-servers
+[openstack-instance-gitlab-runners]
+gitlab-runner-gamma-hgi-01 tenant=gamma-hgi-tenant network="gamma-gitlab-runners-network" image=delta-hgi-docker-image
+gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-runners-network" image=delta-hgi-docker-image
 
 # Groups of dynamic inventory hosts managed by Terraform
 [ssh-gateways]

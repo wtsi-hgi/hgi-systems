@@ -18,22 +18,13 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-[openstack-networks]
-delta-hgi-ci-network openstack_network_name=hgi-ci openstack_network_cidr=192.168.100.0/24
-delta-gitlab-runners-network openstack_network_name=gitlab-runners openstack_network_cidr=192.168.101.0/24
-gamma-hgi-ci-network openstack_network_name=hgi-ci openstack_network_cidr=192.168.200.0/24
-gamma-gitlab-runners-network openstack_network_name=gitlab-runners openstack_network_cidr=192.168.201.0/24
+[openstack-tenants]
+delta-hgi-tenant
+delta-hgi-ci-tenant
+gamma-hgi-tenant
 
-[openstack-delta-hgi-ci]
-delta-hgi-ci-network
-delta-gitlab-runners-network
-
-[openstack-gamma-hgi]
-gamma-hgi-ci-network
-gamma-gitlab-runners-network 
-
-[openstack-credentials:children]
-openstack-networks
+[openstack:children]
+openstack-tenants
 
 [non-hosts:children]
-openstack-networks
+openstack-tenants

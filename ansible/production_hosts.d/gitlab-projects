@@ -9,7 +9,7 @@ gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-b
 sanger-image-builder-gitlab
 hgi-systems-gitlab
 
-[openstack-credentials:children]
+[openstack:children]
 gitlab-projects
 
 [s3-credentials:children]

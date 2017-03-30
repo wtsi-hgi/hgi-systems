@@ -1,0 +1,2 @@
+openstack_network_name: consul-servers
+openstack_network_cidr: 192.168.102.0/24

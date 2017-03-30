@@ -1,0 +1,51 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+
+[openstack-networks-hgi-ci]
+delta-hgi-ci-network tenant=delta-hgi-ci-tenant
+gamma-hgi-ci-network tenant=gamma-hgi-tenant
+
+[openstack-networks-gitlab-runners]
+delta-gitlab-runners-network tenant=delta-hgi-ci-tenant
+gamma-gitlab-runners-network tenant=gamma-hgi-tenant
+
+[openstack-networks-consul-servers]
+delta-hgi-consul-servers-network tenant=delta-hgi-tenant
+
+[openstack-networks:children]
+openstack-networks-hgi-ci
+openstack-networks-gitlab-runners
+openstack-networks-consul-servers
+
+# external networks TODO put this in dynamic groups
+[openstack-external-network-delta]
+delta-hgi-ci-network
+delta-gitlab-runners-network
+delta-hgi-consul-servers-network
+
+[openstack-external-network-gamma]
+gamma-hgi-ci-network
+gamma-gitlab-runners-network
+
+[openstack:children]
+openstack-networks
+
+[non-hosts:children]
+openstack-networks

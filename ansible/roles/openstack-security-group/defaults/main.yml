@@ -1,7 +1,6 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Authors:
-# * Joshua C. Randall <jcrandall@alum.mit.edu>
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -17,19 +16,8 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/openstack-security-group/defaults/main.yml
 
-[openstack-volumes]
-delta-hgi-consul01-volume openstack_volume_name=consul01 openstack_volume_size_gb=10
-delta-hgi-consul02-volume openstack_volume_name=consul02 openstack_volume_size_gb=10
-delta-hgi-consul03-volume openstack_volume_name=consul03 openstack_volume_size_gb=10
-
-[openstack-delta-hgi]
-delta-hgi-consul01-volume
-delta-hgi-consul02-volume
-delta-hgi-consul03-volume
-
-[openstack-credentials:children]
-openstack-volumes
-
-[non-hosts:children]
-openstack-volumes
+openstack_security_group_delegate: 127.0.0.1

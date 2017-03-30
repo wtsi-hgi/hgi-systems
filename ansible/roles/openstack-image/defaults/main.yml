@@ -18,8 +18,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/openstack-network/defaults/main.yml
+# file: roles/openstack-image/defaults/main.yml
 
-openstack_network_delegate: 127.0.0.1
-openstack_network_router_name: "{{ openstack_network_name }}_{{ openstack_external_network_id }}_router"
-openstack_network_subnet_name: "{{ openstack_network_name }}_subnet"
+openstack_image_tmp_dir: /lustre/scratch115/teams/hgi/users/mercury/tmp
+openstack_image_delegate: 127.0.0.1
+openstack_image_name: "Ubuntu Xenial"
+openstack_image_s3_bucket: "hgi-openstack-images"
+openstack_image_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+openstack_image_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+openstack_image_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+

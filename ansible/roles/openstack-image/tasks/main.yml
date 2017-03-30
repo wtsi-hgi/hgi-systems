@@ -1,0 +1,62 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/openstack-image/tasks/main.yml
+
+- name: gather facts about openstack image
+  delegate_to: "{{ openstack_image_delegate }}"
+  os_image_facts:
+    auth: "{{ openstack_auth }}"
+    image: "{{ openstack_image_name }}"
+
+# workaround for ansible s3 module bug: https://github.com/ansible/ansible/issues/5442
+- name: check if image already cached on delegate
+  delegate_to: "{{ openstack_image_delegate }}"
+  stat: 
+    path: "{{ openstack_image_tmp_dir }}/{{ openstack_image_name }}"
+  register: cached_image
+  
+- name: fetch image from s3
+  tags: s3
+  delegate_to: "{{ openstack_image_delegate }}"
+  s3:
+    mode: get
+    rgw: true
+    bucket: "{{ openstack_image_s3_bucket }}"
+    region: ""
+    s3_url: "{{ openstack_image_s3_endpoint }}"
+    aws_access_key: "{{ openstack_image_s3_access_key }}"    
+    aws_secret_key: "{{ openstack_image_s3_secret_key }}"    
+    object: "{{ openstack_image_name }}"
+    dest: "{{ openstack_image_tmp_dir }}/{{ openstack_image_name }}"
+  when: not openstack_image and not cached_image.stat.exists
+
+- name: ensure image is present in glance
+  tags: s3
+  delegate_to: "{{ openstack_image_delegate }}"
+  os_image: 
+    state: present
+    auth: "{{ openstack_auth }}"
+    container_format: bare
+    disk_format: qcow2
+    name: "{{ openstack_image_name }}"
+    filename: "{{ openstack_image_tmp_dir }}/{{ openstack_image_name }}"
+  when: not openstack_image
+

@@ -24,6 +24,7 @@
 - include: gitlab-projects.yml
 
 # make sure openstack instances are bootstrapped and facts are set
+# TODO: migrate to dynamic inventory?
 - include: openstack-instances-bootstrap.yml
 
 # create dynamic groups for hosts based on OS
