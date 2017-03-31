@@ -100,6 +100,9 @@ openstack-instance-consul-servers
 [openstack:children]
 openstack-instances
 
+[infoblox-credentials:children]
+openstack-instances
+
 [openstack-instance-consul-servers]
 consul-server-delta-hgi-01 tenant=delta-hgi-tenant volume=delta-hgi-consul01-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image
 consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image

@@ -65,11 +65,23 @@
     detailed: yes
   when: create_instance|changed
 
+- name: creates DNS A record for the instance in the hgi.sanger.ac.uk zone
+  delegate_to: "{{ openstack_instance_infoblox_delegate }}"
+  infoblox:
+    action: add_a_record
+    server: "{{ openstack_instance_infoblox_api_server }}"
+    dns_view: "{{ openstack_instance_infoblox_dns_view }}"
+    api_version: "{{ openstack_instance_infoblox_api_version }}"
+    username: "{{ openstack_instance_infoblox_username }}"
+    password: "{{ openstack_instance_infoblox_password }}"
+    name: "{{ openstack_servers[0].accessIPv4 }}"
+    address: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
+
 - name: set essential ansible connection facts
   tags:
     - openstack-facts
   set_fact:
-    ansible_host: "{{ openstack_servers[0].accessIPv4 }}"
+    ansible_host: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
     ansible_port: 22
     ansible_user: "{{ openstack_instance_ssh_user }}"
 
@@ -85,19 +97,19 @@
     executable: /bin/bash
   when: create_instance|changed
 
-# - name: scan for ssh fingerprint from instance
-#   delegate_to: localhost
-#   command: ssh-keyscan -H {{ ansible_host }} 
-#   register: ssh_keyscan_results
-#   when: create_instance|changed 
+ # - name: scan for ssh fingerprint from instance
+ #   delegate_to: localhost
+ #   command: ssh-keyscan -H {{ ansible_host }} 
+ #   register: ssh_keyscan_results
+ #   when: create_instance|changed 
 
-# - name: store ssh fingerprint in known_hosts
-#   delegate_to: localhost
-#   known_hosts:
-#     name: "{{ ansible_host }}"
-#     key: "{{ ssh_keyscan_results.stdout }}"
-#     state: present
-#   when: ssh_keyscan_results|changed 
+ # - name: store ssh fingerprint in known_hosts
+ #   delegate_to: localhost
+ #   known_hosts:
+ #     name: "{{ ansible_host }}"
+ #     key: "{{ ssh_keyscan_results.stdout }}"
+ #     state: present
+ #   when: ssh_keyscan_results|changed 
 
 #- name: disable unattended upgrades
 #  file:
