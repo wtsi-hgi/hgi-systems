@@ -21,4 +21,4 @@
 # file: roles/consul-server/meta/main.yml
 
 dependencies:
-  - { role: ansible-consul }
+  - { role: ansible-consul, become: yes }
