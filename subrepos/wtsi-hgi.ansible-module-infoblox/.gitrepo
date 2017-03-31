@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/wtsi-hgi/ansible-module-infoblox.git
 	branch = feature/a-records
-	commit = 21b07ab4fa9905cf7f793832c0b62e562a188d61
-	parent = 97a837106145b75d3109ff797481027dab2fcff9
+	commit = 96c401afedb8b78690eae17e98e71772a886a1d4
+	parent = 19fa89487feb1367c2bd658bb06e33bc17accfb4
 	cmdver = 0.3.1
