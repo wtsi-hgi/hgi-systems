@@ -18,23 +18,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
-
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
-
-# create openstack volumes
-- include: openstack-volumes-bootstrap.yml
-
-# create openstack security groups
-- include: openstack-security-groups-bootstrap.yml
-
-# create openstack images
-- include: openstack-images-bootstrap.yml
-
-# create openstack keypairs
-- include: openstack-keypairs-bootstrap.yml
-
-# bring up openstack instances
-- include: openstack-instances-bootstrap.yml
-
+# file: openstack-keypairs-bootstrap.yml
+- hosts: openstack-keypairs
+  gather_facts: no
+  roles:
+    - openstack-keypair

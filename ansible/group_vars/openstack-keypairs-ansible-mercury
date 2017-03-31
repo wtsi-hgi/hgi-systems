@@ -1,0 +1,3 @@
+
+openstack_keypair_key_name: ansible_mercury_key
+openstack_keypair_public_key_file: "{{ playbook_dir }}/files/public_keys/mercury-farm3"

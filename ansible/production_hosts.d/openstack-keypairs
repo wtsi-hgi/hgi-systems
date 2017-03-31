@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -16,25 +17,17 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
-#
----
-# file: site.yml
 
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
+[openstack-keypairs-ansible-mercury]
+delta-hgi-ansible-mercury-keypair tenant=delta-hgi-tenant
+delta-hgi-ci-ansible-mercury-keypair tenant=delta-hgi-ci-tenant
+gamma-hgi-ansible-mercury-keypair tenant=gamma-hgi-tenant
 
-# create openstack volumes
-- include: openstack-volumes-bootstrap.yml
+[openstack-keypairs:children]
+openstack-keypairs-ansible-mercury
 
-# create openstack security groups
-- include: openstack-security-groups-bootstrap.yml
+[openstack:children]
+openstack-keypairs
 
-# create openstack images
-- include: openstack-images-bootstrap.yml
-
-# create openstack keypairs
-- include: openstack-keypairs-bootstrap.yml
-
-# bring up openstack instances
-- include: openstack-instances-bootstrap.yml
-
+[non-hosts:children]
+openstack-keypairs

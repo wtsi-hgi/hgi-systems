@@ -18,23 +18,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
+# file: roles/openstack-keypair/defaults/main.yml
 
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
-
-# create openstack volumes
-- include: openstack-volumes-bootstrap.yml
-
-# create openstack security groups
-- include: openstack-security-groups-bootstrap.yml
-
-# create openstack images
-- include: openstack-images-bootstrap.yml
-
-# create openstack keypairs
-- include: openstack-keypairs-bootstrap.yml
-
-# bring up openstack instances
-- include: openstack-instances-bootstrap.yml
-
+openstack_keypair_delegate: 127.0.0.1

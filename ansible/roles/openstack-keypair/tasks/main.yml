@@ -18,23 +18,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
+# file: roles/openstack-keypair/tasks/main.yml
 
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
-
-# create openstack volumes
-- include: openstack-volumes-bootstrap.yml
-
-# create openstack security groups
-- include: openstack-security-groups-bootstrap.yml
-
-# create openstack images
-- include: openstack-images-bootstrap.yml
-
-# create openstack keypairs
-- include: openstack-keypairs-bootstrap.yml
-
-# bring up openstack instances
-- include: openstack-instances-bootstrap.yml
+- name: create openstack key pair
+  delegate_to: "{{ openstack_keypair_delegate }}"
+  os_keypair:
+    auth: "{{ openstack_auth }}"
+    state: present
+    name: "{{ openstack_keypair_key_name }}"
+    public_key_file: "{{ openstack_keypair_public_key_file }}"
 

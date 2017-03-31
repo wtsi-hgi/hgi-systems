@@ -20,14 +20,6 @@
 ---
 # file: roles/openstack-instance/tasks/main.yml
 
-- name: create key pair
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_keypair:
-    auth: "{{ openstack_auth }}"
-    state: present
-    name: "{{ openstack_instance_key_name }}"
-    public_key_file: "{{ openstack_instance_public_key_file }}"
-
 - name: gather facts about openstack instance
   tags:
     - openstack-facts

@@ -1,8 +1,7 @@
 openstack_instance_image: "{{ hostvars[image]['openstack_image_name'] }}"
+openstack_instance_key_name: "{{ hostvars[keypair]['openstack_keypair_key_name'] }}"
 openstack_instance_network: "{{ hostvars[network]['openstack_network_name'] }}"
 openstack_instance_volumes: "{{ [ hostvars[volume]['openstack_volume_name'] ] if volume is defined else [] }}"
-openstack_instance_public_key_file: "{{ playbook_dir }}/files/public_keys/mercury-farm3"
-openstack_instance_key_name: ansible_mercury_key
 
 openstack_instance_infoblox_username: "{{ infoblox_credentials_username }}"
 openstack_instance_infoblox_password: "{{ infoblox_credentials_password }}"
