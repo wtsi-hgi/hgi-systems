@@ -25,5 +25,8 @@ gamma-hgi-tenant tenant=gamma-hgi-tenant openstack_tenant_id=0fb6b8ad81f54a84a80
 [openstack:children]
 openstack-destroy-tenants
 
+[infoblox-credentials:children]
+openstack-destroy-tenants
+
 [non-hosts:children]
 openstack-destroy-tenants

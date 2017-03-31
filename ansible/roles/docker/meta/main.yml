@@ -1,7 +1,6 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Authors:
-# * Joshua C. Randall <jcrandall@alum.mit.edu>
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-ansible.
 #
@@ -17,14 +16,9 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/docker/meta/main.yml
 
-[gitlab-runners]
-gitlab-runner-001 ansible_host=172.27.81.117
-
-[hgi-gitlab-project-tokens:children]
-gitlab-runners
-
-[dockerers:children]
-gitlab-runners
-
-
+dependencies:
+  - { role: common }

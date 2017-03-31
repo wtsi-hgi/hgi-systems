@@ -36,3 +36,14 @@
         name: "{{ item.id }}"
       with_items: "{{ openstack_servers | list }}"
 
+    - name: remove internal DNS name for instance from hgi.sanger.ac.uk zone
+      delegate_to: 127.0.0.1
+      infoblox:
+        action: delete_a_record
+        server: "{{ infoblox_credentials_api_server }}"
+        api_version: "{{ infoblox_credentials_api_version }}"
+        username: "{{ infoblox_credentials_username }}"
+        password: "{{ infoblox_credentials_password }}"
+        dns_view: "internal"
+        name: "{{ item.name }}.hgi.sanger.ac.uk"
+      with_items: "{{ openstack_servers | list }}"

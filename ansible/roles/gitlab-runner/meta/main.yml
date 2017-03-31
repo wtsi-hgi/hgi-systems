@@ -18,7 +18,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: dockerers.yml
-- hosts: dockerers
-  roles:
-    - docker
+# file: roles/gitlab-runners/meta/main.yml
+
+dependencies:
+  - { role: docker }

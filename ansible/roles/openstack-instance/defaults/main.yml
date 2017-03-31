@@ -21,8 +21,6 @@
 # file: roles/openstack-instance/defaults/main.yml
 
 openstack_instance_infoblox_delegate: 127.0.0.1
-openstack_instance_infoblox_api_server: infoblox-gm.internal.sanger.ac.uk
-openstack_instance_infoblox_api_version: 2.3.1
 openstack_instance_infoblox_dns_view: internal
 
 openstack_instance_volumes: []

@@ -34,11 +34,6 @@
     - group_by: key=os_{{ ansible_distribution }} # e.g. "os_Ubuntu"
     - group_by: key=os_family_{{ ansible_os_family }} # e.g. "os_Debian"
 
-# run common role on all hosts
-- hosts: all:!non-hosts
-  roles:
-    - common
-
 # playbooks that need nonroot host hgi infrastructure
 - include: mesos-masters.yml
 - include: zookeepers.yml
@@ -50,7 +45,6 @@
 # playbooks that only support root hosts
 - include: cookie-jars.yml
 - include: cookie-monsters.yml
-- include: dockerers.yml
 - include: gitlab-runners.yml
 - include: consul-servers.yml
 

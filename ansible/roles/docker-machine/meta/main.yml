@@ -21,6 +21,5 @@
 # file: roles/docker-machine/meta/main.yml
 
 dependencies:
-  - { role: common }
   - { role: docker }
 

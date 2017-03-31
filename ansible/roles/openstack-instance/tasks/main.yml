@@ -74,8 +74,8 @@
     api_version: "{{ openstack_instance_infoblox_api_version }}"
     username: "{{ openstack_instance_infoblox_username }}"
     password: "{{ openstack_instance_infoblox_password }}"
-    name: "{{ openstack_servers[0].accessIPv4 }}"
-    address: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
+    name: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
+    address: "{{ openstack_servers[0].accessIPv4 }}"
 
 - name: set essential ansible connection facts
   tags:
