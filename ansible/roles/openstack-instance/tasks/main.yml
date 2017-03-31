@@ -57,10 +57,10 @@
     detailed: yes
   when: create_instance|changed
 
-- name: creates DNS A record for the instance in the hgi.sanger.ac.uk zone
+- name: sets DNS A record for the instance in the hgi.sanger.ac.uk zone
   delegate_to: "{{ openstack_instance_infoblox_delegate }}"
   infoblox:
-    action: add_a_record
+    action: set_a_record
     server: "{{ openstack_instance_infoblox_api_server }}"
     dns_view: "{{ openstack_instance_infoblox_dns_view }}"
     api_version: "{{ openstack_instance_infoblox_api_version }}"
