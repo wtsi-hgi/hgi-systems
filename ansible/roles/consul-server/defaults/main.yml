@@ -20,4 +20,11 @@
 ---
 # file: roles/consul-server/defaults/main.yml
 
-consul_version: 0.7.2
+consul_version: "{{ consul_server_version }}"
+consul_encrypt: "{{ consul_server_encrypt }}"
+consul_datacenter: "{{ consul_server_datacenter }}"
+consul_is_ui: true
+consul_is_server: true
+consul_bootstrap: true
+consul_bind_address: "{{ ansible_default_ipv4['address'] }}"
+consul_node_name: "{{ inventory_hostname }}"
