@@ -22,13 +22,13 @@
 
 - name: create mesos-master credentials file
   template: src=mesos-master_credentials.j2 dest={{ mesos_master_credentials_file }} owner=mercury group=hgi mode=0640
-  notify: 
+  notify:
     - restart mesos-master
   tags: mesos-master
 
 - name: create mesos-master supervisord configuration
   template: src=mesos-master_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/mesos-master.conf owner=mercury group=hgi mode=0640
-  notify: 
+  notify:
     - reload supervisord
     - restart mesos-master
   tags: mesos-master
@@ -36,7 +36,7 @@
 - name: add mesos-master supervisord configuration to supervisord conf
   set_fact:
      supervisord_conf_includes: "{{ supervisord_conf_includes | default('') }} {{ supervisord_conf_dir }}/mesos-master.conf"
-  notify: 
+  notify:
     - reload supervisord
     - restart mesos-master
   tags: mesos-master
