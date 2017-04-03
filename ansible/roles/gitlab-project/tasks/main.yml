@@ -26,9 +26,8 @@
   delegate_to: "{{ gitlab_build_variables_delegate }}"
   tags: 
     - gitlab-project
-  gitlab_build_variables:
+  gitlab_ci_build_variables:
     gitlab_url: "{{ gitlab_url }}"
     gitlab_token: "{{ gitlab_token }}"
     gitlab_project: "{{ gitlab_project }}"
     variables: "{{ {}|combine(*gitlab_project_settings) }}"
-

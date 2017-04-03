@@ -2,7 +2,7 @@
 
 DOCUMENTATION = """
 ---
-module: gitlab_build_variables
+module: gitlab_ci_build_variables
 short_description: Sets Gitlab project build variables
 description:
   - Sets GitLab build variables for a project to those given in the variables dictionary.
@@ -33,7 +33,7 @@ requirements:
 
 EXAMPLES = """
 - name: Set gitlab build variables
-  gitlab_build_variables: 
+  gitlab_ci_build_variables: 
     gitlab_url: https://gitlab.com
     gitlab_project: gitlab-org/gitlab-ce
     gitlab_token: xxx
