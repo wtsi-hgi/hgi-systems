@@ -25,6 +25,17 @@ consul_encrypt: "{{ consul_server_encrypt }}"
 consul_datacenter: "{{ consul_server_datacenter }}"
 consul_is_ui: true
 consul_is_server: true
-consul_bootstrap: true
-consul_bind_address: "{{ ansible_default_ipv4['address'] }}"
+
+consul_bootstrap_expect: "{{ groups['consul-servers'] | count }}"
+#consul_bind_address: "{{ ansible_default_ipv4['address'] }}"
+consul_advertise_address:
+
 consul_node_name: "{{ inventory_hostname }}"
+
+consul_use_systemd: true
+consul_use_upstart: false
+
+consul_retry_join: true
+consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'ansible_default_ipv4') | map(attribute='address') | list }}"
+
+

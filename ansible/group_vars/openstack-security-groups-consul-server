@@ -14,3 +14,5 @@ openstack_security_group_rules:
     port_range_min: 8600
   - protocol: udp # DNS interface
     port_range_min: 8600
+  - protocol: tcp # HTTP UI
+    port_range_min: 80
