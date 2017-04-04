@@ -15,7 +15,7 @@
 Using `ansible-galaxy`:
 
 ```
-$ ansible-galaxy install savagegus.consul
+$ ansible-galaxy install savagegus.ansible-consul
 ```
 
 Using `arm` ([Ansible Role Manager](https://github.com/mirskytech/ansible-role-manager/)):
@@ -213,6 +213,8 @@ consul_statsd_address: "127.0.0.1:8125"
 consul_statsite_address: "127.0.0.1:8125"
 # this sets the prefix consul uses for all metrics
 consul_statsite_prefix: "consul"
+# if you don't want to prepend runtime telemetry with the machine's hostname (consul 0.6.4 or later)
+consul_telemetry_disable_hostname: true
 ```
 
 ## DNS Variables
@@ -303,7 +305,9 @@ Logs will be handled by runit and ```consul_log_file``` set to ```/dev/null``` j
     consul_datacenter: "test"
     consul_bootstrap: "true"
     consul_bind_address: "{{ ansible_default_ipv4['address'] }}"
+    consul_use_upstart: false
     consul_use_systemd: true
+    nginx_user: "nginx"
   roles:
     - ansible-consul
 ```

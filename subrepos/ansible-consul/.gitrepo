@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/savagegus/ansible-consul.git
 	branch = master
-	commit = 4fd976c0b9bb9241b3bd662ea97d89be316fd030
-	parent = e4078befaa5f73331f48e0c5d08f8afd8c7b72e0
+	commit = b655bf22a711e865ef52609f7cfc1d97db42cbb2
+	parent = e515838912257d9f29878a2b952996a409af69ce
 	cmdver = 0.3.1
