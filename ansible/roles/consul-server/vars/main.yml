@@ -28,7 +28,7 @@ consul_is_server: true
 
 consul_bootstrap_expect: "{{ groups['consul-servers'] | count }}"
 #consul_bind_address: "{{ ansible_default_ipv4['address'] }}"
-consul_advertise_address:
+consul_advertise_address: "{{ hostvars[inventory_hostname]['openstack_servers'][0].public_v4 }}"
 
 consul_node_name: "{{ inventory_hostname }}"
 
