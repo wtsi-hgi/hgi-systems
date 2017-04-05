@@ -22,6 +22,8 @@ RUN apt-get update \
          python3-openstackclient \
          python3-setuptools \
          s3cmd \
+         wget \
+         unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Build Go
@@ -60,7 +62,13 @@ RUN cd /tmp \
     && cd yatadis \
     && git checkout 0.4.0 \
     && python3 setup.py install
- 
+
+# Install consul
+ENV CONSUL_VERSION 0.7.5
+RUN wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip -O /tmp/consul.zip \
+    && unzip -d /usr/local/bin /tmp/consul.zip \
+    && consul version
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
