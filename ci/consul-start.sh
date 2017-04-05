@@ -14,4 +14,8 @@ ensure_set CONSUL_DATACENTER CONSUL_JOIN_ADDRESS CONSUL_ENCRYPT_KEY
 # Setup consul agent
 rm -rf "${CONSUL_DATA_DIRECTORY}"
 mkdir -p "${CONSUL_DATA_DIRECTORY}"
-consul agent -data-dir "${CONSUL_DATA_DIRECTORY}" -datacenter="${CONSUL_DATACENTER}" -join "${CONSUL_JOIN_ADDRESS}" -encrypt="${CONSUL_ENCRYPT_KEY}"
+consul agent \
+    -data-dir "${CONSUL_DATA_DIRECTORY}" \
+    -datacenter="${CONSUL_DATACENTER}" \
+    -join "${CONSUL_JOIN_ADDRESS}" \
+    -encrypt="${CONSUL_ENCRYPT_KEY}"
