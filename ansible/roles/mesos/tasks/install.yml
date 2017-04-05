@@ -49,7 +49,7 @@
     target: install
   become: yes
 
-- name: Cleanup build directory
-  file:
-    state: absent
-    path: "{{ mesos_build_directory }}"
+#- name: Cleanup build directory
+#  file:
+#    state: absent
+#    path: "{{ mesos_build_directory }}"

@@ -1,5 +1,18 @@
 ---
 
+- name: Create directories expected on non-root
+  file:
+    state: directory
+    path: "{{ item }}"
+    recurse: yes
+    mode: 0775
+    owner: mercury
+    group: hgi
+  become: yes
+  with_items:
+    - "{{ hgi_dir }}"
+    - "{{ hgi_pkglocal_dir }}"
+
 - name: Install supervisor
   pip:
     name: supervisor
@@ -27,19 +40,6 @@
   pip:
     name: passlib
     version: 1.7.1
-
-- name: Create directories required by non-root
-  file:
-    state: directory
-    path: "{{ item }}"
-    recurse: yes
-    mode: 0775
-    owner: mercury
-    group: hgi
-  become: yes
-  with_items:
-    - "{{ hgi_dir }}"
-    - "{{ hgi_pkglocal_dir }}"
 
 - name: Run common configuration for nonroot hosts
   include: nonroot.yml

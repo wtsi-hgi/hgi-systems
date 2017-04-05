@@ -25,6 +25,8 @@
   notify:
     - restart mesos-master
   tags: mesos-master
+  become: yes
+  become_user: mercury
 
 - name: create mesos-master supervisord configuration
   template: src=mesos-master_supervisord.conf.j2 dest={{ supervisord_conf_dir }}/mesos-master.conf owner=mercury group=hgi mode=0640
@@ -32,6 +34,8 @@
     - reload supervisord
     - restart mesos-master
   tags: mesos-master
+  become: yes
+  become_user: mercury
 
 - name: add mesos-master supervisord configuration to supervisord conf
   set_fact:

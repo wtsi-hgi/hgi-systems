@@ -21,4 +21,10 @@
 # file: roles/mesos-master/handlers/main.yml
 
 - name: restart mesos-master
-  supervisorctl: config="{{ supervisord_conf }}" name="{{ mesos_master_supervisor_program }}" username="{{ hgi_username }}" password="{{ hgi_password }}" state="restarted" supervisorctl_path="{{ supervisorctl_bin }}"
+  supervisorctl:
+    config: "{{ supervisord_conf }}"
+    name: "{{ mesos_master_supervisor_program }}"
+    username: "{{ hgi_username }}"
+    password: "{{ hgi_password }}"
+    state: "restarted"
+    supervisorctl_path: "{{ supervisorctl_bin }}"
