@@ -38,4 +38,6 @@ consul_use_upstart: false
 consul_retry_join: true
 consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'ansible_default_ipv4') | map(attribute='address') | list }}"
 
+consul_data_mountpoint: /data/consul
+consul_data_dir: "{{ consul_data_mountpoint }}/data"
 
