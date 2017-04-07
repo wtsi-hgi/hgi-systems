@@ -1,0 +1,13 @@
+---
+
+s3_backup_keep_last_n_copies: 5
+s3_backup_remove_logs_after_n_days: 30
+s3_backup_time: daily
+
+s3_backup_duplicity_backup_sh_git_repository: https://github.com/zertrin/duplicity-backup.sh.git
+s3_backup_duplicity_backup_sh_version: v1.3.0
+
+# Enable by defining the hook URL
+s3_backup_slack_hook_url:
+s3_backup_slack_hook_channel:
+s3_backup_slack_hook_username: duplicity-backup
