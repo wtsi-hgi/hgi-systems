@@ -11,6 +11,7 @@
     - s3cmd
     - python
     - python-boto
+    - cron
 
 - name: install duplicity-backup.sh
   become: yes
@@ -44,3 +45,8 @@
     src: duplicity-backup-sh.conf.j2
     dest: "{{ s3_backup_duplicity_backup_sh_configuration_file }}"
 
+- name: schedule backup using cron
+  become: yes
+  cron:
+    special_time: "{{ s3_backup_time }}"
+    job: "duplicity -c {{ s3_backup_duplicity_backup_sh_configuration_file }}"
