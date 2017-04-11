@@ -20,9 +20,7 @@ RUN apt-get update \
          make \
          openssh-client \
          pkg-config \
-         python-openstackclient \
          python3-dev \
-         python3-openstackclient \
          python3-pip \
          python3-setuptools \
          python3-wheel \
@@ -62,6 +60,9 @@ RUN pip3 install --no-cache-dir git+https://github.com/ansible/ansible.git@7f352
     && pip3 install --no-cache-dir shade==1.16.0 \
     && pip3 install --no-cache-dir git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git@v1.0.0 \
     && pip3 install --no-cache-dir boto==2.46.1
+
+# Install OpenStack client (PyPi version is much more up-to-date than that install via apt!)
+RUN pip3 install python-openstackclient==3.9.0
 
 # Set workdir and entrypoint
 WORKDIR /tmp
