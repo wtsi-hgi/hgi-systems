@@ -20,9 +20,7 @@ RUN apt-get update \
          make \
          openssh-client \
          pkg-config \
-         python-openstackclient \
          python3-dev \
-         python3-openstackclient \
          python3-pip \
          python3-setuptools \
          python3-wheel \
@@ -57,11 +55,20 @@ RUN cd /tmp \
     && cd openstack-tools \
     && python3 setup.py install
 
+# XXX: something above has installed `warlock==1.3.0`. The requirements of the below are:
+# warlock!=1.3.0,<2,>=1.0.1 (from python-glanceclient>=2.5.0->python-openstackclient>=3.3.0->python-ironicclient>=0.10.0->shade==1.16.0)
+# For whatever reason (a bug or due to install of packages with apt-get?), there are a number of files missing when pip deletes
+# warlock, before installing `warlock==1.2.0`. Safely deleting warlock now.
+RUN pip3 uninstall -y warlock || true
+
 # Install ansible and friends using pip3
 RUN pip3 install --no-cache-dir git+https://github.com/ansible/ansible.git@7f352207 \
     && pip3 install --no-cache-dir shade==1.16.0 \
     && pip3 install --no-cache-dir git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git@v1.0.0 \
     && pip3 install --no-cache-dir boto==2.46.1
+
+# Install OpenStack client (PyPi version is much more up-to-date than that install via apt!)
+RUN pip3 install python-openstackclient==3.9.0
 
 # Set workdir and entrypoint
 WORKDIR /tmp
