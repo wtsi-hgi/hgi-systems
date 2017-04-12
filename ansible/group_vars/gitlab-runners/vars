@@ -69,3 +69,4 @@ gitlab_runner_projects:
   - hgi/hgi-systems
   - hgi/hgi-base-image-builder
   - hgi/hgi-docker-image-builder
+  - hgi/hgi-arvados-compute-image-builder

@@ -4,6 +4,7 @@ gitlab-sanger-hgi-hgi-systems gitlab_project=hgi/hgi-systems
 [sanger-image-builder-gitlab]
 gitlab-sanger-hgi-hgi-base-image-builder gitlab_project=hgi/hgi-base-image-builder
 gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-builder
+gitlab-sanger-hgi-hgi-arvados-compute-image-builder gitlab_project=hgi/hgi-arvados-compute-image-builder
 
 [gitlab-projects:children]
 sanger-image-builder-gitlab
