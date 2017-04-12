@@ -33,7 +33,7 @@ dependencies:
     become: yes
   - role: s3-backup
     s3_backup_source: "{{ consul_data_dir }}"
-    s3_backup_destination: "s3://{{ consul_backup_bucket }}"
-    s3_backup_s3_host: "{{ s3_host }}"
-    s3_backup_s3_access_key: "{{ s3_access_key }}"
-    s3_backup_s3_secret_key: "{{ s3_secret_key }}"
+    s3_backup_destination: "s3://{{ consul_s3_backup_bucket }}"
+    s3_backup_s3_host: "{{ consul_s3_host }}"
+    s3_backup_s3_access_key: "{{ consul_s3_access_key }}"
+    s3_backup_s3_secret_key: "{{ consul_s3_secret_key }}"
