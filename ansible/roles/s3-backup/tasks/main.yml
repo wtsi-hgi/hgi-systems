@@ -49,4 +49,4 @@
   become: yes
   cron:
     special_time: "{{ s3_backup_time }}"
-    job: "duplicity -c {{ s3_backup_duplicity_backup_sh_configuration_file }}"
+    job: "duplicity-backup.sh -c {{ s3_backup_duplicity_backup_sh_configuration_file }} -b"
