@@ -28,6 +28,25 @@
     - lvm
   with_items: "{{ attached_openstack_volume_vols }}"
 
+- name: identify xfs volumes
+  become: yes
+  command: "blkid -c /dev/null -o value -s TYPE /dev/{{ attached_openstack_volume_vg }}/{{ item.name }}"
+  register: volume_type
+  tags:
+    - attached_openstack_volume
+  changed_when: false
+  with_items: "{{ attached_openstack_volume_vols }}"
+
+- name: mount existing xfs volumes
+  become: yes
+  mount: fstype={{ item.1.fstype }} name={{ item.1.mountpoint }} src="/dev/{{ attached_openstack_volume_vg }}/{{ item.1.name }}" state=mounted
+  tags:
+    - attached_openstack_volume
+    - mount
+  when: "volume_type.results[item.0].stdout == 'xfs'"
+  changed_when: false
+  with_indexed_items: "{{ attached_openstack_volume_vols }}"
+
 - name: create filesystems on logical volumes
   become: yes
   filesystem: dev="/dev/{{ attached_openstack_volume_vg }}/{{ item.name }}" fstype={{ item.fstype }} resizefs=yes
