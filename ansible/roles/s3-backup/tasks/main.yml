@@ -45,8 +45,20 @@
     src: duplicity-backup-sh.conf.j2
     dest: "{{ s3_backup_duplicity_backup_sh_configuration_file }}"
 
+- name: ensure s3 backup bucket exists
+  run_once: true
+  s3_bucket:
+    name: "{{ consul_s3_backup_bucket }}"
+    ceph: true
+    s3_url: "https://{{ consul_s3_host }}"
+    access_key: "{{ consul_s3_access_key }}"
+    secret_key: "{{ consul_s3_secret_key }}"
+
 - name: schedule backup using cron
   become: yes
   cron:
-    special_time: "{{ s3_backup_time }}"
-    job: "duplicity -c {{ s3_backup_duplicity_backup_sh_configuration_file }}"
+    name: "backup {{ s3_backup_source }} to {{ s3_backup_destination }}"
+    minute: "{{ s3_backup_minute }}"
+    hour: "{{ s3_backup_hour }}"
+    day: "{{ s3_backup_day }}"
+    job: "/usr/local/bin/{{ s3_backup_duplicity_backup_sh_script_name }} -c {{ s3_backup_duplicity_backup_sh_configuration_file }} -b"
