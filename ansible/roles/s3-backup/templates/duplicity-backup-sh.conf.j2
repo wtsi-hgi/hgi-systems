@@ -128,8 +128,8 @@ DEST="{{ s3_backup_destination }}"
 # ------------------------------------------------------------------------------
 # Uncomment these lines if you're using Amazon S3
 #
-#AWS_ACCESS_KEY_ID="foobar_aws_key_id"
-#AWS_SECRET_ACCESS_KEY="foobar_aws_access_key"
+AWS_ACCESS_KEY_ID={{ s3_backup_s3_access_key }}
+AWS_SECRET_ACCESS_KEY={{ s3_backup_s3_secret_key }}
 #
 # SET STORAGE CLASS for AWS
 # The default storage class is STANDARD STORAGE. You can comment this option if
@@ -304,7 +304,7 @@ GPG_OPTIONS="--no-show-photos"
 # Amazon S3 in Europe) `--s3-use-new-style` and `--s3-european-buckets` options
 # Be sure to separate your options with appropriate spacing.
 
-STATIC_OPTIONS="--full-if-older-than 14D --s3-use-new-style"
+STATIC_OPTIONS="--full-if-older-than {{ s3_backup_full_backup_every_n_days }}D --s3-use-new-style"
 
 
 # ------------------------------------------------------------------------------
@@ -325,7 +325,7 @@ STATIC_OPTIONS="--full-if-older-than 14D --s3-use-new-style"
 # than removing the files based on their age), you can use what I use:
 
 CLEAN_UP_TYPE="remove-all-but-n-full"
-CLEAN_UP_VARIABLE="{{ s3_backup_keep_last_n_copies }}"
+CLEAN_UP_VARIABLE="{{ s3_backup_keep_last_n_full_backups }}"
 
 # The third option is to skip cleanup altogether, by:
 #
@@ -412,11 +412,11 @@ MAIL="mailx"     # default command for Linux mail
 # notifications will be sent.
 
 # Possible values for NOTIFICATION_SERVICE are: slack, pushover, ifttt
-NOTIFICATION_SERVICE="slack"
 NOTIFICATION_FAILURE_ONLY="yes" # send notifications only if there was an error while creating backup
 
 # Provider: Slack
-{% if s3_backup_slack_hook_url is defined %}
+{% if s3_backup_slack_hook_url is defined and s3_backup_slack_hook_url != None %}
+NOTIFICATION_SERVICE="slack"
 SLACK_HOOK_URL="{{ s3_backup_slack_hook_url }}"
 SLACK_CHANNEL="{{ s3_backup_slack_hook_channel }}"
 SLACK_USERNAME="{{ s3_backup_slack_hook_username }}"

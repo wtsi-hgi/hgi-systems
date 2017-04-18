@@ -1,11 +1,17 @@
 ---
 
-s3_backup_keep_last_n_copies: 5
-s3_backup_remove_logs_after_n_days: 30
-s3_backup_time: daily
+# Settings for how often a backup is made (could be a full or incremental backup)
+s3_backup_minute: 25
+s3_backup_hour: "*"
+s3_backup_day: "*"
 
-s3_backup_duplicity_backup_sh_git_repository: https://github.com/zertrin/duplicity-backup.sh.git
-s3_backup_duplicity_backup_sh_version: v1.3.0
+# Note: If it's not time for a full backup, an incremental backup is made when the backup cron is ran
+s3_backup_full_backup_every_n_days: 7
+s3_backup_keep_last_n_full_backups: 2
+s3_backup_remove_logs_after_n_days: 30
+
+s3_backup_duplicity_backup_sh_git_repository: https://github.com/wtsi-hgi/duplicity-backup.sh
+s3_backup_duplicity_backup_sh_version: fix/155-s3SchemeIdentification
 
 # Enable by defining the hook URL
 s3_backup_slack_hook_url:
