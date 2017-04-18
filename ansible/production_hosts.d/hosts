@@ -108,7 +108,7 @@ consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-vol
 
 [openstack-instance-gitlab-runners]
 gitlab-runner-gamma-hgi-01 tenant=gamma-hgi-tenant network="gamma-gitlab-runners-network" image=delta-hgi-docker-image keypair=gamma-hgi-ansible-mercury-keypair
-gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-runners-network" image=delta-hgi-docker-image keypair=gamma-hgi-ci-ansible-mercury-keypair
+gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-runners-network" image=delta-hgi-docker-image keypair=delta-hgi-ci-ansible-mercury-keypair
 
 # Groups of dynamic inventory hosts managed by Terraform
 #[ssh-gateways]
