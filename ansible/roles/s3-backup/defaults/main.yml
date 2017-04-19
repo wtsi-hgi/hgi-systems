@@ -10,8 +10,8 @@ s3_backup_full_backup_every_n_days: 7
 s3_backup_keep_last_n_full_backups: 2
 s3_backup_remove_logs_after_n_days: 30
 
-s3_backup_duplicity_backup_sh_git_repository: https://github.com/wtsi-hgi/duplicity-backup.sh
-s3_backup_duplicity_backup_sh_version: fix/155-s3SchemeIdentification
+s3_backup_duplicity_backup_sh_git_repository: https://github.com/zertrin/duplicity-backup.sh
+s3_backup_duplicity_backup_sh_version: cc2ae25355b605c983e2431ef7b346de811d218c
 
 # Enable by defining the hook URL
 s3_backup_slack_hook_url:
