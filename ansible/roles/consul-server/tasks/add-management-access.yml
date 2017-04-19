@@ -1,0 +1,30 @@
+---
+
+- name: setup to install packages from PyPi
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - python
+    - python-pip
+
+- name: install pre-requisite Python modules for managing Consul ACL tokens
+  become: yes
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - python-consul
+    - pyhcl
+
+- name: create an ACL token with rules
+  consul_acl:
+    name: "{{ consul_server_acl_management_name }}"
+    token: "{{ consul_server_acl_management_token }}"
+    mgmt_token: "{{ consul_server_acl_master_token }}"
+    token_type: management
+    host: "{{ consul_client_address }}"
+    rules:
+      - service: ""
+        policy: write
