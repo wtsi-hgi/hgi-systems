@@ -20,6 +20,8 @@
 ---
 # file: roles/consul-server/defaults/main.yml
 
+consul_home: /opt/consul
+
 consul_version: "{{ consul_server_version }}"
 consul_encrypt: "{{ consul_server_encrypt }}"
 consul_datacenter: "{{ consul_server_datacenter }}"
@@ -27,7 +29,6 @@ consul_is_ui: true
 consul_is_server: true
 
 consul_bootstrap_expect: "{{ groups['consul-servers'] | count }}"
-#consul_bind_address: "{{ ansible_default_ipv4['address'] }}"
 consul_advertise_address: "{{ hostvars[inventory_hostname]['openstack_servers'][0].public_v4 }}"
 
 consul_node_name: "{{ inventory_hostname }}"
@@ -43,3 +44,7 @@ consul_client_address_bind: true
 
 consul_data_mountpoint: /data/consul
 consul_data_dir: "{{ consul_data_mountpoint }}/data"
+
+consul_acl_master_token: "{{ consul_server_acl_master_token }}"
+consul_acl_default_policy: "deny"
+consul_acl_datacenter: "{{ consul_datacenter }}"

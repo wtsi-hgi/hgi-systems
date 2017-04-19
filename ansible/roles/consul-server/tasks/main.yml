@@ -1,0 +1,9 @@
+---
+
+- name: identify leadership status
+  shell: "{{ consul_home }}/bin/consul info | awk '$1==\"leader\"' | awk '{print $NF}'"
+  register: leader_status
+  changed_when: false
+
+- include: add-management-access.yml
+  when: leader_status.stdout | bool
