@@ -33,6 +33,7 @@ delta-hgi-consul-servers-network tenant=delta-hgi-tenant
 openstack-networks-hgi-ci
 openstack-networks-gitlab-runners
 openstack-networks-consul-servers
+openstack-instance-consul-servers
 
 # external networks TODO put this in dynamic groups
 [openstack-external-network-delta]

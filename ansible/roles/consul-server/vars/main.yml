@@ -54,6 +54,7 @@ consul_dns_allow_stale: true
 consul_dns_max_stale: 30s
 consul_dns_node_ttl: 30s
 consul_dns_only_passing: true
+consul_recursors: "{{ openstack_network_dns_servers }}"
 
 # Work around for https://github.com/savagegus/ansible-consul/issues/199
 nginx_remove_default: true
