@@ -1,4 +1,5 @@
 # vault contains:
 # consul_server_encrypt: xxxx
+# consul_server_acl_master_token: xxxx
 consul_server_version: 0.7.5
 consul_server_datacenter: "{{ tenant }}"
