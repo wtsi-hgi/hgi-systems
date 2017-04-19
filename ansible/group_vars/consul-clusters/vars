@@ -1,0 +1,1 @@
+consul_cluster_servers: "{{ groups['consul-servers'] | map('extract', hostvars) | selectattr('consul_cluster', 'equalto', inventory_hostname) | map(attribute='inventory_hostname') | list }}"

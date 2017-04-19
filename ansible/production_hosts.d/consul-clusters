@@ -1,0 +1,5 @@
+[consul-clusters]
+consul-cluster-delta-hgi consul_datacenter=delta-hgi
+
+[non-hosts:children]
+consul-clusters

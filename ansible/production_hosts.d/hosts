@@ -102,9 +102,9 @@ openstack-instances
 openstack-instances
 
 [openstack-instance-consul-servers]
-consul-server-delta-hgi-01 tenant=delta-hgi-tenant volume=delta-hgi-consul01-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair
-consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair
-consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair
+consul-server-delta-hgi-01 tenant=delta-hgi-tenant volume=delta-hgi-consul01-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
+consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
+consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
 
 [openstack-instance-gitlab-runners]
 #gitlab-runner-gamma-hgi-01 tenant=gamma-hgi-tenant network="gamma-gitlab-runners-network" image=delta-hgi-docker-image keypair=gamma-hgi-ansible-mercury-keypair

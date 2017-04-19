@@ -48,3 +48,5 @@
 - include: gitlab-runners.yml
 - include: consul-servers.yml
 
+# higher-level infrastructure built on top of hosts
+- include: consul-clusters.yml

@@ -1,0 +1,61 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors: 
+#   Colin Nolan <colin.nolan@sanger.ac.uk>
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/consul-cluster/tasks/main.yml
+
+- name: gather consul cluster info
+  delegate_to: "{{ item }}"
+  vars:
+    ansible_python_interpreter: python3
+  consul_info_facts: 
+    consul_bin: /opt/consul/bin/consul
+  with_items: "{{ consul_cluster_servers }}"
+  register: consul_cluster_info
+
+- name: stop consul service on all servers when cluster has no peers
+  delegate_to: "{{ item }}"
+  become: yes
+  service:
+    name: consul
+    state: stopped
+  when: consul_cluster_has_no_peers_when
+  with_items: "{{ consul_cluster_servers }}"
+
+- name: add peers.json to re-bootstrap when cluster has no peers
+  delegate_to: "{{ item }}"
+  become: yes
+  template: 
+    src: peers.json.j2
+    dest: /data/consul/data/raft/peers.json
+  when: consul_cluster_has_no_peers_when
+  with_items: "{{ consul_cluster_servers }}"
+
+- name: start consul service on all servers when cluster has no peers
+  delegate_to: "{{ item }}"
+  become: yes
+  service:
+    name: consul
+    state: started
+  when: consul_cluster_has_no_peers_when
+  with_items: "{{ consul_cluster_servers }}"
+
+
