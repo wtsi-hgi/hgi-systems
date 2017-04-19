@@ -1,35 +1,9 @@
 ---
 
-- name: setup to install packages from PyPi
-  become: yes
-  apt:
-    name: "{{ item }}"
-    update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
-  with_items:
-    - python
-    - python-pip
-
-- name: install pre-requisite Python modules for managing Consul ACL tokens
-  become: yes
-  pip:
-    name: "{{ item }}"
-  with_items:
-    - python-consul
-    - pyhcl
-
 - name: identify leadership status
   shell: "{{ consul_home }}/bin/consul info | awk '$1==\"leader\"' | awk '{print $NF}'"
   register: leader_status
   changed_when: false
 
-- name: create an ACL token with rules
-  consul_acl:
-    name: "hello"
-    mgmt_token: "{{ consul_server_acl_master_token }}"
-    host: "{{ consul_client_address }}"
-    token: "world"
-    rules:
-      - key: ""
-        policy: read
+- include: add-management-access.yml
   when: leader_status.stdout | bool
