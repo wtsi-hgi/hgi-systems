@@ -40,8 +40,8 @@ def main():
     # parse consul info output
     consul_info = {}
     section = None
-    section_re = re.compile('^\s*(.*):\s*$')
-    keyval_re = re.compile('^\s*(.*)\s*=\s*(.*)\s*$')
+    section_re = re.compile('^\s*(.*?):\s*$')
+    keyval_re = re.compile('^\s*(.*?)\s*=\s*(.*?)\s*$')
     for line in consul_info_process.stdout.decode('utf-8').splitlines():
         m = section_re.search(line)
         if m:
