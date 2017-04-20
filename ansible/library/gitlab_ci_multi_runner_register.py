@@ -43,7 +43,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 def main():
     module = AnsibleModule(argument_spec={
-        "name": {"required": True, "type": "str"},
+        "description": {"required": True, "type": "str"},
         "registration_url": {"required": True, "type": "str"},
         "registration_token": {"required": True, "type": "str"},
         "config_dir": {"default": "/etc/gitlab-runner.d", "type": "str"},
@@ -53,11 +53,11 @@ def main():
         "extra_args": {"required": False, "type": "str"},
     })
 
-    configuration_path = "%s/name-%s.json" % (module.params["config_dir"], module.params["name"])
-    output_toml_path = "%s/name-%s-token-%s-url-%s.toml" % (module.params["config_dir"], module.params["name"], module.params["registration_token"], b64encode(module.params["registration_url"]))
+    configuration_path = "%s/description-%s.json" % (module.params["config_dir"], module.params["description"])
+    output_toml_path = "%s/description-%s-token-%s-url-%s.toml" % (module.params["config_dir"], module.params["description"], module.params["registration_token"], b64encode(module.params["registration_url"]))
 
     config = dict()
-    config["name"] = module.params["name"]
+    config["description"] = module.params["description"]
     config["registration_url"] = module.params["registration_url"]
     config["registration_token"] = module.params["registration_token"]
     config["configuration_path"] = configuration_path
@@ -81,7 +81,7 @@ def main():
                 module.exit_json(changed=False, message="Configuration unchanged")
             else:
                 # configuration has changed, unregister and remove so we can re-register
-                unregister_command = ["gitlab-ci-multi-runner", "unregister", "-c", existing_config["output_toml_path"], "-n", existing_config["name"]]
+                unregister_command = ["gitlab-ci-multi-runner", "unregister", "-c", existing_config["output_toml_path"], "-n", existing_config["description"]]
                 unregister_process = subprocess.Popen(unregister_command, shell=False, stdout=subprocess.PIPE)
                 unregister_process.wait()
                 if unregister_process.returncode != 0:
@@ -96,7 +96,7 @@ def main():
                     pass
                 changed=True
 
-    register_command = ["gitlab-ci-multi-runner", "register", "-n", "--url", config["registration_url"], "--registration-token", config["registration_token"], "--description", config["name"]]
+    register_command = ["gitlab-ci-multi-runner", "register", "-n", "--url", config["registration_url"], "--registration-token", config["registration_token"], "--description", config["description"]]
     if "executor" in config:
         register_command.extend(["--executor", config["executor"]])
     if "limit" in config:
