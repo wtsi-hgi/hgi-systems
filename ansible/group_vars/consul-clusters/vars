@@ -1,1 +1,7 @@
 consul_cluster_servers: "{{ groups['consul-servers'] | map('extract', hostvars) | selectattr('consul_cluster', 'equalto', inventory_hostname) | map(attribute='inventory_hostname') | list }}"
+
+consul_cluster_infoblox_username: "{{ infoblox_credentials_username }}"
+consul_cluster_infoblox_password: "{{ infoblox_credentials_password }}"
+consul_cluster_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
+consul_cluster_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
+

@@ -20,7 +20,9 @@
 ---
 # file: roles/consul-cluster/defaults/main.yml
 
-consul_cluster_delegate: 127.0.0.1
+consul_cluster_infoblox_delegate: 127.0.0.1
+consul_cluster_infoblox_dns_view: internal
+
 consul_cluster_has_no_peers_when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
 # FIXME this is broken and assumes all consul-servers are in a single cluster
