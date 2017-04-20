@@ -41,6 +41,7 @@ from base64 import b64encode
 from tempfile import NamedTemporaryFile
 from ansible.module_utils.basic import AnsibleModule
 
+
 def main():
     module = AnsibleModule(argument_spec={
         "description": {"required": True, "type": "str"},
@@ -54,7 +55,9 @@ def main():
     })
 
     configuration_path = "%s/description-%s.json" % (module.params["config_dir"], module.params["description"])
-    output_toml_path = "%s/description-%s-token-%s-url-%s.toml" % (module.params["config_dir"], module.params["description"], module.params["registration_token"], b64encode(module.params["registration_url"]))
+    output_toml_path = "%s/description-%s-token-%s-url-%s.toml" % (
+    module.params["config_dir"], module.params["description"], module.params["registration_token"],
+    b64encode(module.params["registration_url"]))
 
     config = dict()
     config["description"] = module.params["description"]
@@ -67,11 +70,11 @@ def main():
     if "limit" in module.params:
         config["limit"] = module.params["limit"]
     if "tags" in module.params:
-        config["tags"] = ",".join(sorted(module.params["tags"].split(","))) # canonicalize order of tags
+        config["tags"] = ",".join(sorted(module.params["tags"].split(",")))  # canonicalize order of tags
     if "extra_args" in module.params:
         config["extra_args"] = module.params["extra_args"]
 
-    changed=False
+    changed = False
 
     if os.path.isfile(configuration_path):
         with open(configuration_path) as f:
@@ -81,11 +84,13 @@ def main():
                 module.exit_json(changed=False, message="Configuration unchanged")
             else:
                 # configuration has changed, unregister and remove so we can re-register
-                unregister_command = ["gitlab-ci-multi-runner", "unregister", "-c", existing_config["output_toml_path"], "-n", existing_config["description"]]
+                unregister_command = ["gitlab-ci-multi-runner", "unregister", "-c", existing_config["output_toml_path"],
+                                      "-n", existing_config["description"]]
                 unregister_process = subprocess.Popen(unregister_command, shell=False, stdout=subprocess.PIPE)
                 unregister_process.wait()
                 if unregister_process.returncode != 0:
-                    module.exit_json(failed=True, changed=False, message="Failed to unregister old configuration", existing_config=existing_config)
+                    module.exit_json(failed=True, changed=False, message="Failed to unregister old configuration",
+                                     existing_config=existing_config)
                 try:
                     os.remove(existing_config["configuration_path"])
                 except OSError:
@@ -94,9 +99,10 @@ def main():
                     os.remove(existing_config["output_toml_path"])
                 except OSError:
                     pass
-                changed=True
+                changed = True
 
-    register_command = ["gitlab-ci-multi-runner", "register", "-n", "--url", config["registration_url"], "--registration-token", config["registration_token"], "--description", config["description"]]
+    register_command = ["gitlab-ci-multi-runner", "register", "-n", "--url", config["registration_url"],
+                        "--registration-token", config["registration_token"], "--description", config["description"]]
     if "executor" in config:
         register_command.extend(["--executor", config["executor"]])
     if "limit" in config:
@@ -109,14 +115,17 @@ def main():
     try:
         register_output = subprocess.check_output(register_command, shell=False, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        module.exit_json(failed=True, changed=changed, message="Failed to register configuration (call to '%s' failed with status %s): %s" % (e.cmd, e.returncode, e.output), config=config)
-    changed=True
+        module.exit_json(failed=True, changed=changed,
+                         message="Failed to register configuration (call to '%s' failed with status %s): %s" % (
+                         e.cmd, e.returncode, e.output), config=config)
+    changed = True
 
     sed_command = ["sed", "-ni", "/^\[\[runners\]\]/ { p; :a; n; p; ba; }", config["output_toml_path"]]
     sed_process = subprocess.Popen(sed_command, shell=False, stdout=subprocess.PIPE)
     sed_process.wait()
     if sed_process.returncode != 0:
-        module.exit_json(failed=True, changed=changed, message="Failed to process updated registration config TOML through sed", config=config)
+        module.exit_json(failed=True, changed=changed,
+                         message="Failed to process updated registration config TOML through sed", config=config)
 
     try:
         with NamedTemporaryFile(delete=False) as f:
@@ -125,9 +134,11 @@ def main():
             module.atomic_move(f.name, configuration_path)
 
     except IOError as e:
-        module.exit_json(failed=True, changed=changed, message="Failed to write config JSON to %s: %s" % (configuration_path, e))
+        module.exit_json(failed=True, changed=changed,
+                         message="Failed to write config JSON to %s: %s" % (configuration_path, e))
 
     module.exit_json(changed=True, message="Gitlab runner registered successfully")
+
 
 if __name__ == "__main__":
     main()
