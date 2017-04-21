@@ -55,7 +55,7 @@
     name: "{{ consul_cluster_dns_name }}.hgi.sanger.ac.uk"
     address: "{{ consul_cluster_server_ips[0] }}"
 
-- name: create an ACL token with rules
+- name: create a management ACL token
   delegate_to: "{{ consul_cluster_leader }}"
   consul_acl:
     name: "{{ consul_cluster_acl_management_name }}"
@@ -65,3 +65,24 @@
     rules:
       - service: ""
         policy: write
+
+- name: create a client ACL token for terraform
+  delegate_to: "{{ consul_cluster_leader }}"
+  consul_acl:
+    name: "{{ consul_cluster_acl_terraform_name }}"
+    token: "{{ consul_cluster_acl_terraform_token }}"
+    mgmt_token: "{{ consul_cluster_acl_management_token }}"
+    token_type: client
+    rules:
+      - key: "" 
+        policy: read
+      - session: ""
+        policy: write
+      - key: "terraform" 
+        policy: write
+      - node: ""
+        policy: write
+      - service: ""
+        policy: write
+
+
