@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/wtsi-hgi/ansible-module-infoblox.git
+	branch = feature/multiple-a-record-addresses
+	commit = d2f76d4ed746ded573c353c87ec284628c11b5db
+	parent = 7622a15666fd656c8e431ca275ddea0919baca99
+	cmdver = 0.3.1
