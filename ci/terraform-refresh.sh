@@ -9,6 +9,9 @@ mkdir -p "${artifacts_dir}"
 echo "Changing to terraform/${REGION} directory"
 cd "terraform/${REGION}"
 
+echo "Calling terraform init"
+terraform init
+
 echo "Calling terraform refresh"
 terraform refresh
 refresh_exit_status=$?

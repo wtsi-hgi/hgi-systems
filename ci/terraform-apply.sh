@@ -23,6 +23,9 @@ echo "Generating /tmp/ansible_vault.pw"
 
 cd "terraform/${REGION}"
 
+echo "Calling terraform init"
+terraform init
+
 echo "Calling terraform apply"
 set +e
 terraform apply -input=false plan

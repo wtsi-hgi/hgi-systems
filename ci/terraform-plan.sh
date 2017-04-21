@@ -9,6 +9,9 @@ artifacts=$(ls "${artifacts_dir}/")
 echo "Changing to terraform/${REGION} directory"
 cd terraform/${REGION}
 
+echo "Calling terraform init"
+terraform init
+
 echo "Calling terraform plan"
 terraform plan -input=false -out plan
 plan_exit_status=$?
