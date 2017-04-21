@@ -1,6 +1,0 @@
----
-
-infoblox_delegate: localhost
-infoblox_api_server: infoblox-gm.internal.sanger.ac.uk
-infoblox_api_version: 2.3.1
-infoblox_dns_view: internal
