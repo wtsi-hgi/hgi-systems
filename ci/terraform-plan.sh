@@ -12,6 +12,8 @@ cd terraform/${REGION}
 echo "Calling terraform plan"
 terraform plan -input=false -out plan
 plan_exit_status=$?
+echo "Copying plan to artifacts"
+cp plan "${artifacts_dir}/"
 
 if [[ ${plan_exit_status} -eq 0 ]]; then
     echo "Terraform plan was successful, generating human-readable plan"
