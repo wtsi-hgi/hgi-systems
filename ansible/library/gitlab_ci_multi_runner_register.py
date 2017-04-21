@@ -105,7 +105,7 @@ def main():
             existing_config = json.load(file)
 
         runner_registered = get_runner_token(config["output_toml_path"]) in runners_tokens.values()
-        configuration_changed = cmp(existing_config, config) != 0
+        configuration_changed = existing_config != config
 
         if runner_registered:
             if not configuration_changed:
