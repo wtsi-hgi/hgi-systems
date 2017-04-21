@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 
 from ansible.module_utils.basic import *
-import json
 
 try:
-    from gitlab import Gitlab
-    from gitlab import exceptions as Gitlab_exc
+    from gitlab import Gitlab, GitlabGetError, GitlabDeleteError
+
     _HAS_DEPENDENCIES = True
 except ImportError as e:
     _IMPORT_ERROR = e
@@ -77,14 +76,28 @@ def main():
     connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
     try:
         project = connector.projects.get(module.params["gitlab_project"])
-    except Gitlab_exc.GitlabGetError as e:
+    except GitlabGetError as e:
         module.fail_json(msg="Failed to get project %s from gitlab API endpoint %s: %s" % (module.params["gitlab_project"], module.params["gitlab_url"], e))
 
     try:
-        runners = {runner.description: runner.id for runner in connector.runners.list(all=True)}
-    except Gitlab_exc.GitlabGetError as e:
+        runners_list = connector.runners.list(all=True)
+    except GitlabGetError as e:
         module.fail_json(msg="Failed to get runners from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
 
+    # Detect when there is more than one match for a runner (runner descriptions are not unique after all)
+    existing_runner_descriptions = set()
+    duplicates = set()
+    for runner in runners_list:
+        if runner.description in runner_descriptions:
+            if runner.description in existing_runner_descriptions:
+                duplicates.add(runner.description)
+            else:
+                existing_runner_descriptions.add(runner.description)
+    if len(duplicates) > 0:
+        module.fail_json(msg="Cannot set project runners because there is more than one match for runner(s) with the "
+                             "description(s): %s" % duplicates)
+
+    runners = {runner.description: runner.id for runner in runners_list}
     required_runner_ids = {runners[runner_description] for runner_description in runner_descriptions}
     current_runner_ids = {runner.id for runner in project.runners.list(all=True, scope="specific")}
 
@@ -116,18 +129,23 @@ def main():
             for runner_id in to_remove:
                 try:                
                     project.runners.delete(runner_id)
-                except Gitlab_exc.GitlabDeleteError as e:
+                except GitlabDeleteError:
                     # could not remove from project, try deleting the runner entirely
                     # TODO: should probably check this is the only project associated with the runner 
                     # and possibly require an argument such as delete_runners = True
                     try:
                         connector.runners.delete(runner_id)
-                    except Gitlab_exc.GitlabDeleteError as e:
+                    except GitlabDeleteError as e:
                         module.fail_json(msg="Failed to delete runner %s: %s" % (runner_id, e), information=information)
 
             for runner_id in to_add:
                 project.runners.create({"runner_id": runner_id})
             if disable_shared_runners:
+                # Fixes https://github.com/wtsi-hgi/hgi-systems/issues/9 by working around issue with GitLab library:
+                # https://github.com/gpocentek/python-gitlab/issues/250
+                del project.name
+                del project.public
+                del project.visibility_level
                 project.shared_runners_enabled = False
                 project.save()
             assert {runner.id for runner in project.runners.list(all=True, scope="specific")} == required_runner_ids
