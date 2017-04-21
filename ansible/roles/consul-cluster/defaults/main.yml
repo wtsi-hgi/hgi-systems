@@ -20,8 +20,16 @@
 ---
 # file: roles/consul-cluster/defaults/main.yml
 
-consul_cluster_delegate: 127.0.0.1
-consul_cluster_has_no_peers_when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
+consul_cluster_infoblox_delegate: 127.0.0.1
+consul_cluster_infoblox_dns_view: internal
 
 # FIXME this is broken and assumes all consul-servers are in a single cluster
 consul_cluster_server_ips: "{{ groups['consul-servers'] | map('extract', hostvars, 'openstack_server') |  map(attribute='accessIPv4') | list }}"
+
+#consul_cluster_leader_ip: "{{ (consul_cluster_info.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_attr') | unique | list)[0].split(':')[0] }}"
+#consul_cluster_leader_ip: "{{ (consul_cluster_info.results[0].consul_info.consul.leader_attr | split(':'))[0] }}"
+
+consul_cluster_leader: "{% for server in consul_cluster_info.results %}{% if server.consul_info.consul.leader == 'true' %}{{ server.item }}{% endif %}{% endfor %}"
+
+consul_cluster_leader_acl_master_token: "{{ hostvars[consul_cluster_leader].consul_server_acl_master_token }}"
+
