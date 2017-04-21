@@ -44,7 +44,14 @@
   with_items:
     - gitlab-ci-multi-runner=1.11.1 # pin to 1.11.1 until gitlab-ci-multi-runner is fixed or our gitlab is updated (https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/issues/2305)
     - python-docker
+    - python-pip
   when: ansible_os_family == 'Debian'
+
+- name: install gitlab-runner module prereqs (pip)
+  tags: gitlab-runner
+  become: yes
+  pip:
+    name: python-gitlab
 
 - name: create docker-machine CA cert directory
   tags: 
@@ -119,11 +126,14 @@
     - gitlab-runner-register
   become: yes
   gitlab_ci_multi_runner_register:
+    gitlab_url: "{{ gitlab_url }}"
+    gitlab_token: "{{ gitlab_token }}"
     registration_url: "{{ item[1].url }}"
     registration_token: "{{ item[1].token }}"
     executor: "{{ item[0].executor }}"
     limit: "{{ item[0].limit }}"
-    name: "{{ item[0].name }}-{{ inventory_hostname_short }}"
+    # FIXME: The below is a repeat of `gitlab_runner_descriptions`, which is dangerous if it is different
+    description: "{{ item[0].name }}-{{ inventory_hostname_short }}"
     tags: "{{ group_names | union(item[0].extratags | default([])) | join(',') }}"
     extra_args: "{{ item[0].extraargs | default('') }}"
   with_nested:

@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from ansible.module_utils.basic import *
-import json
 
 try:
     from gitlab import Gitlab
@@ -81,10 +80,24 @@ def main():
         module.fail_json(msg="Failed to get project %s from gitlab API endpoint %s: %s" % (module.params["gitlab_project"], module.params["gitlab_url"], e))
 
     try:
-        runners = {runner.description: runner.id for runner in connector.runners.list(all=True)}
+        runners_list = connector.runners.list(all=True)
     except Gitlab_exc.GitlabGetError as e:
         module.fail_json(msg="Failed to get runners from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
 
+    # Detect when there is more than one match for a runner (runner descriptions are not unique after all)
+    existing_runner_descriptions = set()
+    duplicates = set()
+    for runner in runners_list:
+        if runner.description in runner_descriptions:
+            if runner.description in existing_runner_descriptions:
+                duplicates.add(runner.description)
+            else:
+                existing_runner_descriptions.add(runner.description)
+    if len(duplicates) > 0:
+        module.fail_json(msg="Cannot set project runners because there is more than one match for runner(s) with the "
+                             "description(s): %s" % duplicates)
+
+    runners = {runner.description: runner.id for runner in runners_list}
     required_runner_ids = {runners[runner_description] for runner_description in runner_descriptions}
     current_runner_ids = {runner.id for runner in project.runners.list(all=True, scope="specific")}
 
