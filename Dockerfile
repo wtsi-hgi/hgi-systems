@@ -64,7 +64,7 @@ RUN cd /tmp \
     && python3 setup.py install
 
 # Install consul
-ENV CONSUL_VERSION 0.7.5
+ENV CONSUL_VERSION 0.8.1
 RUN wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip -O /tmp/consul.zip \
     && unzip -d /usr/local/bin /tmp/consul.zip \
     && consul version
