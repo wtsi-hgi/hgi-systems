@@ -31,32 +31,17 @@
   with_items: "{{ consul_cluster_servers }}"
   register: consul_cluster_info
 
-- name: stop consul service on all servers when cluster has no peers
-  delegate_to: "{{ item }}"
-  become: yes
-  service:
-    name: consul
-    state: stopped
-  when: consul_cluster_has_no_peers_when
-  with_items: "{{ consul_cluster_servers }}"
+- include: fix-peerless-cluster.yml
+  when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
-- name: add peers.json to re-bootstrap when cluster has no peers
+- name: gather consul cluster info again
   delegate_to: "{{ item }}"
-  become: yes
-  template: 
-    src: peers.json.j2
-    dest: /data/consul/data/raft/peers.json
-  when: consul_cluster_has_no_peers_when
+  vars:
+    ansible_python_interpreter: python3
+  consul_info_facts: 
+    consul_bin: /opt/consul/bin/consul
   with_items: "{{ consul_cluster_servers }}"
-
-- name: start consul service on all servers when cluster has no peers
-  delegate_to: "{{ item }}"
-  become: yes
-  service:
-    name: consul
-    state: started
-  when: consul_cluster_has_no_peers_when
-  with_items: "{{ consul_cluster_servers }}"
+  register: consul_cluster_info
 
 - name: add DNS entry for cluster (TODO this should point to multiple A records for all servers)
   delegate_to: "{{ consul_cluster_infoblox_delegate }}"
@@ -69,3 +54,14 @@
     password: "{{ consul_cluster_infoblox_password }}"
     name: "{{ consul_cluster_dns_name }}.hgi.sanger.ac.uk"
     address: "{{ consul_cluster_server_ips[0] }}"
+
+- name: create an ACL token with rules
+  delegate_to: "{{ consul_cluster_leader }}"
+  consul_acl:
+    name: "{{ consul_cluster_acl_management_name }}"
+    token: "{{ consul_cluster_acl_management_token }}"
+    mgmt_token: "{{ consul_cluster_leader_acl_master_token }}"
+    token_type: management
+    rules:
+      - service: ""
+        policy: write
