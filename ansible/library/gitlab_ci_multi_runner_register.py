@@ -31,7 +31,18 @@ description:
     a subsequent `assemble` task.
 author:
   - Joshua C. Randall <jcrandall@alum.mit.edu>
+  - Colin Nolan <colin.nolan@sanger.ac.uk>
+requirements:
+  - python-gitlab 
 """
+
+try:
+    from gitlab import Gitlab, GitlabDeleteError
+    from gitlab import exceptions as Gitlab_exc
+    _HAS_DEPENDENCIES = True
+except ImportError as e:
+    _IMPORT_ERROR = e
+    _HAS_DEPENDENCIES = False
 
 import os.path
 import shlex
@@ -44,6 +55,8 @@ from ansible.module_utils.basic import AnsibleModule
 
 def main():
     module = AnsibleModule(argument_spec={
+        "gitlab_url": {"required": True, type: "str"},
+        "gitlab_token": {"required": True, type: "str"},
         "description": {"required": True, "type": "str"},
         "registration_url": {"required": True, "type": "str"},
         "registration_token": {"required": True, "type": "str"},
@@ -52,7 +65,11 @@ def main():
         "limit": {"required": False, "type": "str"},
         "tags": {"required": False, "type": "str"},
         "extra_args": {"required": False, "type": "str"},
+        "enfore_unique_description": {"required": False, "default": True, "type": "bool"}
     })
+
+    if not _HAS_DEPENDENCIES:
+        module.fail_json(msg="A required Python module is not installed: %s" % _IMPORT_ERROR)
 
     configuration_path = "%s/description-%s.json" % (module.params["config_dir"], module.params["description"])
     output_toml_path = "%s/description-%s-token-%s-url-%s.toml" % (
@@ -101,8 +118,9 @@ def main():
                     pass
                 changed = True
 
-    register_command = ["gitlab-ci-multi-runner", "register", "-n", "--url", config["registration_url"],
-                        "--registration-token", config["registration_token"], "--description", config["description"]]
+    register_command = [
+        "gitlab-ci-multi-runner", "register", "-n", "--leave-runner", "--url", config["registration_url"],
+        "--registration-token", config["registration_token"], "--description", config["description"]]
     if "executor" in config:
         register_command.extend(["--executor", config["executor"]])
     if "limit" in config:
@@ -137,7 +155,36 @@ def main():
         module.exit_json(failed=True, changed=changed,
                          message="Failed to write config JSON to %s: %s" % (configuration_path, e))
 
-    module.exit_json(changed=True, message="Gitlab runner registered successfully")
+    deleted_runners = set()
+    if module.params["enfore_unique_description"]:
+        with open(config["output_toml_path"]) as file:
+            for line in file.readlines():
+                if line.strip().startswith("token ="):
+                    runner_id = line.split("=")[1].strip().replace('"', "")
+
+        connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
+        try:
+            runners = connector.runners.list(all=True)
+            projects = connector.projects.list(all=True)
+        except Gitlab_exc.GitlabGetError as e:
+            module.fail_json(
+                msg="Failed to get runners/projects from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
+        for runner in runners:
+            if runner.description == config["description"] and runner.id != runner_id:
+                # GitLab won't let us remove a runner until it's no longer associated to a project
+                for project in projects:
+                    if runner.id in {runner.id for runner in project.runners.list(all=True)}:
+                        try:
+                            project.runners.delete(runner.id)
+                        except GitlabDeleteError as e:
+                            if "Only one project associated with the runner" in e.error_message:
+                                break
+                            else:
+                                raise
+                runner.delete()
+
+    module.exit_json(changed=True, message="Gitlab runner registered successfully. Deleted %d old runners"
+                                           % len(deleted_runners))
 
 
 if __name__ == "__main__":
