@@ -25,16 +25,13 @@ cd "terraform/${REGION}"
 
 echo "Calling terraform apply"
 set +e
-terraform apply -input=false -state-out="${ENV}.tfstate" plan
+terraform apply -input=false plan
 apply_exit_code=$?
 set -e
 
-echo "Copying ${ENV}.tfstate to artifacts"
-cp "${ENV}.tfstate" "${CI_PROJECT_DIR}/artifacts/"
-
 if [[ ${apply_exit_code} -eq 0 ]]; then
     echo "terraform apply succeeded, generating output state artifacts"
-    terraform output -json -state "${ENV}.tfstate" > output.json
+    terraform output -json > output.json
     cp output.json "${CI_PROJECT_DIR}/artifacts/"
     terraform show -no-color > "${ENV}.tfstate.txt"
     cp "${ENV}.tfstate.txt" "${CI_PROJECT_DIR}/artifacts/"
