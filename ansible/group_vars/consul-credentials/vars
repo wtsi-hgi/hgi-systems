@@ -1,0 +1,4 @@
+# Vault contains entries like:
+# consul_credentials:
+#  terraform:
+#    token: xxxxx-xxxxx-xxxxxxxxx

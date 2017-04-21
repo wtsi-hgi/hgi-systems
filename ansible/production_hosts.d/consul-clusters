@@ -4,5 +4,8 @@ consul-cluster-delta-hgi consul_datacenter=delta-hgi consul_cluster_dns_name=con
 [infoblox-credentials:children]
 consul-clusters
 
+[consul-credentials:children]
+consul-clusters
+
 [non-hosts:children]
 consul-clusters
