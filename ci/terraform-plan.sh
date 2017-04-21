@@ -6,33 +6,12 @@ artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
 
-if [[ -n "${artifacts}" ]]; then
-    for artifact in ${artifacts}; do
-        echo "Copying ${artifacts_dir}/${artifact} to terraform/${REGION}/"
-        cp "${artifacts_dir}/${artifact}" "terraform/${REGION}/"
-    done
-else
-    echo "No artifacts to copy"
-fi
-
-echo "Emptying artifacts directory"
-rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
-
-if [[ -e "${ENV}.tfstate" ]]; then
-    echo "Copying ${ENV}.tfstate (from refresh job) into output artifacts"
-    cp "${ENV}.tfstate" "${artifacts_dir}/"
-else
-    echo "No existing ${ENV}.tfstate to pass along in artifacts"
-fi
-
 echo "Changing to terraform/${REGION} directory"
 cd terraform/${REGION}
 
 echo "Calling terraform plan"
-terraform plan -state="${ENV}.tfstate" -input=false -out plan
+terraform plan -input=false -out plan
 plan_exit_status=$?
-echo "Copying plan to artifacts"
-cp plan "${artifacts_dir}/"
 
 if [[ ${plan_exit_status} -eq 0 ]]; then
     echo "Terraform plan was successful, generating human-readable plan"
