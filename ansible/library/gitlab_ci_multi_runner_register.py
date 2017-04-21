@@ -104,8 +104,7 @@ def main():
         with open(configuration_path) as file:
             existing_config = json.load(file)
 
-        runner_id = get_runner_id(config["output_toml_path"])
-        runner_registered = runner_id in {runner.id for runner in runners}
+        runner_registered = get_runner_id(config["output_toml_path"]) in {runner.id for runner in runners}
         configuration_changed = cmp(existing_config, config) != 0
 
         if runner_registered:
@@ -142,7 +141,7 @@ def main():
         register_command.extend(shlex.split(config["extra_args"]))
     register_command.extend(["-c", config["output_toml_path"]])
     try:
-        register_output = subprocess.check_output(register_command, shell=False, stderr=subprocess.STDOUT)
+        subprocess.check_output(register_command, shell=False, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         module.exit_json(failed=True, changed=changed,
                          message="Failed to register configuration (call to '%s' failed with status %s): %s" % (
@@ -157,10 +156,10 @@ def main():
                          message="Failed to process updated registration config TOML through sed", config=config)
 
     try:
-        with NamedTemporaryFile(delete=False) as f:
-            json.dump(config, f)
-            f.close()
-            module.atomic_move(f.name, configuration_path)
+        with NamedTemporaryFile(delete=False) as file:
+            json.dump(config, file)
+            file.close()
+            module.atomic_move(file.name, configuration_path)
 
     except IOError as e:
         module.exit_json(failed=True, changed=changed,
@@ -168,37 +167,46 @@ def main():
 
     deleted_runners = set()
     if module.params["enfore_unique_description"]:
-
-
+        runner_id = get_runner_id(config["output_toml_path"])
         try:
-            runners = connector.runners.list(all=True)
             projects = connector.projects.list(all=True)
         except Gitlab_exc.GitlabGetError as e:
             module.fail_json(
                 msg="Failed to get runners/projects from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
         for runner in runners:
-            if runner.description == config["description"] and runner.id != runner_id:
-                # GitLab won't let us remove a runner until it's no longer associated to a project
-                for project in projects:
-                    if runner.id in {runner.id for runner in project.runners.list(all=True)}:
-                        try:
-                            project.runners.delete(runner.id)
-                        except GitlabDeleteError as e:
-                            if "Only one project associated with the runner" in e.error_message:
-                                break
-                            else:
-                                raise
-                raise Exception("Deleting: %s != %s" % (runner.id, runner_id))
-                runner.delete()
+            if runner.description == config["description"]:
+                runner_details = connector.runners.get(runner.id)
+                if runner_details.token != runner_id:
+                    deleted_runners.add(runner_details.token)
+                    remove_runner(runner, projects)
 
-    module.exit_json(changed=True, message="Gitlab runner registered successfully. Deleted %d old runners"
-                                           % len(deleted_runners))
+    module.exit_json(changed=True, message="Gitlab runner registered successfully. Deleted %d old runner(s): %s"
+                                           % (len(deleted_runners), deleted_runners))
+
+
+def remove_runner(runner, projects):
+    """
+    Removes the given runner from existence.
+    :param runner: the runner to remove
+    :param projects: projects that may have the runner registered
+    """
+    # GitLab won't let us remove a runner until it's no longer associated to a project
+    for project in projects:
+        if runner.id in {runner.id for runner in project.runners.list(all=True)}:
+            try:
+                project.runners.delete(runner.id)
+            except GitlabDeleteError as e:
+                if "Only one project associated with the runner" in e.error_message:
+                    break
+                else:
+                    raise
+    runner.delete()
 
 
 def get_runner_id(output_toml_path):
     """
-    TODO
-    :param output_toml_path: 
+    Gets the current runners registration ID by reading the givne output toml file.
+    :param output_toml_path: location of the output file, produced by the registration step
     :return: 
     """
     with open(output_toml_path) as file:
