@@ -93,14 +93,25 @@ def main():
 
     changed = False
 
+    connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
+    try:
+        runners = connector.runners.list(all=True)
+    except Gitlab_exc.GitlabGetError as e:
+        module.fail_json(
+            msg="Failed to get runners from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
+
     if os.path.isfile(configuration_path):
-        with open(configuration_path) as f:
-            existing_config = json.load(f)
-            if cmp(existing_config, config) == 0:
-                # configuration has not changed from existing, no changes required
+        with open(configuration_path) as file:
+            existing_config = json.load(file)
+
+        runner_id = get_runner_id(config["output_toml_path"])
+        runner_registered = runner_id in {runner.id for runner in runners}
+        configuration_changed = cmp(existing_config, config) != 0
+
+        if runner_registered:
+            if not configuration_changed:
                 module.exit_json(changed=False, message="Configuration unchanged")
             else:
-                # configuration has changed, unregister and remove so we can re-register
                 unregister_command = ["gitlab-ci-multi-runner", "unregister", "-c", existing_config["output_toml_path"],
                                       "-n", existing_config["description"]]
                 unregister_process = subprocess.Popen(unregister_command, shell=False, stdout=subprocess.PIPE)
@@ -108,15 +119,15 @@ def main():
                 if unregister_process.returncode != 0:
                     module.exit_json(failed=True, changed=False, message="Failed to unregister old configuration",
                                      existing_config=existing_config)
-                try:
-                    os.remove(existing_config["configuration_path"])
-                except OSError:
-                    pass
-                try:
-                    os.remove(existing_config["output_toml_path"])
-                except OSError:
-                    pass
-                changed = True
+        try:
+            os.remove(existing_config["configuration_path"])
+        except OSError:
+            pass
+        try:
+            os.remove(existing_config["output_toml_path"])
+        except OSError:
+            pass
+        changed = True
 
     register_command = [
         "gitlab-ci-multi-runner", "register", "-n", "--leave-runner", "--url", config["registration_url"],
@@ -157,12 +168,8 @@ def main():
 
     deleted_runners = set()
     if module.params["enfore_unique_description"]:
-        with open(config["output_toml_path"]) as file:
-            for line in file.readlines():
-                if line.strip().startswith("token ="):
-                    runner_id = line.split("=")[1].strip().replace('"', "")
 
-        connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
+
         try:
             runners = connector.runners.list(all=True)
             projects = connector.projects.list(all=True)
@@ -181,10 +188,23 @@ def main():
                                 break
                             else:
                                 raise
+                raise Exception("Deleting: %s != %s" % (runner.id, runner_id))
                 runner.delete()
 
     module.exit_json(changed=True, message="Gitlab runner registered successfully. Deleted %d old runners"
                                            % len(deleted_runners))
+
+
+def get_runner_id(output_toml_path):
+    """
+    TODO
+    :param output_toml_path: 
+    :return: 
+    """
+    with open(output_toml_path) as file:
+        for line in file.readlines():
+            if line.strip().startswith("token ="):
+                return line.split("=")[1].strip().replace('"', "")
 
 
 if __name__ == "__main__":
