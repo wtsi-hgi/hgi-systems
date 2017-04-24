@@ -41,7 +41,11 @@ WORKDIR $GOPATH
 
 # Build terraform
 RUN go get github.com/mitchellh/gox
-RUN go get github.com/hashicorp/terraform
+RUN mkdir -p $GOPATH/src/github.com/hashicorp && \
+    cd $GOPATH/src/github.com/hashicorp && \
+    git clone https://github.com/hashicorp/terraform && \
+    cd terraform && \
+    git checkout v0.9.3
 WORKDIR $GOPATH/src/github.com/hashicorp/terraform
 ENV XC_ARCH="amd64"
 ENV XC_OS="linux"
