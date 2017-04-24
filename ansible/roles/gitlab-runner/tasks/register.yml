@@ -44,7 +44,7 @@
     - gitlab-runner
     - gitlab-runner-register
   become: yes
-  assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"git st
+  assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"
   when: "not 'image-building' in group_names"
 
 - name: register gitlab project runner with projects

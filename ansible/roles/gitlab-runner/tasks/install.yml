@@ -20,7 +20,11 @@
 - name: install gitlab-runner and docker_container module prereqs (apt)
   tags: gitlab-runner
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
   with_items:
     - gitlab-ci-multi-runner=1.11.1 # pin to 1.11.1 until gitlab-ci-multi-runner is fixed or our gitlab is updated (https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/issues/2305)
     - python-docker
@@ -37,7 +41,9 @@
   tags:
     - gitlab-runner
   become: yes
-  file: path=/root/.docker/machine/certs state=directory
+  file:
+    path: /root/.docker/machine/certs
+    state: directory
 
 - name: put previously generated docker-machine self-signed CA certs in place
   tags: gitlab-runner
