@@ -12,6 +12,12 @@ if [[ -z "${AWS_SECRET_KEY_ID:-}" ]]; then
     exit 1
 fi
 
+terraform_bin=$(which terraform)
+if [[ -z "${terraform_bin}" ]]; then
+    >&2 echo "terraform not in path: ${PATH}"
+    exit 1
+fi
+
 if [[ -d "terraform/${REGION}" ]]; then
     echo "Calling terraform validate in terraform/${REGION}"
     cd terraform/${REGION} && terraform validate
