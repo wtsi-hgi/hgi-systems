@@ -86,6 +86,9 @@ openstack-instance-consul-servers
 [sanger-gitlab:children]
 gitlab-runners
 
+[sanger-networks:children]
+consul-servers
+
 [s3-credentials:children]
 gitlab-runners
 consul-servers
