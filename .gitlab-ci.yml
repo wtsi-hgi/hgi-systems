@@ -36,7 +36,6 @@ before_script:
 
 stages:
   - validate
-  - refresh
   - plan
   - apply
   - sync
@@ -232,59 +231,6 @@ terraform-validate-staging-delta-hgiarvados:
 #   <<: *terraform-validate-def
 #   <<: *staging-emedlab-arvados-def
     
-.terraform-refresh: &terraform-refresh-def
-  stage: refresh
-  tags:
-    - docker
-  image: quay.io/wtsi-hgi/taos
-  script:
-    - ci/terraform-refresh.sh
-  artifacts:
-    paths:
-      - artifacts
-    when: always
-  dependencies: []
-
-terraform-refresh-production-gamma-hgi:
-  <<: *terraform-refresh-def
-  <<: *production-gamma-hgi-def
-
-terraform-refresh-staging-gamma-hgi:
-  <<: *terraform-refresh-def
-  <<: *staging-gamma-hgi-def
-
-terraform-refresh-production-gamma-hgiarvados:
-  <<: *terraform-refresh-def
-  <<: *production-gamma-hgiarvados-def
-
-terraform-refresh-staging-gamma-hgiarvados:
-  <<: *terraform-refresh-def
-  <<: *staging-gamma-hgiarvados-def
-
-terraform-refresh-production-delta-hgi:
-  <<: *terraform-refresh-def
-  <<: *production-delta-hgi-def
-
-terraform-refresh-staging-delta-hgi:
-  <<: *terraform-refresh-def
-  <<: *staging-delta-hgi-def
-
-terraform-refresh-production-delta-hgiarvados:
-  <<: *terraform-refresh-def
-  <<: *production-delta-hgiarvados-def
-
-terraform-refresh-staging-delta-hgiarvados:
-  <<: *terraform-refresh-def
-  <<: *staging-delta-hgiarvados-def
-
-# terraform-refresh-production-emedlab-arvados:
-#   <<: *terraform-refresh-def
-#   <<: *production-emedlab-arvados-def
-
-# terraform-refresh-staging-emedlab-arvados:
-#   <<: *terraform-refresh-def
-#   <<: *staging-emedlab-arvados-def
-
 .terraform-plan: &terraform-plan-def
   stage: plan
   tags:
@@ -299,62 +245,42 @@ terraform-refresh-staging-delta-hgiarvados:
 terraform-plan-production-gamma-hgi:
   <<: *terraform-plan-def
   <<: *production-gamma-hgi-def
-  dependencies:
-    - terraform-refresh-production-gamma-hgi
 
 terraform-plan-staging-gamma-hgi:
   <<: *terraform-plan-def
   <<: *staging-gamma-hgi-def
-  dependencies:
-    - terraform-refresh-staging-gamma-hgi
 
 terraform-plan-production-gamma-hgiarvados:
   <<: *terraform-plan-def
   <<: *production-gamma-hgiarvados-def
-  dependencies:
-    - terraform-refresh-production-gamma-hgiarvados
 
 terraform-plan-staging-gamma-hgiarvados:
   <<: *terraform-plan-def
   <<: *staging-gamma-hgiarvados-def
-  dependencies:
-    - terraform-refresh-staging-gamma-hgiarvados
 
 terraform-plan-production-delta-hgi:
   <<: *terraform-plan-def
   <<: *production-delta-hgi-def
-  dependencies:
-    - terraform-refresh-production-delta-hgi
 
 terraform-plan-staging-delta-hgi:
   <<: *terraform-plan-def
   <<: *staging-delta-hgi-def
-  dependencies:
-    - terraform-refresh-staging-delta-hgi
 
 terraform-plan-production-delta-hgiarvados:
   <<: *terraform-plan-def
   <<: *production-delta-hgiarvados-def
-  dependencies:
-    - terraform-refresh-production-delta-hgiarvados
 
 terraform-plan-staging-delta-hgiarvados:
   <<: *terraform-plan-def
   <<: *staging-delta-hgiarvados-def
-  dependencies:
-    - terraform-refresh-staging-delta-hgiarvados
 
 # terraform-plan-production-emedlab-arvados:
 #   <<: *terraform-plan-def
 #   <<: *production-emedlab-arvados-def
-#   dependencies:
-#     - terraform-refresh-production-emedlab-arvados
 
 # terraform-plan-staging-emedlab-arvados:
 #   <<: *terraform-plan-def
 #   <<: *staging-emedlab-arvados-def
-#   dependencies:
-#     - terraform-refresh-staging-emedlab-arvados
 
 .terraform-apply: &terraform-apply-def
   stage: apply

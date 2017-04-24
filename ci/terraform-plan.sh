@@ -19,13 +19,17 @@ echo "Copying plan to artifacts"
 cp plan "${artifacts_dir}/"
 
 if [[ ${plan_exit_status} -eq 0 ]]; then
-    echo "Terraform plan was successful, generating human-readable plan"
+    echo "Terraform plan was successful"
+    echo "Generating human readable ${ENV}.tfstate.txt artifact"
+    (terraform show -no-color > "${ENV}.tfstate.txt")
+    cp "${ENV}.tfstate.txt" "${artifacts_dir}"
+    echo "Generating human-readable plan.txt artifact"
     terraform show -no-color plan > plan.txt
     cp plan.txt "${artifacts_dir}/"
-    echo "Generating dot graph from plan"
+    echo "Generating dot graph plan.dot from plan"
     terraform graph plan > plan.dot
     cp plan.dot "${artifacts_dir}/"
-    echo "Generating PNG from graph"
+    echo "Generating plan.png PNG from graph"
     dot -Tpng < plan.dot > plan.png
     cp plan.png "${artifacts_dir}/" 
 else
