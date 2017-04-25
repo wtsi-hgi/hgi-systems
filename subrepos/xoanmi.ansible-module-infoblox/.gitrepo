@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/xoanmi/ansible-module-infoblox.git
 	branch = master
-	commit = b2768a040145f96d615bf786ddaab6051fad74b4
-	parent = 0a84370e2481a7597a118cd5f3d78fe3645e512d
+	commit = b33e63da3b0271fdee62fcff3ba710b8424f3db2
+	parent = d94600ba30b6d7ee26c975769f377dd1ec1fda1a
 	cmdver = 0.3.1
