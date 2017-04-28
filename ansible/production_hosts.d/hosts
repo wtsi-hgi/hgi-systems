@@ -86,6 +86,9 @@ openstack-instance-consul-servers
 [sanger-gitlab:children]
 gitlab-runners
 
+[openstack-cleaners:children]
+openstance-instance-openstack-tenant-cleaners
+
 [sanger-networks:children]
 consul-servers
 
@@ -97,6 +100,7 @@ consul-servers
 [openstack-instances:children]
 openstack-instance-gitlab-runners
 openstack-instance-consul-servers
+openstance-instance-openstack-tenant-cleaners
 
 [openstack:children]
 openstack-instances
@@ -112,6 +116,9 @@ consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-vol
 [openstack-instance-gitlab-runners]
 #gitlab-runner-gamma-hgi-01 tenant=gamma-hgi-tenant network="gamma-gitlab-runners-network" image=delta-hgi-docker-image keypair=gamma-hgi-ansible-mercury-keypair
 gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-runners-network" image=delta-hgi-docker-image keypair=delta-hgi-ci-ansible-mercury-keypair
+
+[openstance-instance-openstack-tenant-cleaners]
+openstack-tenant-cleaner tenant=delta-hgi-tenant network=delta-hgi-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair
 
 # Groups of dynamic inventory hosts managed by Terraform
 #[ssh-gateways]

@@ -1,0 +1,3 @@
+---
+
+openstack_cleaner_ssh_security_group_name: "{{ (groups['openstack-security-groups-ssh'] | map('extract', hostvars) | selectattr('tenant', 'equalto', tenant) | list())[0].openstack_security_group_name }}"
