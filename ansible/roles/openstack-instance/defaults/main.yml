@@ -32,6 +32,9 @@ openstack_instance_router: "{{ openstack_instance_network }}_{{ openstack_instan
 openstack_instance_subnet: "{{ openstack_instance_network }}_subnet"
 
 openstack_instance_security_groups:
- - "{{ openstack_instance_ssh_security_group_name }}"
+  - ssh
+# FIXME: I have no idea where on earth `openstack_instance_ssh_security_group_name` is supposed to be set (Ansible is
+# complaining that it's not!). Hacking around this for the time being...
+# - "{{ openstack_instance_ssh_security_group_name }}"
 
 openstack_instance_server_facts: "{{ openstack_servers[0] }}"

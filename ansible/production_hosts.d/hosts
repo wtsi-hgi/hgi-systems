@@ -86,7 +86,7 @@ openstack-instance-consul-servers
 [sanger-gitlab:children]
 gitlab-runners
 
-[openstack-cleaners:children]
+[openstack-tenant-cleaners:children]
 openstance-instance-openstack-tenant-cleaners
 
 [sanger-networks:children]
