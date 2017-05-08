@@ -57,6 +57,9 @@ marathoners
 chronosians
 openstack-instance-gitlab-runners
 
+[logrotaters:children]
+openstack-instance-gitlab-runners
+
 [bamboosians:children]
 mesos-slaves
 
@@ -124,4 +127,3 @@ openstack-tenant-cleaner tenant=delta-hgi-tenant network=delta-hgi-network image
 #[ssh-gateways]
 #openstack_compute_instance_v2.ssh-gateway-hgi ansible_user=ubuntu
 #openstack_compute_instance_v2.ssh-gateway-hgiarvados ansible_user=ubuntu
-
