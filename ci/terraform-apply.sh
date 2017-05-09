@@ -2,6 +2,11 @@
 
 set -euf -o pipefail
 
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_DIRECTORY}/common.sh"
+
+ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD
+
 artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
@@ -19,7 +24,7 @@ echo "Emptying artifacts directory"
 rm -rf "${CI_PROJECT_DIR}/artifacts" && mkdir -p "${CI_PROJECT_DIR}/artifacts"
 
 echo "Generating /tmp/ansible_vault.pw"
-(echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw)
+(echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
 cd "terraform/${REGION}"
 
