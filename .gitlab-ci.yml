@@ -36,7 +36,6 @@ before_script:
 
 stages:
   - validate
-  - plan
   - apply
   - sync
 
@@ -231,57 +230,6 @@ terraform-validate-staging-delta-hgiarvados:
 #   <<: *terraform-validate-def
 #   <<: *staging-emedlab-arvados-def
     
-.terraform-plan: &terraform-plan-def
-  stage: plan
-  tags:
-    - docker
-  image: quay.io/wtsi-hgi/taos
-  script:
-    - ci/terraform-plan.sh
-  artifacts:
-    paths:
-      - artifacts
-
-terraform-plan-production-gamma-hgi:
-  <<: *terraform-plan-def
-  <<: *production-gamma-hgi-def
-
-terraform-plan-staging-gamma-hgi:
-  <<: *terraform-plan-def
-  <<: *staging-gamma-hgi-def
-
-terraform-plan-production-gamma-hgiarvados:
-  <<: *terraform-plan-def
-  <<: *production-gamma-hgiarvados-def
-
-terraform-plan-staging-gamma-hgiarvados:
-  <<: *terraform-plan-def
-  <<: *staging-gamma-hgiarvados-def
-
-terraform-plan-production-delta-hgi:
-  <<: *terraform-plan-def
-  <<: *production-delta-hgi-def
-
-terraform-plan-staging-delta-hgi:
-  <<: *terraform-plan-def
-  <<: *staging-delta-hgi-def
-
-terraform-plan-production-delta-hgiarvados:
-  <<: *terraform-plan-def
-  <<: *production-delta-hgiarvados-def
-
-terraform-plan-staging-delta-hgiarvados:
-  <<: *terraform-plan-def
-  <<: *staging-delta-hgiarvados-def
-
-# terraform-plan-production-emedlab-arvados:
-#   <<: *terraform-plan-def
-#   <<: *production-emedlab-arvados-def
-
-# terraform-plan-staging-emedlab-arvados:
-#   <<: *terraform-plan-def
-#   <<: *staging-emedlab-arvados-def
-
 .terraform-apply: &terraform-apply-def
   stage: apply
   tags:
