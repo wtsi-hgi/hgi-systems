@@ -13,6 +13,9 @@ cd terraform/${REGION}
 echo "Calling terraform init"
 terraform init
 
+echo "Calling terraform refresh"
+terraform refresh
+
 echo "Calling terraform plan"
 terraform plan -input=false -out plan
 plan_exit_status=$?
