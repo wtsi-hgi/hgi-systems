@@ -245,62 +245,42 @@ terraform-validate-staging-delta-hgiarvados:
 terraform-apply-production-gamma-hgi:
   <<: *terraform-apply-def
   <<: *production-gamma-hgi-def
-  dependencies:
-    - terraform-plan-production-gamma-hgi
 
 terraform-apply-staging-gamma-hgi:
   <<: *terraform-apply-def
   <<: *staging-gamma-hgi-def
-  dependencies:
-    - terraform-plan-staging-gamma-hgi
 
 terraform-apply-production-gamma-hgiarvados:
   <<: *terraform-apply-def
   <<: *production-gamma-hgiarvados-def
-  dependencies:
-    - terraform-plan-production-gamma-hgiarvados
 
 terraform-apply-staging-gamma-hgiarvados:
   <<: *terraform-apply-def
   <<: *staging-gamma-hgiarvados-def
-  dependencies:
-    - terraform-plan-staging-gamma-hgiarvados
 
 terraform-apply-production-delta-hgi:
   <<: *terraform-apply-def
   <<: *production-delta-hgi-def
-  dependencies:
-    - terraform-plan-production-delta-hgi
 
 terraform-apply-staging-delta-hgi:
   <<: *terraform-apply-def
   <<: *staging-delta-hgi-def
-  dependencies:
-    - terraform-plan-staging-delta-hgi
 
 terraform-apply-production-delta-hgiarvados:
   <<: *terraform-apply-def
   <<: *production-delta-hgiarvados-def
-  dependencies:
-    - terraform-plan-production-delta-hgiarvados
 
 terraform-apply-staging-delta-hgiarvados:
   <<: *terraform-apply-def
   <<: *staging-delta-hgiarvados-def
-  dependencies:
-    - terraform-plan-staging-delta-hgiarvados
 
 # terraform-apply-production-emedlab-arvados:
 #   <<: *terraform-apply-def
 #   <<: *production-emedlab-arvados-def
-#   dependencies:
-#     - terraform-plan-production-emedlab-arvados
 
 # terraform-apply-staging-emedlab-arvados:
 #   <<: *terraform-apply-def
 #   <<: *staging-emedlab-arvados-def
-#   dependencies:
-#     - terraform-plan-staging-emedlab-arvados
 
 github-sync:
   stage: sync
