@@ -16,6 +16,9 @@ terraform init
 echo "Calling terraform refresh"
 terraform refresh
 
+#echo "feeling sleepy for 10s"
+#sleep 10
+
 echo "Calling terraform plan"
 terraform plan -input=false -out plan
 plan_exit_status=$?
@@ -30,12 +33,12 @@ if [[ ${plan_exit_status} -eq 0 ]]; then
     echo "Generating human-readable plan.txt artifact"
     terraform show -no-color plan > plan.txt
     cp plan.txt "${artifacts_dir}/"
-    echo "Generating dot graph plan.dot from plan"
-    terraform graph plan > plan.dot
-    cp plan.dot "${artifacts_dir}/"
-    echo "Generating plan.png PNG from graph"
-    dot -Tpng < plan.dot > plan.png
-    cp plan.png "${artifacts_dir}/" 
+#    echo "Generating dot graph plan.dot from plan"
+#    terraform graph plan > plan.dot
+#    cp plan.dot "${artifacts_dir}/"
+#    echo "Generating plan.png PNG from graph"
+#    dot -Tpng < plan.dot > plan.png
+#    cp plan.png "${artifacts_dir}/" 
 else
     >&2 echo "Terraform plan failed: ${plan_exit_status}"
     exit ${plan_exit_status}
@@ -44,9 +47,12 @@ fi
 echo "Generating /tmp/ansible_vault.pw"
 (echo "$ANSIBLE_VAULT_PASSWORD" > /tmp/ansible_vault.pw)
 
+#echo "feeling sleepy for 10s"
+#sleep 10
+
 echo "Calling terraform apply"
 set +e
-terraform apply -input=false plan
+terraform apply -input=false -refresh=false plan
 apply_exit_code=$?
 set -e
 
