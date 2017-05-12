@@ -1,0 +1,5 @@
+---
+
+- hosts: logrotaters
+  roles:
+    - logrotate

@@ -2,9 +2,9 @@
 
 set -euf -o pipefail
 
-if [ -z "${S3_IMAGE_BUCKET+x}" ]; then
-    >&2 echo "S3_IMAGE_BUCKET must be set!"
-    exit 1
-fi
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_DIRECTORY}/common.sh"
+
+ensureSet S3_IMAGE_BUCKET
 
 s3cmd info "s3://${S3_IMAGE_BUCKET}"

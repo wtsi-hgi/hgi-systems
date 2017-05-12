@@ -1,0 +1,11 @@
+---
+
+openstack_tenant_cleaner_version: 2.0.1
+openstack_tenant_cleaner_container_name: openstack-tenant-cleaner
+openstack_tenant_cleaner_host_data_directory: /var/opt/openstack-tenant-cleaner
+
+openstack_tenant_cleaner_cleanups:
+  - tenant: "{{ openstack_tenant_auths['delta-hgi-ci-tenant']['project_name'] }}"
+    credentials:
+      - username: "{{ openstack_tenant_auths['delta-hgi-ci-tenant']['username'] }}"
+        password: "{{ openstack_tenant_auths['delta-hgi-ci-tenant']['password'] }}"
