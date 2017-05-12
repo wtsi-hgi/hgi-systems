@@ -45,7 +45,7 @@ RUN /tmp/get-terraform.sh && rm /tmp/get-terraform.sh
 RUN cd /tmp \
     && git clone https://github.com/wtsi-hgi/yatadis.git \
     && cd yatadis \
-    && git checkout 0.4.0 \
+    && git checkout 0.4.1 \
     && python3 setup.py install \
     && cd \
     && rm -rf /tmp/yatadis
