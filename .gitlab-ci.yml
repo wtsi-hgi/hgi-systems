@@ -37,6 +37,7 @@ before_script:
 stages:
   - validate
   - terraform
+  - ansible
   - sync
 
 validate_s3:
@@ -280,6 +281,58 @@ terraform-staging-delta-hgiarvados:
 
 # terraform-staging-emedlab-arvados:
 #   <<: *terraform-def
+#   <<: *staging-emedlab-arvados-def
+
+.ansible: &ansible-def
+  stage: ansible
+  tags:
+    - docker
+  image: quay.io/wtsi-hgi/taos
+  script:
+    - ci/ansible.sh
+  artifacts:
+    paths:
+      - artifacts
+    when: always
+
+ansible-production-gamma-hgi:
+  <<: *ansible-def
+  <<: *production-gamma-hgi-def
+
+ansible-staging-gamma-hgi:
+  <<: *ansible-def
+  <<: *staging-gamma-hgi-def
+
+ansible-production-gamma-hgiarvados:
+  <<: *ansible-def
+  <<: *production-gamma-hgiarvados-def
+
+ansible-staging-gamma-hgiarvados:
+  <<: *ansible-def
+  <<: *staging-gamma-hgiarvados-def
+
+ansible-production-delta-hgi:
+  <<: *ansible-def
+  <<: *production-delta-hgi-def
+
+ansible-staging-delta-hgi:
+  <<: *ansible-def
+  <<: *staging-delta-hgi-def
+
+ansible-production-delta-hgiarvados:
+  <<: *ansible-def
+  <<: *production-delta-hgiarvados-def
+
+ansible-staging-delta-hgiarvados:
+  <<: *ansible-def
+  <<: *staging-delta-hgiarvados-def
+
+# ansible-production-emedlab-arvados:
+#   <<: *ansible-def
+#   <<: *production-emedlab-arvados-def
+
+# ansible-staging-emedlab-arvados:
+#   <<: *ansible-def
 #   <<: *staging-emedlab-arvados-def
 
 github-sync:

@@ -7,8 +7,6 @@ if [[ -z "${YATADIS_BIN}" ]]; then
     exit 0
 fi
 
-terraform_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../terraform/delta-hgiarvados"
-
 export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
 
 export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
@@ -25,7 +23,7 @@ export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 EOF
 )
 
-export DEFAULT_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
+export TF_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
 ansible_ssh_user=mercury
 ansible_host={{ primary.attributes.access_ip_v6
 | default(primary.attributes.ipv6_address, true)
@@ -69,7 +67,6 @@ EOF
 # EOF
 # )
 
-export TF_STATE="${TF_STATE_DIR}/production.tfstate"
 yatadis $@
 
 #rm -f "${tmp_state}"
