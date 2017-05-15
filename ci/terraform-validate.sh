@@ -2,13 +2,14 @@
 
 set -euf -o pipefail
 
-if [[ -z "${AWS_ACCESS_KEY_ID:-}" ]]; then
-    >&2 echo "AWS_ACCESS_KEY_ID not set, giving up on terraform"
-    exit 1
-fi
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_DIRECTORY}/common.sh"
 
-if [[ -z "${AWS_SECRET_KEY_ID:-}" ]]; then
-    >&2 echo "AWS_SECRET_KEY_ID not set, giving up on terraform"
+ensureSet AWS_ACCESS_KEY_ID AWS_SECRET_KEY_ID
+
+terraform_bin=$(which terraform)
+if [[ -z "${terraform_bin}" ]]; then
+    >&2 echo "terraform not in path: ${PATH}"
     exit 1
 fi
 

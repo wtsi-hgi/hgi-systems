@@ -20,7 +20,6 @@
 
 [openstack-destroy-tenants]
 delta-hgi-ci-tenant tenant=delta-hgi-ci-tenant openstack_tenant_id=e95a9c47113a4a1499e6c51c04d4d15e
-gamma-hgi-tenant tenant=gamma-hgi-tenant openstack_tenant_id=0fb6b8ad81f54a84a80b0e8a96a525f2
 
 [openstack:children]
 openstack-destroy-tenants

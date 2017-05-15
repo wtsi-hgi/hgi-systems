@@ -8,6 +8,5 @@
 openstack_tenant_auths:
   delta-hgi-ci-tenant: "{{ openstack_logins['delta-hgi-ci'] | combine({'project_name': 'hgi-ci'}) }}"
   delta-hgi-tenant: "{{ openstack_logins['delta-jr17'] | combine({'project_name': 'hgi'}) }}"
-  gamma-hgi-tenant: "{{ openstack_logins['gamma-jr17'] | combine({'project_name': 'hgi'}) }}"
 
 openstack_auth: "{{ openstack_tenant_auths[tenant] }}"

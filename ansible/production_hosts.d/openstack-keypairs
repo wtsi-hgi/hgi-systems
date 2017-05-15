@@ -21,7 +21,6 @@
 [openstack-keypairs-ansible-mercury]
 delta-hgi-ansible-mercury-keypair tenant=delta-hgi-tenant
 delta-hgi-ci-ansible-mercury-keypair tenant=delta-hgi-ci-tenant
-gamma-hgi-ansible-mercury-keypair tenant=gamma-hgi-tenant
 
 [openstack-keypairs:children]
 openstack-keypairs-ansible-mercury

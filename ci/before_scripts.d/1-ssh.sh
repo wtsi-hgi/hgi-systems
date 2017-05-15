@@ -15,6 +15,6 @@ ssh-add <(echo "$SSH_PRIVATE_KEY")
 # you will overwrite your user's SSH config.
 mkdir -p ~/.ssh
 if [[ -f /.dockerenv ]]; then
-    echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n" > ~/.ssh/config
 fi
 

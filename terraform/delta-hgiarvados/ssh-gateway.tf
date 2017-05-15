@@ -17,6 +17,10 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
     access_network = true
   }
 
+  metadata = {
+    ansible_groups = "ssh_gateways"
+  }
+
   # wait for host to be available via ssh
   provisioner "remote-exec" {
     inline = [
@@ -28,10 +32,6 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
       agent = "true"
       timeout = "2m"
     }
-  }
-  # provision using ansible
-  provisioner "local-exec" {
-    command = "ANSIBLE_CONFIG=../../ansible/ansible-minimal.cfg ansible-playbook -i ../../ansible/production_hosts.d -l 'openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados' ../../ansible/site.yml"
   }
 }
 

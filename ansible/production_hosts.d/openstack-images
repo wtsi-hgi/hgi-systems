@@ -21,7 +21,6 @@
 [openstack-images-docker]
 delta-hgi-docker-image tenant=delta-hgi-tenant
 delta-hgi-ci-docker-image tenant=delta-hgi-ci-tenant
-gamma-hgi-docker-image tenant=gamma-hgi-tenant
 
 [openstack-images:children]
 openstack-images-docker

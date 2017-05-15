@@ -9,7 +9,7 @@ source "${SCRIPT_DIRECTORY}/common.sh"
 CONSUL_DATA_DIRECTORY=/tmp/consul/data
 
 # Ensure required variables are set
-ensure_set CONSUL_DATACENTER CONSUL_JOIN_ADDRESS CONSUL_ENCRYPT_KEY
+ensureSet CONSUL_DATACENTER CONSUL_JOIN_ADDRESS CONSUL_ENCRYPT_KEY
 
 # Setup consul agent
 rm -rf "${CONSUL_DATA_DIRECTORY}"
