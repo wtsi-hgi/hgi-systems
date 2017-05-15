@@ -36,7 +36,7 @@ before_script:
 
 stages:
   - validate
-  - apply
+  - terraform
   - sync
 
 validate_s3:
@@ -230,56 +230,56 @@ terraform-validate-staging-delta-hgiarvados:
 #   <<: *terraform-validate-def
 #   <<: *staging-emedlab-arvados-def
     
-.terraform-apply: &terraform-apply-def
-  stage: apply
+.terraform: &terraform-def
+  stage: terraform
   tags:
     - docker
   image: quay.io/wtsi-hgi/taos
   script:
-    - ci/terraform-apply.sh
+    - ci/terraform.sh
   artifacts:
     paths:
       - artifacts
     when: always
 
-terraform-apply-production-gamma-hgi:
-  <<: *terraform-apply-def
+terraform-production-gamma-hgi:
+  <<: *terraform-def
   <<: *production-gamma-hgi-def
 
-terraform-apply-staging-gamma-hgi:
-  <<: *terraform-apply-def
+terraform-staging-gamma-hgi:
+  <<: *terraform-def
   <<: *staging-gamma-hgi-def
 
-terraform-apply-production-gamma-hgiarvados:
-  <<: *terraform-apply-def
+terraform-production-gamma-hgiarvados:
+  <<: *terraform-def
   <<: *production-gamma-hgiarvados-def
 
-terraform-apply-staging-gamma-hgiarvados:
-  <<: *terraform-apply-def
+terraform-staging-gamma-hgiarvados:
+  <<: *terraform-def
   <<: *staging-gamma-hgiarvados-def
 
-terraform-apply-production-delta-hgi:
-  <<: *terraform-apply-def
+terraform-production-delta-hgi:
+  <<: *terraform-def
   <<: *production-delta-hgi-def
 
-terraform-apply-staging-delta-hgi:
-  <<: *terraform-apply-def
+terraform-staging-delta-hgi:
+  <<: *terraform-def
   <<: *staging-delta-hgi-def
 
-terraform-apply-production-delta-hgiarvados:
-  <<: *terraform-apply-def
+terraform-production-delta-hgiarvados:
+  <<: *terraform-def
   <<: *production-delta-hgiarvados-def
 
-terraform-apply-staging-delta-hgiarvados:
-  <<: *terraform-apply-def
+terraform-staging-delta-hgiarvados:
+  <<: *terraform-def
   <<: *staging-delta-hgiarvados-def
 
-# terraform-apply-production-emedlab-arvados:
-#   <<: *terraform-apply-def
+# terraform-production-emedlab-arvados:
+#   <<: *terraform-def
 #   <<: *production-emedlab-arvados-def
 
-# terraform-apply-staging-emedlab-arvados:
-#   <<: *terraform-apply-def
+# terraform-staging-emedlab-arvados:
+#   <<: *terraform-def
 #   <<: *staging-emedlab-arvados-def
 
 github-sync:
