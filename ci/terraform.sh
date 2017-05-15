@@ -18,6 +18,16 @@ cd terraform/${REGION}
 echo "Calling terraform init"
 terraform init
 
+echo "Switching to ${ENV} environment"
+env_output=$(terraform env select ${ENV})
+env_exit_status=$?
+if [[ ${env_exit_status} -eq 0 ]]; then
+    echo "${env_output}"
+else
+    echo "Could not switch to ${ENV} environment, creating a new one"
+    terraform env new ${ENV}
+fi
+
 echo "Calling terraform refresh"
 terraform refresh
 
