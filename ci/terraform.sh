@@ -19,7 +19,10 @@ echo "Calling terraform init"
 terraform init
 
 echo "Switching to ${ENV} environment"
-terraform env select ${ENV}; env_exit_status=$? || true
+set +e
+terraform env select ${ENV}
+env_exit_status=$?
+set -e
 if [[ ${env_exit_status} -ne 0 ]]; then
     echo "Could not switch to ${ENV} environment, attempting to create a new one"
     terraform env new ${ENV}
@@ -29,8 +32,10 @@ echo "Calling terraform refresh"
 terraform refresh
 
 echo "Calling terraform plan"
+set +e
 terraform plan -input=false -out plan
 plan_exit_status=$?
+set -e
 echo "Copying plan to artifacts"
 cp plan "${artifacts_dir}/"
 
