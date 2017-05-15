@@ -4,9 +4,6 @@
 #  SSH_PRIVATE_KEY (e.g. "-----BEGIN RSA PRIVATE KEY-----
 #                         ...
 #                         -----END RSA PRIVATE KEY-----)"
-#  GAMMA_OS_AUTH_URL
-#  GAMMA_OS_USERNAME
-#  GAMMA_OS_PASSWORD
 #  DELTA_OS_AUTH_URL
 #  DELTA_OS_USERNAME
 #  DELTA_OS_PASSWORD
@@ -50,38 +47,6 @@ validate_s3:
   only:
     - master
 
-.production-gamma-hgi: &production-gamma-hgi-def
-  variables:
-    ENV: "production"
-    REGION: "gamma-hgi"
-  only:
-    - master
-    - production-gamma-hgi
-  
-.staging-gamma-hgi: &staging-gamma-hgi-def
-  variables:
-    ENV: "staging"
-    REGION: "gamma-hgi"
-  only:
-    - develop
-    - staging-gamma-hgi
-  
-.production-gamma-hgiarvados: &production-gamma-hgiarvados-def
-  variables:
-    ENV: "production"
-    REGION: "gamma-hgiarvados"
-  only:
-    - master
-    - production-gamma-hgiarvados
-  
-.staging-gamma-hgiarvados: &staging-gamma-hgiarvados-def
-  variables:
-    ENV: "staging"
-    REGION: "gamma-hgiarvados"
-  only:
-    - develop
-    - staging-gamma-hgiarvados
-  
 .production-delta-hgi: &production-delta-hgi-def
   variables:
     ENV: "production"
@@ -151,22 +116,6 @@ validate_s3:
     - ci/terraform-validate.sh
   dependencies: []
 
-openstack-vars-validate-production-gamma-hgi:
-  <<: *openstack-vars-validate-def
-  <<: *production-gamma-hgi-def
-    
-openstack-vars-validate-staging-gamma-hgi:
-  <<: *openstack-vars-validate-def
-  <<: *staging-gamma-hgi-def
-    
-openstack-vars-validate-production-gamma-hgiarvados:
-  <<: *openstack-vars-validate-def
-  <<: *production-gamma-hgiarvados-def
-    
-openstack-vars-validate-staging-gamma-hgiarvados:
-  <<: *openstack-vars-validate-def
-  <<: *staging-gamma-hgiarvados-def
-    
 openstack-vars-validate-production-delta-hgi:
   <<: *openstack-vars-validate-def
   <<: *production-delta-hgi-def
@@ -190,22 +139,6 @@ openstack-vars-validate-staging-delta-hgiarvados:
 # openstack-vars-validate-staging-emedlab-arvados:
 #   <<: *openstack-vars-validate-def
 #   <<: *staging-emedlab-arvados-def
-    
-terraform-validate-production-gamma-hgi:
-  <<: *terraform-validate-def
-  <<: *production-gamma-hgi-def
-    
-terraform-validate-staging-gamma-hgi:
-  <<: *terraform-validate-def
-  <<: *staging-gamma-hgi-def
-    
-terraform-validate-production-gamma-hgiarvados:
-  <<: *terraform-validate-def
-  <<: *production-gamma-hgiarvados-def
-    
-terraform-validate-staging-gamma-hgiarvados:
-  <<: *terraform-validate-def
-  <<: *staging-gamma-hgiarvados-def
     
 terraform-validate-production-delta-hgi:
   <<: *terraform-validate-def
@@ -243,22 +176,6 @@ terraform-validate-staging-delta-hgiarvados:
       - artifacts
     when: always
 
-terraform-production-gamma-hgi:
-  <<: *terraform-def
-  <<: *production-gamma-hgi-def
-
-terraform-staging-gamma-hgi:
-  <<: *terraform-def
-  <<: *staging-gamma-hgi-def
-
-terraform-production-gamma-hgiarvados:
-  <<: *terraform-def
-  <<: *production-gamma-hgiarvados-def
-
-terraform-staging-gamma-hgiarvados:
-  <<: *terraform-def
-  <<: *staging-gamma-hgiarvados-def
-
 terraform-production-delta-hgi:
   <<: *terraform-def
   <<: *production-delta-hgi-def
@@ -294,22 +211,6 @@ terraform-staging-delta-hgiarvados:
     paths:
       - artifacts
     when: always
-
-ansible-production-gamma-hgi:
-  <<: *ansible-def
-  <<: *production-gamma-hgi-def
-
-ansible-staging-gamma-hgi:
-  <<: *ansible-def
-  <<: *staging-gamma-hgi-def
-
-ansible-production-gamma-hgiarvados:
-  <<: *ansible-def
-  <<: *production-gamma-hgiarvados-def
-
-ansible-staging-gamma-hgiarvados:
-  <<: *ansible-def
-  <<: *staging-gamma-hgiarvados-def
 
 ansible-production-delta-hgi:
   <<: *ansible-def

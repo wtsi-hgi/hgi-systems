@@ -117,7 +117,6 @@ consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-vol
 consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
 
 [openstack-instance-gitlab-runners]
-#gitlab-runner-gamma-hgi-01 tenant=gamma-hgi-tenant network="gamma-gitlab-runners-network" image=delta-hgi-docker-image keypair=gamma-hgi-ansible-mercury-keypair
 gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-runners-network" image=delta-hgi-docker-image keypair=delta-hgi-ci-ansible-mercury-keypair
 
 [openstance-instance-openstack-tenant-cleaners]

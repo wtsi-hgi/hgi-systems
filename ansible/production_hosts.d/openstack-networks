@@ -23,11 +23,9 @@ delta-hgi-network tenant=delta-hgi-tenant
 
 [openstack-networks-hgi-ci]
 delta-hgi-ci-network tenant=delta-hgi-ci-tenant
-gamma-hgi-ci-network tenant=gamma-hgi-tenant
 
 [openstack-networks-gitlab-runners]
 delta-gitlab-runners-network tenant=delta-hgi-ci-tenant
-gamma-gitlab-runners-network tenant=gamma-hgi-tenant
 
 [openstack-networks-consul-servers]
 delta-hgi-consul-servers-network tenant=delta-hgi-tenant
@@ -47,10 +45,6 @@ delta-hgi-network
 delta-hgi-ci-network
 delta-gitlab-runners-network
 delta-hgi-consul-servers-network
-
-[openstack-external-network-gamma]
-gamma-hgi-ci-network
-gamma-gitlab-runners-network
 
 [openstack:children]
 openstack-networks

@@ -1,16 +1,6 @@
 REGION=${REGION:-}
 if [[ -z "$REGION" ]]; then
     echo "REGION unset or empty"
-elif [[ "$REGION" == "gamma-hgi" ]]; then 
-    export OS_USERNAME=${GAMMA_OS_USERNAME}
-    export OS_PASSWORD=${GAMMA_OS_PASSWORD}
-    export OS_AUTH_URL=${GAMMA_OS_AUTH_URL}
-    echo "OS vars for gamma-hgi set"
-elif [[ "$REGION" == "gamma-hgiarvados" ]]; then 
-    export OS_USERNAME=${GAMMA_OS_USERNAME}
-    export OS_PASSWORD=${GAMMA_OS_PASSWORD}
-    export OS_AUTH_URL=${GAMMA_OS_AUTH_URL}
-    echo "OS vars for gamma-hgiarvados set"
 elif [[ "$REGION" == "delta-hgi" ]]; then 
     export OS_USERNAME=${DELTA_OS_USERNAME}
     export OS_PASSWORD=${DELTA_OS_PASSWORD}

@@ -21,15 +21,12 @@
 [openstack-security-groups-ssh]
 delta-hgi-ssh-security-group tenant=delta-hgi-tenant
 delta-hgi-ci-ssh-security-group tenant=delta-hgi-ci-tenant
-gamma-hgi-ci-ssh-security-group tenant=gamma-hgi-tenant
 
 [openstack-security-groups-docker-machine]
 delta-hgi-ci-docker-machine-security-group tenant=delta-hgi-ci-tenant
-gamma-hgi-ci-docker-machine-security-group tenant=gamma-hgi-tenant
 
 [openstack-security-groups-docker-registry]
 delta-hgi-ci-docker-registry-security-group tenant=delta-hgi-ci-tenant
-gamma-hgi-ci-docker-registry-security-group tenant=gamma-hgi-tenant
 
 [openstack-security-groups-consul-server]
 delta-hgi-consul-server-security-group tenant=delta-hgi-tenant

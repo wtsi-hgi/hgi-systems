@@ -21,7 +21,6 @@
 [openstack-tenants]
 delta-hgi-tenant
 delta-hgi-ci-tenant
-gamma-hgi-tenant
 
 [openstack:children]
 openstack-tenants
