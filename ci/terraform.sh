@@ -19,7 +19,7 @@ echo "Calling terraform init"
 terraform init
 
 echo "Switching to ${ENV} environment"
-terraform env select; env_exit_status=$? || true
+terraform env select ${ENV}; env_exit_status=$? || true
 if [[ ${env_exit_status} -ne 0 ]]; then
     echo "Could not switch to ${ENV} environment, attempting to create a new one"
     terraform env new ${ENV}
