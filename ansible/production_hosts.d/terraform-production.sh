@@ -69,13 +69,7 @@ EOF
 # EOF
 # )
 
-#export TF_STATE="${terraform_dir}/production/terraform.tfstate"
-
-tmp_state=$(mktemp)
->&2 echo "Saving terraform state to ${tmp_state}"
-(cd ${terraform_dir} && terraform state pull > ${tmp_state} 2> /dev/null)
-export TF_STATE="${tmp_state}"
-
+export TF_STATE="${TF_STATE_DIR}/production.tfstate"
 yatadis $@
 
 #rm -f "${tmp_state}"
