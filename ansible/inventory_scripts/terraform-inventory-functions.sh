@@ -1,15 +1,18 @@
-#!/bin/bash
-
-YATADIS_BIN=$(which yatadis)
-if [[ -z "${YATADIS_BIN}" ]]; then
-    >&2 echo "No yatadis binary in path, cannot include Terraform dynamic inventory!"
-    echo "{}"
-    exit 0
-fi
-
-export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
-
-export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
+function terraform_inventory {
+   terraform_dir=$1
+   environment=$2
+   shift 2
+   
+   YATADIS_BIN=$(which yatadis)
+   if [[ -z "${YATADIS_BIN}" ]]; then
+       >&2 echo "No yatadis binary in path, cannot include Terraform dynamic inventory!"
+       echo "{}"
+       exit 0
+   fi
+   
+   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
+   
+   export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",
 "tf_provider_"+provider,
 "tf_type_"+type] | join("\n") }}
@@ -23,7 +26,7 @@ export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 EOF
 )
 
-export TF_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
+   export TF_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
 ansible_ssh_user=mercury
 ansible_host={{ primary.attributes.access_ip_v6
 | default(primary.attributes.ipv6_address, true)
@@ -52,21 +55,18 @@ ansible_host={{ primary.attributes.access_ip_v6
 EOF
 )
 
-# export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
-# {{ ["all",
-# "tf_provider_"+provider,
-# "tf_type_"+type,
-# "tf_name_"+primary.attributes.name] | join("\n") }}
-# {% set newline = joiner("\n") -%}
-# {% for security_group in primary.expanded_attributes.security_groups -%}
-# {{ newline() }}tf_security_group_{{ security_group }}
-# {%- endfor -%}
-# {% for network in primary.expanded_attributes.network -%}
-# {{ newline() }}tf_network_{{ network.name }}
-# {%- endfor -%}
-# EOF
-# )
+   tmp_dir="$(mktemp -d)"
+   cd "${terraform_dir}"
+   >&2 echo "Initializing terraform in ${terraform_dir}"
+   terraform init 1>&2
 
-yatadis $@
+   >&2 echo "Selecting environment ${environment}"
+   terraform env select ${environment} 1>&2 
+   
+   >&2 echo "Pulling terraform remote state to ${tmp_dir}/${environment}.tfstate"
+   terraform state pull > "${tmp_dir}/${environment}.tfstate"
+   
+   yatadis --state "${tmp_dir}/${environment}.tfstate" "$@"
 
-#rm -f "${tmp_state}"
+   rm -rf "${tmp_dir}"
+}
