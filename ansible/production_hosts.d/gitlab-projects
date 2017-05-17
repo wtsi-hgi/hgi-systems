@@ -28,5 +28,8 @@ hgi-systems-gitlab
 [consul-credentials:children]
 hgi-systems-gitlab
 
+[infoblox-credentials:children]
+hgi-systems-gitlab
+
 [non-hosts:children]
 gitlab-projects

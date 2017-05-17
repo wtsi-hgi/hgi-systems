@@ -65,3 +65,9 @@ gitlab_project_settings_terraform_s3:
 
 gitlab_project_settings_terraform_consul:
     TERRAFORM_CONSUL_TOKEN: "{{ consul_credentials['terraform'].token }}"
+
+gitlab_project_settings_infoblox:
+    INFOBLOX_PASSWORD: "{{ infoblox_credentials_password }}"
+    INFOBLOX_USERNAME: "{{ infoblox_credentials_username }}"
+    INFOBLOX_HOST: "https://{{ infoblox_credentials_api_server }}"
+
