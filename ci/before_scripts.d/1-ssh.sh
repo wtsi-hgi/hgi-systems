@@ -7,7 +7,7 @@ fi
 eval $(ssh-agent -s)
 
 # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-ssh-add <(echo "$SSH_PRIVATE_KEY")
+ssh-add <(echo "$SSH_PRIVATE_KEY" | sed 's/\\n/\n/g')
 
 # For Docker builds disable host key checking. Be aware that by adding that
 # you are suspectible to man-in-the-middle attacks.
