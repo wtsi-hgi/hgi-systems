@@ -29,7 +29,7 @@ dependencies:
         size: "{{ (hostvars[volume]['openstack_volume_size_gb'] * 1024) - 4 }}M"
         fstype: xfs
         mountpoint: "{{ consul_data_mountpoint }}"
-  - role: ansible-consul
+  - role: wtsi-hgi.ansible-consul
     become: yes
   - role: s3-backup
     s3_backup_source: "{{ consul_data_dir }}"
