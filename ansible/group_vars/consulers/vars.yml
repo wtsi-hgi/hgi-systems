@@ -1,0 +1,18 @@
+---
+
+consul_home: /opt/consul
+
+consul_version: 0.8.4
+consul_datacenter: "{{ tenant }}"
+
+consul_use_systemd: true
+consul_use_upstart: false
+
+consul_retry_join: true
+consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'ansible_default_ipv4') | map(attribute='address') | list }}"
+
+consul_client_address: 0.0.0.0
+consul_client_address_bind: true
+
+consul_data_mountpoint: /data/consul
+consul_data_dir: "{{ consul_data_mountpoint }}/data"
