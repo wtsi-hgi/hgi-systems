@@ -1,8 +1,13 @@
+# Vault contains:
+# consul_encrypt: xxxx
+
 ---
+
+consul_version: 0.8.4
 
 consul_home: /opt/consul
 
-consul_version: 0.8.4
+consul_advertise_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
 consul_datacenter: "{{ tenant }}"
 
 consul_use_systemd: true

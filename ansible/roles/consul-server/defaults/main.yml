@@ -21,10 +21,7 @@
 #
 ---
 
-consul_encrypt: "{{ consul_server_encrypt }}"
-
 consul_bootstrap_expect: "{{ groups['consul-servers'] | count }}"
-consul_advertise_address: "{{ hostvars[inventory_hostname]['openstack_servers'][0].public_v4 }}"
 
 consul_acl_master_token: "{{ consul_server_acl_master_token }}"
 consul_acl_default_policy: "deny"
