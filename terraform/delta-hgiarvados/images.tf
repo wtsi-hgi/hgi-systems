@@ -2,6 +2,10 @@ variable base_image_name {
   default = "hgi-base-xenial-latest"
 }
 
+variable debian_base_image_name {
+  default = "hgi-base-jessie-latest"
+}
+
 variable docker_image_name {
   default = "hgi-docker-ubuntu-xenial-65439049"
 }
