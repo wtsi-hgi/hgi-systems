@@ -35,6 +35,14 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgi" {
   }
 }
 
+resource "infoblox_record" "ssh-gateway-delta-hgi" {
+  value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgi.access_ip_v4}"
+  name = "ssh"
+  domain = "delta-hgi.hgi.sanger.ac.uk"
+  type = "A"
+  ttl = 3600
+}
+
 output "ssh_gateway_delta-hgi_ip" {
   value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgi.access_ip_v4}"
 }
