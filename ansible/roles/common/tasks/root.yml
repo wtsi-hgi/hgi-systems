@@ -52,7 +52,7 @@
     dest: '/etc/apt/apt.conf.d/10periodic'
     line: 'APT::Periodic::Enable "0";'
     regexp: 'APT::Periodic::Enable'
-  when: ansible_service_mgr == 'systemd'
+  when: (ansible_distribution == 'Ubuntu') and (ansible_service_mgr == 'systemd')
 
 - name: setup cloud-init to manage /etc/hosts
   tags: common
