@@ -37,8 +37,8 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
 
 resource "infoblox_record" "ssh-gateway-delta-hgiarvados" {
   value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
-  name = "ssh.delta-hgiarvados"
-  domain = "hgi.sanger.ac.uk"
+  name = "ssh"
+  domain = "delta-hgiarvados.hgi.sanger.ac.uk"
   type = "A"
   ttl = 3600
 }
