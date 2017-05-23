@@ -72,6 +72,7 @@
     password: "{{ openstack_instance_infoblox_password }}"
     name: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
     address: "{{ openstack_instance_server_facts.accessIPv4 }}"
+    ttl: "{{ openstack_instance_dns_ttl }}"
 
 - name: set essential ansible connection facts
   tags:

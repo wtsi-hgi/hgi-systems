@@ -8,3 +8,4 @@ openstack_instance_infoblox_password: "{{ infoblox_credentials_password }}"
 openstack_instance_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
 openstack_instance_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
 
+openstack_instance_dns_ttl: 60
