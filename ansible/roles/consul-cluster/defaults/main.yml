@@ -22,6 +22,7 @@
 
 consul_cluster_infoblox_delegate: 127.0.0.1
 consul_cluster_infoblox_dns_view: internal
+consul_cluster_dns_ttl_in_seconds: 60
 
 # FIXME this is broken and assumes all consul-servers are in a single cluster
 consul_cluster_server_ips: "{{ groups['consul-servers'] | map('extract', hostvars, 'openstack_server') |  map(attribute='accessIPv4') | list }}"
@@ -32,4 +33,3 @@ consul_cluster_server_ips: "{{ groups['consul-servers'] | map('extract', hostvar
 consul_cluster_leader: "{% for server in consul_cluster_info.results %}{% if server.consul_info.consul.leader == 'true' %}{{ server.item }}{% endif %}{% endfor %}"
 
 consul_cluster_leader_acl_master_token: "{{ hostvars[consul_cluster_leader].consul_server_acl_master_token }}"
-
