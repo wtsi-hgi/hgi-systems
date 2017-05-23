@@ -2,7 +2,7 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
   provider = "openstack.delta-hgiarvados"
   count = 1
   name = "arvados-master-delta-hgiarvados"
-  image_name = "${var.debian_base_image.name}"
+  image_name = "${var.debian_base_image["name"]}"
   flavor_name = "m1.xlarge"
   key_pair = "${openstack_compute_keypair_v2.mercury_delta-hgiarvados.id}"
   security_groups = ["${openstack_compute_secgroup_v2.ssh_delta-hgiarvados.id}"]
@@ -22,7 +22,7 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
     ]
     connection {
       type = "ssh"
-      user = "${var.debian_base_image.user}"
+      user = "${var.debian_base_image["user"]}"
       agent = "true"
       timeout = "2m"
       bastion_host = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
