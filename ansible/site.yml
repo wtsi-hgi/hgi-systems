@@ -34,6 +34,10 @@
     - group_by: key=os_{{ ansible_distribution }} # e.g. "os_Ubuntu"
     - group_by: key=os_family_{{ ansible_os_family }} # e.g. "os_Debian"
 
+# when image-building, make sure we apply common role even if no other groups apply
+- hosts: image-building
+  roles: common
+
 # playbooks that need nonroot host hgi infrastructure
 - include: mesos-masters.yml
 - include: zookeepers.yml
