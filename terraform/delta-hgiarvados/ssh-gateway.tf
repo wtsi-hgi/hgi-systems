@@ -19,6 +19,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
 
   metadata = {
     ansible_groups = "ssh_gateways"
+    user = "${var.base_image_user}"
   }
 
   # wait for host to be available via ssh
