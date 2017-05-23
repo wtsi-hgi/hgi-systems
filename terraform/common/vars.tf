@@ -26,12 +26,12 @@ variable docker_image_user {
   default = "ubuntu"
 }
 
-variable debian_base_image_name {
+variable arvados_base_image_name {
   type = "string"
   default = "hgi-base-jessie-latest"
 }
 
-variable debian_base_image_user {
+variable arvados_base_image_user {
   type = "string"
   default = "debian"
 }
