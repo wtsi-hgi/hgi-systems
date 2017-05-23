@@ -1,24 +1,24 @@
 variable base_image {
   type = "map"
   default = {
-    name = "hgi-base-xenial-latest"
-    user = "ubuntu"
+    name = "${var.base_image_name}"
+    user = "${var.base_image_user}"
   }
 }
 
 variable debian_base_image {
   type = "map"
   default = {
-    name = "hgi-base-jessie-latest"
-    user = "debian"
+    name = "${var.debian_base_image_name}"
+    user = "${var.debian_base_image_user}"
   }
 }
 
 variable docker_image {
   type = "map"
   default = {
-    name = "hgi-docker-ubuntu-xenial-65439049"
-    user = "debian"
+    name = "${var.docker_image_name}"
+    user = "${var.docker_image_user}"
   }
 }
 
