@@ -35,6 +35,14 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
   }
 }
 
+resource "infoblox_record" "ssh-gateway-delta-hgiarvados" {
+  value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
+  name = "ssh"
+  domain = "delta-hgiarvados.hgi.sanger.ac.uk"
+  type = "A"
+  ttl = 3600
+}
+
 output "ssh_gateway_delta-hgiarvados_ip" {
   value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
 }
