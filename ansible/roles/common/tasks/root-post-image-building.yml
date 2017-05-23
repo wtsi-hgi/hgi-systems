@@ -1,0 +1,69 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-ansible.
+#
+# hgi-ansible is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/common/tasks/root-post-image-building.yml
+
+- name: install GRL CA cert
+  become: yes
+  copy:
+    src: grl-cacert.pem
+    dest: /usr/local/share/ca-certificates/grl-cacert.crt
+  tags:
+    - common
+  notify: update ca certificates
+
+- name: create hgi group
+  tags: common
+  become: yes
+  group:
+    name: hgi
+    gid: 1313
+
+- name: create mercury user account
+  tags: common
+  become: yes
+  user: 
+    name: mercury
+    uid: 13912
+    group: hgi
+    shell: /bin/bash
+
+- name: give mercury NOPASSWD sudo access
+  tags: common
+  become: yes
+  template:
+    src: mercury_sudoers.j2
+    dest: /etc/sudoers.d/mercury-nopasswd
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440
+
+- name: set authorized keys for mercury
+  tags: common
+  become: yes
+  authorized_key:
+    user: mercury
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_file:
+    - public_keys/mercury-farm3
+
