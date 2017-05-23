@@ -22,7 +22,7 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
     ]
     connection {
       type = "ssh"
-      user = "ubuntu"
+      user = "debian"
       agent = "true"
       timeout = "2m"
       bastion_host = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
