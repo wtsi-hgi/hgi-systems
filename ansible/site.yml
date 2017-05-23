@@ -36,7 +36,8 @@
 
 # when image-building, make sure we apply common role even if no other groups apply
 - hosts: image-building
-  roles: common
+  roles: 
+    - common
 
 # playbooks that need nonroot host hgi infrastructure
 - include: mesos-masters.yml
