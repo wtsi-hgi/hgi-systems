@@ -26,6 +26,11 @@ set -e
 if [[ ${env_exit_status} -ne 0 ]]; then
     echo "Could not switch to ${ENV} environment, attempting to create a new one"
     terraform env new ${ENV}
+    env_new_exit_status=$?
+    if [[ ${env_new_exit_status} -ne 0 ]]; then
+	>&2 echo "Could not create new environment ${ENV} - if error is Permission Denied, check if CONSUL_HTTP_TOKEN is set correctly"
+	exit ${env_new_exit_status}
+    fi
 fi
 
 echo "Calling terraform refresh"
