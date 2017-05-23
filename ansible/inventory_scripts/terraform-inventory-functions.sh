@@ -27,7 +27,7 @@ EOF
 )
 
    export TF_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
-ansible_ssh_user=mercury
+ansible_ssh_user={{ primary.expanded_attributes.metadata.user }}
 ansible_host={{ primary.attributes.access_ip_v6
 | default(primary.attributes.ipv6_address, true)
 | default(primary.attributes.access_ip_v4, true)
