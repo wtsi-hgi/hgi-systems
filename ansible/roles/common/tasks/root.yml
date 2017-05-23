@@ -71,50 +71,7 @@
 #    - common
 #  when: ansible_os_family == 'Debian'
 
-- name: install GRL CA cert
-  become: yes
-  copy:
-    src: grl-cacert.pem
-    dest: /usr/local/share/ca-certificates/grl-cacert.crt
-  tags:
-    - common
-  notify: update ca certificates
-
-- name: create hgi group
-  tags: common
-  become: yes
-  group:
-    name: hgi
-    gid: 1313
-
-- name: create mercury user account
-  tags: common
-  become: yes
-  user: 
-    name: mercury
-    uid: 13912
-    group: hgi
-    shell: /bin/bash
-
-- name: give mercury NOPASSWD sudo access
-  tags: common
-  become: yes
-  template:
-    src: mercury_sudoers.j2
-    dest: /etc/sudoers.d/mercury-nopasswd
-    validate: "visudo -cf %s"
-    owner: root
-    group: root
-    mode: 0440
-
-- name: set authorized keys for mercury
-  tags: common
-  become: yes
-  authorized_key:
-    user: mercury
-    manage_dir: yes
-    state: present
-    key: "{{ item }}"
-  with_file:
-    - public_keys/mercury-farm3
+- name: common root configuration not to be baked into images
+  include: root-post-image-building.yml
+  when: "not 'image-building' in group_names"
 

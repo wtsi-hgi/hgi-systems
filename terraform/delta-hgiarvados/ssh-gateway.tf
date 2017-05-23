@@ -7,7 +7,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
   provider = "openstack.delta-hgiarvados"
   count = 1
   name = "ssh-gateway-delta-hgiarvados"
-  image_name = "${var.base_image["name"]}"
+  image_name = "${var.base_image_name}"
   flavor_name = "m1.small"
   key_pair = "${openstack_compute_keypair_v2.mercury_delta-hgiarvados.id}"
   security_groups = ["${openstack_compute_secgroup_v2.ssh_delta-hgiarvados.id}"]
@@ -19,6 +19,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
 
   metadata = {
     ansible_groups = "ssh_gateways"
+    user = "${var.base_image_user}"
   }
 
   # wait for host to be available via ssh
@@ -28,7 +29,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgiarvados" {
     ]
     connection {
       type = "ssh"
-      user = "${var.base_image["user"]}"
+      user = "${var.base_image_user}"
       agent = "true"
       timeout = "2m"
     }
