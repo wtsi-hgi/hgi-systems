@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/xoanmi/ansible-module-infoblox.git
-	branch = master
-	commit = b33e63da3b0271fdee62fcff3ba710b8424f3db2
-	parent = d94600ba30b6d7ee26c975769f377dd1ec1fda1a
+	remote = https://github.com/wtsi-hgi/ansible-module-infoblox.git
+	branch = feature/a-record-ttl
+	commit = e7e24206fc4aad9fa9252e90fbf221e3aebeec01
+	parent = 938b3b166ca070347d4cf467586a96cb039a84bc
 	cmdver = 0.3.1
