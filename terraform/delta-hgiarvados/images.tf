@@ -1,24 +1,32 @@
-variable base_image_name {
-  default = "hgi-base-xenial-latest"
+variable base_image {
+  type = "map"
+  default = {
+    name = "hgi-base-xenial-latest"
+    user = "ubuntu"
+  }
 }
 
-variable debian_base_image_name {
-  default = "hgi-base-jessie-latest"
+variable debian_base_image {
+  type = "map"
+  default = {
+    name = "hgi-base-jessie-latest"
+    user = "debian"
+  }
 }
 
-variable docker_image_name {
-  default = "hgi-docker-ubuntu-xenial-65439049"
-}
-
-variable gitlab_runner_image_name {
-  default = "gitlab-runner-ubuntu-xenial-bd395366"
+variable docker_image {
+  type = "map"
+  default = {
+    name = "hgi-docker-ubuntu-xenial-65439049"
+    user = "debian"
+  }
 }
 
 # N.B. this output helps to keep terraform working even if no instances exist to produce output
 output "image_names" {
   value = {
-    "docker" = "${var.docker_image_name}"
-    "base" = "${var.base_image_name}"
-    "gitlab_runner" = "${var.gitlab_runner_image_name}"
+    "base" = "${var.base_image.name}"
+    "debian_base" = "${var.debian_base_image.name}"
+    "docker" = "${var.docker_image.name}"
   }
 }
