@@ -12,7 +12,7 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
   }
 
   metadata = {
-    ansible_groups = "arvados_masters"
+    ansible_groups = "arvados-masters"
   }
 
   # wait for host to be available via ssh
