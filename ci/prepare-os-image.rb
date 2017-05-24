@@ -9,8 +9,8 @@ OS_IMAGE_LIMIT = 1000
 OS_SOURCE_IMAGE_SEPARATOR = ','
 RESOURCE_NOT_FOUND_ERROR = 'Could not find resource'
 IMAGE_DOWNLOAD_DIRECTORY = '/tmp'
-CLI_PARAMETERS = ["prepare-os-image.rb", "os_image", "s3_image_bucket"]
-USAGE =  "Usage: #{CLI_PARAMETERS.join(" ")}"
+CLI_PARAMETERS = ["os_image", "s3_image_bucket"]
+USAGE =  "Usage: prepare-os-image.rb #{CLI_PARAMETERS.join(" ")}"
 
 
 def find_in_openstack(possible_images)
