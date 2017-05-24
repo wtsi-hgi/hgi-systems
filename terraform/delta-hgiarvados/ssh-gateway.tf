@@ -41,7 +41,7 @@ resource "infoblox_record" "ssh-gateway-delta-hgiarvados" {
   name = "ssh"
   domain = "delta-hgiarvados.hgi.sanger.ac.uk"
   type = "A"
-  ttl = 3600
+  ttl = 600
 }
 
 output "ssh_gateway_delta-hgiarvados_ip" {
