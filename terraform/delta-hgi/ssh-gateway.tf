@@ -5,7 +5,7 @@ resource "openstack_compute_floatingip_v2" "ssh-gateway-delta-hgi" {
 
 resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgi" {
   provider = "openstack.delta-hgi"
-  count = 0
+  count = 1
   name = "ssh-gateway-delta-hgi"
   image_name = "${var.base_image_name}"
   flavor_name = "m1.small"

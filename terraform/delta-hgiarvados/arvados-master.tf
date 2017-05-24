@@ -1,6 +1,6 @@
 resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
   provider = "openstack.delta-hgiarvados"
-  count = 0
+  count = 1
   name = "arvados-master-delta-hgiarvados"
   image_name = "${var.arvados_base_image_name}"
   flavor_name = "m1.xlarge"
