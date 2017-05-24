@@ -24,12 +24,10 @@
   apt_key: keyserver=pool.sks-keyservers.net id=1078ECD7
   become: yes
 
-- name: debug dump
-  debug:
-    var: hostvars[inventory_hostname]
-
 - name: add arvados apt repository
-  apt_repository: repo='deb http://apt.arvados.org/ "{{   }}" main' state=present
+  apt_repository: 
+    repo: "deb http://apt.arvados.org/ '{{ ansible_distribution_release }}' main"
+    state: present
   become: yes
 
 - name: install prerequisite packages
