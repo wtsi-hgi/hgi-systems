@@ -7,6 +7,7 @@ RUN apt-get update \
         git \
         ruby \
         python3 \
+        ssh \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir and entrypoint
