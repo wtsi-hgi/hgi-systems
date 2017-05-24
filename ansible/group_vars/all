@@ -91,4 +91,4 @@ pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
 hgi_docker_os_image_name: hgi-docker-xenial-8b5badf9
 hgi_docker_os_image_user: ubuntu
 
-ansible_ssh_extra_args: "{% if bastion_host != "" %}-o ProxyCommand=\"ssh -W %h:%p -q {% if bastion_user != "" %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
+ansible_ssh_extra_args: "{% if bastion_host %}-o ProxyCommand=\"ssh -W %h:%p -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
