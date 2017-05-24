@@ -39,6 +39,7 @@ resource "openstack_networking_subnet_v2" "main_delta-hgi" {
   network_id = "${openstack_networking_network_v2.main_delta-hgi.id}"
   cidr = "10.101.0.0/24"
   ip_version = 4
+  dns_nameservers = ["172.18.255.1", "172.18.255.2", "172.18.255.3"]
 }
 
 resource "openstack_networking_router_v2" "main_nova_delta-hgi" {
