@@ -12,7 +12,10 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
   }
 
   metadata = {
-    ansible_groups = "delta-hgiarvados-bastion,arvados-masters"
+    ansible_groups = "arvados-masters"
+    user = "${var.arvados_base_image_user}"
+    bastion_host = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
+    bastion_user = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.metadata["user"]}"
   }
 
   # wait for host to be available via ssh

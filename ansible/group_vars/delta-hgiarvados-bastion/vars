@@ -1,2 +1,0 @@
-
-ansible_ssh_extra_args: '-o ProxyCommand="ssh -W %h:%p -q mercury@ssh.delta-hgiarvados.hgi.sanger.ac.uk"'
