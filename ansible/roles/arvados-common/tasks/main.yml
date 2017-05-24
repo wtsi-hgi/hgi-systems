@@ -26,7 +26,7 @@
 
 - name: add arvados apt repository
   apt_repository: 
-    repo: "deb http://apt.arvados.org/ '{{ ansible_distribution_release }}' main"
+    repo: "deb http://apt.arvados.org/ {{ ansible_distribution_release }} main"
     state: present
   become: yes
 
