@@ -9,7 +9,7 @@ OS_IMAGE_LIMIT = 1000
 OS_SOURCE_IMAGE_SEPARATOR = ','
 RESOURCE_NOT_FOUND_ERROR = 'Could not find resource'
 IMAGE_DOWNLOAD_DIRECTORY = '/tmp'
-CLI_PARAMETERS = ["prepare-image.rb", "os_image s3_image_bucket"]
+CLI_PARAMETERS = ["prepare-os-image.rb", "os_image", "s3_image_bucket"]
 USAGE =  "Usage: #{CLI_PARAMETERS.join(" ")}"
 
 
@@ -29,6 +29,7 @@ def find_in_openstack(possible_images)
     return nil
 end
 
+
 def find_in_object_store(possible_images, image_bucket)
     std_out, std_err, status = Open3.capture3("s3cmd ls 's3://#{image_bucket}/'")
     if status.exitstatus != 0
@@ -45,6 +46,7 @@ def find_in_object_store(possible_images, image_bucket)
     return nil
 end
 
+
 def load_from_object_store(image, image_bucket)
     STDERR.puts("downloading #{image} from the object store to #{IMAGE_DOWNLOAD_DIRECTORY}")
     system("s3cmd get --force 's3://#{image_bucket}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}'") or abort
@@ -58,6 +60,7 @@ def load_from_object_store(image, image_bucket)
     end
     return nil
 end
+
 
 def run(os_image, s3_image_bucket)
     possible_images = os_image.split(OS_SOURCE_IMAGE_SEPARATOR)
