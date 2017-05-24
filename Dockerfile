@@ -6,6 +6,7 @@ RUN apt-get update \
         s3cmd \
         git \
         ruby \
+        python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir and entrypoint
