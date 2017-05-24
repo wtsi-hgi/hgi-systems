@@ -3,19 +3,15 @@
 require('fileutils')
 require('open3')
 require('json')
+require 'optparse'
 
 OS_IMAGE_LIMIT = 1000
 OS_SOURCE_IMAGE_SEPARATOR = ','
 RESOURCE_NOT_FOUND_ERROR = 'Could not find resource'
 IMAGE_DOWNLOAD_DIRECTORY = '/tmp'
+CLI_PARAMETERS = ["prepare-image.rb", "os_image s3_image_bucket"]
+USAGE =  "Usage: #{CLI_PARAMETERS.join(" ")}"
 
-def write_image_artifact(image_id)
-    os_source_image_artifact = ENV['GITLAB_OS_SOURCE_IMAGE_ARTIFACT']
-    os_source_image_artifact_dir = File.dirname(os_source_image_artifact)
-    FileUtils.mkdir_p(os_source_image_artifact_dir)
-    File.write(os_source_image_artifact, image_id)
-    STDERR.puts("Written source image ID \"#{image_id}\" to \"#{os_source_image_artifact}\"")
-end
 
 def find_in_openstack(possible_images)
     std_out, std_err, status = Open3.capture3("openstack image list --limit #{OS_IMAGE_LIMIT} -f json")
@@ -33,15 +29,8 @@ def find_in_openstack(possible_images)
     return nil
 end
 
-def validate_object_store_access
-    # Validate S3 credentials (will fail if invalid)
-    s3_validator = "#{ENV['GITLAB_HGI_CI_DIR']}/validate-s3.sh"
-    STDERR.puts("Validating S3 credentials using: #{s3_validator}")
-    return system(s3_validator)
-end
-
-def find_in_object_store(possible_images)
-    std_out, std_err, status = Open3.capture3("s3cmd ls 's3://#{ENV['S3_IMAGE_BUCKET']}/'")
+def find_in_object_store(possible_images, image_bucket)
+    std_out, std_err, status = Open3.capture3("s3cmd ls 's3://#{image_bucket}/'")
     if status.exitstatus != 0
         abort("Could not connect to the object store: #{std_err}")
     end
@@ -56,9 +45,9 @@ def find_in_object_store(possible_images)
     return nil
 end
 
-def load_from_object_store(image)
+def load_from_object_store(image, image_bucket)
     STDERR.puts("downloading #{image} from the object store to #{IMAGE_DOWNLOAD_DIRECTORY}")
-    system("s3cmd get --force 's3://#{ENV['S3_IMAGE_BUCKET']}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}'") or abort
+    system("s3cmd get --force 's3://#{image_bucket}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}'") or abort
     STDERR.puts('Uploading image to OpenStack...')
     std_out, std_err, status = Open3.capture3(
         "openstack image create --file '#{IMAGE_DOWNLOAD_DIRECTORY}/#{image}' -c id -f value '#{image}'")
@@ -70,26 +59,37 @@ def load_from_object_store(image)
     return nil
 end
 
-def main
-    possible_images = ENV['OS_SOURCE_IMAGE'].split(OS_SOURCE_IMAGE_SEPARATOR)
+def run(os_image, s3_image_bucket)
+    possible_images = os_image.split(OS_SOURCE_IMAGE_SEPARATOR)
 
     image_id = find_in_openstack(possible_images)
 
     if image_id.nil?
         STDERR.puts('No matching images found in OpenStack - checking for the images in the object store')
-        unless validate_object_store_access
-            abort('Failed to validate access to the object store')
-        end
-        image = find_in_object_store(possible_images)
+        image = find_in_object_store(possible_images, s3_image_bucket)
         unless image.nil?
-            image_id = load_from_object_store(image)
+            image_id = load_from_object_store(image, s3_image_bucket)
         end
     end
     if image_id.nil?
         abort("No matching images found in either OpenStack or in the object store: #{possible_images}")
     end
 
-    write_image_artifact(image_id)
+    STDOUT.puts(image_id)
 end
 
-main()
+
+def main(positional_arguments)
+    if positional_arguments.length < CLI_PARAMETERS.length
+        success = positional_arguments.length == 0 || (positional_arguments.length == 1 \
+                      && (positional_arguments[0] == "-h" || positional_arguments[0] == "--help"))
+       STDERR.puts(USAGE)
+       exit(success ? 0 : 1)
+    end
+
+    os_image, s3_image_bucket = ARGV
+
+    run(os_image, s3_image_bucket)
+end
+
+main(ARGV)
