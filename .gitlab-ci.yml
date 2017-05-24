@@ -51,6 +51,15 @@ validate_s3:
   only:
     - master
 
+# XXX: This isn't really a pure validation job as it will change the environment to make it valid
+prepare_os_images:
+  stage: validate
+  tags:
+    - docker
+  image: quay.io/wtsi-hgi/os3
+  script:
+    - "ci/terraform-prepare-os-images.py"
+
 .production-delta-hgi: &production-delta-hgi-def
   variables:
     ENV: "production"
