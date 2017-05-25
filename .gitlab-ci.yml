@@ -127,7 +127,7 @@ validate_s3:
     - docker
   image: quay.io/wtsi-hgi/os3
   script:
-    - ci/terraform-prepare-os-images.py
+    - ci/terraform-prepare-os-images.py ${S3_IMAGE_BUCKET}
 
 openstack-vars-validate-production-delta-hgi:
   <<: *openstack-vars-validate-def
