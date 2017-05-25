@@ -2,11 +2,14 @@
 import argparse
 import os
 import subprocess
+from concurrent.futures import ThreadPoolExecutor, Future
+from typing import List, Dict
 
 _OS_IMAGE_KEY_PREFIX = "TF_VAR_"
 _OS_IMAGE_KEY_SUFFIX = "_image_name"
 _PREPARE_OS_IMAGE_SCRIPT = os.path.join(os.path.dirname(os.path.realpath(__file__)), "prepare-os-image.rb")
 _CHARACTER_ENCODING = "utf-8"
+_MAX_CONCURRENT_DOWNLOADS = 10
 
 _OpenStackId = str
 
@@ -17,10 +20,14 @@ class RunConfiguration:
 
 
 def run(configuration: RunConfiguration):
-    for key, value in os.environ.items():
-        if key.startswith(_OS_IMAGE_KEY_PREFIX) and key.endswith(_OS_IMAGE_KEY_SUFFIX):
-            image_id = prepare_os_image(value, configuration.image_bucket)
-            print("%s in OpenStack with ID: %s" % (key, image_id))
+    named_futures: Dict[str, Future] = []
+    with ThreadPoolExecutor(max_workers=_MAX_CONCURRENT_DOWNLOADS) as executor:
+        for key, value in os.environ.items():
+            if key.startswith(_OS_IMAGE_KEY_PREFIX) and key.endswith(_OS_IMAGE_KEY_SUFFIX):
+                named_futures[key] = executor.submit(prepare_os_image, value, configuration.image_bucket)
+    # Prints IDs nice and together at the end
+    for name, future in named_futures.items():
+        print("%s in OpenStack with ID: %s" % (name, future.result()))
 
 
 def prepare_os_image(image_name: str, image_bucket: str) -> _OpenStackId:
