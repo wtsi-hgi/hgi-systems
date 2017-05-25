@@ -20,7 +20,7 @@ class RunConfiguration:
 
 
 def run(configuration: RunConfiguration):
-    named_futures: Dict[str, Future] = []
+    named_futures = {}  # type: Dict[str, Future]
     with ThreadPoolExecutor(max_workers=_MAX_CONCURRENT_DOWNLOADS) as executor:
         for key, value in os.environ.items():
             if key.startswith(_OS_IMAGE_KEY_PREFIX) and key.endswith(_OS_IMAGE_KEY_SUFFIX):
