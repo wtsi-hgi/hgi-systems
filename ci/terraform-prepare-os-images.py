@@ -16,9 +16,9 @@ class RunConfiguration:
 def run(configuration: RunConfiguration):
     for key, value in os.environ.items():
         if key.startswith(_OS_IMAGE_KEY_PREFIX) and key.endswith(_OS_IMAGE_KEY_SUFFIX):
-            print([_PREPARE_OS_IMAGE_SCRIPT, value, os.environ[configuration.image_bucket]])
+            print([_PREPARE_OS_IMAGE_SCRIPT, value, configuration.image_bucket])
             completed_process = subprocess.run(
-                [_PREPARE_OS_IMAGE_SCRIPT, value, os.environ[configuration.image_bucket]])
+                [_PREPARE_OS_IMAGE_SCRIPT, value, configuration.image_bucket])
             if completed_process.returncode != 0:
                 exit(completed_process.returncode)
 
