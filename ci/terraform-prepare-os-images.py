@@ -21,7 +21,7 @@ def run(configuration: RunConfiguration):
                 [_PREPARE_OS_IMAGE_SCRIPT, value, configuration.image_bucket], stdout=subprocess.PIPE)
             if completed_process.returncode != 0:
                 exit(completed_process.returncode)
-            print("%s: %s" % (key, completed_process.stdout.decode(_CHARACTER_ENCODING)))
+            print("%s in OpenStack with ID: %s" % (key, completed_process.stdout.decode(_CHARACTER_ENCODING).strip()))
 
 
 def parse_arguments() -> RunConfiguration:
