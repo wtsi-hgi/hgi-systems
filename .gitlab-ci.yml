@@ -51,15 +51,6 @@ validate_s3:
   only:
     - master
 
-# XXX: This isn't really a pure validation job as it will change the environment to make it valid
-prepare_os_images:
-  stage: validate
-  tags:
-    - docker
-  image: quay.io/wtsi-hgi/os3
-  script:
-    - "ci/terraform-prepare-os-images.py"
-
 .production-delta-hgi: &production-delta-hgi-def
   variables:
     ENV: "production"
@@ -129,6 +120,15 @@ prepare_os_images:
     - ci/terraform-validate.sh
   dependencies: []
 
+# XXX: This isn't really a pure validation job as it will change the environment to make it valid
+.os_images_validate: &os-images-validate-def
+  stage: validate
+  tags:
+    - docker
+  image: quay.io/wtsi-hgi/os3
+  script:
+    - ci/terraform-prepare-os-images.py
+
 openstack-vars-validate-production-delta-hgi:
   <<: *openstack-vars-validate-def
   <<: *production-delta-hgi-def
@@ -176,7 +176,23 @@ terraform-validate-staging-delta-hgiarvados:
 # terraform-validate-staging-emedlab-arvados:
 #   <<: *terraform-validate-def
 #   <<: *staging-emedlab-arvados-def
-    
+
+os-images-validate-production-delta-hgi:
+  <<: *os-images-validate-def
+  <<: *production-delta-hgi-def
+
+os-images-validate-staging-delta-hgi:
+  <<: *os-images-validate-def
+  <<: *staging-delta-hgi-def
+
+os-images-validate-production-delta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *production-delta-hgiarvados-def
+
+os-images-validate-staging-delta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *staging-delta-hgiarvados-def
+
 .terraform: &terraform-def
   stage: terraform
   tags:
