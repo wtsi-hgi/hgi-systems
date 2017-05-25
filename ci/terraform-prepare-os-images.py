@@ -8,6 +8,8 @@ _OS_IMAGE_KEY_SUFFIX = "_image_name"
 _PREPARE_OS_IMAGE_SCRIPT = os.path.join(os.path.dirname(os.path.realpath(__file__)), "prepare-os-image.rb")
 _CHARACTER_ENCODING = "utf-8"
 
+_OpenStackId = str
+
 
 class RunConfiguration:
     def __init__(self, image_bucket: str):
@@ -17,11 +19,16 @@ class RunConfiguration:
 def run(configuration: RunConfiguration):
     for key, value in os.environ.items():
         if key.startswith(_OS_IMAGE_KEY_PREFIX) and key.endswith(_OS_IMAGE_KEY_SUFFIX):
-            completed_process = subprocess.run(
-                [_PREPARE_OS_IMAGE_SCRIPT, value, configuration.image_bucket], stdout=subprocess.PIPE)
-            if completed_process.returncode != 0:
-                exit(completed_process.returncode)
-            print("%s in OpenStack with ID: %s" % (key, completed_process.stdout.decode(_CHARACTER_ENCODING).strip()))
+            image_id = prepare_os_image(value, configuration.image_bucket)
+            print("%s in OpenStack with ID: %s" % (key, image_id))
+
+
+def prepare_os_image(image_name: str, image_bucket: str) -> _OpenStackId:
+    completed_process = subprocess.run(
+        [_PREPARE_OS_IMAGE_SCRIPT, image_name, image_bucket], stdout=subprocess.PIPE)
+    if completed_process.returncode != 0:
+        exit(completed_process.returncode)
+    return completed_process.stdout.decode(_CHARACTER_ENCODING).strip()
 
 
 def parse_arguments() -> RunConfiguration:
