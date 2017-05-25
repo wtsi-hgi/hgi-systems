@@ -17,9 +17,10 @@ def run(configuration: RunConfiguration):
     for key, value in os.environ.items():
         if key.startswith(_OS_IMAGE_KEY_PREFIX) and key.endswith(_OS_IMAGE_KEY_SUFFIX):
             completed_process = subprocess.run(
-                [_PREPARE_OS_IMAGE_SCRIPT, value, configuration.image_bucket])
+                [_PREPARE_OS_IMAGE_SCRIPT, value, configuration.image_bucket], stdout=subprocess.PIPE)
             if completed_process.returncode != 0:
                 exit(completed_process.returncode)
+            print("%s: %s" % (key, completed_process.stdout))
 
 
 def parse_arguments() -> RunConfiguration:
