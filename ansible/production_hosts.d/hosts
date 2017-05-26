@@ -30,15 +30,18 @@ hgs4f
 hgs4j
 
 [mesos-slaves]
-hgs4[a:k]
+hgs4[a:b]
+hgs4[d:k]
 
 [marathoners]
-hgs4c
+#hgs4c
+hgs4d
 hgs4g
 hgs4k
 
 [chronosians]
-hgs4c
+#hgs4c
+hgs4d
 hgs4g
 hgs4k
 

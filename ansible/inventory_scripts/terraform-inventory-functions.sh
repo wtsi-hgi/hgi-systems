@@ -64,6 +64,11 @@ EOF
 
    >&2 echo "Selecting environment ${environment}"
    terraform env select ${environment} 1>&2 
+   if [[ $? -ne 0 ]]; then
+     >&2 echo "terraform environment ${environment} not available - is the remote state backend offline?"
+     echo "{}"
+     exit 0
+   fi
    
    >&2 echo "Pulling terraform remote state to ${tmp_dir}/${environment}.tfstate"
    terraform state pull > "${tmp_dir}/${environment}.tfstate"
