@@ -51,14 +51,15 @@ def load_from_object_store(image, image_bucket)
     STDERR.puts("Downloading #{image} from the object store to #{IMAGE_DOWNLOAD_DIRECTORY}")
     system("s3cmd get --force 's3://#{image_bucket}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}' >&2") or abort
     STDERR.puts("Uploading #{image} to Glance...")
+    image_location = File.join(IMAGE_DOWNLOAD_DIRECTORY, image)
     std_out, std_err, status = Open3.capture3(
-        "openstack image create --file '#{IMAGE_DOWNLOAD_DIRECTORY}/#{image}' -c id -f value '#{image}'")
+        "openstack image create --file '#{image_location}' -c id -f value '#{image}'")
+    FileUtils.rm(image_location)
     if status.exitstatus != 0
         abort("Error uploading image to OpenStack: #{std_err}")
     else
         return std_out.strip
     end
-    return nil
 end
 
 
