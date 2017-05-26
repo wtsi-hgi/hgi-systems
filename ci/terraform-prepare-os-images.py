@@ -3,13 +3,13 @@ import argparse
 import os
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, Future
-from typing import List, Dict
+from typing import Dict
 
 _OS_IMAGE_KEY_PREFIX = "TF_VAR_"
 _OS_IMAGE_KEY_SUFFIX = "_image_name"
 _PREPARE_OS_IMAGE_SCRIPT = os.path.join(os.path.dirname(os.path.realpath(__file__)), "prepare-os-image.rb")
 _CHARACTER_ENCODING = "utf-8"
-_MAX_CONCURRENT_DOWNLOADS = 10
+_MAX_CONCURRENT_DOWNLOADS = 5
 
 _OpenStackId = str
 
