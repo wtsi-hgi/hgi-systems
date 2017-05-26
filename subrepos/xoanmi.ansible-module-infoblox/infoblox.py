@@ -1,4 +1,15 @@
 #!/usr/bin/python
+from copy import copy
+
+from ansible.module_utils.basic import *
+
+try:
+    import requests
+    requests.packages.urllib3.disable_warnings()
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
+
 
 DOCUMENTATION = """
 module: infoblox
@@ -79,6 +90,11 @@ options:
       - Infoblox Network View
     required: False
     default: "default"
+  ttl:
+    description:
+      - DNS time-to-live
+    required: False
+    default: None
 """
 
 RETURN = """
@@ -132,14 +148,14 @@ EXAMPLES = """
     debug: msg="Get crazy!"
 """
 
-from ansible.module_utils.basic import *
-try:
-    import requests
-
-    requests.packages.urllib3.disable_warnings()
-    HAS_REQUESTS = True
-except ImportError:
-    HAS_REQUESTS = False
+_COMMENT_PROPERTY = "comment"
+_TTL_PROPERTY = "ttl"
+_USE_TTL_PROPERTY = "use_ttl"
+_NAME_PROPERTY = "name"
+_VIEW_PROPERTY = "view"
+_RETURN_FIELDS_PROPERTY = "_return_fields"
+_IPV4_ADDRESS_PROPERTY = "ipv4addr"
+_ID_PROPERTY = "_ref"
 
 
 # ---------------------------------------------------------------------------
@@ -251,12 +267,15 @@ class Infoblox(object):
         """
         if not name:
             self.module.exit_json(msg="You must specify the option 'name'.")
-        return self.invoke("get", "record:a", params={"name": name, "view": self.dns_view})
+        return self.invoke("get", "record:a", params={
+            _NAME_PROPERTY: name, _VIEW_PROPERTY: self.dns_view, _RETURN_FIELDS_PROPERTY: [
+                _NAME_PROPERTY, _TTL_PROPERTY, _USE_TTL_PROPERTY, _COMMENT_PROPERTY, _VIEW_PROPERTY,
+                _IPV4_ADDRESS_PROPERTY]})
 
     # ---------------------------------------------------------------------------
     # create_a_record()
     # ---------------------------------------------------------------------------
-    def create_a_record(self, name, address, comment):
+    def create_a_record(self, name, address, comment, ttl=None):
         """
         Creates an A record with the given name that points to the given IP address.
 
@@ -266,8 +285,8 @@ class Infoblox(object):
         if not name or not address:
             self.module.exit_json(msg="You must specify the option 'name' and 'address'.")
 
-        payload = {"name": name, "ipv4addr": address, "comment": comment, "view": self.dns_view}
-        return self.invoke("post", "record:a", ok_codes=(200, 201, 400), json=payload)
+        model = _create_a_record_model(name, address, self.dns_view, comment, ttl)
+        return self.invoke("post", "record:a", ok_codes=(200, 201, 400), json=model)
 
     # ---------------------------------------------------------------------------
     # get_aliases()
@@ -358,6 +377,50 @@ class Infoblox(object):
         return self.invoke("put", object_ref, json=payload)
 
 
+def _create_a_record_model(name, address, view, comment, ttl=None):
+    """
+    Creates a JSON model of an A record with the given properties, using the same keys as used by the WAPI.
+    :param name: the domain name
+    :param address: the IP address of the record
+    :param view: the DNS view
+    :param comment: an associated comment
+    :param ttl: the TTL in seconds or `None` if the TTL is to be inherited
+    :return: the created model
+    """
+    model = {
+        _NAME_PROPERTY: name,
+        _IPV4_ADDRESS_PROPERTY: address,
+        _COMMENT_PROPERTY: comment,
+        _VIEW_PROPERTY: view,
+        _USE_TTL_PROPERTY: ttl is not None
+    }
+    if ttl is not None:
+        model[_TTL_PROPERTY] = int(ttl)
+    return model
+
+
+def _are_records_equivalent(a_record_1, a_record_2):
+    """
+    Checks whether the given records are equivalent (ignoring irrelevant properties).
+    :param a_record_1: first A record
+    :param a_record_2: second A record
+    :return: whether the records are equivalent
+    """
+    a_record_1 = copy(a_record_1)
+    a_record_2 = copy(a_record_2)
+
+    ignore_properties = {_ID_PROPERTY}
+    if not (a_record_1.get(_USE_TTL_PROPERTY, True) or a_record_2.get(_USE_TTL_PROPERTY, True)):
+        # Not using TTL property therefore we don't care what the TTL value is
+        ignore_properties.add(_TTL_PROPERTY)
+
+    for property in ignore_properties:
+        for a_record in [a_record_1, a_record_2]:
+            a_record.pop(property, None)
+
+    return a_record_1 == a_record_2
+
+
 # ---------------------------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------------------------
@@ -392,6 +455,7 @@ def main():
             api_version=dict(required=False, default="1.7.1"),
             dns_view=dict(required=False, default="Private"),
             net_view=dict(required=False, default="default"),
+            ttl=dict(required=False)
         ),
         mutually_exclusive=[
             ["network", "address"],
@@ -429,85 +493,165 @@ def main():
     api_version = module.params["api_version"]
     dns_view = module.params["dns_view"]
     net_view = module.params["net_view"]
+    ttl = module.params["ttl"]
 
-    try:
-        infoblox = Infoblox(module, server, username, password, api_version, dns_view, net_view)
+    infoblox = Infoblox(module, server, username, password, api_version, dns_view, net_view)
 
-        if action == "get_network":
-            if network:
-                result = infoblox.get_network(network)
-                if result:
-                    module.exit_json(result=result)
-                else:
-                    module.exit_json(msg="Network %s not found" % network)
-            else:
-                raise Exception("You must specify the option 'network' or 'address'.")
-
-        elif action == "get_next_available_ip":
+    if action == "get_network":
+        if network:
             result = infoblox.get_network(network)
             if result:
-                network_ref = result[0]["_ref"]
-                result = infoblox.get_next_available_ip(network_ref)
-                if result:
-                    module.exit_json(result=result)
-                else:
-                    module.fail_json(msg="No vailable IPs in network: %s" % network)
+                module.exit_json(result=result)
+            else:
+                module.exit_json(msg="Network %s not found" % network)
+        else:
+            raise Exception("You must specify the option 'network' or 'address'.")
 
-        elif action == "reserve_next_available_ip":
-            result = infoblox.reserve_next_available_ip(network)
+    elif action == "get_next_available_ip":
+        result = infoblox.get_network(network)
+        if result:
+            network_ref = result[0]["_ref"]
+            result = infoblox.get_next_available_ip(network_ref)
+            if result:
+                module.exit_json(result=result)
+            else:
+                module.fail_json(msg="No vailable IPs in network: %s" % network)
+
+    elif action == "reserve_next_available_ip":
+        result = infoblox.reserve_next_available_ip(network)
+        if result:
+            module.exit_json(changed=True, result=result)
+        else:
+            raise Exception()
+
+    elif action == "get_fixedaddress":
+        result = infoblox.get_fixedaddress(address)
+        if result:
+            module.exit_json(result=result)
+        else:
+            module.exit_json(msg="FIXEDADDRESS %s not found" % address)
+
+    elif action == "get_aliases":
+        result = infoblox.get_aliases(host)
+        if result:
+            if "aliases" in result[0]:
+                module.exit_json(result=result[0]["aliases"])
+            else:
+                module.exit_json(msg="Aliases not found for host %s" % host)
+        else:
+            module.exit_json(msg="Host %s not found" % host)
+
+    elif action == "get_cname":
+        result = infoblox.get_cname(cname)
+        if result:
+            module.exit_json(result=result)
+        else:
+            module.exit_json(msg="CNAME %s not found" % cname)
+
+    elif action == "get_a_record":
+        result = infoblox.get_a_record(name)
+        if result:
+            module.exit_json(result=result)
+        else:
+            module.exit_json(msg="No A record for name %s" % name)
+
+    elif action == "get_host":
+        result = infoblox.get_host_by_name(host)
+        if result:
+            module.exit_json(result=result)
+        else:
+            module.exit_json(msg="Host %s not found" % host)
+
+    elif action == "add_alias":
+        result = infoblox.get_aliases(host)
+        if result:
+            object_ref = result[0]["_ref"]
+            aliases = {}
+            if "aliases" in result[0]:
+                alias_list = result[0]["aliases"]
+            else:
+                alias_list = []
+            alias_list.append(alias)
+            aliases["aliases"] = alias_list
+            result = infoblox.update_host_alias(object_ref, aliases)
             if result:
                 module.exit_json(changed=True, result=result)
             else:
                 raise Exception()
+        else:
+            module.exit_json(msg="Host %s not found" % host)
 
-        elif action == "get_fixedaddress":
-            result = infoblox.get_fixedaddress(address)
-            if result:
-                module.exit_json(result=result)
-            else:
-                module.exit_json(msg="FIXEDADDRESS %s not found" % address)
-
-        elif action == "get_aliases":
-            result = infoblox.get_aliases(host)
-            if result:
-                if "aliases" in result[0]:
-                    module.exit_json(result=result[0]["aliases"])
-                else:
-                    module.exit_json(msg="Aliases not found for host %s" % host)
-            else:
-                module.exit_json(msg="Host %s not found" % host)
-
-        elif action == "get_cname":
+    elif action == "add_cname":
+        result = infoblox.create_cname(cname, canonical, comment)
+        if result:
             result = infoblox.get_cname(cname)
-            if result:
-                module.exit_json(result=result)
-            else:
-                module.exit_json(msg="CNAME %s not found" % cname)
+            module.exit_json(changed=True, result=result)
+        else:
+            raise Exception()
 
-        elif action == "get_a_record":
-            result = infoblox.get_a_record(name)
-            if result:
-                module.exit_json(result=result)
-            else:
-                module.exit_json(msg="No A record for name %s" % name)
+    elif action == "set_a_record":
+        if address:
+            if addresses:
+                module.fail_json(msg="Either specify `address` or `addresses`, not both")
+            addresses = {address}
+            del address
+        addresses = set(addresses)
 
-        elif action == "get_host":
-            result = infoblox.get_host_by_name(host)
-            if result:
-                module.exit_json(result=result)
-            else:
-                module.exit_json(msg="Host %s not found" % host)
+        a_records = infoblox.get_a_record(name)
+        desired_a_records = {address: _create_a_record_model(name, address, infoblox.dns_view, comment, ttl)
+                             for address in addresses}
 
-        elif action == "add_alias":
-            result = infoblox.get_aliases(host)
-            if result:
-                object_ref = result[0]["_ref"]
-                aliases = {}
-                if "aliases" in result[0]:
-                    alias_list = result[0]["aliases"]
+        a_records_to_delete = []
+        a_records_to_update = []
+        a_records_to_leave = []
+
+        for a_record in a_records:
+            address = a_record[_IPV4_ADDRESS_PROPERTY]
+            if address not in addresses:
+                a_records_to_delete.append(a_record)
+            else:
+                if _are_records_equivalent(desired_a_records[address], a_record):
+                    a_records_to_leave.append(a_record)
                 else:
-                    alias_list = []
-                alias_list.append(alias)
+                    a_records_to_update.append(a_record)
+
+        # Note: being lazy and doing an update using a delete + create
+        for a_record in a_records_to_delete + a_records_to_update:
+            infoblox.delete_object(a_record[_ID_PROPERTY])
+
+        addresses_of_a_records_to_create = {a_record[_IPV4_ADDRESS_PROPERTY] for a_record in a_records_to_update} \
+                                           | (addresses - {a_record[_IPV4_ADDRESS_PROPERTY] for a_record in a_records_to_leave})
+
+        if len(addresses_of_a_records_to_create) == 0:
+            module.exit_json(changed=False, result=a_records)
+        else:
+            for address in addresses_of_a_records_to_create:
+                infoblox.create_a_record(name, address, comment, ttl)
+
+            # Validation
+            set_a_records = infoblox.get_a_record(name)
+            assert len(set_a_records) == len(addresses) == len(desired_a_records)
+            for a_record in set_a_records:
+                assert _are_records_equivalent(desired_a_records[a_record[_IPV4_ADDRESS_PROPERTY]], a_record)
+
+            module.exit_json(changed=True, result=set_a_records)
+
+    elif action == "add_host":
+        result = infoblox.create_host_record(host, network, address, comment)
+        if result:
+            result = infoblox.get_host_by_name(host)
+            module.exit_json(changed=True, result=result)
+        else:
+            raise Exception()
+
+    elif action == "delete_alias":
+        result = infoblox.get_aliases(host)
+        if result:
+            if "aliases" in result[0]:
+                object_ref = result[0]["_ref"]
+                alias_list = result[0]["aliases"]
+                alias_list.remove(alias)
+                aliases = dict()
                 aliases["aliases"] = alias_list
                 result = infoblox.update_host_alias(object_ref, aliases)
                 if result:
@@ -515,118 +659,58 @@ def main():
                 else:
                     raise Exception()
             else:
-                module.exit_json(msg="Host %s not found" % host)
+                module.exit_json(msg="No aliases found in Host %s" % host)
+        else:
+            module.exit_json(msg="Host %s not found" % host)
 
-        elif action == "add_cname":
-            result = infoblox.create_cname(cname, canonical, comment)
-            if result:
-                result = infoblox.get_cname(cname)
-                module.exit_json(changed=True, result=result)
-            else:
-                raise Exception()
+    elif action == "delete_host":
+        result = infoblox.get_host_by_name(host)
+        if result:
+            result = infoblox.delete_object(result[0]["_ref"])
+            module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=host))
+        else:
+            module.exit_json(msg="Host %s not found" % host)
 
-        elif action == "set_a_record":
-            if address:
-                if addresses:
-                    module.fail_json(msg="Either specify `address` or `addresses`, not both")
-                addresses = [address]
-            addresses = set(addresses)
+    elif action == "delete_fixedaddress":
+        result = infoblox.get_fixedaddress(address)
+        if result:
+            result = infoblox.delete_object(result[0]["_ref"])
+            module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=address))
+        else:
+            module.exit_json(msg="Fixedaddress %s not found" % address)
 
-            correct_existing_addresses = set()
-            a_records = infoblox.get_a_record(name)
-            for a_record in a_records:
-                existing_address = a_record["ipv4addr"]
-                if existing_address not in addresses:
-                    infoblox.delete_object(a_record["_ref"])
-                else:
-                    correct_existing_addresses.add(existing_address)
+    elif action == "delete_cname":
+        result = infoblox.get_cname(cname)
+        if result:
+            result = infoblox.delete_object(result[0]["_ref"])
+            module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=cname))
+        else:
+            module.exit_json(msg="CNAME %s not found" % cname)
 
-            addresses_to_add = addresses - correct_existing_addresses
-            if len(addresses_to_add) == 0:
-                module.exit_json(changed=False, result=a_records)
-            else:
-                for address in addresses_to_add:
-                    infoblox.create_a_record(name, address, comment)
-                module.exit_json(changed=True, result=infoblox.get_a_record(name))
+    elif action == "delete_a_record":
+        result = infoblox.get_a_record(name)
+        if result:
+            result = infoblox.delete_object(result[0]["_ref"])
+            module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=name))
+        else:
+            module.exit_json(msg="A record with name %s not found" % name)
 
-        elif action == "add_host":
-            result = infoblox.create_host_record(host, network, address, comment)
-            if result:
-                result = infoblox.get_host_by_name(host)
-                module.exit_json(changed=True, result=result)
-            else:
-                raise Exception()
+    elif action == "set_name":
+        result = infoblox.set_name(object_ref, name)
+        if result:
+            module.exit_json(changed=True, result=result)
+        else:
+            raise Exception()
 
-        elif action == "delete_alias":
-            result = infoblox.get_aliases(host)
-            if result:
-                if "aliases" in result[0]:
-                    object_ref = result[0]["_ref"]
-                    alias_list = result[0]["aliases"]
-                    alias_list.remove(alias)
-                    aliases = dict()
-                    aliases["aliases"] = alias_list
-                    result = infoblox.update_host_alias(object_ref, aliases)
-                    if result:
-                        module.exit_json(changed=True, result=result)
-                    else:
-                        raise Exception()
-                else:
-                    module.exit_json(msg="No aliases found in Host %s" % host)
-            else:
-                module.exit_json(msg="Host %s not found" % host)
-
-        elif action == "delete_host":
-            result = infoblox.get_host_by_name(host)
-            if result:
-                result = infoblox.delete_object(result[0]["_ref"])
-                module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=host))
-            else:
-                module.exit_json(msg="Host %s not found" % host)
-
-        elif action == "delete_fixedaddress":
-            result = infoblox.get_fixedaddress(address)
-            if result:
-                result = infoblox.delete_object(result[0]["_ref"])
-                module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=address))
-            else:
-                module.exit_json(msg="Fixedaddress %s not found" % address)
-
-        elif action == "delete_cname":
-            result = infoblox.get_cname(cname)
-            if result:
-                result = infoblox.delete_object(result[0]["_ref"])
-                module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=cname))
-            else:
-                module.exit_json(msg="CNAME %s not found" % cname)
-
-        elif action == "delete_a_record":
-            result = infoblox.get_a_record(name)
-            if result:
-                result = infoblox.delete_object(result[0]["_ref"])
-                module.exit_json(changed=True, result=result, msg="Object {name} deleted".format(name=name))
-            else:
-                module.exit_json(msg="A record with name %s not found" % name)
-
-        elif action == "set_name":
-            result = infoblox.set_name(object_ref, name)
+    elif action == "set_extattr":
+        result = infoblox.get_host_by_name(host)
+        if result:
+            host_ref = result[0]["_ref"]
+            result = infoblox.set_extattr(host_ref, attr_name, attr_value)
             if result:
                 module.exit_json(changed=True, result=result)
             else:
                 raise Exception()
-
-        elif action == "set_extattr":
-            result = infoblox.get_host_by_name(host)
-            if result:
-                host_ref = result[0]["_ref"]
-                result = infoblox.set_extattr(host_ref, attr_name, attr_value)
-                if result:
-                    module.exit_json(changed=True, result=result)
-                else:
-                    raise Exception()
-
-    except Exception as e:
-        module.fail_json(msg=str(e))
 
 
 if __name__ == "__main__":

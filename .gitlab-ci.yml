@@ -108,6 +108,7 @@ validate_s3:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
     - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
+    - 'test -n "${OS_TENANT_NAME}" || (echo "OS_TENANT_NAME must be set!"; exit 1)'
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
   dependencies: []
 
@@ -119,6 +120,15 @@ validate_s3:
   script:
     - ci/terraform-validate.sh
   dependencies: []
+
+# XXX: This isn't really a pure validation job as it will change the environment to make it valid
+.os_images_validate: &os-images-validate-def
+  stage: validate
+  tags:
+    - docker
+  image: quay.io/wtsi-hgi/os3
+  script:
+    - ci/terraform-prepare-os-images.py ${S3_IMAGE_BUCKET}
 
 openstack-vars-validate-production-delta-hgi:
   <<: *openstack-vars-validate-def
@@ -167,7 +177,23 @@ terraform-validate-staging-delta-hgiarvados:
 # terraform-validate-staging-emedlab-arvados:
 #   <<: *terraform-validate-def
 #   <<: *staging-emedlab-arvados-def
-    
+
+os-images-validate-production-delta-hgi:
+  <<: *os-images-validate-def
+  <<: *production-delta-hgi-def
+
+os-images-validate-staging-delta-hgi:
+  <<: *os-images-validate-def
+  <<: *staging-delta-hgi-def
+
+os-images-validate-production-delta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *production-delta-hgiarvados-def
+
+os-images-validate-staging-delta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *staging-delta-hgiarvados-def
+
 .terraform: &terraform-def
   stage: terraform
   tags:

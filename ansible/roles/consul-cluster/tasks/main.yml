@@ -54,6 +54,7 @@
     password: "{{ consul_cluster_infoblox_password }}"
     name: "{{ consul_cluster_dns_name }}.hgi.sanger.ac.uk"
     addresses: "{{ consul_cluster_server_ips }}"
+    ttl: "{{ consul_cluster_dns_ttl_in_seconds }}"
 
 - name: create a management ACL token
   delegate_to: "{{ consul_cluster_leader }}"
