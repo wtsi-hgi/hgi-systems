@@ -23,7 +23,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   image_name = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair = "${var.key_pair_id}"
-  security_groups = "${var.security_groups}"
+  security_groups = "${var.security_groups123}"
   network {
     uuid = "${var.network_id}"
     floating_ip = "${openstack_compute_floatingip_v2.ssh-gateway.address}"
