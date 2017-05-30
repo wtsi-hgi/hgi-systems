@@ -1,6 +1,7 @@
 variable "flavour" {}
 variable "domain" {}
 variable "key_pair_id" {}
+variable "network_id" {}
 variable "security_groups" {
   type = "list"
   default = []
@@ -24,7 +25,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   key_pair = "${var.key_pair_id}"
   security_groups = "${var.security_groups}"
   network {
-    uuid = "${openstack_networking_network_v2.main_delta-hgiarvados.id}"
+    uuid = "${var.network_id}"
     floating_ip = "${openstack_compute_floatingip_v2.ssh-gateway.address}"
     access_network = true
   }
@@ -48,7 +49,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   }
 }
 
-resource "infoblox_record" "ssh-gateway-delta-hgiarvados" {
+resource "infoblox_record" "ssh-gateway" {
   value = "${openstack_compute_instance_v2.ssh-gateway.access_ip_v4}"
   name = "ssh"
   domain = "${var.domain}"
