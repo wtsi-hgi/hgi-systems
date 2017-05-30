@@ -1,5 +1,5 @@
 module "ssh-gateway" {
-  source = "/modules/ssh-gateway"
+  source = "../modules/ssh-gateway"
   image = {
     name = "${var.base_image_name}"
     user = "${var.base_image_user}"
