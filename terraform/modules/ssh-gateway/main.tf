@@ -4,7 +4,7 @@ variable "key_pair_id" {}
 variable "network_id" {}
 variable "security_groups" {
   type = "list"
-  default = ["food"]
+  default = []
 }
 variable "image" {
   type = "map"
