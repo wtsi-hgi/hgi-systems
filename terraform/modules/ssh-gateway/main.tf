@@ -1,8 +1,14 @@
-variable "image" {}
 variable "flavour" {}
 variable "domain" {}
 variable "key_pair_id" {}
-variable "security_groups" {}
+variable "security_groups" {
+  type = "list"
+  default = []
+}
+variable "image" {
+  type = "map"
+  default = {}
+}
 
 resource "openstack_compute_floatingip_v2" "ssh-gateway" {
   provider = "openstack"
