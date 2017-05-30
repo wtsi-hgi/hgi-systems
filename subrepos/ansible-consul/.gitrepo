@@ -5,7 +5,7 @@
 ;
 [subrepo]
 	remote = https://github.com/wtsi-hgi/ansible-consul
-	branch = fix/197-consul-config-idempotence
-	commit = dbfcd451b40e4ae89cf8742b79ae47b8321e6259
-	parent = 663478f3eaf900fa6e23cdca9505b17af0d66bdb
+	branch = hotfixes
+	commit = 62badf36273962becbfc68fea64df021826e8854
+	parent = 4b5b087085e03c1a01a765f74977545c027d7264
 	cmdver = 0.3.1
