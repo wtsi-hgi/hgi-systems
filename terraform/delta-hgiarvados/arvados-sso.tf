@@ -14,8 +14,8 @@ resource "openstack_compute_instance_v2" "arvados-sso-delta-hgiarvados" {
   metadata = {
     ansible_groups = "arvados-ssos,arvados-cluster-ncucu"
     user = "${var.arvados_base_image_user}"
-    bastion_host = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
-    bastion_user = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.metadata["user"]}"
+    bastion_host = "${module.ssh-gateway.host}"
+    bastion_user = "${module.ssh-gateway.user}"
   }
 
   # wait for host to be available via ssh
@@ -28,8 +28,8 @@ resource "openstack_compute_instance_v2" "arvados-sso-delta-hgiarvados" {
       user = "${var.arvados_base_image_user}"
       agent = "true"
       timeout = "2m"
-      bastion_host = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
-      bastion_user = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.metadata["user"]}"
+      bastion_host = "${module.ssh-gateway.host}"
+      bastion_user = "${module.ssh-gateway.user}"
     }
   }
 }

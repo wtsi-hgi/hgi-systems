@@ -50,7 +50,11 @@ resource "infoblox_record" "ssh-gateway-delta-hgiarvados" {
   ttl = 600
 }
 
-output "ssh_gateway_delta-hgiarvados_ip" {
+output "host" {
   value = "${openstack_compute_instance_v2.ssh-gateway.access_ip_v4}"
+}
+
+output "user" {
+  value = "${var.image["user"]}"
 }
 
