@@ -33,6 +33,9 @@ if [[ ${env_exit_status} -ne 0 ]]; then
     fi
 fi
 
+echo "Calling terraform get"
+terraform get
+
 echo "Calling terraform refresh"
 terraform refresh
 
