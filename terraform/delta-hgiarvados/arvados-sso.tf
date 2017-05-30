@@ -1,9 +1,9 @@
-resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
+resource "openstack_compute_instance_v2" "arvados-sso-delta-hgiarvados" {
   provider = "openstack"
   count = 1
-  name = "arvados-master-delta-hgiarvados"
+  name = "arvados-sso-delta-hgiarvados"
   image_name = "${var.arvados_base_image_name}"
-  flavor_name = "m1.xlarge"
+  flavor_name = "m1.medium"
   key_pair = "${openstack_compute_keypair_v2.mercury_delta-hgiarvados.id}"
   security_groups = ["${openstack_compute_secgroup_v2.ssh_delta-hgiarvados.id}"]
   network {
@@ -12,7 +12,7 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
   }
 
   metadata = {
-    ansible_groups = "arvados-masters,arvados-cluster-ncucu"
+    ansible_groups = "arvados-ssos,arvados-cluster-ncucu"
     user = "${var.arvados_base_image_user}"
     bastion_host = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.access_ip_v4}"
     bastion_user = "${openstack_compute_instance_v2.ssh-gateway-delta-hgiarvados.metadata["user"]}"
@@ -35,6 +35,6 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
 }
 
 output "arvados_master_delta-hgiarvados_ip" {
-  value = "${openstack_compute_instance_v2.arvados-master-delta-hgiarvados.access_ip_v4}"
+  value = "${openstack_compute_instance_v2.arvados-sso-delta-hgiarvados.access_ip_v4}"
 }
 
