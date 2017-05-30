@@ -1,49 +1,12 @@
-resource "openstack_compute_floatingip_v2" "ssh-gateway-delta-hgi" {
-  provider = "openstack.delta-hgi"
-  pool = "nova"
-}
-
-resource "openstack_compute_instance_v2" "ssh-gateway-delta-hgi" {
-  provider = "openstack.delta-hgi"
-  count = 1
-  name = "ssh-gateway-delta-hgi"
-  image_name = "${var.base_image_name}"
-  flavor_name = "m1.small"
-  key_pair = "${openstack_compute_keypair_v2.mercury_delta-hgi.id}"
-  security_groups = ["${openstack_compute_secgroup_v2.ssh_delta-hgi.id}"]
-  network {
-    uuid = "${openstack_networking_network_v2.main_delta-hgi.id}"
-    floating_ip = "${openstack_compute_floatingip_v2.ssh-gateway-delta-hgi.address}"
-    access_network = true
-  }
-
-  metadata = {
-    ansible_groups = "ssh_gateways"
+module "ssh-gateway" {
+  source = "../modules/ssh-gateway"
+  image = {
+    name = "${var.base_image_name}"
     user = "${var.base_image_user}"
   }
-
-  # wait for host to be available via ssh
-  provisioner "remote-exec" {
-    inline = [
-      "hostname"
-    ]
-    connection {
-      type = "ssh"
-      user = "${var.base_image_user}"
-      agent = "true"
-      timeout = "2m"
-    }
-  }
-}
-
-resource "infoblox_record" "ssh-gateway-delta-hgi" {
-  value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgi.access_ip_v4}"
-  name = "ssh"
+  flavour = "m1.small"
   domain = "delta-hgi.hgi.sanger.ac.uk"
-  type = "A"
-  ttl = 600
+  security_groups = ["${openstack_compute_secgroup_v2.ssh_delta-hgi.id}"]
+  key_pair_id = "${openstack_compute_keypair_v2.mercury_delta-hgi.id}"
 }
 
-output "ssh_gateway_delta-hgi_ip" {
-  value = "${openstack_compute_instance_v2.ssh-gateway-delta-hgi.access_ip_v4}"
-}
