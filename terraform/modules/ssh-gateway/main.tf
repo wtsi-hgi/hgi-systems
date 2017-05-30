@@ -23,6 +23,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   image_name = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair = "${var.key_pair_id}"
+  # FIXME temporarily have to surround this list interpolation with square brackets because of a terraform bug: https://github.com/hashicorp/terraform/issues/13869
   security_groups = ["${var.security_groups}"]
   network {
     uuid = "${var.network_id}"
