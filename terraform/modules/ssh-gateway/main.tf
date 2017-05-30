@@ -2,7 +2,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "key_pair_id" {}
 variable "network_id" {}
-variable "security_groups123" {
+variable "security_groups" {
   type = "list"
   default = ["food"]
 }
