@@ -2,6 +2,9 @@ variable "env" {}
 varaible "region" {}
 variable "mercury_keypair" {}
 variable "jr17_keypair" {}
+variable "self" {
+  default = "module.openstack"
+}
 
 ###############################################################################
 # Key Pairs
@@ -20,8 +23,8 @@ resource "openstack_compute_keypair_v2" "jr17_${var.region}_${var.env}" {
 
 output "key_pair_ids" {
   value = { 
-    "mercury" = "${openstack_compute_keypair_v2.mercury_${var.region}_${var.env}.id}"
-    "jr17" = "${openstack_compute_keypair_v2.jr17_${var.region}_${var.env}.id}"
+    "mercury" = "${var.self}.${openstack_compute_keypair_v2.mercury_${var.region}_${var.env}.id}"
+    "jr17" = "${var.self}.${openstack_compute_keypair_v2.jr17_${var.region}_${var.env}.id}"
   }
   depends_on = ["${openstack_compute_keypair_v2.jr17_${var.region}_${var.env}", "${openstack_compute_keypair_v2.mercury_${var.region}_${var.env}"]
 }
@@ -43,7 +46,7 @@ resource "openstack_compute_secgroup_v2" "ssh_${var.region}_${var.env}" {
 
 output "security_group_ids" {
   value = {
-    "ssh" = "${openstack_compute_secgroup_v2.ssh_${var.region}_${var.env}.id}"
+    "ssh" = "${var.self}.${openstack_compute_secgroup_v2.ssh_${var.region}_${var.env}.id}"
   }
   depends_on = ["${openstack_compute_secgroup_v2.ssh_${var.region}_${var.env}}"]
 }
@@ -58,7 +61,7 @@ resource "openstack_networking_network_v2" "main_${var.region}_${var.env}" {
 }
 
 output "network_id" {
-  value = "${openstack_networking_network_v2.main_${var.region}_${var.env}.id}"
+  value = "${var.self}.${openstack_networking_network_v2.main_${var.region}_${var.env}.id}"
   depends_on = "${openstack_networking_network_v2.main_${var.region}_${var.env}}"
 }
 
