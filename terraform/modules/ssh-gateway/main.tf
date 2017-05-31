@@ -62,7 +62,7 @@ resource "infoblox_record" "ssh-gateway" {
 
 output "host" {
   value = "${openstack_compute_instance_v2.ssh-gateway.access_ip_v4}"
-  depends_on = "${openstack_compute_instance_v2.ssh-gateway}"
+  depends_on = ["${openstack_compute_instance_v2.ssh-gateway}"]
 }
 
 output "user" {
