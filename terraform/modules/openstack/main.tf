@@ -55,6 +55,10 @@ resource "openstack_networking_network_v2" "main_delta-hgiarvados" {
   admin_state_up = "true"
 }
 
+output "network_id" {
+  value = "${openstack_networking_network_v2.main_delta-hgiarvados.id}"
+}
+
 resource "openstack_networking_subnet_v2" "main_delta-hgiarvados" {
   provider = "openstack"
   name = "main_delta-hgiarvados"

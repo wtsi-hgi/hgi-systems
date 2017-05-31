@@ -4,10 +4,10 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
   name = "arvados-master-delta-hgiarvados"
   image_name = "${var.arvados_base_image_name}"
   flavor_name = "m1.xlarge"
-  key_pair = "${module.openstack.openstack_compute_keypair_v2.mercury_delta-hgiarvados.id}"
-  security_groups = ["${module.openstack.openstack_compute_secgroup_v2.ssh_delta-hgiarvados.id}"]
+  key_pair = "${module.openstack.key_pair_ids["mercury"]}"
+  security_groups = ["${module.openstack.security_group_ids["ssh"]}"]
   network {
-    uuid = "${module.openstack.openstack_networking_network_v2.main_delta-hgiarvados.id}"
+    uuid = "${module.openstack.network_id}"
     access_network = true
   }
 
