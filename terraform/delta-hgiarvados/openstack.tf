@@ -2,6 +2,9 @@ provider "openstack" {
   tenant_name = "${var.env == "production" ? "hgiarvados" : "hgi-dev"}"
 }
 
+###############################################################################
+# Key Pairs
+###############################################################################
 resource "openstack_compute_keypair_v2" "mercury_delta-hgiarvados" {
   provider = "openstack"
   name = "mercury_delta-hgiarvados"
@@ -14,6 +17,16 @@ resource "openstack_compute_keypair_v2" "jr17_delta-hgiarvados" {
   public_key = "${var.jr17_keypair}"
 }
 
+output "keypair_ids" {
+  value = { 
+    "mercury" = "${openstack_compute_keypair_v2.mercury_delta-hgiarvados.id}"
+    "jr17" = "${openstack_compute_keypair_v2.jr17_delta-hgiarvados.id}"
+  }
+}
+
+###############################################################################
+# Security Groups
+###############################################################################
 resource "openstack_compute_secgroup_v2" "ssh_delta-hgiarvados" {
   provider = "openstack"
   name = "ssh_delta-hgiarvados"
@@ -26,6 +39,16 @@ resource "openstack_compute_secgroup_v2" "ssh_delta-hgiarvados" {
   }
 }
 
+output "security_group_ids" {
+  value = {
+    "ssh" = "${openstack_compute_secgroup_v2.ssh_delta-hgiarvados.id}"
+  }
+  
+}
+
+###############################################################################
+# Networks, Subnets, Routers
+###############################################################################
 resource "openstack_networking_network_v2" "main_delta-hgiarvados" {
   provider = "openstack"
   name = "main_delta-hgiarvados"

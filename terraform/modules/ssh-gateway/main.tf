@@ -1,10 +1,13 @@
 variable "flavour" {}
 variable "domain" {}
-variable "key_pair_id" {}
 variable "network_id" {}
-variable "security_groups" {
-  type = "list"
-  default = []
+variable "security_group_ids" {
+  type = "map"
+  default = {}
+}
+variable "key_pair_ids" {
+  type = "map"
+  default = {}
 }
 variable "image" {
   type = "map"
@@ -22,9 +25,8 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   name = "ssh-gateway"
   image_name = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
-  key_pair = "${var.key_pair_id}"
-  # FIXME temporarily have to surround this list interpolation with square brackets because of a terraform bug: https://github.com/hashicorp/terraform/issues/13869
-  security_groups = ["${var.security_groups}"]
+  key_pair = "${var.key_pair_ids["mercury"]}"
+  security_groups = ["${var.security_group_ids["ssh"]}"]
   network {
     uuid = "${var.network_id}"
     floating_ip = "${openstack_compute_floatingip_v2.ssh-gateway.address}"
