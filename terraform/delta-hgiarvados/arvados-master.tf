@@ -35,6 +35,6 @@ resource "openstack_compute_instance_v2" "arvados-master-delta-hgiarvados" {
 }
 
 output "arvados_master_delta-hgiarvados_ip" {
-  value = "${module.openstack.openstack_compute_instance_v2.arvados-master-delta-hgiarvados.access_ip_v4}"
+  value = "${openstack_compute_instance_v2.arvados-master-delta-hgiarvados.access_ip_v4}"
 }
 
