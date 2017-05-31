@@ -1,5 +1,5 @@
 resource "openstack_compute_instance_v2" "arvados-sso-delta-hgiarvados" {
-  provider = "openstack"
+  provider = "module.openstack.openstack-provider"
   count = 1
   name = "arvados-sso-delta-hgiarvados"
   image_name = "${var.arvados_base_image_name}"
