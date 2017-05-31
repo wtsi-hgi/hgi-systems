@@ -15,12 +15,12 @@ variable "image" {
 }
 
 resource "openstack_compute_floatingip_v2" "ssh-gateway" {
-  provider = "module.openstack.openstack"
+  provider = "openstack"
   pool = "nova"
 }
 
 resource "openstack_compute_instance_v2" "ssh-gateway" {
-  provider = "module.openstack.openstack"
+  provider = "openstack"
   count = 1
   name = "ssh-gateway"
   image_name = "${var.image["name"]}"

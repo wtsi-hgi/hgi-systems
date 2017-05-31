@@ -1,11 +1,6 @@
 variable "env" {}
 variable "mercury_keypair" {}
 variable "jr17_keypair" {}
-variable "tenant_name" {}
-
-provider "openstack" {
-  tenant_name = "${var.tenant_name}"
-}
 
 ###############################################################################
 # Key Pairs
