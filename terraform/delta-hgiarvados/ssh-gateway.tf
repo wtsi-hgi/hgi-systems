@@ -6,7 +6,7 @@ module "ssh-gateway" {
   }
   flavour = "m1.small"
   domain = "delta-hgiarvados.hgi.sanger.ac.uk"
-  security_group_ids = "${module.root.security_group_ids}"
-  key_pair_ids = "${module.root.key_pair_ids}"
+  security_group_ids = "${root.security_group_ids}"
+  key_pair_ids = "${root.key_pair_ids}"
   network_id = "${openstack_networking_network_v2.main_delta-hgiarvados.id}"
 }
