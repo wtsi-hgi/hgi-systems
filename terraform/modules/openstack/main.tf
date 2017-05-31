@@ -1,5 +1,5 @@
 variable "env" {}
-varaible "region" {}
+variable "region" {}
 variable "mercury_keypair" {}
 variable "jr17_keypair" {}
 variable "self" {
@@ -26,7 +26,7 @@ output "key_pair_ids" {
     mercury = "${var.self}.${openstack_compute_keypair_v2.mercury.id}"
     jr17 = "${var.self}.${openstack_compute_keypair_v2.jr17.id}"
   }
-  depends_on = ["${openstack_compute_keypair_v2.jr17", "${openstack_compute_keypair_v2.mercury"]
+  depends_on = ["${openstack_compute_keypair_v2.jr17}", "${openstack_compute_keypair_v2.mercury}"]
 }
 
 ###############################################################################
