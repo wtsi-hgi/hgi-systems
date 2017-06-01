@@ -15,8 +15,16 @@ fi
 
 if [[ -d "terraform/${REGION}" ]]; then
     echo "Calling terraform validate in terraform/${REGION}"
-    cd terraform/${REGION} && terraform validate
+    (cd terraform/${REGION} && terraform validate)
 else
     >&2 echo "Path terraform/${REGION} not a directory"
     exit 1
+fi
+
+echo "Calling terraform fmt"
+fmt_diff=$(cd terraform/${REGION} && terraform fmt -write=false -diff=true)
+if [[ -n "${fmt_diff}" ]]; then
+  >&2 echo 'ERROR: terraform fmt indicates formatting changes are required, suggest using a pre-commit hook to run `terraform fmt`'
+  echo "${fmt_diff}"
+  exit 1
 fi
