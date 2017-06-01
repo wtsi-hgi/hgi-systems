@@ -17,6 +17,11 @@ variable "image" {
   default = {}
 }
 
+variable "bastion" {
+  type    = "map"
+  default = {}
+}
+
 resource "openstack_compute_instance_v2" "arvados-sso" {
   provider        = "openstack"
   count           = 1
