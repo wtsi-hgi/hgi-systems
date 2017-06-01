@@ -34,8 +34,8 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
   metadata = {
     ansible_groups = "arvados-ssos,arvados-cluster-ncucu"
     user           = "${var.image["user"]}"
-    bastion_host   = "${module.ssh-gateway.host}"
-    bastion_user   = "${module.ssh-gateway.user}"
+    bastion_host   = "${var.bastion["host"]}"
+    bastion_user   = "${var.bastion["user"]}"
   }
 
   # wait for host to be available via ssh
@@ -49,8 +49,8 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
       user         = "${var.image["user"]}"
       agent        = "true"
       timeout      = "2m"
-      bastion_host = "${module.ssh-gateway.host}"
-      bastion_user = "${module.ssh-gateway.user}"
+      bastion_host = "${var.bastion["host"]}"
+      bastion_user = "${var.bastion["user"]}"
     }
   }
 }
