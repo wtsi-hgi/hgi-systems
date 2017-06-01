@@ -7,32 +7,31 @@ variable "region" {
 }
 
 variable "base_image_name" {
-  type = "string"
+  type    = "string"
   default = "hgi-base-xenial-latest"
 }
 
 variable "base_image_user" {
-  type = "string"
+  type    = "string"
   default = "ubuntu"
 }
 
 variable docker_image_name {
-  type = "string"
+  type    = "string"
   default = "hgi-docker-xenial-latest"
 }
 
 variable docker_image_user {
-  type = "string"
+  type    = "string"
   default = "ubuntu"
 }
 
 variable arvados_base_image_name {
-  type = "string"
+  type    = "string"
   default = "hgi-base-jessie-latest"
 }
 
 variable arvados_base_image_user {
-  type = "string"
+  type    = "string"
   default = "debian"
 }
-

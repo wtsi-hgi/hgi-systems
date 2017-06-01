@@ -1,2 +1,1 @@
-provider "infoblox" {
-}
+provider "infoblox" {}
