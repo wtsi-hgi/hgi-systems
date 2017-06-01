@@ -60,6 +60,6 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
   }
 }
 
-output "arvados_sso_delta-hgiarvados_ip" {
-  value = "${openstack_compute_instance_v2.arvados-sso-delta-hgiarvados.access_ip_v4}"
+output "ip" {
+  value = "${openstack_compute_instance_v2.arvados-sso.access_ip_v4}"
 }

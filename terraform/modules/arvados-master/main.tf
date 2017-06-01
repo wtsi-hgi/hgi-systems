@@ -60,6 +60,6 @@ resource "openstack_compute_instance_v2" "arvados-master" {
   }
 }
 
-output "arvados_master_delta-hgiarvados_ip" {
+output "ip" {
   value = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
 }
