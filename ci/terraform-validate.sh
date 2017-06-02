@@ -21,10 +21,5 @@ else
     exit 1
 fi
 
-echo "Calling terraform fmt"
-fmt_diff=$(cd terraform/${REGION} && terraform fmt -write=false -diff=true)
-if [[ -n "${fmt_diff}" ]]; then
-  >&2 echo -e '\e[31mERROR: terraform fmt indicates formatting changes are required, suggest using a pre-commit hook to run `terraform fmt`'
-  >&2 echo -e "\e[91m${fmt_diff}"
-  exit 1
-fi
+ci/terraform-fmt.sh "terraform/${REGION}"
+

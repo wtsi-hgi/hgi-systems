@@ -7,15 +7,8 @@
 #
 # To enable this hook, rename this file to "pre-commit".
 
-# Run terraform fmt
-terraform_bin=$(which terraform)
-if [ -z "${terraform_bin}" ]; then
-  >&2 echo "terraform not in PATH, cannot run terraform fmt"
-  exit 1
-else
-  >&2 echo "running ${terraform_bin} fmt"
-  (cd terraform; ${terraform_bin} fmt)
-fi
+# Run terraform fmt on terraform dir
+./ci/terraform-fmt.sh terraform
 
 if git rev-parse --verify HEAD >/dev/null 2>&1
 then
