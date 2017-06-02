@@ -11,7 +11,8 @@ module "arvados-sso" {
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
-  bastion	     = {
+
+  bastion = {
     host = "${module.ssh-gateway.host}"
     user = "${module.ssh-gateway.user}"
   }
