@@ -19,7 +19,17 @@
 #
 ---
 
-# file: arvados-masters.yml
+# file: arvados.yml
+
 - hosts: arvados-masters
   roles:
     - arvados-master
+
+- hosts: arvados-ssos
+  roles:
+    - arvados-sso
+
+- hosts: arvados-computers
+  roles:
+    - arvados-compute
+
