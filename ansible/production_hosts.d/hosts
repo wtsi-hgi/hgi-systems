@@ -4,9 +4,9 @@
 # * Joshua C. Randall <jcrandall@alum.mit.edu>
 # * Christopher Harrison <ch12@sanger.ac.uk>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -115,15 +115,15 @@ openstack-instances
 openstack-instances
 
 [openstack-instance-consul-servers]
-consul-server-delta-hgi-01 tenant=delta-hgi-tenant volume=delta-hgi-consul01-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
-consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
-consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair consul_cluster=consul-cluster-delta-hgi
+consul-server-delta-hgi-01 tenant=delta-hgi-tenant volume=delta-hgi-consul01-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-systems-mercury-keypair consul_cluster=consul-cluster-delta-hgi
+consul-server-delta-hgi-02 tenant=delta-hgi-tenant volume=delta-hgi-consul02-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-systems-mercury-keypair consul_cluster=consul-cluster-delta-hgi
+consul-server-delta-hgi-03 tenant=delta-hgi-tenant volume=delta-hgi-consul03-volume network=delta-hgi-consul-servers-network image=delta-hgi-docker-image keypair=delta-hgi-systems-mercury-keypair consul_cluster=consul-cluster-delta-hgi
 
 [openstack-instance-gitlab-runners]
 gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-runners-network" image=delta-hgi-docker-image keypair=delta-hgi-ci-ansible-mercury-keypair
 
 [openstance-instance-openstack-tenant-cleaners]
-openstack-tenant-cleaner tenant=delta-hgi-tenant network=delta-hgi-network image=delta-hgi-docker-image keypair=delta-hgi-ansible-mercury-keypair
+openstack-tenant-cleaner tenant=delta-hgi-tenant network=delta-hgi-network image=delta-hgi-docker-image keypair=delta-hgi-systems-mercury-keypair
 
 # Groups of dynamic inventory hosts managed by Terraform
 #[ssh-gateways]

@@ -3,9 +3,9 @@
 # Authors:
 # * Joshua C. Randall <jcrandall@alum.mit.edu>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -19,7 +19,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 [openstack-keypairs-ansible-mercury]
-delta-hgi-ansible-mercury-keypair tenant=delta-hgi-tenant
+delta-hgi-systems-mercury-keypair tenant=delta-hgi-tenant
 delta-hgi-ci-ansible-mercury-keypair tenant=delta-hgi-ci-tenant
 
 [openstack-keypairs:children]
