@@ -16,4 +16,6 @@ module "arvados-master" {
     host = "${module.ssh-gateway.host}"
     user = "${module.ssh-gateway.user}"
   }
+
+  arvados_cluster_id = "ncucu"
 }

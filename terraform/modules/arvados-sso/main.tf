@@ -1,6 +1,7 @@
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
+variable "arvados_cluster_id" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -37,7 +38,7 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
   }
 
   metadata = {
-    ansible_groups = "arvados-ssos,arvados-cluster-ncucu"
+    ansible_groups = "arvados-ssos,arvados-cluster-${var.arvados_cluster_id}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
