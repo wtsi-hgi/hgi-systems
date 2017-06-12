@@ -22,6 +22,7 @@
 # file: roles/consul-server/tasks/main.yml
 ---
 
+# TODO: Should common ensure this is setup?
 - name: setup to install packages from PyPi
   become: yes
   apt:
