@@ -21,4 +21,11 @@
 ---
 # file: group_vars/arvados-cluster-ncucu/vars
 
+# vault contents:
+# arvados_cluster_db_password_sso
+# arvados_cluster_db_password_api
+
 arvados_cluster_id: ncucu
+arvados_cluster_db_user_sso: arvados_sso
+arvados_cluster_db_user_api: arvados
+

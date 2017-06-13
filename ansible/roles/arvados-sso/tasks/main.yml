@@ -20,3 +20,78 @@
 ---
 # file: roles/arvados-sso/tasks/main.yml
 
+- name: install arvados sso prerequisites including postgresql
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - postgresql
+    - bison
+    - build-essential
+    - gettext
+    - libcurl3
+    - libcurl3-gnutls
+    - libcurl4-openssl-dev
+    - libpcre3-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxslt1.1
+    - zlib1g-dev
+
+- name: create postgresql user for arvados sso
+  become: yes
+  postgresql_user:
+    name: "{{ arvados_cluster_db_user_sso }}"
+    password: "{{ arvados_cluster_db_password_sso }}"
+    encrypted: yes
+    role_attr_flags: "NOSUPERUSER,NOCREATEROLE"
+
+- name: create arvados_sso_production database
+  become: yes
+  postgresql_db:
+    name: arvados_sso_production
+    template: template0
+    encoding: UTF8
+    owner: "{{ arvados_cluster_db_user_sso }}"
+
+- name: ensure /usr/local/src directory exists
+  become: yes
+  file:
+    path: /usr/local/src
+    state: directory
+    
+- name: download ruby source archive
+  get_url:
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz
+    dest: /usr/local/src/ruby-2.3.3.tar.gz
+    checksum: sha256:1014ee699071aa2ddd501907d18cbe15399c997d
+    
+
+- name: expand ruby source archive
+  unarchive:
+    src: /usr/local/src/ruby-2.3.3.tar.gz
+    dest: /usr/local/src
+    remote_src: true
+    creates: /usr/local/src/ruby-2.3.3
+
+- name: configure ruby source
+  command: ./configure --disable-install-rdoc
+  args:
+    creates: /usr/local/src/ruby-2.3.3/Makefile
+    chdir: /usr/local/src/ruby-2.3.3
+
+- name: build ruby
+  command: make
+  args:
+    creates: /usr/local/src/ruby-2.3.3/ruby
+    chdir: /usr/local/src/ruby-2.3.3
+
+- name: install ruby
+  become: yes
+  command: make install
+  args:
+    creates: /usr/local/bin/ruby
+    chdir: /usr/local/src/ruby-2.3.3
