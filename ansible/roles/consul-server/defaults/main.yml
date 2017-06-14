@@ -24,6 +24,9 @@
 consul_bootstrap_expect: "{{ groups['consul-servers'] | count }}"
 
 consul_acl_master_token: "{{ consul_server_acl_master_token }}"
+# XXX: The `ansible-consul` role does not current support the setting of `acl_agent_token`. Using the fallback (but
+# wider scoped `acl_token` instead.
+consul_acl_token: "{{ consul_server_acl_agent_token }}"
 consul_acl_default_policy: "deny"
 consul_acl_datacenter: "{{ consul_datacenter }}"
 
