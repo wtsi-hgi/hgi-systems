@@ -22,6 +22,7 @@
 # file: roles/consul-server/tasks/main.yml
 ---
 
+# TODO: Should common ensure this is setup?
 - name: setup to install packages from PyPi
   become: yes
   apt:
@@ -40,3 +41,17 @@
     - python-consul
     - pyhcl
 
+# FIXME: I am unsure if the ACL master token is guaranteed to be set at this point as I think it is done by the leader
+- name: create ACL token required for the server to communicate fully with the rest of the cluster
+  consul_acl:
+    name: "{{ consul_server_acl_name }}"
+    token: "{{ consul_server_acl_token }}"
+    mgmt_token: "{{ consul_server_acl_master_token }}"
+    token_type: client
+    rules:
+      - agent: ""
+        policy: write
+      - node: ""
+        policy: write
+      - service: "consul"
+        policy: write

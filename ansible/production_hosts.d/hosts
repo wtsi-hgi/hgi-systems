@@ -89,6 +89,10 @@ openstack-instance-gitlab-runners
 [consul-servers:children]
 openstack-instance-consul-servers
 
+[consulers:children]
+consul-servers
+#consul-agents
+
 [sanger-gitlab:children]
 gitlab-runners
 

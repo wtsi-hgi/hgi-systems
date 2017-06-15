@@ -54,6 +54,7 @@
 - include: consul-servers.yml
 - include: openstack-tenant-cleaners.yml
 - include: arvados.yml
+- include: arvados-crunchers.yml
 
 # higher-level infrastructure built on top of hosts
 - include: consul-clusters.yml

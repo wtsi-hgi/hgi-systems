@@ -36,6 +36,7 @@
     - attached_openstack_volume
   changed_when: false
   with_items: "{{ attached_openstack_volume_vols }}"
+  ignore_errors: yes
 
 - name: mount existing xfs volumes
   become: yes

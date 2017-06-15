@@ -64,7 +64,19 @@
     mgmt_token: "{{ consul_cluster_leader_acl_master_token }}"
     token_type: management
     rules:
+      - agent: ""
+        policy: write
+      - event: ""
+        policy: write
+      - key: ""
+        policy: write
+      - node: ""
+        policy: write
+      - query: ""
+        policy: write
       - service: ""
+        policy: write
+      - session: ""
         policy: write
 
 - name: create a client ACL token for terraform

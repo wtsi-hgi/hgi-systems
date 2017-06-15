@@ -1,0 +1,7 @@
+# Vault contains:
+# consul_server_acl_master_token: xxxx
+# consul_server_acl_token: xxxx
+
+---
+
+consul_server_acl_name: server_token

@@ -1,12 +1,10 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Authors:
-#   Colin Nolan <colin.nolan@sanger.ac.uk>
-#   Joshua C. Randall <jcrandall@alum.mit.edu>
+# Author: Colin Nolan <colin.nolan@sanger.ac.uk>
 #
-# This file is part of hgi-systems.
+# This file is part of hgi-ansible.
 #
-# hgi-systems is free software: you can redistribute it and/or modify it under
+# hgi-ansible is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -21,10 +19,6 @@
 #
 ---
 
-consul_is_ui: true
-consul_is_server: true
-consul_dns_config: true
-
-# Work around for https://github.com/savagegus/ansible-consul/issues/199
-nginx_remove_default: true
-nginx_remove_default_vhost: true
+- hosts: arvados-crunchers
+  roles:
+    - arvados-cruncher
