@@ -7,7 +7,7 @@ consul_version: 0.8.4
 
 consul_home: /opt/consul
 
-consul_advertise_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+consul_advertise_address: "{{ hostvars[inventory_hostname]['openstack_servers'][0].public_v4 }}"
 consul_datacenter: "{{ tenant }}"
 
 consul_use_systemd: true
