@@ -13,3 +13,6 @@ if [[ -z "${INFOBLOX_HOST+x}" ]]; then
     exit 1
 fi
 export INFOBLOX_SSLVERIFY=false
+
+echo "Making sure INFOBLOX_HOST is accessible over the network"
+wget --no-check-certificate "${INFOBLOX_HOST}" > /dev/null
