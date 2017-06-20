@@ -29,7 +29,5 @@ gitlab_runner_registrations:
       - docker
     extra_args: "--docker-image docker:latest"
 
-hgi_gitlab_tokens:
-  - project: ""
-    url: ""
-    token: ""
+# GitLab runner tokens are objects with the properties `project`, `url` and `token`
+gitlab_runner_tokens: []
