@@ -99,7 +99,7 @@ validate_s3:
 #     - develop
 #     - staging-emedlab-arvados
   
-.Openstack-vars-validate: &openstack-vars-validate-def
+.openstack-vars-validate: &openstack-vars-validate-def
   stage: validate
   tags:
     - docker
