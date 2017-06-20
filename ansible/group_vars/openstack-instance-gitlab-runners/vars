@@ -2,3 +2,6 @@ openstack_instance_security_groups:
  - "{{ (groups['openstack-security-groups-ssh'] | map('extract', hostvars) | selectattr('tenant', 'equalto', tenant) | list())[0].openstack_security_group_name }}"
  - "{{ (groups['openstack-security-groups-docker-registry'] | map('extract', hostvars) | selectattr('tenant', 'equalto', tenant) | list())[0].openstack_security_group_name }}"
 
+openstack_instance_flavor: m1.medium
+
+
