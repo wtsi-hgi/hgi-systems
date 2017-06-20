@@ -29,14 +29,11 @@ gitlab_runner_registrations:
       - docker
     extra_args: "--docker-image docker:latest"
 
-hgi_gitlab_tokens:
-  - project: ""
-    url: ""
-    token: ""
-
 gitlab_runner_docker_registry_config_file: /etc/docker-registry-config.yml
 gitlab_runner_docker_registry_cert_file: /etc/docker-registry.cert
 gitlab_runner_docker_registry_key_file: /etc/docker-registry.key
 
 gitlab_runner_docker_registry_container_name: docker-registry
 
+# GitLab runner tokens are objects with the properties `project`, `url` and `token`
+gitlab_runner_tokens: []

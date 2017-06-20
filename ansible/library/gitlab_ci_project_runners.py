@@ -1,16 +1,5 @@
 #!/usr/bin/python3
 
-from ansible.module_utils.basic import *
-
-try:
-    from gitlab import Gitlab, GitlabGetError, GitlabDeleteError
-
-    _HAS_DEPENDENCIES = True
-except ImportError as e:
-    _IMPORT_ERROR = e
-    _HAS_DEPENDENCIES = False
-
-
 DOCUMENTATION = """
 ---
 module: gitlab_ci_project_runners
@@ -51,6 +40,17 @@ EXAMPLES = """
       - gitlab-ci-runner-docker-01
       - gitlab-ci-runner-docker-02
 """
+
+try:
+    from gitlab import Gitlab, GitlabGetError, GitlabDeleteError
+
+    _HAS_DEPENDENCIES = True
+except ImportError as e:
+    _IMPORT_ERROR = e
+    _HAS_DEPENDENCIES = False
+
+from ansible.module_utils.basic import AnsibleModule
+import json
 
 
 def main():
