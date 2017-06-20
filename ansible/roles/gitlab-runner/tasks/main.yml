@@ -160,13 +160,48 @@
     gitlab_runners: "{{ gitlab_runner_descriptions }}"
   with_items: "{{ gitlab_runner_projects }}"
 
+- name: create docker registry configuration
+  tags:
+   - gitlab-runner
+  become: yes
+  template:
+    src: "docker-registry-config.yml.j2"
+    dest: "{{ gitlab_runner_docker_registry_config_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart docker registry container
+
+- name: copy docker registry cert
+  become: yes
+  copy:
+    content: "{{ gitlab_runner_docker_registry_cert }}"
+    dest: "{{ gitlab_runner_docker_registry_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart docker registry container
+
+- name: copy docker registry key
+  become: yes
+  copy:
+    content: "{{ gitlab_runner_docker_registry_key }}"
+    dest: "{{ gitlab_runner_docker_registry_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart docker registry container
+
 - name: setup docker registry container
   tags: gitlab-runner
   become: yes
   docker_container:
-    env:
-      REGISTRY_PROXY_REMOTEURL: https://registry-1.docker.io
+    volumes:
+      - "{{ gitlab_runner_docker_registry_config_file }}:/etc/docker/registry/config.yml"
+      - "{{ gitlab_runner_docker_registry_cert_file }}:{{ gitlab_runner_docker_registry_cert_file }}"
+      - "{{ gitlab_runner_docker_registry_key_file }}:{{ gitlab_runner_docker_registry_key_file }}"
     published_ports: 6000:5000
     restart_policy: always
-    name: registry
+    name: "{{ gitlab_runner_docker_registry_container_name }}"
     image: registry:2
+

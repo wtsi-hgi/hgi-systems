@@ -1,0 +1,4 @@
+- name: restart docker registry container
+  become: yes
+  command: docker restart "{{ gitlab_runner_docker_registry_container_name }}"
+

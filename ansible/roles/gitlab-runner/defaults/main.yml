@@ -33,3 +33,10 @@ hgi_gitlab_tokens:
   - project: ""
     url: ""
     token: ""
+
+gitlab_runner_docker_registry_config_file: /etc/docker-registry-config.yml
+gitlab_runner_docker_registry_cert_file: /etc/docker-registry.cert
+gitlab_runner_docker_registry_key_file: /etc/docker-registry.key
+
+gitlab_runner_docker_registry_container_name: docker-registry
+
