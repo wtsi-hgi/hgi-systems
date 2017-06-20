@@ -45,7 +45,7 @@ validate_s3:
   stage: validate
   tags:
    - docker
-  image: quay.io/wtsi-hgi/taos
+  image: taos
   script:
     - "ci/validate-s3.sh"
   only:
@@ -103,7 +103,7 @@ validate_s3:
   stage: validate
   tags:
     - docker
-  image: quay.io/wtsi-hgi/gitlab-ci-git-push
+  image: gitlab-ci-git-push
   script:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
@@ -116,7 +116,7 @@ validate_s3:
   stage: validate
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: taos
   script:
     - ci/terraform-validate.sh
   dependencies: []
@@ -126,7 +126,7 @@ validate_s3:
   stage: validate
   tags:
     - docker
-  image: quay.io/wtsi-hgi/os3
+  image: os3
   script:
     - ci/terraform-prepare-os-images.py ${S3_IMAGE_BUCKET}
 
@@ -198,7 +198,7 @@ os-images-validate-staging-delta-hgiarvados:
   stage: terraform
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: taos
   script:
     - ci/terraform.sh
   artifacts:
@@ -234,7 +234,7 @@ terraform-staging-delta-hgiarvados:
   stage: ansible
   tags:
     - docker
-  image: quay.io/wtsi-hgi/taos
+  image: taos
   script:
     - ci/ansible.sh
   artifacts:
@@ -270,7 +270,7 @@ github-sync:
   stage: sync
   tags:
     - docker
-  image: quay.io/wtsi-hgi/gitlab-ci-git-push
+  image: gitlab-ci-git-push
   script:
     - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
   dependencies: []
