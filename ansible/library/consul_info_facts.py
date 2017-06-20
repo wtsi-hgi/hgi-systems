@@ -22,6 +22,11 @@ EXAMPLES = """
   consul_info_facts: consul_bin="/usr/local/bin/consul"
 """
 
+from ansible.module_utils.basic import AnsibleModule
+import subprocess
+import re
+
+
 def main():
     module = AnsibleModule(
         argument_spec={
@@ -61,6 +66,6 @@ def main():
 
     module.exit_json(changed=False, message="Facts set from consul info", consul_info=consul_info)
 
-from ansible.module_utils.basic import *
+
 if __name__ == "__main__":
     main()

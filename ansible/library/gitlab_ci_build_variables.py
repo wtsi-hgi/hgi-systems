@@ -49,6 +49,9 @@ try:
 except ImportError:
     HAS_GITLABBUILDVARIABLES = False
 
+from ansible.module_utils.basic import AnsibleModule
+
+
 def main():
     module = AnsibleModule(
         argument_spec={
@@ -80,6 +83,6 @@ def main():
             updater.update()
             module.exit_json(changed=True, message="Gitlab build variables updated successfully")
 
-from ansible.module_utils.basic import *
+
 if __name__ == "__main__":
     main()
