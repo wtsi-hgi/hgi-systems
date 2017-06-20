@@ -12,4 +12,4 @@ if [[ -z "${INFOBLOX_HOST+x}" ]]; then
     >&2 echo "INFOBLOX_HOST must be set!"
     exit 1
 fi
-export INFOBLOX_SSLVERIFY=0
+export INFOBLOX_SSLVERIFY=false
