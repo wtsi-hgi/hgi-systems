@@ -8,8 +8,16 @@ proxy:
 storage:
   cache:
     blobdescriptor: inmemory
-  filesystem:
-    rootdirectory: /var/lib/registry
+  s3:
+    accesskey: "{{ gitlab_runner_s3_access_key }}"
+    secretkey: "{{ gitlab_runner_s3_secret_key }}"
+    region: generic
+    regionendpoint: "{{ gitlab_runner_s3_endpoint }}"
+    bucket: hgi-docker-registry
+    encrypt: false
+    secure: false
+    v4auth: false
+    rootdirectory: ""
 http:
   addr: :5000
   headers:
