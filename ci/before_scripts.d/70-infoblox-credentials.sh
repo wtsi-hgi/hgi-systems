@@ -14,9 +14,3 @@ if [[ -z "${INFOBLOX_HOST+x}" ]]; then
 fi
 export INFOBLOX_SSLVERIFY=false
 
-wget_bin=$(which wget || true)
-if [[ -n "${wget_bin}" ]]; then
-    echo "Making sure INFOBLOX_HOST is accessible over the network"
-    wget --no-check-certificate "${INFOBLOX_HOST}" > /dev/null
-fi
-
