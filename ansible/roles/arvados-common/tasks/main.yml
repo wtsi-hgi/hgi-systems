@@ -21,7 +21,9 @@
 # file: roles/arvados-common/tasks/main.yml
 
 - name: add arvados apt signing key
-  apt_key: keyserver=pool.sks-keyservers.net id=1078ECD7
+  apt_key: 
+    keyserver: "{{ pgp_keyserver_url }}"
+    id: 1078ECD7
   become: yes
 
 - name: add arvados apt repository

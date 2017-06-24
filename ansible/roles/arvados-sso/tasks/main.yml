@@ -95,3 +95,55 @@
   args:
     creates: /usr/local/bin/ruby
     chdir: /usr/local/src/ruby-2.3.3
+
+- name: install bundler
+  become: yes
+  command: gem install bundler
+  args:
+    creates: /usr/local/bin/bundler
+
+- name: add passenger apt signing key
+  become: yes
+  apt_key: 
+    keyserver: "{{ pgp_keyserver_url }}"
+    id: 561F9B9CAC40B2F7
+
+- name: add arvados apt repository
+  become: yes
+  apt_repository: 
+    repo: "deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main"
+    state: present
+
+- name: install nginx and passenger
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - nginx-extras
+    - passenger
+
+- name: activate passenger in nginx configuration
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: "http {"
+    content: |
+      include /etc/nginx/passenger.conf;
+  notify:
+    - restart nginx
+
+- name: ensure nginx has restarted before installing arvados sso
+  meta: flush_handlers
+
+- name: install arvados sso server
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - arvados-sso-server
+

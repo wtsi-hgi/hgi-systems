@@ -61,6 +61,14 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
   }
 }
 
+resource "infoblox_record" "ssh-gateway" {
+  value  = "${openstack_compute_instance_v2.arvados-sso.access_ip_v4}"
+  name   = "arvados-sso-${var.arvados_cluster_id}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
+}
+
 output "ip" {
   value = "${openstack_compute_instance_v2.arvados-sso.access_ip_v4}"
 }
