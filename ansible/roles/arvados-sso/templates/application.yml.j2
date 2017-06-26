@@ -19,8 +19,8 @@ common:
 
   # After logging in, the title and URL of the link that will be presented to
   # the user as the default destination on the welcome page.
-  default_link_title: Arvados
-  default_link_url: "http://localhost:3000"
+  default_link_title: Arvados Workbench {{ arvados_cluster_id }}
+  default_link_url: "https://arvados-workbench-{{ arvados_cluster_id }}.hgi.sanger.ac.uk"
 
   ###
   ### Local account configuration.  This is enabled if neither
@@ -43,8 +43,8 @@ common:
   # See https://github.com/zquestz/omniauth-google-oauth2
   #
   # and https://developers.google.com/accounts/docs/OAuth2
-  google_oauth2_client_id: false
-  google_oauth2_client_secret: false
+  google_oauth2_client_id: "{{ arvados_cluster_sso_google_oauth_client_id }}"
+  google_oauth2_client_secret: "{{ arvados_cluster_sso_google_oauth_client_secret }}"
 
   # Set this to your OpenId 2.0 realm to enable migration from Google OpenId
   # 2.0 to Google OAuth2 OpenId Connect (Google will provide OpenId 2.0 user
