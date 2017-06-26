@@ -51,11 +51,11 @@
     encrypted: yes
     role_attr_flags: "NOSUPERUSER,NOCREATEROLE"
 
-- name: create arvados_sso_production database
+- name: create arvados sso database
   become: yes
   become_user: postgres
   postgresql_db:
-    name: arvados_sso_production
+    name: "{{ arvados_cluster_db_name_sso }}"
     template: template0
     encoding: UTF8
     owner: "{{ arvados_cluster_db_user_sso }}"
@@ -152,3 +152,54 @@
   with_items:
     - arvados-sso-server
 
+- name: configure arvados
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/arvados/sso/{{ item }}"
+  with_items:
+    - application.yml
+    - database.yml
+    - production.rb
+  notify:
+    - reconfigure arvados-sso-server
+
+- name: create app secret generation script
+  become: yes
+  template:
+    src: "generate-sso-app-secret.rb.j2"
+    dest: "{{ arvados_sso_generate_app_secret_script }}"
+    mode: 0700
+    owner: www-data
+  notify:
+    - generate sso app secret
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ arvados_sso_cert }}"
+    dest: "{{ arvados_sso_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ arvados_sso_key }}"
+    dest: "{{ arvados_sso_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for arvados-sso
+  become: yes
+  template:
+    src: "arvados-sso.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-sso.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx

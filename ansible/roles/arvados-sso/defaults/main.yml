@@ -1,2 +1,7 @@
 
 arvados_sso_ruby_version: 2.3.4
+arvados_sso_generate_app_secret_script: /etc/arvados/generate-sso-app-secret.rb
+
+arvados_sso_key_file: /etc/arvados/ssl.key
+arvados_sso_cert_file: /etc/arvados/ssl.cert
+
