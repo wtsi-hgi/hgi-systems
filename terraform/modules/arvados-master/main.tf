@@ -44,7 +44,7 @@ resource "openstack_compute_instance_v2" "arvados-master" {
   }
 
   metadata = {
-    ansible_groups = "arvados-masters arvados-cluster-${var.arvados_cluster_id}"
+    ansible_groups = "arvados-masters arvados-cluster-${var.arvados_cluster_id} hgi-credentials"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
