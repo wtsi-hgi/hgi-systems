@@ -23,6 +23,11 @@ variable "bastion" {
   default = {}
 }
 
+resource "openstack_compute_floatingip_v2" "arvados-master" {
+  provider = "openstack"
+  pool     = "nova"
+}
+
 resource "openstack_compute_instance_v2" "arvados-master" {
   provider        = "openstack"
   count           = 1
@@ -34,6 +39,7 @@ resource "openstack_compute_instance_v2" "arvados-master" {
 
   network {
     uuid           = "${var.network_id}"
+    floating_ip    = "${openstack_compute_floatingip_v2.arvados-master.address}"
     access_network = true
   }
 
@@ -59,6 +65,14 @@ resource "openstack_compute_instance_v2" "arvados-master" {
       bastion_user = "${var.bastion["user"]}"
     }
   }
+}
+
+resource "infoblox_record" "arvados-master" {
+  value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  name   = "arvados-master-${var.arvados_cluster_id}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
 }
 
 output "ip" {
