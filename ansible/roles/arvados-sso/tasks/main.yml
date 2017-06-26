@@ -44,6 +44,7 @@
 
 - name: create postgresql user for arvados sso
   become: yes
+  become_user: postgres
   postgresql_user:
     name: "{{ arvados_cluster_db_user_sso }}"
     password: "{{ arvados_cluster_db_password_sso }}"
@@ -52,6 +53,7 @@
 
 - name: create arvados_sso_production database
   become: yes
+  become_user: postgres
   postgresql_db:
     name: arvados_sso_production
     template: template0
@@ -63,39 +65,40 @@
   file:
     path: /usr/local/src
     state: directory
+    owner: "{{ ansible_ssh_user }}"
     
 - name: download ruby source archive
   get_url:
-    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-2.3.3.tar.gz
-    dest: /usr/local/src/ruby-2.3.3.tar.gz
-    checksum: sha256:1014ee699071aa2ddd501907d18cbe15399c997d
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_sso_ruby_version }}.tar.gz
+    dest: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}.tar.gz
+    checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
     
 
 - name: expand ruby source archive
   unarchive:
-    src: /usr/local/src/ruby-2.3.3.tar.gz
+    src: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}.tar.gz
     dest: /usr/local/src
     remote_src: true
-    creates: /usr/local/src/ruby-2.3.3
+    creates: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}
 
 - name: configure ruby source
   command: ./configure --disable-install-rdoc
   args:
-    creates: /usr/local/src/ruby-2.3.3/Makefile
-    chdir: /usr/local/src/ruby-2.3.3
+    creates: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}/Makefile
+    chdir: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}
 
 - name: build ruby
   command: make
   args:
-    creates: /usr/local/src/ruby-2.3.3/ruby
-    chdir: /usr/local/src/ruby-2.3.3
+    creates: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}
 
 - name: install ruby
   become: yes
   command: make install
   args:
     creates: /usr/local/bin/ruby
-    chdir: /usr/local/src/ruby-2.3.3
+    chdir: /usr/local/src/ruby-{{ arvados_sso_ruby_version }}
 
 - name: install bundler
   become: yes
@@ -127,6 +130,7 @@
     - passenger
 
 - name: activate passenger in nginx configuration
+  become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
     insertafter: "http {"
