@@ -43,9 +43,23 @@ resource "openstack_compute_secgroup_v2" "ssh" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "https" {
+  provider    = "openstack"
+  name        = "https_${var.region}_${var.env}"
+  description = "Incoming https access"
+
+  rule {
+    from_port   = 443
+    to_port     = 443
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 output "security_group_ids" {
   value = {
-    ssh = "${openstack_compute_secgroup_v2.ssh.id}"
+    ssh   = "${openstack_compute_secgroup_v2.ssh.id}"
+    https = "${openstack_compute_secgroup_v2.https.id}"
   }
 
   depends_on = ["${openstack_compute_secgroup_v2.ssh}"]
