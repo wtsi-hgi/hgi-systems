@@ -7,7 +7,7 @@ module "arvados-sso" {
   }
 
   flavour            = "m1.medium"
-  domain             = "delta-hgiarvados.hgi.sanger.ac.uk"
+  domain             = "hgi.sanger.ac.uk"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
