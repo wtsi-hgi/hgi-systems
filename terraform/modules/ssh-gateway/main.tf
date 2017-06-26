@@ -38,7 +38,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   }
 
   metadata = {
-    ansible_groups = "ssh_gateways"
+    ansible_groups = "ssh-gateways"
     user           = "${var.image["user"]}"
   }
 
