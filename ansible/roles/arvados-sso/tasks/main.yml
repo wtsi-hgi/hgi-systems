@@ -39,6 +39,7 @@
     - libreadline-dev
     - libssl-dev
     - libxslt1.1
+    - python-psycopg2
     - zlib1g-dev
 
 - name: create postgresql user for arvados sso
