@@ -52,6 +52,7 @@
 - include: cookie-monsters.yml
 - include: gitlab-runners.yml
 - include: consul-servers.yml
+- include: ssh-gateways.yml
 - include: openstack-tenant-cleaners.yml
 - include: arvados.yml
 - include: arvados-crunchers.yml
