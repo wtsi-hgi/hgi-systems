@@ -20,3 +20,198 @@
 ---
 # file: roles/arvados-master/tasks/main.yml
 
+- name: install arvados master prerequisites including postgresql
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - postgresql
+    - bison
+    - build-essential
+    - gettext
+    - libcurl3
+    - libcurl3-gnutls
+    - libcurl4-openssl-dev
+    - libpcre3-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxslt1.1
+    - python-psycopg2
+    - zlib1g-dev
+
+- name: create postgresql user for arvados api
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ arvados_cluster_db_user_api }}"
+    password: "{{ arvados_cluster_db_password_api }}"
+    encrypted: yes
+    role_attr_flags: "NOSUPERUSER,NOCREATEROLE"
+
+- name: create arvados api database
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name: "{{ arvados_cluster_db_name_api }}"
+    template: template0
+    encoding: UTF8
+    owner: "{{ arvados_cluster_db_user_api }}"
+
+- name: ensure /usr/local/src directory exists
+  become: yes
+  file:
+    path: /usr/local/src
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    
+- name: download ruby source archive
+  get_url:
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    dest: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
+    
+
+- name: expand ruby source archive
+  unarchive:
+    src: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    dest: /usr/local/src
+    remote_src: true
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: configure ruby source
+  command: ./configure --disable-install-rdoc
+  args:
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/Makefile
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: build ruby
+  command: make
+  args:
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: install ruby
+  become: yes
+  command: make install
+  args:
+    creates: /usr/local/bin/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: install bundler
+  become: yes
+  command: gem install bundler
+  args:
+    creates: /usr/local/bin/bundler
+
+- name: add passenger apt signing key
+  become: yes
+  apt_key: 
+    keyserver: "{{ pgp_keyserver_url }}"
+    id: 561F9B9CAC40B2F7
+
+- name: add arvados apt repository
+  become: yes
+  apt_repository: 
+    repo: "deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main"
+    state: present
+
+- name: install nginx and passenger
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - nginx-extras
+    - passenger
+
+- name: activate passenger in nginx configuration
+  become: yes
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: "http {"
+    content: |
+      include /etc/nginx/passenger.conf;
+      include /etc/nginx/passenger_settings.conf;
+  notify:
+    - restart nginx
+
+- name: configure passenger nginx
+  become: yes
+  template: 
+    src: passenger_settings.conf.j2
+    dest: /etc/nginx/passenger_settings.conf
+  notify:
+    - restart nginx
+
+- name: ensure nginx has restarted before installing arvados api
+  meta: flush_handlers
+
+- name: install arvados api server
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - arvados-api-server
+  notify:
+    - reconfigure arvados-api-server
+
+- name: create directories for arvados
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ arvados_master_git_repositories_dir }}"
+    - /var/www/arvados-api/current/tmp/cache
+    - /var/run/nginx/passenger
+  notify:
+    - reconfigure arvados-api-server
+
+- name: configure arvados
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/arvados/api/{{ item }}"
+  with_items:
+    - application.yml
+    - database.yml
+  notify:
+    - reconfigure arvados-api-server
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ arvados_master_cert }}"
+    dest: "{{ arvados_master_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ arvados_master_key }}"
+    dest: "{{ arvados_master_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for arvados-api
+  become: yes
+  template:
+    src: "arvados-api.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-api.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx

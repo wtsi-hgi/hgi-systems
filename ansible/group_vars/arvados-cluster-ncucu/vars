@@ -25,11 +25,20 @@
 # arvados_cluster_db_password_sso
 # arvados_cluster_db_password_api
 # arvados_cluster_secret_token
+# arvados_cluster_blob_signing_key
 # arvados_cluster_sso_app_secret
 # arvados_cluster_sso_google_oauth_client_id
 # arvados_cluster_sso_google_oauth_client_secret
 
 arvados_cluster_id: ncucu
+
+arvados_cluster_sso_app_id: arvados-server
+
 arvados_cluster_db_user_sso: arvados_sso
-arvados_cluster_db_user_api: arvados
 arvados_cluster_db_name_sso: arvados_sso_production
+
+arvados_cluster_db_user_api: arvados
+arvados_cluster_db_name_api: arvados_api_production
+
+arvados_cluster_internal_nets: 
+  - 10.101.0.0/24
