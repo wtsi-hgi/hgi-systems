@@ -67,7 +67,7 @@ resource "openstack_compute_instance_v2" "arvados-master" {
   }
 }
 
-resource "infoblox_record" "arvados-master" {
+resource "infoblox_record" "arvados-api" {
   value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
   name   = "arvados-api-${var.arvados_cluster_id}"
   domain = "${var.domain}"
@@ -75,7 +75,7 @@ resource "infoblox_record" "arvados-master" {
   ttl    = 600
 }
 
-resource "infoblox_record" "arvados-master" {
+resource "infoblox_record" "arvados-ws" {
   value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
   name   = "arvados-ws-${var.arvados_cluster_id}"
   domain = "${var.domain}"
@@ -83,7 +83,7 @@ resource "infoblox_record" "arvados-master" {
   ttl    = 600
 }
 
-resource "infoblox_record" "arvados-master" {
+resource "infoblox_record" "arvados-git" {
   value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
   name   = "arvados-git-${var.arvados_cluster_id}"
   domain = "${var.domain}"
@@ -91,7 +91,7 @@ resource "infoblox_record" "arvados-master" {
   ttl    = 600
 }
 
-resource "infoblox_record" "arvados-master" {
+resource "infoblox_record" "arvados-workbench" {
   value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
   name   = "arvados-workbench-${var.arvados_cluster_id}"
   domain = "${var.domain}"
