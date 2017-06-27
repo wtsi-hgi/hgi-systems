@@ -1,0 +1,22 @@
+upstream arvados-git-httpd {
+  server     127.0.0.1:{{ arvados_master_git_httpd_backend_port }};
+}
+
+server {
+  listen       0.0.0.0:443 ssl;
+  server_name  {{ arvados_cluster_git_host }}.{{ arvados_cluster_domain }};
+
+  proxy_connect_timeout 90s;
+  proxy_read_timeout    300s;
+
+  ssl                 on;
+  ssl_certificate     {{ arvados_master_cert_file }};
+  ssl_certificate_key {{ arvados_master_key_file }};
+
+  # The server needs to accept potentially large refpacks from push clients.
+  client_max_body_size 50m;
+
+  location / {
+    proxy_pass            http://arvados-git-httpd;
+  }
+}

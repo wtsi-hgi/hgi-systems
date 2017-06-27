@@ -20,7 +20,10 @@
 ---
 # file: roles/arvados-master/tasks/main.yml
 
-- name: install arvados master prerequisites including postgresql
+################################################################################
+# arvados-api
+################################################################################
+- name: install arvados api server prerequisites including postgresql
   become: yes
   apt:
     name: "{{ item }}"
@@ -59,6 +62,8 @@
     template: template0
     encoding: UTF8
     owner: "{{ arvados_cluster_db_user_api }}"
+  notify:
+    - create superuser api token
 
 - name: ensure /usr/local/src directory exists
   become: yes
@@ -72,7 +77,6 @@
     url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
     dest: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
     checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
-    
 
 - name: expand ruby source archive
   unarchive:
@@ -162,6 +166,7 @@
     - arvados-api-server
   notify:
     - reconfigure arvados-api-server
+    - create superuser api token
 
 - name: create directories for arvados
   become: yes
@@ -185,6 +190,7 @@
     - database.yml
   notify:
     - reconfigure arvados-api-server
+    - create superuser api token
 
 - name: copy ssl certificate
   become: yes
@@ -211,6 +217,289 @@
   template:
     src: "arvados-api.conf.j2"
     dest: /etc/nginx/conf.d/arvados-api.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+
+##############################################################################
+# arvados-ws
+##############################################################################
+- name: install arvados websockets server
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - arvados-ws
+  notify:
+   - restart arvados-ws
+
+- name: ensure ws configuration directory exists
+  become: yes
+  file:
+    path: /etc/arvados/ws
+    state: directory
+    owner: root
+    mode: 0700
+
+- name: configure arvados-ws
+  become: yes
+  template:
+    src: ws.yml.j2
+    dest: /etc/arvados/ws/ws.yml
+    mode: 0700
+    owner: root
+  notify:
+   - restart arvados-ws
+
+- name: ensure arvados-ws has restarted before checking it is functional
+  meta: flush_handlers
+
+- name: wait up to 10s for arvados-ws port
+  wait_for:
+    port: "{{ arvados_master_ws_backend_port }}"
+    host: 127.0.0.1
+    timeout: 10
+
+- name: verify arvados-ws is functional
+  uri:
+    url: "http://127.0.0.1:{{ arvados_master_ws_backend_port }}/status.json"
+    return_content: yes
+  register: ws
+
+- name: verify that arvados-ws returned data
+  fail:
+  when: "ws.json.Clients < 1"
+
+- name: configure nginx for arvados-ws
+  become: yes
+  template:
+    src: "arvados-ws.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-ws.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+   
+- name: ensure nginx has restarted before checking it is functional remotely via https
+  meta: flush_handlers
+
+- name: verify arvados-ws is functional remotely via https
+  delegate_to: "{{ arvados_master_remote_check_delegate }}"
+  uri:
+    url: "https://{{ arvados_cluster_ws_host }}.{{ arvados_cluster_domain }}/status.json"
+    return_content: yes
+  register: wss
+
+- name: verify that arvados-ws returned data via https
+  fail:
+  when: "wss.json.Clients < 1"
+
+
+##############################################################################
+# arvados-git
+##############################################################################
+- name: install arvados git server prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - git
+    - openssh-server
+
+- name: create git group
+  become: yes
+  group:
+    name: git
+
+- name: create git user
+  become: yes
+  user:
+    name: git
+    group: git
+    home: "{{ arvados_master_git_home }}"
+    comment: git
+    state: present
+
+- name: ensure git home directory owned by git user
+  become: yes
+  file:
+    path: "{{ arvados_master_git_home }}"
+    owner: git
+    group: git
+    recurse: yes
+    state: directory
+
+- name: ensure git ~/.ssh directory exists
+  become: yes
+  file:
+    path: "{{ arvados_master_git_home }}/.ssh"
+    owner: git
+    group: git
+    mode: 0755
+    state: directory
+
+- name: install ssh private key for git user
+  become: yes
+  become_user: git
+  copy:
+    content: "{{ arvados_cluster_git_ssh_private_key }}"
+    dest: "{{ arvados_master_git_home }}/.ssh/id_rsa"
+    owner: git
+    mode: 0600
+
+- name: install ssh public key for git user
+  become: yes
+  become_user: git
+  copy:
+    content: "{{ arvados_cluster_git_ssh_public_key }}"
+    dest: "{{ arvados_master_git_home }}/.ssh/id_rsa.pub"
+    owner: git
+    mode: 0644
+
+- name: detect localhost keys
+  command: ssh-keyscan localhost
+  changed_when: false
+  register: localhost_host_keys
+
+- name: add localhost host keys to git user's known_hosts
+  become: yes
+  become_user: git
+  known_hosts: 
+    name: localhost
+    key: "{{ item }}"
+    state: present
+  with_items: "{{ localhost_host_keys.stdout_lines }}"
+
+- name: create git ~/bin
+  become: yes
+  become_user: git
+  file:
+    path: "{{ arvados_master_git_home }}/bin"
+    mode: 0755
+    state: directory
+
+- name: configure git user .profile
+  become: yes
+  become_user: git
+  template:
+    src: git.profile.j2
+    dest: "{{ arvados_master_git_home }}/.profile"
+    mode: 0644
+
+- name: clone gitolite source
+  become: yes
+  become_user: git
+  command: git clone --branch v3.6.4 https://github.com/sitaramc/gitolite
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/gitolite"
+
+- name: install gitolite
+  become: yes
+  become_user: git
+  command: ./gitolite/install -ln "{{ arvados_master_git_home }}/bin"
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/bin/gitolite"
+
+- name: setup initial gitolite repositories
+  become: yes
+  become_user: git
+  command: ./bin/gitolite setup -pk .ssh/id_rsa.pub
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/repositories/gitolite-admin.git"
+
+- name: clone gitolite-admin repo 
+  become: yes
+  become_user: git
+  command: git clone git@localhost:gitolite-admin
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/gitolite-admin"
+
+- name: configure gitolite-admin git repo
+  become: yes
+  become_user: git
+  git_config:
+    repo: "{{ arvados_master_git_home }}/gitolite-admin"
+    scope: local
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { name: "user.email", value: "arvados" }
+    - { name: "user.name", value: "arvados" }
+    - { name: "push.default", value: "simple" }
+
+- name: configure gitolite.rc 
+  become: yes
+  become_user: git
+  template:
+    src: gitolite.rc.j2
+    dest: "{{ arvados_master_git_home }}/.gitolite.rc"
+    mode: 0600
+
+- name: configure arvados git synchronisation
+  become: yes
+  template: 
+    src: arvados-clients.yml.j2
+    dest: /var/www/arvados-api/current/config/arvados-clients.yml
+    mode: 0644
+
+- name: enable arvados git synchronisation cron job 
+  become: yes
+  cron: 
+    state: present
+    cron_file: /etc/cron.d/arvados-git-sync
+    minute: "*/5"
+    hour: "*"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    user: git
+    job: cd /var/www/arvados-api/current && bundle exec script/arvados-git-sync.rb production
+
+- name: install arvados-git-httpd
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - git
+    - arvados-git-httpd
+
+- name: ensure git-httpd configuration directory exists
+  become: yes
+  file:
+    path: /etc/arvados/git-httpd
+    state: directory
+    owner: root
+    mode: 0700
+
+- name: configure arvados-git-httpd
+  become: yes
+  template:
+    src: git-httpd.yml.j2
+    dest: /etc/arvados/git-httpd/git-httpd.yml
+    mode: 0700
+    owner: root
+  notify:
+   - restart arvados-git-httpd
+
+- name: configure nginx for arvados-git-httpd
+  become: yes
+  template:
+    src: "arvados-git-httpd.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-git-httpd.conf
     mode: 0700
     owner: www-data
   notify:

@@ -1,10 +1,32 @@
 - name: restart nginx
   become: yes
-  service:
+  systemd:
     name: nginx
     state: restarted
 
 - name: reconfigure arvados-api-server
   become: yes
   command: dpkg-reconfigure arvados-api-server
+
+- name: restart arvados-ws
+  become: yes
+  systemd:
+    name: arvados-ws
+    state: restarted
+
+- name: restart arvados-git-httpd
+  become: yes
+  systemd:
+    name: arvados-git-httpd
+    state: restarted
+
+- name: create superuser api token
+  become: yes
+  become_user: www-data
+  shell: "bundle exec ./script/create_superuser_token.rb {{ arvados_cluster_superuser_api_token }}"
+  args:
+    chdir: /var/www/arvados-api
+  environment:
+    HOME: /tmp
+    RAILS_ENV: production
 
