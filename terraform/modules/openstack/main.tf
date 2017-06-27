@@ -2,6 +2,7 @@ variable "env" {}
 variable "region" {}
 variable "mercury_keypair" {}
 variable "jr17_keypair" {}
+variable "subnet" {}
 
 ###############################################################################
 # Key Pairs
@@ -83,7 +84,7 @@ resource "openstack_networking_subnet_v2" "main" {
   provider        = "openstack"
   name            = "main_${var.region}_${var.env}"
   network_id      = "${openstack_networking_network_v2.main.id}"
-  cidr            = "10.101.0.0/24"
+  cidr            = "${var.subnet}"
   ip_version      = 4
   dns_nameservers = ["172.18.255.1", "172.18.255.2", "172.18.255.3"]
 }
