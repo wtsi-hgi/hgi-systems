@@ -1,6 +1,5 @@
 
-user = User.new(:email => "{{ arvados_cluster_admin_user_email }}")
+email = "{{ arvados_cluster_admin_user_email }}"
+user = User.find_by_email(email) || User.new(:email => email)
 user.password = "{{ arvados_cluster_admin_user_password }}"
 user.save!
-quit
-
