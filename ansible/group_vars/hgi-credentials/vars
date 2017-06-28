@@ -6,6 +6,7 @@
 # mercury_ssh_key: xxxx
 # pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxxx
 # pem_WILDCARD_hgi_sanger_ac_uk_key: xxxx
+# mercury_hgi_arvados_google_service_account_json_key: xxxx
 
 pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     #

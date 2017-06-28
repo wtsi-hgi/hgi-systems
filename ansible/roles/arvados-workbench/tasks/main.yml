@@ -210,3 +210,23 @@
   notify:
    - restart nginx
 
+- name: ensure nginx has restarted before checking it is functional
+  meta: flush_handlers
+
+- name: wait up to 10s for arvados-workbench backend port
+  wait_for:
+    port: "{{ arvados_workbench_backend_port }}"
+    host: 127.0.0.1
+    timeout: 10
+
+- name: verify arvados-workbench is functional
+  delegate_to: "{{ arvados_workbench_remote_check_delegate }}"
+  uri:
+    url: "https://{{ arvados_cluster_workbench_host }}.{{ arvados_cluster_domain }}/"
+    return_content: yes
+  register: workbench_backend
+
+- name: verify that arvados-workbench returned data
+  fail:
+  when: "arvados_cluster_site_name not in workbench_backend.content"
+
