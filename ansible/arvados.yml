@@ -37,3 +37,8 @@
   roles:
     - arvados-compute
 
+# non-host playbooks
+- hosts: arvados-clusters
+  roles:
+    - arvados-cluster
+

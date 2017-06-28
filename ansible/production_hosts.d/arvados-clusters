@@ -1,0 +1,8 @@
+[arvados-clusters]
+arvados-cluster-ncucu
+
+[hgi-credentials:children]
+arvados-clusters
+
+[non-hosts:children]
+arvados-clusters
