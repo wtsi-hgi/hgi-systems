@@ -1,0 +1,2 @@
+arvados_workbench_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
+arvados_workbench_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"

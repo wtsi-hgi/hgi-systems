@@ -1,0 +1,23 @@
+# Copy this file to application.yml and edit to suit.
+#
+# Consult application.default.yml for the full list of configuration
+# settings.
+#
+# The order of precedence is:
+# 1. config/environments/{RAILS_ENV}.rb (deprecated)
+# 2. Section in application.yml corresponding to RAILS_ENV (e.g., development)
+# 3. Section in application.yml called "common"
+# 4. Section in application.default.yml corresponding to RAILS_ENV
+# 5. Section in application.default.yml called "common"
+
+production:
+  # At minimum, you need a nice long randomly generated secret_token here.
+  secret_token: {{ arvados_cluster_workbench_secret_token }}
+
+  # You probably also want to point to your API server.
+  arvados_login_base: https://{{ arvados_cluster_api_host }}.{{ arvados_cluster_domain }}/login
+  arvados_v1_base: https://{{ arvados_cluster_api_host }}.{{ arvados_cluster_domain }}/arvados/v1
+  arvados_insecure_https: false
+
+  site_name: "{{ arvados_cluster_site_name }}"
+

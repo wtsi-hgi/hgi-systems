@@ -7,7 +7,7 @@
     passenger_request_queue_overflow_status_code 513;
     passenger_intercept_errors on;
 
-    # pre-start arvados api server
-    passenger_pre_start http://127.0.0.1:{{ arvados_master_api_backend_port }}/arvados/v1/jobs;
+    # pre-start arvados workbench
+    passenger_pre_start http://127.0.0.1:{{ arvados_workbench_backend_port }}/;
 
     large_client_header_buffers 4 32k;

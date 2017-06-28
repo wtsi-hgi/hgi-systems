@@ -1,5 +1,5 @@
 server {
-  listen 127.0.0.1:8000;
+  listen 127.0.0.1:{{ arvados_master_api_backend_port }};
   server_name localhost-api;
 
   root /var/www/arvados-api/current/public;
@@ -15,14 +15,14 @@ server {
   # * `client_max_body_size` in the server section below
   # * `client_max_body_size` in the Workbench Nginx configuration (twice)
   # * `max_request_size` in the API server's application.yml file
-  client_max_body_size 128m;
+  client_max_body_size {{ arvados_cluster_max_body_size_m }}m;
 
   access_log /var/log/nginx/arvados-api-backend-access.log;
   error_log /var/log/nginx/arvados-api-backend-error.log;
 }
 
 upstream api {
-  server     127.0.0.1:8000  fail_timeout=10s;
+  server     127.0.0.1:{{ arvados_master_api_backend_port }}  fail_timeout=10s;
 }
 
 proxy_http_version 1.1;
@@ -50,7 +50,7 @@ server {
   index  index.html index.htm index.php;
 
   # Refer to the comment about this setting in the server section above.
-  client_max_body_size 128m;
+  client_max_body_size {{ arvados_cluster_max_body_size_m }}m;
 
   location / {
     proxy_pass            http://api;

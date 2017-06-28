@@ -18,22 +18,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
+# file: roles/arvados-workbench/meta/main.yml
 
-# file: arvados.yml
-
-- hosts: arvados-ssos
-  roles:
-    - arvados-sso
-
-- hosts: arvados-masters
-  roles:
-    - arvados-master
-
-- hosts: arvados-workbenches
-  roles:
-    - arvados-workbench
-
-- hosts: arvados-computers
-  roles:
-    - arvados-compute
-
+dependencies:
+  - { role: common }
+  - { role: arvados-common }

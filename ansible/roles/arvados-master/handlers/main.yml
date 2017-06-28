@@ -27,6 +27,6 @@
   args:
     chdir: /var/www/arvados-api
   environment:
-    HOME: /tmp
+    HOME: /var/www
     RAILS_ENV: production
 

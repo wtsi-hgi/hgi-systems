@@ -15,7 +15,7 @@ production:
   # http://http://doc.arvados.org/install/install-api-server.html#configure_application
   # for more information.
   uuid_prefix: {{ arvados_cluster_id }}
-  secret_token: {{ arvados_cluster_secret_token }}
+  secret_token: {{ arvados_cluster_api_secret_token }}
   blob_signing_key: {{ arvados_cluster_blob_signing_key }}
   sso_app_secret: {{ arvados_cluster_sso_app_secret }}
   sso_app_id: {{ arvados_cluster_sso_app_id }}
@@ -83,6 +83,8 @@ production:
   #
   # 100000 is a reasonable batch size for most sites.
   max_audit_log_delete_batch: 100000
+
+  max_request_size: {{ arvados_cluster_max_body_size_m * 1024 * 1024 }}
 
 common:
   # Settings in this section will be used in all environments
