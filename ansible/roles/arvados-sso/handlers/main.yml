@@ -18,13 +18,3 @@
     HOME: /var/www
     RAILS_ENV: production
 
-- name: create admin user
-  become: yes
-  become_user: www-data
-  command: bundle exec rails runner "{{ arvados_sso_create_admin_user_script }}"
-  args:
-    chdir: /var/www/arvados-sso/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
-

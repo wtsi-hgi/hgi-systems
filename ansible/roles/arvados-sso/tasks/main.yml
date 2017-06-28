@@ -174,16 +174,6 @@
   notify:
     - generate sso app secret
 
-- name: create admin user creation script
-  become: yes
-  template:
-    src: "create-admin-user.rb.j2"
-    dest: "{{ arvados_sso_create_admin_user_script }}"
-    mode: 0700
-    owner: www-data
-  notify:
-    - create admin user
-
 - name: copy ssl certificate
   become: yes
   copy:
