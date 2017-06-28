@@ -2,6 +2,7 @@
 # hgi_username: xxxx
 # hgi_password: xxxx
 # ansible_vault_password: xxxx
+# mercury_google_password: xxxx
 # mercury_ssh_key: xxxx
 # pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxxx
 # pem_WILDCARD_hgi_sanger_ac_uk_key: xxxx
