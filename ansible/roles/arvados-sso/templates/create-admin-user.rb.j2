@@ -1,0 +1,6 @@
+
+user = User.new(:email => "{{ arvados_cluster_admin_user_email }}")
+user.password = "{{ arvados_cluster_admin_user_password }}"
+user.save!
+quit
+
