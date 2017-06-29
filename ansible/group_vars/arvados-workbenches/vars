@@ -1,5 +1,5 @@
 arvados_workbench_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
 arvados_workbench_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
 
-arvados_workbench_remote_check_delegate: hgs4a.internal.sanger.ac.uk
+arvados_workbench_remote_check_delegate: openstack_compute_instance_v2.ssh-gateway
 
