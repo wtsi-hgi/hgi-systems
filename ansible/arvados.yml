@@ -39,6 +39,7 @@
 
 # non-host playbooks
 - hosts: arvados-clusters
+  gather_facts: no
   roles:
     - arvados-cluster
 
