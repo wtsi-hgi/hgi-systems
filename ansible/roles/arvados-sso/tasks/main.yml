@@ -129,6 +129,12 @@
     - nginx-extras
     - passenger
 
+- name: make /var/www owned by www-data
+  become: yes
+  file: 
+    path: /var/www
+    owner: www-data
+
 - name: activate passenger in nginx configuration
   become: yes
   blockinfile:
