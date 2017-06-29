@@ -25,7 +25,7 @@
   become_user: www-data
   shell: "bundle exec ./script/create_superuser_token.rb {{ arvados_cluster_superuser_api_token }}"
   args:
-    chdir: /var/www/arvados-api
+    chdir: /var/www/arvados-api/current
   environment:
     HOME: /var/www
     RAILS_ENV: production
