@@ -8,6 +8,8 @@
 # pem_WILDCARD_hgi_sanger_ac_uk_key: xxxx
 # mercury_hgi_arvados_google_service_account_json_key: xxxx
 
+hgi_credentials_mercury_google_uid: 112543019536584549283
+
 pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     #
     # X.509 Certificate

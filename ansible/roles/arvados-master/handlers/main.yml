@@ -30,3 +30,23 @@
     HOME: /var/www
     RAILS_ENV: production
 
+- name: create trusted workbench api client
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_workbench_api_client_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+
+- name: create mercury admin user
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_mercury_admin_user_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+

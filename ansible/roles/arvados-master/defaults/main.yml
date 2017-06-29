@@ -7,6 +7,8 @@ arvados_master_cert_file: /etc/arvados/ssl.cert
 arvados_master_git_home: /var/lib/arvados/git
 arvados_master_git_repositories_dir: "{{ arvados_master_git_home }}/repositories"
 arvados_master_git_internal_dir: /var/lib/arvados/internal.git
+arvados_master_create_workbench_api_client_script: /etc/arvados/create-workbench-api-client.rb
+arvados_master_create_mercury_admin_user_script: /etc/arvados/create-mercury-admin-user.rb
 
 arvados_master_api_backend_port: 8000
 arvados_master_ws_backend_port: 9003

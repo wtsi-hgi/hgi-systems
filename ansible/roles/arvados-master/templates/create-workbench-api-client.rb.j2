@@ -1,0 +1,7 @@
+
+include CurrentApiClient
+wb = ApiClient.find_by_name("workbench") || ApiClient.new(:name => "workbench")
+wb.url_prefix = "https://{{ arvados_cluster_workbench_host }}.{{ arvados_cluster_domain }}/"
+wb.is_trusted = true
+act_as_system_user do wb.save! end
+

@@ -62,8 +62,6 @@
     template: template0
     encoding: UTF8
     owner: "{{ arvados_cluster_db_user_api }}"
-  notify:
-    - create superuser api token
 
 - name: ensure /usr/local/src directory exists
   become: yes
@@ -132,6 +130,14 @@
   with_items:
     - nginx-extras
     - passenger
+  notify:
+    - restart nginx
+
+- name: make /var/www owned by www-data
+  become: yes
+  file: 
+    path: /var/www
+    owner: www-data
 
 - name: activate passenger in nginx configuration
   become: yes
@@ -221,6 +227,26 @@
     owner: www-data
   notify:
    - restart nginx
+
+- name: create trusted workbench api client script
+  become: yes
+  template: 
+    src: "create-workbench-api-client.rb.j2"	
+    dest: "{{ arvados_master_create_workbench_api_client_script }}"
+    mode: 0700
+    owner: www-data
+  notify: create trusted workbench api client
+
+- name: create mercury admin user script
+  become: yes
+  template:
+    src: "create-mercury-admin-user.rb.j2"
+    dest: "{{ arvados_master_create_mercury_admin_user_script }}"
+    mode: 0700
+    owner: www-data
+  notify:
+    - create mercury admin user
+  
 
 ##############################################################################
 # arvados-ws
