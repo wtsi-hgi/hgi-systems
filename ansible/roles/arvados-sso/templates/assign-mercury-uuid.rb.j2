@@ -1,5 +1,6 @@
 
 u = User.find_by_email("mercury@sanger.ac.uk") || User.new(:email => "mercury@sanger.ac.uk")
+u.save!
 u.uuid = "ncucu-tpzed-mercuryadminsso"
 u.first_name = "Mercury"
 u.last_name = "pipeline"
