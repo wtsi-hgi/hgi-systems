@@ -59,6 +59,6 @@ sanger_ftp_proxy: http://wwwcache.sanger.ac.uk:3128
 hgi_docker_os_image_name: hgi-docker-xenial-fa88ed1d
 hgi_docker_os_image_user: ubuntu
 
-ansible_ssh_extra_args: "{% if bastion_host %}-o ProxyCommand=\"ssh -W %h:%p -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
+ansible_ssh_extra_args: "{% if bastion_host is defined and bastion_host %}-o ProxyCommand=\"ssh -W %h:%p -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
 
 pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
