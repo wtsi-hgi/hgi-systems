@@ -57,6 +57,32 @@ resource "openstack_compute_secgroup_v2" "https" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "tcp-local" {
+  provider    = "openstack"
+  name        = "spark-local_${var.region}_${var.env}"
+  description = "Local network access from all TCP ports"
+
+  rule {
+    from_port   = 0
+    to_port     = 65535
+    ip_protocol = "tcp"
+    cidr        = "192.168.0.0/16"
+  }
+}
+
+resource "openstack_compute_secgroup_v2" "udp-local" {
+  provider    = "openstack"
+  name        = "spark-standalone-local_${var.region}_${var.env}"
+  description = "Local network access from all UDP ports"
+
+  rule {
+    from_port   = 0
+    to_port     = 65535
+    ip_protocol = "udp"
+    cidr        = "192.168.0.0/16"
+  }
+}
+
 output "security_group_ids" {
   value = {
     ssh   = "${openstack_compute_secgroup_v2.ssh.id}"
