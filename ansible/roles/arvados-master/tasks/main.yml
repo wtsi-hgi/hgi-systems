@@ -231,7 +231,7 @@
 - name: create trusted workbench api client script
   become: yes
   template: 
-    src: "create-workbench-api-client.rb.j2"	
+    src: "create-workbench-api-client.rb.j2"
     dest: "{{ arvados_master_create_workbench_api_client_script }}"
     mode: 0700
     owner: www-data
