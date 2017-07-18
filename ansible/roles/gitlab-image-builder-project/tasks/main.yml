@@ -1,0 +1,58 @@
+"""
+
+# TODO: split out common setup
+
+- builders:
+  - repository: https://gitlab.internal.sanger.ac.uk/hgi/hgi-base-image-builder.git
+    files:
+      - src: .gitlab-ci.yml
+        dest: .gitlab-ci.yml
+        overwrite: true
+      - src: 1000-debugging.sh
+        dest: ci/before_scripts.d/1000-debugging.sh
+        overwrite: false
+    templates:
+      - src: 10-ansible-inventory-groups.sh.j2
+        dest: 10-ansible-inventory-groups.sh
+        overwrite: true
+        variables:
+          ansible_groups:
+            - common
+      - src: README.md.j2
+        dest: README.md
+        overwrite: false
+        variables:
+          repository_name: hgi-image-creation
+          title: Builds Base Images for HGI
+          description: Uses CI to build base images for HGI instances.
+    subrepos:
+      - src: https://github.com/wtsi-hgi/hgi-image-creation.git
+        dest: subrepos/hgi-image-creation
+        branch: master
+        overwrite: false
+      - src: https://github.com/wtsi-hgi/hgi-systems.git
+        dest: subrepos/hgi-systems
+        branch: master
+        overwrite: false
+"""
+
+---
+
+# TODO: create a temp directory to clone the builder repositories into
+
+# TODO: clone and checkout n builder repositories
+
+# TODO: clone and checkout hgi-image-creation
+
+# TODO: set facts for n builders
+
+- name: TODO
+  delegate_to: "{{ gitlab_image_builder_project_delegate }}"
+  gitcommonsync:
+    repository: "{{ item.repository }}"
+    committer_name: Ansible Synchroniser
+    committer_email: hgi@sanger.ac.uk
+    # TODO: prefix template and file srcs with location of hgi-image-creation common directory
+    subrepos: "{{ item.subrepos }}"
+
+# TODO: remove temp directory
