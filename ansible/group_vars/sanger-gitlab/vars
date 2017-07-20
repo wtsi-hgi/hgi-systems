@@ -26,3 +26,4 @@
 
 gitlab_username: mercury
 gitlab_url: https://gitlab.internal.sanger.ac.uk
+gitlab_hgi_group: hgi
