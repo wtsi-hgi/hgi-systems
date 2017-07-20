@@ -20,4 +20,4 @@
 ---
 # file: roles/gitlab-project/defaults/main.yml
 
-gitlab_build_variables_delegate: localhost
+gitlab_project_delegate: localhost
