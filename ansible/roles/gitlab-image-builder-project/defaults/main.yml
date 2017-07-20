@@ -1,3 +1,41 @@
 ---
 
 gitlab_image_builder_project_delegate: localhost
+
+gitlab_image_builder_project_common_repository_url: https://github.com/wtsi-hgi/hgi-image-creation.git
+gitlab_image_builder_project_common_repository_branch: master
+gitlab_image_builder_project_common_repository_directory: repository
+
+gitlab_image_builder_project_synchronisations:
+  files:
+    gitlab_ci:
+      src: .gitlab-ci.yml
+      dest: .gitlab-ci.yml
+      overwrite: true
+    debugging:
+      src: 1000-debugging.sh
+      dest: ci/before_scripts.d/1000-debugging.sh
+      overwrite: false
+  templates:
+    ansible_groups:
+      src: 10-ansible-inventory-groups.sh.j2
+      dest: 10-ansible-inventory-groups.sh
+      overwrite: true
+      variables:
+        ansible_groups:
+          - common
+    readme:
+      src: README.md.j2
+      dest: README.md
+      overwrite: false
+  subrepos:
+    hgi_image_creation:
+      src: https://github.com/wtsi-hgi/hgi-image-creation.git
+      dest: subrepos/hgi-image-creation
+      branch: master
+      overwrite: false
+    hgi_systems:
+      src: https://github.com/wtsi-hgi/hgi-systems.git
+      dest: subrepos/hgi-systems
+      branch: master
+      overwrite: false
