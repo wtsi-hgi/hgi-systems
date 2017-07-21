@@ -8,7 +8,7 @@ gitlab_image_builder_project_committer_name: Ansible Synchroniser
 gitlab_image_builder_project_committer_email: hgi@sanger.ac.uk
 
 gitlab_image_builder_project_projects:
-  - name: test-1
+  - name: hgi-base-image-builder
     settings:
       files: "{{ gitlab_image_builder_project_synchronisations.files | json_query('*') }}"
       templates:
@@ -24,9 +24,32 @@ gitlab_image_builder_project_projects:
             gitlab_image_builder_project_synchronisations.templates.readme
               | combine(dict(
                   variables=dict(
-                      repository_name='hgi-image-creation',
+                      repository_name='hgi-base-image-builder',
                       title='Builds Base Images for HGI',
-                      description='Uses CI to build base images for HGI instances.'
+                      description='Uses CI to build an image suitable for use as a base image for HGI instances.'
+                  )
+                ))
+          }}"
+      subrepos: "{{ gitlab_image_builder_project_synchronisations.subrepos | json_query('*') }}"
+  - name: hgi-docker-image-builder
+    settings:
+      files: "{{ gitlab_image_builder_project_synchronisations.files | json_query('*') }}"
+      templates:
+        - "{{
+            gitlab_image_builder_project_synchronisations.templates.ansible_groups
+              | combine(dict(
+                  variables=dict(
+                      ansible_groups=['common', 'dockerers']
+                  )
+                ))
+          }}"
+        - "{{
+            gitlab_image_builder_project_synchronisations.templates.readme
+              | combine(dict(
+                  variables=dict(
+                      repository_name='hgi-docker-image-builder',
+                      title='Builds Images With Docker',
+                      description='Uses CI to build an image suitable for use to run docker containers for HGI instances.'
                   )
                 ))
           }}"

@@ -5,7 +5,7 @@
 - name: create GitLab image builder projects
   delegate_to: "{{ gitlab_image_builder_project_delegate }}"
   gitlab_project:
-    server_url: "https://{{ gitlab_image_builder_project_gitlab_host }}"
+    server_url: "{{ gitlab_image_builder_project_gitlab_url }}"
     login_token: "{{ gitlab_image_builder_project_gitlab_token }}"
     name: "{{ item }}"
     group: "{{ gitlab_image_builder_project_gitlab_group }}"
@@ -27,6 +27,7 @@
 
     - set_fact:
         common_repository: "{{ temp_directory.path }}/{{ gitlab_image_builder_project_common_repository_checkout_directory }}"
+        gitlab_host: "{{ gitlab_image_builder_project_gitlab_url | regex_replace('^.*://(.*)', '\\1') }}"
 
     - name: checkout common image creation repository
       delegate_to: "{{ gitlab_image_builder_project_delegate }}"
@@ -39,7 +40,7 @@
     - name: synchronise GitHub image builder projects
       delegate_to: "{{ gitlab_image_builder_project_delegate }}"
       gitcommonsync:
-        repository: "git@{{ gitlab_image_builder_project_gitlab_host }}:{{ gitlab_image_builder_project_gitlab_group }}/{{ item.name }}.git"
+        repository: "git@{{ gitlab_host }}:{{ gitlab_image_builder_project_gitlab_group }}/{{ item.name }}.git"
         committer_name: "{{ gitlab_image_builder_project_committer_name }}"
         committer_email: "{{ gitlab_image_builder_project_committer_email }}"
         files: "{{
@@ -61,7 +62,6 @@
       vars:
         ansible_python_interpreter: /usr/bin/env python3
       with_items: "{{ gitlab_image_builder_project_projects }}"
-      check_mode: True
 
   always:
     - name: remove temp directory

@@ -19,7 +19,7 @@ gitlab_image_builder_project_synchronisations:
   templates:
     ansible_groups:
       src: 10-ansible-inventory-groups.sh.j2
-      dest: 10-ansible-inventory-groups.sh
+      dest: ci/before_scripts.d/10-ansible-inventory-groups.sh
       overwrite: true
       variables:
         ansible_groups:
@@ -27,7 +27,7 @@ gitlab_image_builder_project_synchronisations:
     readme:
       src: README.md.j2
       dest: README.md
-      overwrite: false
+      overwrite: true
   subrepos:
     hgi_image_creation:
       src: https://github.com/wtsi-hgi/hgi-image-creation.git
