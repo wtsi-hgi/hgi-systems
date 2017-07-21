@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/wtsi-hgi/git-common-sync.git
+	branch = master
+	commit = d90347e1196efc871efe28b822c047dab5d9af56
+	parent = d526202cea24be2ec6f5732877d5215158e2537f
+	cmdver = 0.3.1

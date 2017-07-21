@@ -1,0 +1,27 @@
+FROM mercury/python-subrepo
+
+ENV INSTALL_DIRECTORY=/tmp
+
+RUN git config --global user.email "example@example.com" \
+    && git config --global user.name example
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        rsync \
+        unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Note: Need to install newer version of git than that available for Jessie
+RUN echo "deb http://ftp.debian.org/debian stretch main contrib non-free" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        git \
+    && rm -rf /var/lib/apt/lists/* \
+    && sed -i '$ d' /etc/apt/sources.list
+
+ADD test_requirements.txt ${INSTALL_DIRECTORY}
+ADD requirements.txt ${INSTALL_DIRECTORY}
+RUN pip install coverage \
+    && pip install -U -r ${INSTALL_DIRECTORY}/test_requirements.txt \
+    && pip install -U -r ${INSTALL_DIRECTORY}/requirements.txt
+RUN rm ${INSTALL_DIRECTORY}/*requirements.txt

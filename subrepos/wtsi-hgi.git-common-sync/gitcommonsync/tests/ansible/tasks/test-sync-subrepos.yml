@@ -1,0 +1,73 @@
+---
+
+- block:
+  - include: setup.yml
+
+  - name: test create new subrepo
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      subrepos:
+        - src: "{{ remote_directory }}"
+          dest: subrepos/other-repository
+          branch: master
+          overwrite: true
+    register: test_results
+
+  - name: verify new repository synchronised
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.subrepos == ["subrepos/other-repository"]
+        - (test_results.synchronised.files + test_results.synchronised.templates) | length == 0
+
+  - name: test update existing subrepo when no override
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      subrepos:
+        - src: "{{ remote_directory }}"
+          dest: subrepos/other-repository
+          branch: develop
+          overwrite: false
+    register: test_results
+
+  - name: verify subrepo has not been updated
+    assert:
+      that:
+        - not test_results.changed
+        - test_results | json_query("values(synchronised)[]") | length == 0
+
+  - name: test update existing subrepo
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      subrepos:
+        - src: "{{ remote_directory }}"
+          dest: subrepos/other-repository
+          branch: develop
+          overwrite: true
+    register: test_results
+
+  - name: verify subrepo has been updated
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.subrepos == ["subrepos/other-repository"]
+        - (test_results.synchronised.files + test_results.synchronised.templates) | length == 0
+
+  - name: test update up-to-date subrepo
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      subrepos:
+        - src: "{{ remote_directory }}"
+          dest: subrepos/other-repository
+          branch: develop
+          overwrite: true
+    register: test_results
+
+  - name: verify subrepo has been updated
+    assert:
+      that:
+        - not test_results.changed
+        - test_results | json_query("values(synchronised)[]") | length == 0
+
+  always:
+    - include: tear-down.yml

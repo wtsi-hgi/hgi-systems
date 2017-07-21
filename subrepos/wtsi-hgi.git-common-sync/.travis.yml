@@ -1,0 +1,22 @@
+sudo: required
+
+language: python
+
+python:
+  - 3.6
+
+services:
+  - docker
+
+before_install:
+  - docker build -t testing-image -f Dockerfile.test .
+  - pip install codecov
+
+install:
+  -
+
+script:
+  - docker run -v $PWD:$PWD -w $PWD testing-image ./test-runner.sh
+
+after_success:
+  - codecov

@@ -1,0 +1,59 @@
+---
+
+- block:
+  - include: setup.yml
+
+  - name: test create new template
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      templates:
+        - src: "{{ example_files }}/template.j2"
+          dest: template.txt
+          variables:
+            message: "{{ gitcommonsync_test_template_message_1 }}"
+    register: test_results
+
+  - name: verify template created
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.templates == ["template.txt"]
+        - (test_results.synchronised.subrepos + test_results.synchronised.files) | length == 0
+
+  - name: test update template
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      templates:
+        - src: "{{ example_files }}/template.j2"
+          dest: template.txt
+          variables:
+            message: "{{ gitcommonsync_test_template_message_2 }}"
+          overwrite: true
+    register: test_results
+
+  - name: verify template changed
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.templates == ["template.txt"]
+        - (test_results.synchronised.subrepos + test_results.synchronised.files) | length == 0
+
+  - name: test update up-to-date template
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      templates:
+        - src: "{{ example_files }}/template.j2"
+          dest: template.txt
+          variables:
+            message: "{{ gitcommonsync_test_template_message_2 }}"
+          overwrite: true
+    register: test_results
+
+  - name: verify template not changed
+    assert:
+      that:
+        - not test_results.changed
+        - test_results | json_query("values(synchronised)[]") | length == 0
+
+  always:
+    - include: tear-down.yml

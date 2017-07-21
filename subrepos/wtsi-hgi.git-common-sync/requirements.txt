@@ -1,0 +1,4 @@
+PyYAML>=3.12
+GitPython
+ansible>=2.3.1.0
+gitsubrepo>=1.0.2

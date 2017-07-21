@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = .
+omit =
+    gitcommonsync/tests/*
+parallel = True

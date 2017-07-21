@@ -1,0 +1,85 @@
+---
+
+- block:
+  - include: setup.yml
+
+  - name: test synchronise new file
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      files:
+        - src: "{{ example_files }}/a.txt"
+          dest: a/new.txt
+          overwrite: true
+    register: test_results
+
+  - name: verify new file changed
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.files == ["a/new.txt"]
+        - (test_results.synchronised.subrepos + test_results.synchronised.templates) | length == 0
+
+  - name: test synchronise changed file when no override
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      files:
+        - src: "{{ example_files }}/a.txt"
+          dest: a/d.txt
+          overwrite: false
+    register: test_results
+
+  - name: verify no change
+    assert:
+      that:
+        - not test_results.changed
+        - test_results | json_query("values(synchronised)[]") | length == 0
+
+  - name: test synchronise changed file
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      files:
+        - src: "{{ example_files }}/a.txt"
+          dest: a/d.txt
+          overwrite: true
+    register: test_results
+
+  - name: verify existing file has changed
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.files == ["a/d.txt"]
+        - (test_results.synchronised.subrepos + test_results.synchronised.templates) | length == 0
+
+  - name: test synchronise unchanged file
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      files:
+        - src: "{{ example_files }}/a.txt"
+          dest: a/d.txt
+          overwrite: true
+    register: test_results
+
+  - name: verify no change
+    assert:
+      that:
+        - not test_results.changed
+        - test_results | json_query("values(synchronised)[]") | length == 0
+
+  - name: test synchronise changed directory
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      files:
+        - src: "{{ example_files }}/b"
+          dest: a
+          overwrite: true
+    register: test_results
+
+  - name: verify existing directory has changed
+    assert:
+      that:
+        - test_results.changed
+        - test_results.synchronised.files == ["a"]
+        - (test_results.synchronised.subrepos + test_results.synchronised.templates) | length == 0
+
+  always:
+    - include: tear-down.yml

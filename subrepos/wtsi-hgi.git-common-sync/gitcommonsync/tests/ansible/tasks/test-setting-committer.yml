@@ -1,0 +1,41 @@
+---
+
+- block:
+  - include: setup.yml
+
+  - name: test synchronise new file
+    gitcommonsync:
+      repository: "{{ remote_directory }}"
+      committer_name: "{{ gitcommonsync_test_committer_name }}"
+      committer_email: "{{ gitcommonsync_test_committer_email }}"
+      files:
+        - src: "{{ example_files }}/a.txt"
+          dest: a/new.txt
+          overwrite: true
+
+  - set_fact:
+      checkout_directory: "{{ temp_directory }}/checkout"
+
+  - name: checkout copy of the test repository
+    git:
+      repo: "{{ remote_directory }}"
+      dest: "{{ checkout_directory }}"
+
+  - shell: git log -1 --pretty='%an'
+    args:
+      chdir: "{{ checkout_directory }}"
+    register: set_author_name
+
+  - shell: git log -1 --pretty='%ae'
+    args:
+      chdir: "{{ checkout_directory }}"
+    register: set_author_email
+
+  - name: verify committer
+    assert:
+      that:
+        - set_author_name.stdout == gitcommonsync_test_committer_name
+        - set_author_email.stdout == gitcommonsync_test_committer_email
+
+  always:
+    - include: tear-down.yml

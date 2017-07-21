@@ -1,0 +1,9 @@
+---
+
+gitcommonsync_test_remote_git_repository: test-repository.git
+
+gitcommonsync_test_template_message_1: Hello world
+gitcommonsync_test_template_message_2: Hello world 2
+
+gitcommonsync_test_committer_name: Ansible Synchroniser
+gitcommonsync_test_committer_email: team@example.com
