@@ -1,7 +1,6 @@
 ---
 
 gitlab_image_builder_project_gitlab_url: "{{ gitlab_url }}"
-gitlab_image_builder_project_gitlab_username: "{{ gitlab_username }}"
 gitlab_image_builder_project_gitlab_token: "{{ gitlab_token }}"
 gitlab_image_builder_project_gitlab_group: "{{ gitlab_hgi_group }}"
 
@@ -9,7 +8,7 @@ gitlab_image_builder_project_committer_name: Ansible Synchroniser
 gitlab_image_builder_project_committer_email: hgi@sanger.ac.uk
 
 gitlab_image_builder_project_projects:
-  - name: hgi-base-image-builder
+  - name: test-1
     settings:
       files: "{{ gitlab_image_builder_project_synchronisations.files | json_query('*') }}"
       templates:

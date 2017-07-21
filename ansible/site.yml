@@ -22,6 +22,7 @@
 
 # set up non-host infrastructure
 - include: gitlab-projects.yml
+- include: gitlab-image-builder-projects.yml
 
 # make sure openstack instances are bootstrapped and facts are set
 # TODO: migrate to dynamic inventory?

@@ -83,6 +83,10 @@ hgi-cordon-cookie-jar
 cookie-monsters
 cookie-jars
 
+# FIXME: not sure what host should be in this group
+[gitlab-image-builder-projects]
+localhost
+
 [gitlab-runners:children]
 openstack-instance-gitlab-runners
 
@@ -95,6 +99,7 @@ consul-servers
 
 [sanger-gitlab:children]
 gitlab-runners
+gitlab-image-builder-projects
 
 [openstack-tenant-cleaners:children]
 openstance-instance-openstack-tenant-cleaners

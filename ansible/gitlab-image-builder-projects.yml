@@ -1,0 +1,7 @@
+---
+
+- hosts: gitlab-image-builder-projects
+  gather_facts: no
+  roles:
+    - gitlab-image-builder-project
+

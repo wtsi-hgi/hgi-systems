@@ -6,7 +6,6 @@
   delegate_to: "{{ gitlab_image_builder_project_delegate }}"
   gitlab_project:
     server_url: "https://{{ gitlab_image_builder_project_gitlab_host }}"
-    login_user: "{{ gitlab_image_builder_project_gitlab_username }}"
     login_token: "{{ gitlab_image_builder_project_gitlab_token }}"
     name: "{{ item }}"
     group: "{{ gitlab_image_builder_project_gitlab_group }}"
