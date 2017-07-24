@@ -24,7 +24,7 @@
   tags: docker-machine
   become: yes
   get_url: 
-    url: https://github.com/docker/machine/releases/download/v0.10.0/docker-machine-Linux-x86_64
+    url: https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-Linux-x86_64
     dest: /usr/local/bin/docker-machine
     mode: 0755
-    checksum: sha256:74f77385f6744fb83ec922b206f39b4c33ac42e63ed09d4d63652741d8a94df9
+    checksum: sha256:3c0a1a03653dff205f27bb178773f3c294319435a2589cf3cb4456423f8cef08
