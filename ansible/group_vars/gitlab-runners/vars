@@ -23,7 +23,7 @@
 
 gitlab_runner_concurrent: 30
 gitlab_runner_idle_machines: 3
-gitlab_runner_idle_time: 900
+gitlab_runner_idle_time: 3600
 gitlab_runner_max_builds: 0
 
 gitlab_runner_os_flavor_name: "m1.small"
