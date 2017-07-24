@@ -59,6 +59,7 @@ zookeepers
 marathoners
 chronosians
 openstack-instance-gitlab-runners
+gitlab-runners
 
 [logrotaters:children]
 openstack-instance-gitlab-runners
