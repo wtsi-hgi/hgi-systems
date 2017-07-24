@@ -63,7 +63,7 @@ resource "openstack_compute_secgroup_v2" "tcp-local" {
   description = "Local network access from all TCP ports"
 
   rule {
-    from_port   = 0
+    from_port   = 1
     to_port     = 65535
     ip_protocol = "tcp"
     cidr        = "192.168.0.0/16"
@@ -76,7 +76,7 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
   description = "Local network access from all UDP ports"
 
   rule {
-    from_port   = 0
+    from_port   = 1
     to_port     = 65535
     ip_protocol = "udp"
     cidr        = "192.168.0.0/16"
