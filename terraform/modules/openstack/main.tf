@@ -59,11 +59,11 @@ resource "openstack_compute_secgroup_v2" "https" {
 
 resource "openstack_compute_secgroup_v2" "tcp-local" {
   provider    = "openstack"
-  name        = "spark-local_${var.region}_${var.env}"
+  name        = "tcp-local_${var.region}_${var.env}"
   description = "Local network access from all TCP ports"
 
   rule {
-    from_port   = 0
+    from_port   = 1
     to_port     = 65535
     ip_protocol = "tcp"
     cidr        = "192.168.0.0/16"
@@ -72,11 +72,11 @@ resource "openstack_compute_secgroup_v2" "tcp-local" {
 
 resource "openstack_compute_secgroup_v2" "udp-local" {
   provider    = "openstack"
-  name        = "spark-standalone-local_${var.region}_${var.env}"
+  name        = "udp-local_${var.region}_${var.env}"
   description = "Local network access from all UDP ports"
 
   rule {
-    from_port   = 0
+    from_port   = 1
     to_port     = 65535
     ip_protocol = "udp"
     cidr        = "192.168.0.0/16"
@@ -85,11 +85,13 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
 
 output "security_group_ids" {
   value = {
-    ssh   = "${openstack_compute_secgroup_v2.ssh.id}"
-    https = "${openstack_compute_secgroup_v2.https.id}"
+    ssh       = "${openstack_compute_secgroup_v2.ssh.id}"
+    https     = "${openstack_compute_secgroup_v2.https.id}"
+    tcp-local = "${openstack_compute_secgroup_v2.tcp-local.id}"
+    udp-local = "${openstack_compute_secgroup_v2.udp-local.id}"
   }
 
-  depends_on = ["${openstack_compute_secgroup_v2.ssh}"]
+  depends_on = ["${openstack_compute_secgroup_v2.ssh}", "${openstack_compute_secgroup_v2.https}", "${openstack_compute_secgroup_v2.tcp-local}", "${openstack_compute_secgroup_v2.udp-local}"]
 }
 
 ###############################################################################
