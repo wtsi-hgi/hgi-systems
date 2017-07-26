@@ -1,0 +1,106 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/spark-master/tasks/main.yml
+
+- name: create spark group
+  become: yes
+  group:
+    name: spark
+
+- name: create spark user account
+  become: yes
+  user:
+    name: spark
+    group: spark
+    shell: /bin/bash
+
+- name: set authorized keys for spark
+  become: yes
+  authorized_key:
+    user: spark
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_file:
+    - public_keys/spark
+
+- name: set private key for spark
+  become: yes
+  copy:
+    content: "{{ spark_master_ssh_key }}"
+    dest: /home/spark/.ssh/id_rsa
+    owner: spark
+    mode: 0600
+
+- name: install spark prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - openjdk-8-jre-headless
+
+- name: download spark
+  become: yes
+  get_url:
+    url: "{{ spark_master_apache_mirror }}/spark/spark-{{ spark_master_version }}/spark-{{ spark_master_version }}-bin-hadoop2.7.tgz"
+    dest: "/tmp/spark-{{ spark_master_version }}-bin-hadoop2.7.tgz"
+    checksum: "{{ spark_master_tar_checksum }}"
+    mode: 0644
+    owner: root
+
+- name: create spark directory
+  become: yes
+  file:
+    path: "{{ spark_master_prefix }}"
+    state: directory
+    owner: spark
+
+- name: expand spark
+  become: yes
+  unarchive:
+    src: "/tmp/spark-{{ spark_master_version }}-bin-hadoop2.7.tgz"
+    dest: "{{ spark_master_prefix }}"
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+    owner: spark
+    creates: "{{ spark_master_prefix }}/bin/spark-shell"
+  notify:
+    - restart spark
+
+- name: install systemd spark service
+  become: yes
+  template:
+    src: spark.service.j2
+    dest: /etc/systemd/system/spark.service
+    owner: root
+  notify:
+    - restart spark
+
+- name: enable and start spark service
+  become: yes
+  service:
+    name: spark
+    enabled: yes
+    state: started
+

@@ -1,0 +1,5 @@
+- name: restart spark
+  become: yes
+  service:
+    name: spark
+    state: restarted
