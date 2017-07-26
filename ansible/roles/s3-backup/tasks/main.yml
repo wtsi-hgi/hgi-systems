@@ -38,12 +38,14 @@
   template:
     src: s3cmd.ini.j2
     dest: "{{ s3_backup_s3cmd_configuration_file }}"
+    mode: 0660
 
 - name: create duplicity-backup.sh configuration file
   become: yes
   template:
     src: duplicity-backup-sh.conf.j2
     dest: "{{ s3_backup_duplicity_backup_sh_configuration_file }}"
+    mode: 0660
 
 - name: ensure s3 backup bucket exists
   run_once: true
