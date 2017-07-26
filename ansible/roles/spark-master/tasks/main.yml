@@ -74,6 +74,7 @@
     owner: root
   notify:
     - restart spark
+    - reload systemd
 
 - name: enable and start spark service
   become: yes
