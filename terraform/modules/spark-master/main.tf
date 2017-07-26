@@ -31,7 +31,7 @@ resource "openstack_compute_floatingip_v2" "spark-master" {
 resource "openstack_compute_instance_v2" "spark-master" {
   provider        = "openstack"
   count           = 1
-  name            = "spark-master"
+  name            = "spark-${var.spark_cluster_id}-master"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"
   key_pair        = "${var.key_pair_ids["mercury"]}"

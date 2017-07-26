@@ -2,6 +2,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
 variable "spark_cluster_id" {}
+variable "count" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -30,8 +31,8 @@ resource "openstack_compute_floatingip_v2" "spark-compute" {
 
 resource "openstack_compute_instance_v2" "spark-compute" {
   provider        = "openstack"
-  count           = 1
-  name            = "spark-compute"
+  count           = "${var.count}"
+  name            = "spark-${var.spark_cluster_id}-compute-${count.index}"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"
   key_pair        = "${var.key_pair_ids["mercury"]}"
