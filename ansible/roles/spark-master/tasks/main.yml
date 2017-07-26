@@ -20,28 +20,6 @@
 ---
 # file: roles/spark-master/tasks/main.yml
 
-- name: create spark group
-  become: yes
-  group:
-    name: spark
-
-- name: create spark user account
-  become: yes
-  user:
-    name: spark
-    group: spark
-    shell: /bin/bash
-
-- name: set authorized keys for spark
-  become: yes
-  authorized_key:
-    user: spark
-    manage_dir: yes
-    state: present
-    key: "{{ item }}"
-  with_file:
-    - public_keys/spark
-
 - name: set private key for spark
   become: yes
   copy:

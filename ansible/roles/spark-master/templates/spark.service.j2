@@ -5,7 +5,7 @@ After=systemd-user-sessions.service
 After=network-online.target
 
 [Service]
-User=mercury
+User=spark
 Type=forking
 ExecStart={{ spark_master_prefix }}/sbin/start-all.sh
 ExecStop={{ spark_master_prefix }}/sbin/stop-all.sh
