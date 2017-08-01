@@ -83,3 +83,33 @@
     enabled: yes
     state: started
 
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ spark_master_cert }}"
+    dest: "{{ spark_master_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ spark_master_key }}"
+    dest: "{{ spark_master_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for spark
+  become: yes
+  template:
+    src: "spark.conf.j2"
+    dest: /etc/nginx/conf.d/spark.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+
