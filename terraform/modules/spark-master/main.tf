@@ -69,7 +69,7 @@ resource "openstack_compute_instance_v2" "spark-master" {
 
 resource "infoblox_record" "spark-master-dns" {
   value  = "${openstack_compute_instance_v2.spark-master.access_ip_v4}"
-  name   = "spark-${var.spark_cluster_id}"
+  name   = "spark-${var.spark_cluster_id}-master"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
