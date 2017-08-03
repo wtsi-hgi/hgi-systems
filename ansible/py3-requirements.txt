@@ -1,4 +1,4 @@
-git+https://github.com/ansible/ansible.git@v2.3.1.0-1
 git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git
+ansible==2.3.1.0
 shade
 boto
