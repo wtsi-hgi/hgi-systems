@@ -11,7 +11,7 @@ docker build -t hgi-systems-ansible .
 With `mercury`'s SSH key and the Ansible vault password:
 ```bash
 docker run -it --rm \
-    -v ~/checkouts/hgi-systems:/hgi-systems
+    -v ~/checkouts/hgi-systems:/hgi-systems \
     -v ~/.ssh/:/ssh-key:ro \
     -v ~/secrets/:/vault-password:ro \
     -e VAULT_LOCATION=/vault-password/vault.pw \
