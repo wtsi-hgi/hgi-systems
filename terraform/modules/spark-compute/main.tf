@@ -64,7 +64,7 @@ resource "openstack_compute_instance_v2" "spark-compute" {
 
 resource "infoblox_record" "spark-compute-dns" {
   count  = "${var.count}"
-  value  = "${openstack_compute_instance_v2.spark-compute[count.index].access_ip_v4}"
+  value  = "${openstack_compute_instance_v2.spark-compute.${count.index}.access_ip_v4}"
   name   = "spark-${var.spark_cluster_id}-compute-${count.index}"
   domain = "${var.domain}"
   type   = "A"
