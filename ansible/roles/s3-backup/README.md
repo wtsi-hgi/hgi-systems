@@ -6,4 +6,5 @@ s3_backup_destination
 s3_backup_s3_host
 s3_backup_s3_access_key
 s3_backup_s3_secret_key
+s3_backup_s3_bucket
 ```

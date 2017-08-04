@@ -21,20 +21,7 @@
 #
 ---
 
-consul_bootstrap_expect: "{{ groups['consul-servers'] | count }}"
-
-consul_acl_master_token: "{{ consul_server_acl_master_token }}"
-consul_acl_token: "{{ consul_server_acl_token }}"
-consul_acl_default_policy: "deny"
-consul_acl_datacenter: "{{ consul_datacenter }}"
-
-consul_dns_allow_stale: true
-consul_dns_max_stale: 30s
-consul_dns_node_ttl: 30s
-consul_dns_only_passing: true
-consul_recursors: "{{ sanger_network_dns_servers }}"
-
-consul_s3_backup_bucket: consul-backup
-consul_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
-consul_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
-consul_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+consul_server_s3_backup_bucket: consul-backup
+consul_server_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+consul_server_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+consul_server_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"

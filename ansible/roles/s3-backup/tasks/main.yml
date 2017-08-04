@@ -50,11 +50,11 @@
 - name: ensure s3 backup bucket exists
   run_once: true
   s3_bucket:
-    name: "{{ consul_s3_backup_bucket }}"
+    name: "{{ s3_backup_s3_bucket }}"
     ceph: true
-    s3_url: "https://{{ consul_s3_host }}"
-    access_key: "{{ consul_s3_access_key }}"
-    secret_key: "{{ consul_s3_secret_key }}"
+    s3_url: "https://{{ s3_backup_s3_host }}"
+    access_key: "{{ s3_backup_s3_access_key }}"
+    secret_key: "{{ s3_backup_s3_secret_key }}"
 
 - name: schedule backup using cron
   become: yes

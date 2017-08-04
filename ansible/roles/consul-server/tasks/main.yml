@@ -32,10 +32,11 @@
     name: s3-backup
   vars:
     s3_backup_source: "{{ consul_data_dir }}"
-    s3_backup_destination: "s3://{{ consul_s3_host }}/{{ consul_s3_backup_bucket }}/{{ hostvars[volume]['openstack_volume_name'] }}"
-    s3_backup_s3_host: "{{ consul_s3_host }}"
-    s3_backup_s3_access_key: "{{ consul_s3_access_key }}"
-    s3_backup_s3_secret_key: "{{ consul_s3_secret_key }}"
+    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ hostvars[volume]['openstack_volume_name'] }}"
+    s3_backup_s3_host: "{{ consul_server_s3_host }}"
+    s3_backup_s3_access_key: "{{ consul_server_s3_access_key }}"
+    s3_backup_s3_secret_key: "{{ consul_server_s3_secret_key }}"
+    s3_backup_s3_bucket: "{{ consul_server_s3_backup_bucket }}"
 
 # TODO: This should be done in common setup
 - name: setup to install packages from PyPi
@@ -56,10 +57,11 @@
     - python-consul
     - pyhcl
 
-# TODO: Can this be done on localhost and therefore not require Python modules to be installed on the host?
 # FIXME: I am unsure if the ACL master token is guaranteed to be set at this point as I think it is done by the leader
+# Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
 - name: create ACL token required for the server to communicate fully with the rest of the cluster
   consul_acl:
+    host: localhost
     name: "{{ consul_server_acl_name }}"
     token: "{{ consul_server_acl_token }}"
     mgmt_token: "{{ consul_server_acl_master_token }}"
