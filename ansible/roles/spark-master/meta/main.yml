@@ -23,3 +23,5 @@
 dependencies:
   - { role: common }
   - { role: spark-common }
+  - role: franklinkim.nginx
+    become: yes

@@ -1,3 +1,7 @@
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+
 - name: restart spark
   become: yes
   service:
