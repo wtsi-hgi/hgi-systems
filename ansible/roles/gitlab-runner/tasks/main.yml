@@ -46,7 +46,7 @@
     update_cache: yes
     cache_valid_time: "{{ apt_cache_valid_time }}"
   with_items:
-    - gitlab-ci-multi-runner=1.11.1 # pin to 1.11.1 until gitlab-ci-multi-runner is fixed or our gitlab is updated (https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/issues/2305)
+    - gitlab-ci-multi-runner
     - python-docker
     - python-pip
   when: ansible_os_family == 'Debian'
