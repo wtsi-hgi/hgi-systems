@@ -135,7 +135,3 @@ gitlab-runner-delta-hgi-ci-01 tenant=delta-hgi-ci-tenant network="delta-gitlab-r
 [openstance-instance-openstack-tenant-cleaners]
 openstack-tenant-cleaner tenant=delta-hgi-tenant network=delta-hgi-network image=delta-hgi-docker-image keypair=delta-hgi-systems-mercury-keypair
 
-# Groups of dynamic inventory hosts managed by Terraform
-#[ssh-gateways]
-#openstack_compute_instance_v2.ssh-gateway-hgi ansible_user=ubuntu
-#openstack_compute_instance_v2.ssh-gateway-hgiarvados ansible_user=ubuntu

@@ -1,2 +1,3 @@
 
-spark_cluster_server_name: spark-01.hgi.sanger.ac.uk
+spark_cluster_id: 01
+spark_cluster_server_name: "spark-{{ spark_cluster_id }}-master.hgi.sanger.ac.uk"

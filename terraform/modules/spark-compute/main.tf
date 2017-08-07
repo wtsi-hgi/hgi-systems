@@ -62,14 +62,14 @@ resource "openstack_compute_instance_v2" "spark-compute" {
   }
 }
 
-resource "infoblox_record" "spark-compute-dns" {
-  count  = "${var.count}"
-  value  = "${openstack_compute_instance_v2.spark-compute.*.access_ip_v4[count.index]}"
-  name   = "spark-${var.spark_cluster_id}-compute-${count.index}"
-  domain = "${var.domain}"
-  type   = "A"
-  ttl    = 600
-}
+#resource "infoblox_record" "spark-compute-dns" {
+#  count  = "${var.count}"
+#  value  = "${openstack_compute_instance_v2.spark-compute.*.access_ip_v4[count.index]}"
+#  name   = "spark-${var.spark_cluster_id}-compute-${count.index}"
+#  domain = "${var.domain}"
+#  type   = "A"
+#  ttl    = 600
+#}
 
 output "ip" {
   value = "${openstack_compute_instance_v2.spark-compute.access_ip_v4}"

@@ -2,8 +2,8 @@
   become: yes
   command: systemctl daemon-reload
 
-- name: restart spark
+- name: restart nginx
   become: yes
   service:
-    name: spark
+    name: nginx
     state: restarted
