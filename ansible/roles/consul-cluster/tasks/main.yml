@@ -70,8 +70,10 @@
         policy: write
       - key: ""
         policy: write
+      - keyring: write
       - node: ""
         policy: write
+      - operator: write
       - query: ""
         policy: write
       - service: ""
