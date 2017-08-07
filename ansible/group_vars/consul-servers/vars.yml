@@ -12,9 +12,3 @@ consul_acl_master_token: "{{ consul_server_acl_master_token }}"
 consul_acl_token: "{{ consul_server_acl_token }}"
 consul_acl_default_policy: "deny"
 consul_acl_datacenter: "{{ consul_datacenter }}"
-
-consul_dns_allow_stale: true
-consul_dns_max_stale: 30s
-consul_dns_node_ttl: 30s
-consul_dns_only_passing: true
-consul_recursors: "{{ sanger_network_dns_servers }}"

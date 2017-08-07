@@ -1,1 +1,6 @@
 ---
+
+consul_is_ui: false
+consul_is_server: false
+consul_dns_config: true
+consul_install_nginx: false

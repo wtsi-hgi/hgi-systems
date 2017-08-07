@@ -1,5 +1,0 @@
----
-
-dependencies:
-  - role: wtsi-hgi.ansible-consul
-    become: yes

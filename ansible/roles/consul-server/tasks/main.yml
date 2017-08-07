@@ -57,10 +57,9 @@
     - python-consul
     - pyhcl
 
-# FIXME: I am unsure if the ACL master token is guaranteed to be set at this point as I think it is done by the leader
-# Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
 - name: create ACL token required for the server to communicate fully with the rest of the cluster
   consul_acl:
+    # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
     host: localhost
     name: "{{ consul_server_acl_name }}"
     token: "{{ consul_server_acl_token }}"

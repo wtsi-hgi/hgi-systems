@@ -1,0 +1,3 @@
+---
+
+consul_acl_token: "{{ consul_credentials['agent'].token }}"

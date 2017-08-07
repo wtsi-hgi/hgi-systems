@@ -1,0 +1,6 @@
+---
+
+- name: Install Consul agent
+  become: yes
+  include_role:
+    name: wtsi-hgi.ansible-consul

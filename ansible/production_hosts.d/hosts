@@ -87,12 +87,17 @@ cookie-jars
 [gitlab-runners:children]
 openstack-instance-gitlab-runners
 
+[consul-credentials:children]
+consul-agents
+
+[consul-commoners:children]
+consul-agents
+consul-servers
+
+[consul-agents]
+
 [consul-servers:children]
 openstack-instance-consul-servers
-
-[consulers:children]
-consul-servers
-#consul-agents
 
 [sanger-gitlab:children]
 gitlab-runners
@@ -101,7 +106,7 @@ gitlab-runners
 openstance-instance-openstack-tenant-cleaners
 
 [sanger-networks:children]
-consul-servers
+consul-commoners
 
 [s3-credentials:children]
 gitlab-runners

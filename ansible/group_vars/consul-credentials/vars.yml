@@ -1,0 +1,8 @@
+# Vault contains:
+# consul_credentials:
+#  terraform:
+#    token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#  agent:
+#    token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+
+---
