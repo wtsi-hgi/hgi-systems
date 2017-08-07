@@ -67,3 +67,12 @@
   with_file:
     - public_keys/mercury-farm3
 
+- name: add entry to hosts file using default ip
+  tags: common
+  become: yes
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "({{ inventory_hostname }}|{{ ansible_fqdn }})"
+    line: "{{ ansible_default_ipv4.address }} {{ ansible_fqdn }} {{ inventory_hostname }}"
+    state: present
+

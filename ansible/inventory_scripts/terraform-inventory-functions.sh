@@ -10,7 +10,7 @@ function terraform_inventory {
        exit 0
    fi
    
-   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ name }}'
+   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE='{{ primary.expanded_attributes.name | default(name) }}'
    
    export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",

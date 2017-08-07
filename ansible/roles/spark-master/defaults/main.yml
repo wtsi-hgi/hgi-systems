@@ -1,9 +1,5 @@
 spark_master_key_file: /etc/ssl.key
 spark_master_cert_file: /etc/ssl.cert
 
-spark_master_version: 2.2.0
-spark_master_tar_checksum: "sha512:7a186a2a007b2dfd880571f7214a7d329c972510a460a8bdbef9f7f2a891019343c020f74b496a61e5aa42bc9e9a79cc99defe5cb3bf8b6f49c07e01b259bc6b"
-spark_master_apache_mirror: "http://mirror.ox.ac.uk/sites/rsync.apache.org"
-
-spark_master_prefix: "/usr/local/spark-{{ spark_master_version }}"
 spark_master_backend_port: 8080
+spark_master_jupyter_port: 8888

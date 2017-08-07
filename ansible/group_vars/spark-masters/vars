@@ -6,3 +6,6 @@
 
 spark_master_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
 spark_master_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+
+spark_master_cluster_workers: "{{ (groups['spark-computers'] | map('extract', hostvars) | selectattr('spark_cluster_id', 'equalto', spark_cluster_id)) | map(attribute='ansible_host') | list() }}"
+

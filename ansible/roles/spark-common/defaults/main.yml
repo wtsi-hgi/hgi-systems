@@ -1,0 +1,6 @@
+spark_common_version: 2.1.1
+spark_common_hadoop_version: 2.7
+spark_common_tar_checksum: "sha512:4b6427ca6dc6f888b21bff9f9a354260af4a0699a1f43caabf58ae6030951ee5fa8b976497aa33de7e4ae55609d47a80bfe66dfc48c79ea28e3e5b03bdaaba11"
+spark_common_apache_mirror: "http://mirror.ox.ac.uk/sites/rsync.apache.org"
+
+spark_common_prefix: "/usr/local/spark-{{ spark_common_version }}"
