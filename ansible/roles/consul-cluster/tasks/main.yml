@@ -110,3 +110,5 @@
     rules:
       - node: ""
         policy: write
+      - key: ""
+        policy: write
