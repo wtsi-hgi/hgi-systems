@@ -1,0 +1,20 @@
+---
+
+- name: download Hail
+  get_url:
+    url: "{{ hail_download_location }}"
+    dest: "{{ hail_download_destination }}"
+    checksum: "md5:{{ hail_download_md5 }}"
+
+- name: expand Hail
+  unarchive:
+    src: "{{ hail_download_destination }}"
+    dest: "{{ hail_installation_location }}"
+    owner: spark
+    creates: "{{ hail_jupyter_binary }}"
+
+- name: remove Hail download
+  become: yes
+  file:
+    path: "{{ hail_download_destination }}"
+    state: absent

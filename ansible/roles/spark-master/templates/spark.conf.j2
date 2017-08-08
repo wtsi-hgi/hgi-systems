@@ -2,6 +2,7 @@ upstream spark {
   server 127.0.0.1:{{ spark_master_backend_port }}  fail_timeout=10s;
 }
 
+# FIXME: This is specifically for Hail, opposed to being required for a generic Spark installation
 upstream jupyter {
   server 127.0.0.1:{{ spark_master_jupyter_port }} fail_timeout=0;
 }

@@ -36,7 +36,7 @@
 
 # when image-building, make sure we apply common role even if no other groups apply
 - hosts: image-building
-  roles: 
+  roles:
     - common
 
 # playbooks that need nonroot host hgi infrastructure
@@ -56,6 +56,7 @@
 - include: cookie-monsters.yml
 - include: dockerers.yml
 - include: gitlab-runners.yml
+- include: hailers.yml
 - include: openstack-tenant-cleaners.yml
 - include: spark.yml
 - include: ssh-gateways.yml
