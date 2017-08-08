@@ -1,0 +1,6 @@
+---
+# handlers file for roles/systemd/service
+- name: reload systemd
+  shell: |
+    service "{{ systemd_service_name }}" restart
+  when: not ansible_unit_test
