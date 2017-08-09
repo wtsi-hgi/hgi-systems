@@ -2,8 +2,10 @@
 
 - name: check if Hail download is required
   stat:
-    path: "{{ hail_jupyter_binary }}"
+    path: "{{ hail_jupiter_binary }}"
   register: jhail_binary
 
 - include: install.yml
-  when: not jhail_binary.contains.exists
+  when: not jhail_binary.stat.exists
+
+- include: startup.yml

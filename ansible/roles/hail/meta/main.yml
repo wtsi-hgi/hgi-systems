@@ -1,4 +1,4 @@
 ---
 
-dependencies:
-  - role: spark-master
+#dependencies:
+#  - role: spark-master

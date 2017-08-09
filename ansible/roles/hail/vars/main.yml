@@ -1,3 +1,4 @@
 ---
 
 hail_download_destination: /tmp/hail.zip
+hail_temp_unzip_destination: /tmp/hail
