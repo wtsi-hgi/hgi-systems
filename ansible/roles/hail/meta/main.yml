@@ -1,4 +1,14 @@
 ---
 
-#dependencies:
-#  - role: spark-master
+dependencies:
+  - role: wtsi-hgi.ansible-anaconda
+    vars:
+      anaconda_python_ver: 3
+      anaconda_ver: "4.4.0"
+      anaconda_pkg_update: no
+#      anaconda_parent_dir: /usr/local
+#      anaconda_link_subdir: anaconda
+
+  - role: spark-master
+
+

@@ -4,4 +4,4 @@
   vars:
     systemd_service_name: hail
     systemd_service_Unit_Description: Hail Manager
-    systemd_service_Service_ExecStart: "su - {{ hail_user }} {{ hail_jupyter_binary }}"
+    systemd_service_Service_ExecStart: "su - {{ hail_user }} {{ hail_jupyter_binary }} --config={{ hail_jupyter_configuration_location }}"
