@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/tumf/ansible-role-systemd-service.git
-	branch = master
-	commit = aad1a4af5872821f2dc9c0a4a4aa1e579839bef3
-	parent = e803194fce27a87ac7977a2e26ffa994c97f2431
+	remote = https://github.com/wtsi-hgi/ansible-role-systemd-service.git
+	branch = hotfixes
+	commit = d4e63c8e1c333db1a2295ac8cee54ad9203c2742
+	parent = 04bc5e70d17a4bcd3e12058459b7d82c2727a4e7
 	cmdver = 0.3.1
