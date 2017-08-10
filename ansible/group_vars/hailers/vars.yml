@@ -1,0 +1,6 @@
+# Ansible vault contains:
+# hail_jupyter_token: xxx
+
+---
+
+hail_apt_cache_valid_time: "{{ apt_cache_valid_time }}"

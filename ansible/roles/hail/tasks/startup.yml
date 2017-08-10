@@ -1,0 +1,13 @@
+---
+
+- include_role:
+    name: wtsi-hgi.ansible-role-systemd-service
+  become: yes
+  vars:
+    systemd_service_name: hail
+    systemd_service_Unit_Description: Hail Manager
+    systemd_service_Service_ExecStart: "{{ hail_jupyter_binary }} --config={{ hail_jupyter_configuration_location }}"
+    systemd_service_Service_User: "{{ hail_user }}"
+    systemd_service_envs:
+      - "SPARK_HOME={{ hail_spark_home }}/bin"
+      - "PATH=$PATH:{{ hail_anaconda_installation_location }}/bin"

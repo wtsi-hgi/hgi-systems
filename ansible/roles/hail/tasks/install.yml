@@ -1,0 +1,69 @@
+---
+
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+  with_items:
+    - unzip
+
+- name: check if Hail download is required
+  stat:
+    path: "{{ hail_jupyter_binary }}"
+  changed_when: false
+  register: jhail_binary
+
+- block:
+    - name: download Hail
+      get_url:
+        url: "{{ hail_download_location }}"
+        dest: "{{ hail_download_destination }}"
+        checksum: "md5:{{ hail_download_md5 }}"
+        force: yes
+
+    - name: create temp directory
+      file:
+        path: "{{ hail_temp_unzip_destination }}"
+        state: directory
+
+    # Note: `--strip-components=1` does not work with `unzip`
+    - name: expand Hail into temp directory
+      unarchive:
+        src: "{{ hail_download_destination }}"
+        dest: "{{ hail_temp_unzip_destination }}"
+        remote_src: yes
+
+    # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
+    - name: install Hail
+      become: yes
+      shell: "mv {{ hail_temp_unzip_destination }}/* {{ hail_installation_location }}/"
+
+  when: not jhail_binary.stat.exists
+  always:
+    - name: remove Hail download
+      file:
+        path: "{{ hail_download_destination }}"
+        state: absent
+
+    - name: remove temp directory
+      file:
+        path: "{{ hail_temp_unzip_destination }}"
+        state: absent
+
+- name: set installation permissions
+  become: yes
+  file:
+    path: "{{ hail_installation_location }}"
+    owner: "{{ hail_user }}"
+    recurse: yes
+
+- name: set configuration for Jupyter
+  become: yes
+  template:
+    src: jupyter_notebook_config.py.j2
+    dest: "{{ hail_jupyter_configuration_location }}"
+    owner: "{{ hail_user }}"
+    mode: "0600"
