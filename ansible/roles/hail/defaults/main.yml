@@ -14,3 +14,9 @@ hail_jupyter_binary: "{{ hail_installation_location }}/bin/jhail"
 hail_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
 
 hail_user: spark
+
+hail_spark_version: 2.1.1
+hail_spark_home: "/usr/local/spark-{{ hail_spark_version }}"
+
+hail_anaconda_version: 4.4.0
+hail_anaconda_installation_location: "/usr/local/anaconda-{{ hail_anaconda_version }}"

@@ -4,11 +4,12 @@ dependencies:
   - role: wtsi-hgi.ansible-anaconda
     vars:
       anaconda_python_ver: 3
-      anaconda_ver: "4.4.0"
+      anaconda_ver: "{{ hail_anaconda_version }}"
       anaconda_pkg_update: no
-#      anaconda_parent_dir: /usr/local
-#      anaconda_link_subdir: anaconda
+      anaconda_parent_dir: "{{ hail_anaconda_installation_location | dirname }}"
+      anaconda_link_subdir: "{{ hail_anaconda_installation_location | basename }}"
 
   - role: spark-master
-
-
+    vars:
+      spark_common_version: "{{ hail_spark_version }}"
+      spark_common_prefix: "{{ hail_spark_home }}"
