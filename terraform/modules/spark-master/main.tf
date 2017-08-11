@@ -2,6 +2,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
 variable "spark_cluster_id" {}
+variable "count" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -30,7 +31,7 @@ resource "openstack_compute_floatingip_v2" "spark-master" {
 
 resource "openstack_compute_instance_v2" "spark-master" {
   provider        = "openstack"
-  count           = 1
+  count           = "${var.count}"
   name            = "spark-${var.spark_cluster_id}-master"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"

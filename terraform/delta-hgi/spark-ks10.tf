@@ -1,5 +1,6 @@
 module "spark-master-ks10" {
   source = "../modules/spark-master"
+  count  = 1
 
   image = {
     name = "${var.base_image_name}"
@@ -21,8 +22,8 @@ module "spark-master-ks10" {
 }
 
 module "spark-compute-ks10" {
-  count  = 1
   source = "../modules/spark-compute"
+  count  = 1
 
   image = {
     name = "${var.base_image_name}"

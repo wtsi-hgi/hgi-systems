@@ -6,11 +6,11 @@
 hail_apt_cache_valid_time: 3600
 
 hail_version: 0.1
-hail_download_location: https://storage.googleapis.com/hail-common/distributions/0.1/Hail-0.1-7146786-Spark-2.1.0.zip
-hail_download_md5: bb477eb7eab7c51604a6722deb9f83c6
+hail_repository: https://github.com/hail-is/hail.git
+hail_seaborn_version: 0.8.0
 
 hail_installation_location: "/usr/local/hail-{{ hail_version }}"
-hail_jupyter_binary: "{{ hail_installation_location }}/bin/jhail"
+hail_jupyter_binary: "{{ hail_installation_location }}/scripts/jhail"
 hail_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
 
 hail_user: spark

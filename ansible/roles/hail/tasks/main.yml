@@ -4,4 +4,4 @@
   notify: restart hail
 
 - include: startup.yml
-  notify: restart hail
+

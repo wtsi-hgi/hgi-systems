@@ -1,4 +1,4 @@
 ---
 
-hail_download_destination: /tmp/hail.zip
-hail_temp_unzip_destination: /tmp/hail
+hail_temp_directory: /tmp/hail
+hail_default_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

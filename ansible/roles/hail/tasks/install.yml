@@ -8,7 +8,17 @@
     update_cache: yes
     cache_valid_time: "{{ hail_apt_cache_valid_time }}"
   with_items:
-    - unzip
+    - g++
+    - cmake
+    - make
+    - build-essential
+
+- name: install conda prerequisites
+  become: yes
+  conda:
+    name: seaborn
+    version: "{{ hail_seaborn_version }}"
+    executable: "{{ hail_anaconda_installation_location }}/bin/conda"
 
 - name: check if Hail download is required
   stat:
@@ -17,40 +27,28 @@
   register: jhail_binary
 
 - block:
-    - name: download Hail
-      get_url:
-        url: "{{ hail_download_location }}"
-        dest: "{{ hail_download_destination }}"
-        checksum: "md5:{{ hail_download_md5 }}"
-        force: yes
+    - name: checkout Hail from GitHub
+      git:
+        repo: "{{ hail_repository }}"
+        dest: "{{ hail_temp_directory }}"
+        version: "{{ hail_version }}"
 
-    - name: create temp directory
-      file:
-        path: "{{ hail_temp_unzip_destination }}"
-        state: directory
-
-    # Note: `--strip-components=1` does not work with `unzip`
-    - name: expand Hail into temp directory
-      unarchive:
-        src: "{{ hail_download_destination }}"
-        dest: "{{ hail_temp_unzip_destination }}"
-        remote_src: yes
+    - name: compile Hail
+      command: "./gradlew -Dspark.version={{ hail_spark_version }} shadowJar archiveZip"
+      args:
+        chdir: "{{ hail_temp_directory }}"
 
     # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
     - name: install Hail
       become: yes
-      shell: "mv {{ hail_temp_unzip_destination }}/* {{ hail_installation_location }}/"
+      command: "mv {{ hail_temp_directory }} {{ hail_installation_location }}"
+      notify: restart hail
 
   when: not jhail_binary.stat.exists
   always:
-    - name: remove Hail download
-      file:
-        path: "{{ hail_download_destination }}"
-        state: absent
-
     - name: remove temp directory
       file:
-        path: "{{ hail_temp_unzip_destination }}"
+        path: "{{ hail_temp_directory }}"
         state: absent
 
 - name: set installation permissions
@@ -59,6 +57,13 @@
     path: "{{ hail_installation_location }}"
     owner: "{{ hail_user }}"
     recurse: yes
+  notify: restart hail
+
+- name: create link to jars directory expected by Hail
+  file:
+    src: "{{ hail_installation_location }}/build/libs"
+    dest: "{{ hail_installation_location }}/jars"
+    state: link
 
 - name: set configuration for Jupyter
   become: yes
@@ -67,3 +72,4 @@
     dest: "{{ hail_jupyter_configuration_location }}"
     owner: "{{ hail_user }}"
     mode: "0600"
+  notify: restart hail
