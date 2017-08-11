@@ -1,0 +1,7 @@
+---
+
+- name: restart hail
+  become: yes
+  service:
+    name: hail
+    state: restarted
