@@ -1,27 +1,14 @@
 ---
 
-#hail_service_start: "{{ hail_jupyter_binary }} --config={{ hail_jupyter_configuration_location }}"
-#hail_service_user: "{{ hail_user }}"
-
 - name: setup systemd entry to control Hail
-  include_role:
-    name: wtsi-hgi.ansible-role-systemd-service
   become: yes
-  vars:
-    systemd_service_name: hail
-    systemd_service_Unit_Description: Hail Manager
-    systemd_service_Service_ExecStart: "{{ hail_jupyter_binary }} --config={{ hail_jupyter_configuration_location }}"
-    systemd_service_Service_User: "{{ hail_user }}"
-    systemd_service_envs:
-      - "PATH={{ hail_default_path }}:{{ hail_anaconda_installation_location }}/bin:{{ hail_installation_location }}/bin"
-      - "HAIL_HOME={{ hail_installation_location }}"
-      - "SPARK_HOME={{ hail_spark_home }}"
-      - "PYTHONPATH={{ hail_installation_location }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
-      - "SPARK_CLASSPATH={{ hail_installation_location }}/build/libs/hail-all-spark.jar"
-
-- name: restart Hail task
-  debug:
+  template:
+    src: hail.service.j2
+    dest: "{{ hail_systemd_service_directory }}/hail.service"
   notify: restart hail
-  changed_when: true
+  register: hail_service
 
-
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+  when: hail_service.changed
