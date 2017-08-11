@@ -44,7 +44,7 @@ resource "openstack_compute_instance_v2" "spark-master" {
   }
 
   metadata = {
-    ansible_groups = "spark-masters spark-cluster-${var.spark_cluster_id}-members hgi-credentials"
+    ansible_groups = "hailers spark-masters spark-cluster-${var.spark_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
