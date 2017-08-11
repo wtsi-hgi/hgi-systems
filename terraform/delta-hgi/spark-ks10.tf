@@ -1,4 +1,4 @@
-module "spark-master" {
+module "spark-master-ks10" {
   source = "../modules/spark-master"
 
   image = {
@@ -20,7 +20,7 @@ module "spark-master" {
   spark_cluster_id = "ks10"
 }
 
-module "spark-compute" {
+module "spark-compute-ks10" {
   count  = 1
   source = "../modules/spark-compute"
 
