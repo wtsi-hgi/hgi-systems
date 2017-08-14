@@ -1,4 +1,4 @@
-module "spark-master-ks10" {
+module "spark-master-ks20" {
   source = "../modules/spark-master"
   count  = 1
 
@@ -18,10 +18,10 @@ module "spark-master-ks10" {
     user = "${module.ssh-gateway.user}"
   }
 
-  spark_cluster_id = "ks10"
+  spark_cluster_id = "ks20"
 }
 
-module "spark-compute-ks10" {
+module "spark-compute-ks20" {
   source = "../modules/spark-compute"
   count  = 0
 
@@ -41,5 +41,5 @@ module "spark-compute-ks10" {
     user = "${module.ssh-gateway.user}"
   }
 
-  spark_cluster_id = "ks10"
+  spark_cluster_id = "ks20"
 }
