@@ -20,26 +20,29 @@
 ---
 # file: site.yml
 
-# set up non-host infrastructure
+# Set up non-host infrastructure
 - include: gitlab-projects.yml
 
-# make sure openstack instances are bootstrapped and facts are set
+# Make sure openstack instances are bootstrapped and facts are set
 # TODO: migrate to dynamic inventory?
 - include: openstack-instances-bootstrap.yml
 
-# create dynamic groups for hosts based on OS
+# Create dynamic groups for hosts based on OS
 - hosts: all:!non-hosts
   tasks:
     - group_by: key=os_{{ ansible_distribution }}-{{ ansible_distribution_version }} # e.g. "os_Ubuntu_14.04"
     - group_by: key=os_{{ ansible_distribution }} # e.g. "os_Ubuntu"
     - group_by: key=os_family_{{ ansible_os_family }} # e.g. "os_Debian"
 
-# when image-building, make sure we apply common role even if no other groups apply
+# When image-building, make sure we apply common role even if no other groups apply
 - hosts: image-building
   roles:
     - common
 
-# playbooks that need nonroot host hgi infrastructure
+# Critical infrastructure
+- include: ssh-gateways.yml
+
+# Playbooks that need nonroot host hgi infrastructure
 - include: mesos-masters.yml
 - include: zookeepers.yml
 - include: marathoners.yml
@@ -47,7 +50,7 @@
 - include: mesos-slaves.yml
 - include: bamboosians.yml
 
-# playbooks that only support root hosts
+# Playbooks that only support root hosts
 - include: arvados.yml
 - include: arvados-crunchers.yml
 - include: consul-agents.yml
@@ -59,7 +62,6 @@
 - include: hailers.yml
 - include: openstack-tenant-cleaners.yml
 - include: spark.yml
-- include: ssh-gateways.yml
 
-# higher-level infrastructure built on top of hosts
+# Higher-level infrastructure built on top of hosts
 - include: consul-clusters.yml
