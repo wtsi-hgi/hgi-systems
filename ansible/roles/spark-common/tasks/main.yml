@@ -82,5 +82,5 @@
     owner: spark
     creates: "{{ spark_common_prefix }}/bin/spark-shell"
   notify:
-    - restart spark
+    - restart_spark
 

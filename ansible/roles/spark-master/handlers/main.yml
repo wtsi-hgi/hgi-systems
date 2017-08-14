@@ -7,3 +7,10 @@
   service:
     name: nginx
     state: restarted
+
+- name: restart spark
+  become: yes
+  service:
+    name: spark
+    state: restarted
+  listen: restart_spark

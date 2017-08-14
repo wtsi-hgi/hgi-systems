@@ -35,7 +35,7 @@
     dest: /etc/systemd/system/spark.service
     owner: root
   notify:
-    - restart spark
+    - restart_spark
     - reload systemd
 
 - name: enable and start spark service
@@ -83,5 +83,5 @@
     mode: 0644
     owner: spark
   notify:
-   - restart spark 
+   - restart_spark
 
