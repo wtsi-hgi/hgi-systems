@@ -1,5 +1,7 @@
 ---
 
 - name: don't restart spark
-  meta: noop
+  fail:
+    msg: never gonna give you up
   listen: restart_spark
+  when: true is false
