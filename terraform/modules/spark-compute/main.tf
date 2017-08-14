@@ -38,6 +38,8 @@ resource "openstack_compute_instance_v2" "spark-compute" {
     access_network = true
   }
 
+  user_data = "#cloud-config\nhostname: spark-${var.spark_cluster_id}-compute-${count.index}\nfqdn: spark-${var.spark_cluster_id}-compute-${count.index}.${var.domain}"
+
   metadata = {
     ansible_groups = "spark-computers spark-cluster-${var.spark_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"

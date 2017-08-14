@@ -43,6 +43,8 @@ resource "openstack_compute_instance_v2" "arvados-master" {
     access_network = true
   }
 
+  user_data = "#cloud-config\nhostname: arvados-master-${var.arvados_cluster_id}\nfqdn: arvados-master-${var.arvados_cluster_id}.${var.domain}"
+
   metadata = {
     ansible_groups = "arvados-masters arvados-cluster-${var.arvados_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"
@@ -65,6 +67,14 @@ resource "openstack_compute_instance_v2" "arvados-master" {
       bastion_user = "${var.bastion["user"]}"
     }
   }
+}
+
+resource "infoblox_record" "arvados-master" {
+  value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  name   = "arvados-master-${var.arvados_cluster_id}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
 }
 
 resource "infoblox_record" "arvados-api" {

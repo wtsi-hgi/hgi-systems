@@ -31,7 +31,7 @@ module "spark-compute" {
   }
 
   flavour            = "m1.large"
-  domain             = "hgi.sanger.ac.uk"
+  domain             = "node.hgi-delta.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
