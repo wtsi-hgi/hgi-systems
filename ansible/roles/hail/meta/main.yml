@@ -18,6 +18,11 @@ dependencies:
     attached_openstack_volume_vg: hail-vg
     attached_openstack_volume_vols:
       - name: hail-data
-        size: "{{ (hostvars[volume]['openstack_volume_size_gb'] * 1024) - 4 }}M"
+        # FIXME: The volume size in GB should come from Terraform
+        size: "{{ (100 * 1024) - 4 }}M"
         fstype: xfs
-        mountpoint: "{{ hail_data_mountpount }}"
+        mountpoint: "{{ hail_data_directory }}"
+    # FIXME: The device should come from Terraform
+    attached_openstack_volumes:
+      - device: "/dev/vdb"
+
