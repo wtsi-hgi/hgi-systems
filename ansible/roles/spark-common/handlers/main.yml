@@ -1,0 +1,5 @@
+---
+
+- name: don't restart spark
+  meta: noop
+  listen: restart_spark
