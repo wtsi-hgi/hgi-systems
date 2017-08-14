@@ -29,3 +29,5 @@ hail_service_environment_variables:
   SPARK_HOME: "{{ hail_spark_home }}"
   PYTHONPATH: "{{ hail_installation_location }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
   SPARK_CLASSPATH: "{{ hail_installation_location }}/build/libs/hail-all-spark.jar"
+
+hail_data_mountpount: /data

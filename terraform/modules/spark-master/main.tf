@@ -79,3 +79,9 @@ resource "infoblox_record" "spark-master-dns" {
 output "ip" {
   value = "${openstack_compute_instance_v2.spark-master.access_ip_v4}"
 }
+
+# FIXME: This is here for Hail, not Spark
+resource "openstack_blockstorage_volume_v2" "spark-master-volume" {
+  name = "spark-${var.spark_cluster_id}-volume"
+  size = 100
+}
