@@ -60,7 +60,6 @@ marathoners
 chronosians
 openstack-instance-gitlab-runners
 gitlab-runners
-spark-masters
 
 [logrotaters:children]
 openstack-instance-gitlab-runners
