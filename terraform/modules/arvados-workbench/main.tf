@@ -43,6 +43,8 @@ resource "openstack_compute_instance_v2" "arvados-workbench" {
     access_network = true
   }
 
+  user_data = "#cloud-config\nhostname: arvados-workbench-${var.arvados_cluster_id}\nfqdn: arvados-workbench-${var.arvados_cluster_id}.${var.domain}"
+
   metadata = {
     ansible_groups = "arvados-workbenches arvados-cluster-${var.arvados_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"

@@ -44,6 +44,8 @@ resource "openstack_compute_instance_v2" "spark-master" {
     access_network = true
   }
 
+  user_data = "#cloud-config\nhostname: spark-${var.spark_cluster_id}-master\nfqdn: spark-${var.spark_cluster_id}-master.${var.domain}"
+
   metadata = {
     ansible_groups = "hailers spark-masters spark-cluster-${var.spark_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"

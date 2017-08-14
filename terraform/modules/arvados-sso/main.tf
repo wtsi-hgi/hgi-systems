@@ -43,6 +43,8 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
     access_network = true
   }
 
+  user_data = "#cloud-config\nhostname: arvados-sso-${var.arvados_cluster_id}\nfqdn: arvados-sso-${var.arvados_cluster_id}.${var.domain}"
+
   metadata = {
     ansible_groups = "arvados-ssos arvados-cluster-${var.arvados_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"

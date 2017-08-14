@@ -37,6 +37,8 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
     access_network = true
   }
 
+  user_data = "#cloud-config\nhostname: ssh\nfqdn: ssh.${var.domain}"
+
   metadata = {
     ansible_groups = "ssh-gateways"
     user           = "${var.image["user"]}"
