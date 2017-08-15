@@ -33,6 +33,7 @@
 # arvados_cluster_superuser_api_token
 # arvados_cluster_git_ssh_private_key
 # arvados_cluster_admin_user_password
+# arvados_cluster_anonymous_api_token
 
 arvados_cluster_id: ncucu
 arvados_cluster_site_name: "HGI Arvados ncucu"
