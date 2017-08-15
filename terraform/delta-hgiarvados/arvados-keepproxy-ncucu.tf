@@ -1,5 +1,5 @@
-module "arvados-s3-keep" {
-  source = "../modules/arvados-s3-keep"
+module "arvados-keepproxy" {
+  source = "../modules/arvados-keepproxy"
 
   image = {
     name = "${var.base_image_name}"

@@ -23,15 +23,15 @@ variable "bastion" {
   default = {}
 }
 
-resource "openstack_compute_floatingip_v2" "arvados-s3-keep" {
+resource "openstack_compute_floatingip_v2" "arvados-keepproxy" {
   provider = "openstack"
   pool     = "nova"
 }
 
-resource "openstack_compute_instance_v2" "arvados-s3-keep" {
+resource "openstack_compute_instance_v2" "arvados-keepproxy" {
   provider        = "openstack"
   count           = 1
-  name            = "arvados-s3-keep"
+  name            = "arvados-keepproxy"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"
   key_pair        = "${var.key_pair_ids["mercury"]}"
@@ -39,14 +39,14 @@ resource "openstack_compute_instance_v2" "arvados-s3-keep" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.arvados-s3-keep.address}"
+    floating_ip    = "${openstack_compute_floatingip_v2.arvados-keepproxy.address}"
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: arvados-s3-keep-${var.arvados_cluster_id}\nfqdn: arvados-s3-keep-${var.arvados_cluster_id}.${var.domain}"
+  user_data = "#cloud-config\nhostname: arvados-keepproxy-${var.arvados_cluster_id}\nfqdn: arvados-keepproxy-${var.arvados_cluster_id}.${var.domain}"
 
   metadata = {
-    ansible_groups = "arvados-s3-keepers arvados-cluster-${var.arvados_cluster_id}-members hgi-credentials"
+    ansible_groups = "arvados-keepproxyers arvados-cluster-${var.arvados_cluster_id}-members hgi-credentials"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
@@ -69,16 +69,16 @@ resource "openstack_compute_instance_v2" "arvados-s3-keep" {
   }
 }
 
-resource "infoblox_record" "arvados-s3-keep" {
-  value  = "${openstack_compute_instance_v2.arvados-s3-keep.access_ip_v4}"
-  name   = "arvados-s3-keep-${var.arvados_cluster_id}"
+resource "infoblox_record" "arvados-keepproxy" {
+  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  name   = "arvados-keepproxy-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
 }
 
 resource "infoblox_record" "arvados-api" {
-  value  = "${openstack_compute_instance_v2.arvados-s3-keep.access_ip_v4}"
+  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
   name   = "arvados-download-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -86,7 +86,7 @@ resource "infoblox_record" "arvados-api" {
 }
 
 resource "infoblox_record" "arvados-ws" {
-  value  = "${openstack_compute_instance_v2.arvados-s3-keep.access_ip_v4}"
+  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
   name   = "arvados-collections-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -94,5 +94,5 @@ resource "infoblox_record" "arvados-ws" {
 }
 
 output "ip" {
-  value = "${openstack_compute_instance_v2.arvados-s3-keep.access_ip_v4}"
+  value = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
 }
