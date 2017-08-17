@@ -77,7 +77,15 @@ resource "infoblox_record" "arvados-keepproxy" {
   ttl    = 600
 }
 
-resource "infoblox_record" "arvados-api" {
+resource "infoblox_record" "arvados-keep" {
+  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  name   = "arvados-keep-${var.arvados_cluster_id}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
+}
+
+resource "infoblox_record" "arvados-download" {
   value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
   name   = "arvados-download-${var.arvados_cluster_id}"
   domain = "${var.domain}"
@@ -85,7 +93,7 @@ resource "infoblox_record" "arvados-api" {
   ttl    = 600
 }
 
-resource "infoblox_record" "arvados-ws" {
+resource "infoblox_record" "arvados-collections" {
   value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
   name   = "arvados-collections-${var.arvados_cluster_id}"
   domain = "${var.domain}"
