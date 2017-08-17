@@ -4,14 +4,33 @@
   with_first_found:
     - "{{ ansible_os_family }}-{{ ansible_distribution_major_version}}.yml"
     - "{{ ansible_os_family }}.yml"
+
 - include: install.yml
-- { include: install-ui.yml, when: consul_is_ui == true }
-- { include: install-cli.yml, when: consul_install_consul_cli == true }
-- { include: dnsmasq.yml, when: consul_install_dnsmasq == true }
-- { include: consulate.yml, when: consul_install_consulate == true }
+  become: yes
+
+- include: install-ui.yml
+  become: yes
+  when: consul_is_ui == true
+
+- include: install-cli.yml
+  become: yes
+  when: consul_install_consul_cli == true
+
+- include: dnsmasq.yml
+  become: yes
+  when: consul_install_dnsmasq == true
+
+- include: consulate.yml
+  become: yes
+  when: consul_install_consulate == true 
+
 - service: >
     name=consul
     state="{{ consul_service_state }}"
     enabled=yes
   when: consul_manage_service
-- { include: services.yml, when: consul_services is defined and consul_services|length > 0 }
+  become: yes
+
+- include: services.yml
+  become: yes
+  when: consul_services is defined and consul_services|length > 0
