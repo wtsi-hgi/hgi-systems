@@ -1,0 +1,190 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/arvados-keepproxy/tasks/main.yml
+
+################################################################################
+# arvados-keepproxy
+################################################################################
+- name: install arvados-keepproxy and it prerequisites 
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - keepproxy
+    - runit
+    - nginx
+
+- name: create runit directory for arvados-keepproxy
+  become: yes
+  file:
+    path: /etc/sv/arvados-keepproxy
+    state: directory
+
+- name: install runit service for arvados-keepproxy
+  become: yes
+  template:
+    src: "arvados-keepproxy.run.j2"
+    dest: "/etc/sv/arvados-keepproxy/run"
+    mode: 0755
+  notify:
+   - restart arvados-keepproxy
+
+- name: create runit log directory for arvados-keepproxy
+  become: yes
+  file:
+    path: /etc/sv/arvados-keepproxy/log
+    state: directory
+
+- name: install runit log service for arvados-keepproxy
+  become: yes
+  template:
+    src: "arvados-keepproxy.log.run.j2"
+    dest: "/etc/sv/arvados-keepproxy/log/run"
+    mode: 0755
+  notify:
+   - restart arvados-keepproxy
+
+- name: enable arvados-keepproxy
+  become: yes
+  runit:
+    name: arvados-keepproxy
+    enabled: yes
+    state: started
+    service_dir: /etc/service
+    service_src: /etc/sv
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ arvados_keepproxy_cert }}"
+    dest: "{{ arvados_keepproxy_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ arvados_keepproxy_key }}"
+    dest: "{{ arvados_keepproxy_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for arvados-keepproxy
+  become: yes
+  template:
+    src: "arvados-keepproxy.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-keepproxy.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+
+
+################################################################################
+# arvados-keep-web
+################################################################################
+- name: install arvados-keep-web and it prerequisites 
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - keep-web
+    - runit
+    - nginx
+
+- name: create runit directory for arvados-keep-web
+  become: yes
+  file:
+    path: /etc/sv/arvados-keep-web
+    state: directory
+
+- name: install runit service for arvados-keep-web
+  become: yes
+  template:
+    src: "arvados-keep-web.run.j2"
+    dest: "/etc/sv/arvados-keep-web/run"
+    mode: 0755
+  notify:
+   - restart arvados-keep-web
+
+- name: create runit log directory for arvados-keep-web
+  become: yes
+  file:
+    path: /etc/sv/arvados-keep-web/log
+    state: directory
+
+- name: install runit log service for arvados-keep-web
+  become: yes
+  template:
+    src: "arvados-keep-web.log.run.j2"
+    dest: "/etc/sv/arvados-keep-web/log/run"
+    mode: 0755
+  notify:
+   - restart arvados-keep-web
+
+- name: enable arvados-keep-web
+  become: yes
+  runit:
+    name: arvados-keep-web
+    enabled: yes
+    state: started
+    service_dir: /etc/service
+    service_src: /etc/sv
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ arvados_keepproxy_cert }}"
+    dest: "{{ arvados_keepproxy_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ arvados_keepproxy_key }}"
+    dest: "{{ arvados_keepproxy_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for arvados-keep-web
+  become: yes
+  template:
+    src: "arvados-keep-web.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-keep-web.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx

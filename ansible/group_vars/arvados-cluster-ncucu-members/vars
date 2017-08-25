@@ -54,6 +54,7 @@ arvados_cluster_api_host: "arvados-api-{{ arvados_cluster_id }}"
 arvados_cluster_ws_host: "arvados-ws-{{ arvados_cluster_id }}"
 arvados_cluster_git_host: "arvados-git-{{ arvados_cluster_id }}"
 arvados_cluster_workbench_host: "arvados-workbench-{{ arvados_cluster_id }}"
+arvados_cluster_keepproxy_host: "arvados-keep-{{ arvados_cluster_id }}"
 arvados_cluster_download_host: "arvados-download-{{ arvados_cluster_id }}"
 arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}"
 

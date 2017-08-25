@@ -62,3 +62,9 @@
     - curl
     - bundler
 
+- name: create /etc/arvados conf dir
+  become: yes
+  file:
+    path: /etc/arvados
+    state: directory
+

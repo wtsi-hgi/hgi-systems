@@ -1,0 +1,8 @@
+
+arvados_keepproxy_key_file: /etc/arvados/ssl.key
+arvados_keepproxy_cert_file: /etc/arvados/ssl.cert
+
+arvados_keepproxy_backend_port: 25107
+arvados_keepproxy_web_backend_port: 9002
+arvados_keepproxy_api_token: "{{ arvados_cluster_anonymous_api_token }}"
+arvados_keepproxy_api_host: "{{ arvados_cluster_api_host }}.{{ arvados_cluster_domain }}"

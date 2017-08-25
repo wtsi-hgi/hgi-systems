@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -e
+
+ARVADOS_API_TOKEN="{{ arvados_keepproxy_api_token }}" ARVADOS_API_HOST="{{ arvados_keepproxy_api_host }}" exec keepproxy

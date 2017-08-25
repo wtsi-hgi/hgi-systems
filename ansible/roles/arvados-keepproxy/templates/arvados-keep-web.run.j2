@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -e
+
+ARVADOS_API_TOKEN="{{ arvados_keepproxy_api_token }}" ARVADOS_API_HOST="{{ arvados_keepproxy_api_host }}" exec sudo -u nobody -E keep-web -listen=:{{ arvados_keepproxy_web_backend_port }} -attachment-only-host={{ arvados_cluster_download_host}}.{{ arvados_cluster_domain }} -allow-anonymous 2>&1
