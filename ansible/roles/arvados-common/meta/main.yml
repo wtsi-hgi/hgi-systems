@@ -20,5 +20,3 @@
 ---
 # file: roles/arvados-common/meta/main.yml
 
-dependencies:
-  - { role: consul-agent }

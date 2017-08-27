@@ -62,3 +62,8 @@ hgi_docker_os_image_user: ubuntu
 ansible_ssh_extra_args: "{% if bastion_host is defined and bastion_host %}-o ProxyCommand=\"ssh -W %h:%p -o StrictHostKeyChecking=no -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
 
 pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
+
+sanger_network_dns_servers:
+  - 172.18.255.1
+  - 172.18.255.2
+  - 172.18.255.3
