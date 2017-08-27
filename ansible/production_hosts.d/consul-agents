@@ -1,0 +1,5 @@
+[consul-agents]
+
+[consul-credentials:children]
+consul-agents
+
