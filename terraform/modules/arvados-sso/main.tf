@@ -31,7 +31,7 @@ resource "openstack_compute_floatingip_v2" "arvados-sso" {
 resource "openstack_compute_instance_v2" "arvados-sso" {
   provider        = "openstack"
   count           = 1
-  name            = "arvados-sso"
+  name            = "arvados-sso-${var.arvados_cluster_id}"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"
   key_pair        = "${var.key_pair_ids["mercury"]}"
