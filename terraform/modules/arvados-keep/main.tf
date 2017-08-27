@@ -35,7 +35,6 @@ resource "openstack_compute_instance_v2" "arvados-keep" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.arvados-keep.address}"
     access_network = true
   }
 
