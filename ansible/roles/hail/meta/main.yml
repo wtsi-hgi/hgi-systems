@@ -25,4 +25,3 @@ dependencies:
     # FIXME: The device should come from Terraform
     attached_openstack_volumes:
       - device: "/dev/vdb"
-
