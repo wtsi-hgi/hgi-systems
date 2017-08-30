@@ -8,8 +8,7 @@ consul_version: 0.8.4
 consul_home: /opt/consul
 
 consul_advertise_address: "{{ hostvars[inventory_hostname]['openstack_servers'][0].public_v4 }}"
-# TODO: Should this be hardcoded?
-consul_datacenter: delta-hgi
+consul_datacenter: "{{ tenant }}"
 
 consul_use_systemd: true
 consul_use_upstart: false
