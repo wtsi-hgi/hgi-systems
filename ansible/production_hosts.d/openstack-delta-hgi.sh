@@ -39,10 +39,12 @@ openstack-{{ resource.type }}s
 openstack-managed-by-{{ resource.metadata.managed_by }}
 {% endif %}
 {% set newline = joiner("\n") -%}
+{% if resource.metadata is defined and resource.metadata.managed_by is defined and resource.metadata.managed_by == "ansible" -%}
 {% if resource.metadata is defined and resource.metadata.ansible_groups is defined -%}
 {% for ansible_groups in resource.metadata.ansible_groups.split() -%}
 {{ newline() }}{{ ansible_groups }}
 {%- endfor -%}
+{% endif -%}
 {% endif -%}
 EOF
 )
