@@ -4,19 +4,19 @@ set -euf -o pipefail
 
 export OS_TENANT_NAME=hgi
 if [[ -z "${OS_USERNAME}" ]]; then
-    2>&1 echo "OS_USERNAME required"
+    >&2 echo "OS_USERNAME required"
     exit 1
 fi
 if [[ -z "${OS_PASSWORD}" ]]; then
-    2>&1 echo "OS_PASSWORD required"
+    >&2 echo "OS_PASSWORD required"
     exit 1
 fi
 if [[ -z "${OS_AUTH_URL}" ]]; then
-    2>&1 echo "OS_AUTH_URL required"
+    >&2 echo "OS_AUTH_URL required"
     exit 1
 fi
 
-   export OS_ANSIBLE_INVENTORY_NAME_TEMPLATE=$(cat <<EOF
+export OSI_ANSIBLE_INVENTORY_NAME_TEMPLATE=$(cat <<EOF
 {%- if resource.type == "instance" -%}
 {%- if resource.metadata is defined and resource.metadata.managed_by is defined and resource.metadata.managed_by == "ansible" -%}
 {{ resource.name }}
@@ -29,9 +29,9 @@ fi
 EOF
 )
 
-   export OS_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ resource.type in ["instance", "network", "security_group", "volume", "image", "keypair"] }}'
+export OSI_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ resource.type in ["instance", "network", "security_group", "volume", "image", "keypair"] }}'
 
-   export OS_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
+export OSI_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 all
 openstack
 openstack-{{ resource.type }}s
@@ -48,7 +48,7 @@ EOF
 )
 
 
-   export OS_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
+export OSI_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
 {%- if resource.type == "instance" -%}
 ansible_host={{ resource.accessIPv6
 | default(resource.accessIPv4, true)
