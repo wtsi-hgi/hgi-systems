@@ -47,7 +47,6 @@ openstack-managed-by-{{ resource.metadata.managed_by }}
 EOF
 )
 
-
 export OSI_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
 {%- if resource.type == "instance" -%}
 ansible_host={{ resource.accessIPv6
