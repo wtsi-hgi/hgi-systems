@@ -44,6 +44,7 @@
     network: "{{ openstack_instance_network }}"
     security_groups: "{{ openstack_instance_security_groups }}"
     volumes: "{{ openstack_instance_volumes }}"
+    meta: "managed_by=ansible"
   tags: 
       - openstack-instance
   when: (openstack_servers | length == 0)
