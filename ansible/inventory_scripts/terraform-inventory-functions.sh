@@ -11,7 +11,7 @@ function terraform_inventory {
    fi
    
    tenant="$(basename ${terraform_dir})"
-   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="${tenant}."'{{ primary.expanded_attributes.name | default(name) }}'
+   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="tf.${tenant}.{{ type }}.{{ primary.expanded_attributes.name | default(name) }}"
    
    export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",
