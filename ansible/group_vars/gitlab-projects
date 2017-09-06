@@ -23,9 +23,9 @@
 # file: group_vars/gitlab-projects
 
 gitlab_project_settings_hgi_ci_openstack:
-    OS_AUTH_URL: "{{ openstack_logins['delta-hgi-ci']['auth_url'] }}"
-    OS_USERNAME: "{{ openstack_logins['delta-hgi-ci']['username'] }}"
-    OS_PASSWORD: "{{ openstack_logins['delta-hgi-ci']['password'] }}"
+    OS_AUTH_URL: "{{ openstack_logins['delta-mercury']['auth_url'] }}"
+    OS_USERNAME: "{{ openstack_logins['delta-mercury']['username'] }}"
+    OS_PASSWORD: "{{ openstack_logins['delta-mercury']['password'] }}"
     OS_NETWORKS: hgi-ci
     OS_SECURITY_GROUPS: ssh
     OS_TENANT_NAME: hgi-ci
@@ -43,9 +43,9 @@ gitlab_project_settings_terragrunt_locks:
     TERRAGRUNT_LOCKS_AWS_SECRET_KEY: "{{ terragrunt_locks_aws_secret_key }}"
 
 gitlab_project_settings_terraform_openstack:
-    DELTA_OS_AUTH_URL: "{{ openstack_logins['delta-jr17']['auth_url'] }}"
-    DELTA_OS_USERNAME: "{{ openstack_logins['delta-jr17']['username'] }}"
-    DELTA_OS_PASSWORD: "{{ openstack_logins['delta-jr17']['password'] }}"
+    DELTA_OS_AUTH_URL: "{{ openstack_logins['delta-mercury']['auth_url'] }}"
+    DELTA_OS_USERNAME: "{{ openstack_logins['delta-mercury']['username'] }}"
+    DELTA_OS_PASSWORD: "{{ openstack_logins['delta-mercury']['password'] }}"
     EMEDLAB_OS_AUTH_URL: "{{ openstack_logins['emedlab-jrandall']['auth_url'] }}"
     EMEDLAB_OS_USERNAME: "{{ openstack_logins['emedlab-jrandall']['username'] }}"
     EMEDLAB_OS_PASSWORD: "{{ openstack_logins['emedlab-jrandall']['password'] }}"
