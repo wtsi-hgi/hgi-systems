@@ -20,43 +20,6 @@
 ---
 # file: roles/openstack-image/tasks/main.yml
 
-- name: gather facts about openstack image
-  delegate_to: "{{ openstack_image_delegate }}"
-  os_image_facts:
-    auth: "{{ openstack_auth }}"
-    image: "{{ openstack_image_name }}"
-
-# workaround for ansible s3 module bug: https://github.com/ansible/ansible/issues/5442
-- name: check if image already cached on delegate
-  delegate_to: "{{ openstack_image_delegate }}"
-  stat: 
-    path: "{{ openstack_image_tmp_dir }}/{{ openstack_image_name }}"
-  register: cached_image
-  
-- name: fetch image from s3
-  tags: s3
-  delegate_to: "{{ openstack_image_delegate }}"
-  s3:
-    mode: get
-    rgw: true
-    bucket: "{{ openstack_image_s3_bucket }}"
-    region: ""
-    s3_url: "{{ openstack_image_s3_endpoint }}"
-    aws_access_key: "{{ openstack_image_s3_access_key }}"    
-    aws_secret_key: "{{ openstack_image_s3_secret_key }}"    
-    object: "{{ openstack_image_name }}"
-    dest: "{{ openstack_image_tmp_dir }}/{{ openstack_image_name }}"
-  when: not openstack_image and not cached_image.stat.exists
-
-- name: ensure image is present in glance
-  tags: s3
-  delegate_to: "{{ openstack_image_delegate }}"
-  os_image: 
-    state: present
-    auth: "{{ openstack_auth }}"
-    container_format: bare
-    disk_format: qcow2
-    name: "{{ openstack_image_name }}"
-    filename: "{{ openstack_image_tmp_dir }}/{{ openstack_image_name }}"
-  when: not openstack_image
-
+- name: bootstrap openstack image if it is managed by ansible
+  include: managed_by_ansible.yml
+  when: 'managed_by is defined and managed_by == "ansible"'

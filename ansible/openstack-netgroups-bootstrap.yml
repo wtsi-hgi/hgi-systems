@@ -18,8 +18,19 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/openstack-network/defaults/main.yml
+# file: openstack-networks-bootstrap.yml
 
-openstack_network_delegate: 127.0.0.1
-openstack_network_router_name: "{{ openstack_network_name }}_{{ openstack_external_network_id }}_router"
-openstack_network_subnet_name: "{{ openstack_network_name }}_subnet"
+- hosts: openstack-networks
+  gather_facts: no
+  roles:
+    - openstack-network
+
+- hosts: openstack-subnets
+  gather_facts: no
+  roles:
+    - openstack-subnet
+
+- hosts: openstack-routers
+  gather_facts: no
+  roles:
+    - openstack-router

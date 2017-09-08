@@ -18,12 +18,10 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-[openstack-images-docker]
-delta-hgi-docker-image tenant=delta-hgi-tenant
-delta-hgi-ci-docker-image tenant=delta-hgi-ci-tenant
-
-[openstack-images:children]
-openstack-images-docker
+[openstack-images]
+os.delta-hgi.image.hgi-docker-xenial-926b0ea4 managed_by=ansible openstack_image_user=ubuntu
+os.delta-hgi-ci.image.hgi-docker-xenial-926b0ea4 managed_by=ansible openstack_image_user=ubuntu
+os.delta-hgi.image.hgi-docker-xenial-6912cc07 managed_by=ansible openstack_image_user=ubuntu
 
 [openstack:children]
 openstack-images
@@ -33,3 +31,4 @@ openstack-images
 
 [non-hosts:children]
 openstack-images
+

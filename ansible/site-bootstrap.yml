@@ -20,8 +20,8 @@
 ---
 # file: site.yml
 
-# create openstack networks
-- include: openstack-networks-bootstrap.yml
+# create openstack netgroups (networks, subnets, and routers)
+- include: openstack-netgroups-bootstrap.yml
 
 # create openstack volumes
 - include: openstack-volumes-bootstrap.yml

@@ -1,1 +1,0 @@
-openstack_image_name: "{{ hgi_docker_os_image_name }}"

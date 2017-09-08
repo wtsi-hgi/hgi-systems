@@ -19,17 +19,17 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 [openstack-security-groups-ssh]
-delta-hgi-ssh-security-group tenant=delta-hgi-tenant
-delta-hgi-ci-ssh-security-group tenant=delta-hgi-ci-tenant
+os.delta-hgi.security_group.delta-hgi-ssh tenant=delta-hgi-tenant managed_by=ansible
+os.delta-hgi-ci.security_group.delta-hgi-ci-ssh tenant=delta-hgi-ci-tenant managed_by=ansible
 
 [openstack-security-groups-docker-machine]
-delta-hgi-ci-docker-machine-security-group tenant=delta-hgi-ci-tenant
+os.delta-hgi-ci.security_group.delta-hgi-ci-docker-machine tenant=delta-hgi-ci-tenant managed_by=ansible
 
 [openstack-security-groups-docker-registry]
-delta-hgi-ci-docker-registry-security-group tenant=delta-hgi-ci-tenant
+os.delta-hgi-ci.security_group.delta-hgi-ci-docker-registry tenant=delta-hgi-ci-tenant managed_by=ansible
 
 [openstack-security-groups-consul-server]
-delta-hgi-consul-server-security-group tenant=delta-hgi-tenant
+os.delta-hgi.security_group.delta-hgi-consul-server tenant=delta-hgi-tenant managed_by=ansible
 
 [openstack-security-groups:children]
 openstack-security-groups-ssh

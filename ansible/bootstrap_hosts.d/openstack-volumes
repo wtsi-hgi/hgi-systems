@@ -19,9 +19,9 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 [openstack-volumes]
-delta-hgi-consul01-volume tenant=delta-hgi-tenant openstack_volume_name=consul01 openstack_volume_size_gb=10
-delta-hgi-consul02-volume tenant=delta-hgi-tenant openstack_volume_name=consul02 openstack_volume_size_gb=10
-delta-hgi-consul03-volume tenant=delta-hgi-tenant openstack_volume_name=consul03 openstack_volume_size_gb=10
+os.delta-hgi.volume.delta-hgi-consul01 managed_by=ansible openstack_volume_size_gb=10
+os.delta-hgi.volume.delta-hgi-consul02 managed_by=ansible openstack_volume_size_gb=10
+os.delta-hgi.volume.delta-hgi-consul03 managed_by=ansible openstack_volume_size_gb=10
 
 [openstack:children]
 openstack-volumes

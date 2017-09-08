@@ -32,8 +32,8 @@ gitlab_runner_os_project_name: "{{ openstack_auth.project_name }}"
 gitlab_runner_os_username: "{{ openstack_auth.username }}"
 gitlab_runner_os_password: "{{ openstack_auth.password }}"
 
-gitlab_runner_os_image_name: "{{ hgi_docker_os_image_name }}"
-gitlab_runner_os_ssh_user: "{{ hgi_docker_os_image_user }}"
+gitlab_runner_os_image_name: "{{ hostvars[gitlab_runner_image]['openstack_image_name'] }}"
+gitlab_runner_os_ssh_user: "{{ hostvars[gitlab_runner_image]['openstack_image_user'] }}"
 gitlab_runner_ssh_private_key_file: "/etc/gitlab-runner-ssh-private-key"
 gitlab_runner_ssh_keypair_name: "{{ openstack_instance_key_name }}"
 

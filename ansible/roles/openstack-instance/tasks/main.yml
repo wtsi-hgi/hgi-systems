@@ -20,131 +20,85 @@
 ---
 # file: roles/openstack-instance/tasks/main.yml
 
-- name: gather facts about openstack instance
-  tags:
-    - openstack-facts
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_server_facts:
-    auth: "{{ openstack_auth }}"
-    server: "{{ inventory_hostname }}"
-    detailed: yes
+# - name: gather facts about openstack instance
+#   tags:
+#     - openstack-facts
+#   delegate_to: "{{ openstack_instance_delegate }}"
+#   os_server_facts:
+#     auth: "{{ openstack_auth }}"
+#     server: "{{ inventory_hostname }}"
+#     detailed: yes
 
-- name: create an openstack instance
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_server: 
-    state: present
-    auth: "{{ openstack_auth }}"
-    image: "{{ openstack_instance_image }}"
-    name: "{{ inventory_hostname }}"
-    wait: yes
-    auto_ip: yes
-    reuse_ips: no
-    flavor: "{{ openstack_instance_flavor }}"
-    key_name: "{{ openstack_instance_key_name }}"
-    network: "{{ openstack_instance_network }}"
-    security_groups: "{{ openstack_instance_security_groups }}"
-    volumes: "{{ openstack_instance_volumes }}"
-    meta: "managed_by=ansible"
-  tags: 
-      - openstack-instance
-  when: (openstack_servers | length == 0)
-  register: create_instance
+- name: bootstrap openstack network if it is managed by ansible
+  when: managed_by is defined and managed_by == "ansible"
+  block:
+    - name: create an openstack instance
+      delegate_to: "{{ openstack_instance_delegate }}"
+      os_server: 
+        state: present
+        auth: "{{ openstack_auth }}"
+        image: "{{ openstack_instance_image }}"
+        name: "{{ inventory_hostname }}"
+        wait: yes
+        auto_ip: yes
+        reuse_ips: no
+        flavor: "{{ openstack_instance_flavor }}"
+        key_name: "{{ openstack_instance_key_name }}"
+        network: "{{ openstack_instance_network }}"
+        security_groups: "{{ openstack_instance_security_groups }}"
+        volumes: "{{ openstack_instance_volumes }}"
+        meta: "managed_by=ansible,user={{ openstack_instance_ssh_user }},host={{ inventory_hostname }}.hgi.sanger.ac.uk,port=22"
+      tags: 
+          - openstack-instance
+      when: (openstack_servers | length == 0)
+      register: create_instance
 
-- name: gather facts again
-  delegate_to: "{{ openstack_instance_delegate }}"
-  os_server_facts:
-    auth: "{{ openstack_auth }}"
-    server: "{{ inventory_hostname }}"
-    detailed: yes
-  when: create_instance|changed
+    # - name: gather facts again
+    #   delegate_to: "{{ openstack_instance_delegate }}"
+    #   os_server_facts:
+    #     auth: "{{ openstack_auth }}"
+    #     server: "{{ inventory_hostname }}"
+    #     detailed: yes
+    #   when: create_instance|changed
 
-- name: set openstack_server fact TODO this should be replaced by dynamic inventory
-  set_fact:
-    openstack_server: "{{ openstack_servers[0] }}"
+    # - name: set openstack_server fact TODO this should be replaced by dynamic inventory
+    #   set_fact:
+    #     openstack_server: "{{ openstack_servers[0] }}"
 
-- name: sets DNS A record for the instance in the hgi.sanger.ac.uk zone
-  delegate_to: "{{ openstack_instance_infoblox_delegate }}"
-  infoblox:
-    action: set_a_record
-    server: "{{ openstack_instance_infoblox_api_server }}"
-    dns_view: "{{ openstack_instance_infoblox_dns_view }}"
-    api_version: "{{ openstack_instance_infoblox_api_version }}"
-    username: "{{ openstack_instance_infoblox_username }}"
-    password: "{{ openstack_instance_infoblox_password }}"
-    name: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
-    address: "{{ openstack_instance_server_facts.accessIPv4 }}"
-    ttl: "{{ openstack_instance_dns_ttl }}"
+    - name: sets DNS A record for the instance in the hgi.sanger.ac.uk zone
+      delegate_to: "{{ openstack_instance_infoblox_delegate }}"
+      infoblox:
+        action: set_a_record
+        server: "{{ openstack_instance_infoblox_api_server }}"
+        dns_view: "{{ openstack_instance_infoblox_dns_view }}"
+        api_version: "{{ openstack_instance_infoblox_api_version }}"
+        username: "{{ openstack_instance_infoblox_username }}"
+        password: "{{ openstack_instance_infoblox_password }}"
+        name: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
+        address: "{{ openstack_instance_server_facts.accessIPv4 }}"
+        ttl: "{{ openstack_instance_dns_ttl }}"
 
-- name: set essential ansible connection facts
-  tags:
-    - openstack-facts
-  set_fact:
-    ansible_host: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
-    ansible_port: 22
-    ansible_user: "{{ openstack_instance_ssh_user }}"
+    # - name: set essential ansible connection facts
+    #   tags:
+    #     - openstack-facts
+    #   set_fact:
+    #     ansible_host: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
+    #     ansible_port: 22
+    #     ansible_user: "{{ openstack_instance_ssh_user }}"
 
-- name: wait for instance to come up
-  local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} timeout=240 connect_timeout=15 state=started
-  become: no
-  when: create_instance|changed
+    - name: wait for instance to come up
+      local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} timeout=240 connect_timeout=15 state=started
+      become: no
+      when: create_instance|changed
 
-- name: wait for cloud-init to finish
-  become: no
-  raw: timeout 120 /bin/bash -c 'until stat /var/lib/cloud/instance/boot-finished &>/dev/null; do echo -n "."; sleep 1; done'
-  args:
-    executable: /bin/bash
-  when: create_instance|changed
+    - name: wait for cloud-init to finish
+      become: no
+      raw: timeout 120 /bin/bash -c 'until stat /var/lib/cloud/instance/boot-finished &>/dev/null; do echo -n "."; sleep 1; done'
+      args:
+        executable: /bin/bash
+      when: create_instance|changed
 
- # - name: scan for ssh fingerprint from instance
- #   delegate_to: localhost
- #   command: ssh-keyscan -H {{ ansible_host }} 
- #   register: ssh_keyscan_results
- #   when: create_instance|changed 
-
- # - name: store ssh fingerprint in known_hosts
- #   delegate_to: localhost
- #   known_hosts:
- #     name: "{{ ansible_host }}"
- #     key: "{{ ssh_keyscan_results.stdout }}"
- #     state: present
- #   when: ssh_keyscan_results|changed 
-
-#- name: disable unattended upgrades
-#  file:
-#    name: "/etc/apt/apt.conf.d/50unattended-upgrades"
-#    state: absent
-#  when: create_instance|changed
-
-# - name: stop apt-daily (systemd)
-#   become: yes
-#   raw: systemctl stop apt-daily.service
-#   args:
-#     executable: /bin/bash
-#   when: create_instance|changed
-
-# - name: kill apt-daily (systemd)
-#   become: yes
-#   raw: systemctl kill --kill-who=all apt-daily.service
-#   args:
-#     executable: /bin/bash
-#   when: create_instance|changed
-
-# - name: wait for apt-daily to be dead (systemd)
-#   become: yes
-#   raw: timeout 120 /bin/bash -c 'while ! (systemctl list-units --all apt-daily.service | fgrep -q dead); do echo -n "."; sleep 1; done'
-#   args:
-#     executable: /bin/bash
-#   when: create_instance|changed
-
-# - name: install python
-#   become: yes
-#   raw: apt-get update && apt-get install -qqy python
-#   args:
-#     executable: /bin/bash
-#   when: create_instance|changed
-
-- name: gather facts for openstack instance
-  tags:
-    - openstack-facts
-  setup:
-  
+    # - name: gather facts for openstack instance
+    #   tags:
+    #     - openstack-facts
+    #   setup:
