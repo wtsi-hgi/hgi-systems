@@ -20,25 +20,17 @@
 ---
 # file: roles/openstack-instance/tasks/main.yml
 
-# - name: gather facts about openstack instance
-#   tags:
-#     - openstack-facts
-#   delegate_to: "{{ openstack_instance_delegate }}"
-#   os_server_facts:
-#     auth: "{{ openstack_auth }}"
-#     server: "{{ inventory_hostname }}"
-#     detailed: yes
-
 - name: bootstrap openstack network if it is managed by ansible
   when: managed_by is defined and managed_by == "ansible"
   block:
     - name: create an openstack instance
-      delegate_to: "{{ openstack_instance_delegate }}"
+      when: os_id is not defined
+      delegate_to: "{{ openstack_delegate }}"
       os_server: 
         state: present
         auth: "{{ openstack_auth }}"
         image: "{{ openstack_instance_image }}"
-        name: "{{ inventory_hostname }}"
+        name: "{{ openstack_name }}"
         wait: yes
         auto_ip: yes
         reuse_ips: no
@@ -47,23 +39,24 @@
         network: "{{ openstack_instance_network }}"
         security_groups: "{{ openstack_instance_security_groups }}"
         volumes: "{{ openstack_instance_volumes }}"
-        meta: "managed_by=ansible,user={{ openstack_instance_ssh_user }},host={{ inventory_hostname }}.hgi.sanger.ac.uk,port=22"
+        meta: "managed_by=ansible,user={{ openstack_instance_ssh_user }},host={{ openstack_name }}.hgi.sanger.ac.uk,port=22"
       tags: 
           - openstack-instance
-      when: (openstack_servers | length == 0)
       register: create_instance
 
-    # - name: gather facts again
-    #   delegate_to: "{{ openstack_instance_delegate }}"
-    #   os_server_facts:
-    #     auth: "{{ openstack_auth }}"
-    #     server: "{{ inventory_hostname }}"
-    #     detailed: yes
-    #   when: create_instance|changed
+    - name: gather facts again
+      when: os_id is not defined
+      delegate_to: "{{ openstack_delegate }}"
+      os_server_facts:
+        auth: "{{ openstack_auth }}"
+        server: "{{ openstack_name }}"
+        detailed: yes
+      register: gather_os_server_facts
 
-    # - name: set openstack_server fact TODO this should be replaced by dynamic inventory
-    #   set_fact:
-    #     openstack_server: "{{ openstack_servers[0] }}"
+    - name: set os_accessIPv4 fact from openstack_server_facts
+      when: os_id is not defined
+      set_fact:
+        os_accessIPv4: "{{ openstack_servers[0].accessIPv4 }}"
 
     - name: sets DNS A record for the instance in the hgi.sanger.ac.uk zone
       delegate_to: "{{ openstack_instance_infoblox_delegate }}"
@@ -74,31 +67,24 @@
         api_version: "{{ openstack_instance_infoblox_api_version }}"
         username: "{{ openstack_instance_infoblox_username }}"
         password: "{{ openstack_instance_infoblox_password }}"
-        name: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
-        address: "{{ openstack_instance_server_facts.accessIPv4 }}"
+        name: "{{ openstack_name }}.hgi.sanger.ac.uk"
+        address: "{{ os_accessIPv4 }}"
         ttl: "{{ openstack_instance_dns_ttl }}"
 
-    # - name: set essential ansible connection facts
-    #   tags:
-    #     - openstack-facts
-    #   set_fact:
-    #     ansible_host: "{{ inventory_hostname }}.hgi.sanger.ac.uk"
-    #     ansible_port: 22
-    #     ansible_user: "{{ openstack_instance_ssh_user }}"
+    - name: set ansible_host to dns hostname
+      when: os_id is not defined
+      set_fact:
+        ansible_host: "{{ openstack_name }}.hgi.sanger.ac.uk"
 
     - name: wait for instance to come up
+      when: create_instance|changed
       local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} timeout=240 connect_timeout=15 state=started
       become: no
-      when: create_instance|changed
 
     - name: wait for cloud-init to finish
+      when: create_instance|changed
       become: no
       raw: timeout 120 /bin/bash -c 'until stat /var/lib/cloud/instance/boot-finished &>/dev/null; do echo -n "."; sleep 1; done'
       args:
         executable: /bin/bash
-      when: create_instance|changed
 
-    # - name: gather facts for openstack instance
-    #   tags:
-    #     - openstack-facts
-    #   setup:

@@ -21,10 +21,11 @@
 # file: roles/openstack-volume/tasks/main.yml
 
 - name: create an openstack volume
-  delegate_to: "{{ openstack_volume_delegate }}"
+  when: managed_by is defined and managed_by == "ansible"
+  delegate_to: "{{ openstack_delegate }}"
   os_volume:
     auth: "{{ openstack_auth }}"
     state: present
-    display_name: "{{ openstack_volume_name }}"
+    display_name: "{{ openstack_name }}"
     size: "{{ openstack_volume_size_gb }}"
 

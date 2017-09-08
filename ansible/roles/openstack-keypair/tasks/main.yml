@@ -21,10 +21,10 @@
 # file: roles/openstack-keypair/tasks/main.yml
 
 - name: create openstack key pair
-  delegate_to: "{{ openstack_keypair_delegate }}"
+  delegate_to: "{{ openstack_delegate }}"
   os_keypair:
     auth: "{{ openstack_auth }}"
     state: present
-    name: "{{ openstack_keypair_key_name }}"
+    name: "{{ openstack_name }}"
     public_key_file: "{{ openstack_keypair_public_key_file }}"
 

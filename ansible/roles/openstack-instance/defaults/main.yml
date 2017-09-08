@@ -25,16 +25,8 @@ openstack_instance_infoblox_dns_view: internal
 
 openstack_instance_volumes: []
 
-openstack_instance_delegate: 127.0.0.1
-openstack_instance_ssh_user: ubuntu
 openstack_instance_flavor: m1.small
-openstack_instance_router: "{{ openstack_instance_network }}_{{ openstack_instance_external_network }}_router"
-openstack_instance_subnet: "{{ openstack_instance_network }}_subnet"
 
 openstack_instance_security_groups:
-  - ssh
-# FIXME: I have no idea where on earth `openstack_instance_ssh_security_group_name` is supposed to be set (Ansible is
-# complaining that it's not!). Hacking around this for the time being...
-# - "{{ openstack_instance_ssh_security_group_name }}"
+ - "{{ (groups['openstack-security-groups-ssh'] | map('extract', hostvars) | selectattr('openstack_tenant', 'equalto', openstack_tenant) | list())[0].openstack_name }}"
 
-openstack_instance_server_facts: "{{ openstack_servers[0] }}"
