@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:17.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -8,7 +8,6 @@ RUN apt-get update \
          apt-utils \
          software-properties-common \
     && apt-get install -y --no-install-recommends \
-         ansible \
          bash \
          curl \
          git \
@@ -28,8 +27,9 @@ RUN apt-get update \
          zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Ansible
-RUN pip3 install ansible
+# Install ansible
+COPY get-ansible.sh /tmp/get-ansible.sh
+RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh
 
 # Install go
 COPY get-go.sh /tmp/get-go.sh
@@ -41,15 +41,6 @@ ENV PATH /usr/local/go/bin:$PATH
 # Install terraform
 COPY get-terraform.sh /tmp/get-terraform.sh
 RUN /tmp/get-terraform.sh && rm /tmp/get-terraform.sh
-
-# Install yatadis 
-RUN cd /tmp \
-    && git clone https://github.com/wtsi-hgi/yatadis.git \
-    && cd yatadis \
-    && git checkout 0.4.1 \
-    && python3 setup.py install \
-    && cd \
-    && rm -rf /tmp/yatadis
 
 # Set workdir and entrypoint
 WORKDIR /tmp
