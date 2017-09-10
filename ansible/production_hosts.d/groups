@@ -58,8 +58,9 @@ mesos-slaves
 zookeepers
 marathoners
 chronosians
-openstack-instance-gitlab-runners
 gitlab-runners
+openstack-instances
+terraform
 
 [logrotaters:children]
 openstack-instance-gitlab-runners
