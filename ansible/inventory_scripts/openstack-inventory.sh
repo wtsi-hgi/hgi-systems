@@ -17,6 +17,12 @@ fi
 
 export tenant=delta-${OS_TENANT_NAME}
 
+
+tmp_openstackinfo=$(mktemp)
+openstackinfo_bin=$(which openstackinfo)
+>&2 echo "openstack-inventory: retrieving openstackinfo for ${tenant} using ${openstackinfo_bin}, writing to ${tmp_openstackinfo}"
+${openstackinfo_bin} -i id > "${tmp_openstackinfo}"
+
 export OSI_ANSIBLE_INVENTORY_NAME_TEMPLATE="os.${tenant}.{{ resource.type }}.{{ resource.name }}"
 
 export OSI_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ resource.type in ["network", "security_group", "volume", "keypair"] or ( resource.type == "image" and resource.visibility == "private" ) or ( resource.type == "instance" and resource.metadata is defined and resource.metadata.managed_by is defined and resource.metadata.managed_by == "ansible" ) }}'
@@ -25,6 +31,7 @@ export OSI_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 all
 openstack
 openstack-{{ resource.type }}s
+canary-openstack-${tenant}
 {% if resource.metadata is defined and resource.metadata.managed_by is defined -%}
 openstack-managed-by-{{ resource.metadata.managed_by }}
 {% endif %}
@@ -67,11 +74,6 @@ ansible_port={{ resource.metadata.port }}
 {%- endfor -%}
 EOF
 )
-
-tmp_openstackinfo=$(mktemp)
-openstackinfo_bin=$(which openstackinfo)
->&2 echo "openstack-inventory: retrieving openstackinfo for ${OS_TENANT_NAME} using ${openstackinfo_bin}, writing to ${tmp_openstackinfo}"
-${openstackinfo_bin} -i id > "${tmp_openstackinfo}"
 
 >&2 echo "openstack-inventory: running yaosadis on ${tmp_openstackinfo}"
 yaosadis --info "${tmp_openstackinfo}" "$@"

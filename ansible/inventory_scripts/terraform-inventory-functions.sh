@@ -15,6 +15,7 @@ function terraform_inventory {
    
    export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",
+"canary-terraform-${tenant}",
 "tf_provider_"+provider,
 "tf_type_"+type] | join("\n") }}
 {% set newline = joiner("\n") -%}
