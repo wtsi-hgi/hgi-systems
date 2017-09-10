@@ -44,6 +44,7 @@
 [s3-credentials]
 [openstack]
 [openstack-instances]
+[terraform]
 
 [hgs4:children]
 mesos-masters
