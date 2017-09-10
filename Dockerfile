@@ -1,30 +1,17 @@
-FROM ubuntu:17.04
+FROM python:3.6.2
 
 ENV DEBIAN_FRONTEND noninteractive
 
 # Install Go prerequisite, ansible, openstack, and s3 packages
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-         apt-utils \
-         software-properties-common \
-    && apt-get install -y --no-install-recommends \
          bash \
-         curl \
          git \
          graphviz \
          openssh-client \
-         python3-openstackclient \
-         python3-setuptools \
          s3cmd \
-         wget \
-         unzip \
-         build-essential \
          libssl-dev \
          libffi-dev \
-         python3 \
-         python3-dev \
-         python3-pip \
-         zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install ansible
