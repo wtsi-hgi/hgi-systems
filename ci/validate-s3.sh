@@ -7,7 +7,7 @@ source "${SCRIPT_DIRECTORY}/common.sh"
 
 ensureSet S3_IMAGE_BUCKET
 
->&2 echo "calling s3cmd info on ${S3_IMAGE_BUCKUP}"
+>&2 echo "calling s3cmd info on ${S3_IMAGE_BUCKET}"
 s3cmd info "s3://${S3_IMAGE_BUCKET}"
 
 >&2 echo "s3cmd info appears to have worked"
