@@ -36,7 +36,7 @@
     name: hgi
     gid: 1313
 
-- name: create mercury user account
+- name: create mercury user account and set password for console login
   tags: common
   become: yes
   user: 
@@ -44,6 +44,7 @@
     uid: 13912
     group: hgi
     shell: /bin/bash
+    password: "{{ mercury_system_password_crypted }}"
 
 - name: give mercury NOPASSWD sudo access
   tags: common
