@@ -68,4 +68,15 @@ ansible_port={{ resource.metadata.port }}
 EOF
 )
 
-openstackinfo -i id | yaosadis --info - "$@"
+tmp_openstackinfo=$(mktemp)
+openstackinfo_bin=$(which openstackinfo)
+>&2 echo "openstack-inventory: retrieving openstackinfo for ${OS_TENANT_NAME} using ${openstackinfo_bin}, writing to ${tmp_openstackinfo}"
+${openstackinfo_bin} -i id > "${tmp_openstackinfo}"
+
+>&2 echo "openstack-inventory: running yaosadis on ${tmp_openstackinfo}"
+yaosadis --info "${tmp_openstackinfo}" "$@"
+
+>&2 echo "openstack-inventory: removing temporary openstackinfo file ${tmp_openstackinfo}"
+rm "${tmp_openstackinfo}"
+
+exit 0
