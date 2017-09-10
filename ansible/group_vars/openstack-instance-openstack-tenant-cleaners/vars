@@ -1,0 +1,3 @@
+openstack_instance_security_groups:
+ - "{{ (groups['openstack-security-groups-ssh'] | map('extract', hostvars) | selectattr('openstack_tenant', 'equalto', openstack_tenant) | list())[0].openstack_name }}"
+

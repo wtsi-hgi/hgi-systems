@@ -7,8 +7,9 @@ consul_version: 0.8.4
 
 consul_home: /opt/consul
 
-consul_advertise_address: "{{ hostvars[inventory_hostname]['openstack_servers'][0].public_v4 }}"
-# TODO: Should this be hardcoded?
+consul_advertise_address: "{{ os_public_v4 | default(tf_access_ip_v4) | default(ansible_default_ipv4.address) }}"
+
+# TODO: this should probably not be hardcoded here
 consul_datacenter: delta-hgi
 
 consul_use_systemd: true
@@ -23,7 +24,8 @@ consul_data_mountpoint: /data/consul
 consul_data_dir: "{{ consul_data_mountpoint }}/data"
 
 #consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'ansible_default_ipv4') | map(attribute='address') | list }}"
-consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'openstack_server') | map(attribute='public_v4') | list }}"
+#consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'openstack_server') | map(attribute='public_v4') | list }}"
+consul_servers: "{{ groups['consul-servers'] | map('extract', hostvars, 'consul_advertise_address') | list }}"
 
 consul_dns_allow_stale: true
 consul_dns_max_stale: 30s

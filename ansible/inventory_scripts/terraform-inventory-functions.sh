@@ -28,7 +28,7 @@ EOF
 )
 
    export TF_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
-ansible_ssh_user={{ primary.expanded_attributes.metadata.user }}
+ansible_user={{ primary.expanded_attributes.metadata.user }}
 bastion_host={{ primary.expanded_attributes.metadata.bastion_host | default("") }}
 bastion_user={{ primary.expanded_attributes.metadata.bastion_user | default("") }}
 ansible_host={{ primary.attributes.access_ip_v6

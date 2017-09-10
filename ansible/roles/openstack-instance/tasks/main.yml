@@ -35,7 +35,7 @@
         auto_ip: yes
         reuse_ips: no
         flavor: "{{ openstack_instance_flavor }}"
-        key_name: "{{ openstack_instance_key_name }}"
+        key_name: "{{ openstack_instance_key }}"
         network: "{{ openstack_instance_network }}"
         security_groups: "{{ openstack_instance_security_groups }}"
         volumes: "{{ openstack_instance_volumes }}"

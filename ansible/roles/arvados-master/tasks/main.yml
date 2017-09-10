@@ -68,7 +68,7 @@
   file:
     path: /usr/local/src
     state: directory
-    owner: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
     
 - name: download ruby source archive
   get_url:

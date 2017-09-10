@@ -1,4 +1,5 @@
 ---
 
-attached_openstack_volumes: "{{ hostvars[inventory_hostname].openstack_servers[0].volumes | selectattr('name', 'equalto', hostvars[volume]['openstack_volume_name']) | list() }}"
+#attached_openstack_volumes: "{{ hostvars[inventory_hostname].openstack_servers[0].volumes | selectattr('name', 'equalto', hostvars[volume]['openstack_volume_name']) | list() }}"
+attached_openstack_volumes: "{{ os_volumes }}"
 attached_openstack_volume_pvs: "{{ attached_openstack_volumes[0].device }}"

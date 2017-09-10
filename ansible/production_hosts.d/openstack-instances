@@ -9,5 +9,5 @@ openstack-instance-consul-servers-delta-hgi
 [openstack-instance-gitlab-runners]
 os.delta-hgi-ci.instance.gitlab-runner-delta-hgi-ci-01 netgroup=openstack-netgroups-gitlab-runners image=os.delta-hgi-ci.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi-ci.keypair.ansible-mercury gitlab_runner_image=os.delta-hgi-ci.image.hgi-docker-xenial-926b0ea4 managed_by=ansible
 
-[openstance-instance-openstack-tenant-cleaners]
+[openstack-instance-openstack-tenant-cleaners]
 os.delta-hgi.instance.openstack-tenant-cleaner netgroup=openstack-netgroups-hgi image=os.delta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi.keypair.ansible-mercury managed_by=ansible

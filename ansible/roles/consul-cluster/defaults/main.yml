@@ -25,7 +25,8 @@ consul_cluster_infoblox_dns_view: internal
 consul_cluster_dns_ttl_in_seconds: 60
 
 # FIXME this is broken and assumes all consul-servers are in a single cluster
-consul_cluster_server_ips: "{{ groups['consul-servers'] | map('extract', hostvars, 'openstack_server') |  map(attribute='accessIPv4') | list }}"
+#consul_cluster_server_ips: "{{ groups['consul-servers'] | map('extract', hostvars, 'openstack_server') |  map(attribute='accessIPv4') | list }}"
+consul_cluster_server_ips: "{{ groups['consul-servers'] | map('extract', hostvars, 'ansible_host') | list }}"
 
 #consul_cluster_leader_ip: "{{ (consul_cluster_info.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_attr') | unique | list)[0].split(':')[0] }}"
 #consul_cluster_leader_ip: "{{ (consul_cluster_info.results[0].consul_info.consul.leader_attr | split(':'))[0] }}"
