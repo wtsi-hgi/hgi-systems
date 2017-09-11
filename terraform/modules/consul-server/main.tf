@@ -41,7 +41,7 @@ resource "openstack_compute_instance_v2" "consul-server" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.consul-server.*.address[${count.index}]}"
+    floating_ip    = "${openstack_compute_floatingip_v2.consul-server.*.address[count.index]}"
     access_network = true
   }
 
@@ -86,7 +86,7 @@ resource "openstack_blockstorage_volume_v2" "consul-server" {
 }
 
 resource "openstack_compute_volume_attach_v2" "consul-server" {
-  volume_id   = "${openstack_blockstorage_volume_v2.consul-server.*.id[${count.index}]}"
-  instance_id = "${openstack_compute_instance_v2.consul-server.*.id[${count.index}]}"
+  volume_id   = "${openstack_blockstorage_volume_v2.consul-server.*.id[count.index]}"
+  instance_id = "${openstack_compute_instance_v2.consul-server.*.id[count.index]}"
   count       = "${var.count}"
 }
