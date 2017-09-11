@@ -72,7 +72,7 @@ resource "openstack_compute_instance_v2" "consul-server" {
 }
 
 resource "infoblox_record" "consul-server" {
-  value  = "${openstack_compute_instance_v2.consul-server.access_ip_v4}"
+  value  = "${openstack_compute_instance_v2.consul-server.*.access_ip_v4[count.index]}"
   name   = "consul-server-${var.consul_datacenter}-${count.index}"
   domain = "${var.domain}"
   type   = "A"
