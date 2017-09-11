@@ -24,5 +24,6 @@ check_ssl_hostname = True
 host_base = ${S3_HOST}
 host_bucket = ${S3_HOST_BUCKET}
 secret_key = ${S3_SECRET_KEY}
+use_https = True
 EOF
 
