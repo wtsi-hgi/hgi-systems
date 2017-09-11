@@ -33,7 +33,7 @@ resource "openstack_compute_floatingip_v2" "consul-server" {
 resource "openstack_compute_instance_v2" "consul-server" {
   provider        = "openstack"
   count           = "${var.count}"
-  name            = "consul-server-${var.consul_datacenter}"
+  name            = "consul-server-${var.consul_datacenter}-${count.index}"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"
   key_pair        = "${var.key_pair_ids["mercury"]}"
