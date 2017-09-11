@@ -27,6 +27,6 @@ dependencies:
     attached_openstack_volume_vg: consul-vg
     attached_openstack_volume_vols:
       - name: consul-data
-        size: "{{ (hostvars[volume]['openstack_volume_size_gb'] * 1024) - 4 }}M"
+        size: "{{ ((consul_server_volume_size_gb |int ) * 1024) - 4 }}M"
         fstype: xfs
         mountpoint: "{{ consul_data_mountpoint }}"

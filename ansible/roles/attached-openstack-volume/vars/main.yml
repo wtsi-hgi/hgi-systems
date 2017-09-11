@@ -1,5 +1,9 @@
 ---
 
-#attached_openstack_volumes: "{{ hostvars[inventory_hostname].openstack_servers[0].volumes | selectattr('name', 'equalto', hostvars[volume]['openstack_volume_name']) | list() }}"
-attached_openstack_volumes: "{{ os_volumes }}"
-attached_openstack_volume_pvs: "{{ attached_openstack_volumes[0].device }}"
+# FIXME this role probably should not have "openstack" in the name as it now supports terraform as well
+
+_attached_openstack_tf_volume_id: "{{ (groups['tf_type_openstack_compute_volume_attach_v2'] | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id) | list())[0].tf_volume_id }}"
+_attached_openstack_tf_volume: "{{ (groups['tf_type_openstack_blockstorage_volume_v2'] | map('extract', hostvars) | selectattr('tf_id', 'equalto', _attached_openstack_tf_volume_id) | list())[0].tf_attachment[0] }}"
+
+# N.B. this is called pvs because it can be a list of PVs from which to create an LVM VG, but we only support one for now
+attached_openstack_volume_pvs: "{% if tf_id is defined %}{{ _attached_openstack_tf_volume.device }}{% else %}{{ os.volumes[0].device }}{% endif %}"

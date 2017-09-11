@@ -13,22 +13,29 @@ function terraform_inventory {
    tenant="$(basename ${terraform_dir})"
    export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="tf.${tenant}.{{ type }}.{{ primary.expanded_attributes.name | default(name) }}"
    
+   export TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ type in ["openstack_compute_instance_v2", "openstack_blockstorage_volume_v2", "openstack_compute_volume_attach_v2"] }}'
+
    export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",
 "canary-terraform-${tenant}",
 "tf_provider_"+provider,
 "tf_type_"+type] | join("\n") }}
 {% set newline = joiner("\n") -%}
+{% if type != "openstack_compute_instance_v2" -%}
+non-hosts
+{% else -%}
 {% for security_group in primary.expanded_attributes.security_groups -%}
 {{ newline() }}tf_security_group_{{ security_group }}
 {%- endfor -%}
 {% for ansible_group in primary.expanded_attributes.metadata.ansible_groups.split() -%}
 {{ newline() }}{{ ansible_group }}
 {%- endfor -%}
+{%- endif -%}
 EOF
 )
 
    export TF_ANSIBLE_HOST_VARS_TEMPLATE=$(cat <<EOF
+{% if type == "openstack_compute_instance_v2" -%}
 ansible_user={{ primary.expanded_attributes.metadata.user }}
 bastion_host={{ primary.expanded_attributes.metadata.bastion_host | default("") }}
 bastion_user={{ primary.expanded_attributes.metadata.bastion_user | default("") }}
@@ -52,6 +59,7 @@ ansible_host={{ primary.attributes.access_ip_v6
 | default(primary.attributes["network_interface.0.address"], true)
 | default(primary.attributes["network.0.fixed_ip_v6"], true)
 | default(primary.attributes["network.0.fixed_ip_v4"], true)}}
+{% endif -%}
 {% set newline = joiner("\n") -%}
 {% for attr, value in primary.expanded_attributes.items() -%}
 {{ newline() }}tf_{{ attr }}={{ value }}
