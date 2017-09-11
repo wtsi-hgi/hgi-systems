@@ -20,6 +20,16 @@
 ---
 # file: site.yml
 
+# Sanity check that dynamic inventories have run
+- hosts: canaries
+  gather_facts: no
+  tasks:
+    - assert:
+        that: groups[item] is defined
+        msg: "dynamic inventory does not appear to have run (group '{{ item }}' not present)"
+      with_items: "{{ canary_groups }}"
+      any_errors_fatal: yes
+
 # Set up non-host infrastructure
 - include: gitlab-projects.yml
 

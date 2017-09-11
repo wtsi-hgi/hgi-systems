@@ -30,6 +30,7 @@
 [gitlab-runners]
 [bamboosians]
 [batonistas]
+[canaries]
 [cookie-monsters]
 [cookie-jars]
 [consul-credentials]
@@ -110,3 +111,6 @@ openstack-instances
 
 [infoblox-credentials:children]
 openstack-instances
+
+[non-hosts:children]
+canaries
