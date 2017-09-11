@@ -9,6 +9,7 @@ version=git-3fadd3cb
 shade_version=1.16.0
 gitlabbuildvariables_version=0.2.0
 boto3_version=1.4.7
+boto_version=2.46.1-hotfix.1
 yatadis_version=1.0.0
 openstack_info_version=5.3.0
 yaosadis_version=2.0.1
@@ -27,6 +28,9 @@ pip3 install shade==${shade_version}
 
 echo "Installing boto3 using pip3..."
 pip3 install boto3==${boto3_version}
+
+echo "Installing boto using pip3 from github..."
+pip3 install git+https://github.com/wtsi-hgi/boto.git@${boto_version}
 
 echo "Installing gitlab-build-variables-manager using pip3 from github..."
 pip3 install git+https://github.com/wtsi-hgi/gitlab-build-variables-manager.git@v${gitlabbuildvariables_version}
