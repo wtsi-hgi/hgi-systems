@@ -31,14 +31,69 @@ output "key_pair_ids" {
 ###############################################################################
 # Security Groups
 ###############################################################################
-resource "openstack_compute_secgroup_v2" "ssh" {
+
+resource "openstack_compute_secgroup_v2" "consul-server" {
   provider    = "openstack"
-  name        = "ssh_${var.region}_${var.env}"
-  description = "Incoming ssh access"
+  name        = "consul-server_${var.region}_${var.env}"
+  description = "Access to consul server agent"
+
+  # Server RPC
+  rule {
+    from_port   = 8300
+    to_port     = 8300
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  # serf LAN/WAN TCP
+  rule {
+    from_port   = 8301
+    to_port     = 8302
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  # serf LAN/WAN UDP
+  rule {
+    from_port   = 8301
+    to_port     = 8302
+    ip_protocol = "udp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  # HTTP API
+  rule {
+    from_port   = 8500
+    to_port     = 8500
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  # DNS TCP
+  rule {
+    from_port   = 8600
+    to_port     = 8600
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  # DNS UDP
+  rule {
+    from_port   = 8600
+    to_port     = 8600
+    ip_protocol = "udp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
+resource "openstack_compute_secgroup_v2" "http" {
+  provider    = "openstack"
+  name        = "http_${var.region}_${var.env}"
+  description = "Incoming http access"
 
   rule {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 80
+    to_port     = 80
     ip_protocol = "tcp"
     cidr        = "0.0.0.0/0"
   }
@@ -52,6 +107,19 @@ resource "openstack_compute_secgroup_v2" "https" {
   rule {
     from_port   = 443
     to_port     = 443
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
+resource "openstack_compute_secgroup_v2" "ssh" {
+  provider    = "openstack"
+  name        = "ssh_${var.region}_${var.env}"
+  description = "Incoming ssh access"
+
+  rule {
+    from_port   = 22
+    to_port     = 22
     ip_protocol = "tcp"
     cidr        = "0.0.0.0/0"
   }
@@ -85,13 +153,15 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
 
 output "security_group_ids" {
   value = {
-    ssh       = "${openstack_compute_secgroup_v2.ssh.id}"
-    https     = "${openstack_compute_secgroup_v2.https.id}"
-    tcp-local = "${openstack_compute_secgroup_v2.tcp-local.id}"
-    udp-local = "${openstack_compute_secgroup_v2.udp-local.id}"
+    consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
+    http          = "${openstack_compute_secgroup_v2.http.id}"
+    https         = "${openstack_compute_secgroup_v2.https.id}"
+    ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
+    tcp-local     = "${openstack_compute_secgroup_v2.tcp-local.id}"
+    udp-local     = "${openstack_compute_secgroup_v2.udp-local.id}"
   }
 
-  depends_on = ["${openstack_compute_secgroup_v2.ssh}", "${openstack_compute_secgroup_v2.https}", "${openstack_compute_secgroup_v2.tcp-local}", "${openstack_compute_secgroup_v2.udp-local}"]
+  depends_on = ["${openstack_compute_secgroup_v2.consul-server}", "${openstack_compute_secgroup_v2.http}", "${openstack_compute_secgroup_v2.https}", "${openstack_compute_secgroup_v2.ssh}", "${openstack_compute_secgroup_v2.tcp-local}", "${openstack_compute_secgroup_v2.udp-local}"]
 }
 
 ###############################################################################
