@@ -29,6 +29,6 @@ consul_dns_config: true
 nginx_remove_default: true
 nginx_remove_default_vhost: true
 
-_attached_openstack_tf_volume_size: "{{ (groups['tf_type_openstack_blockstorage_volume_v2'] | map('extract', hostvars) | selectattr('tf_id', 'equalto', (groups['tf_type_openstack_compute_volume_attach_v2'] | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id | default('')) | list()) | json_query('[0].tf_volume_id')) | list()) | json_query('[0].tf_size') }}"
+_attached_openstack_tf_volume_size: "{{ (groups['tf_type_openstack_blockstorage_volume_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_id', 'equalto', (groups['tf_type_openstack_compute_volume_attach_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id | default('')) | list()) | json_query('[0].tf_volume_id')) | list()) | json_query('[0].tf_size') }}"
 
 consul_server_volume_size_gb: "{{ _attached_openstack_tf_volume_size if tf_id is defined else hostvars[openstack_instance_volumes[0].inventory_hostname]['openstack_volume_size_gb'] }}"

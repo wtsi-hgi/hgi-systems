@@ -88,18 +88,18 @@
     owner: root
     mode: 0600
 
-- name: ensure gitlab-runner S3 bucket exists
-  tags:
-    - gitlab-runner
-    - s3
-  delegate_to: localhost
-  s3_bucket:
-    ceph: yes
-    s3_url: "{{ gitlab_runner_s3_endpoint }}"
-    aws_access_key: "{{ gitlab_runner_s3_access_key }}"
-    aws_secret_key: "{{ gitlab_runner_s3_secret_key }}"
-    name: "{{ gitlab_runner_s3_bucket }}"
-    state: present
+# - name: ensure gitlab-runner S3 bucket exists
+#   tags:
+#     - gitlab-runner
+#     - s3
+#   delegate_to: localhost
+#   s3_bucket:
+#     ceph: yes
+#     s3_url: "{{ gitlab_runner_s3_endpoint }}"
+#     aws_access_key: "{{ gitlab_runner_s3_access_key }}"
+#     aws_secret_key: "{{ gitlab_runner_s3_secret_key }}"
+#     name: "{{ gitlab_runner_s3_bucket }}"
+#     state: present
 
 - name: create gitlab runner configuration fragment directory
   tags:
@@ -132,7 +132,7 @@
     executor: "{{ item[0].executor }}"
     limit: "{{ item[0].limit }}"
     # FIXME: The below is a repeat of `gitlab_runner_descriptions`, which is dangerous if it is different
-    description: "{{ item[0].name }}-{{ inventory_hostname_short }}"
+    description: "{{ item[0].name }}-{{ openstack_name }}"
     tags: "{{ group_names | union(item[0].extratags | default([])) | join(',') }}"
     extra_args: "{{ item[0].extraargs | default('') }}"
   with_nested:
