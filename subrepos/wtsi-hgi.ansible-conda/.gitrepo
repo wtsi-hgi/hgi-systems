@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/wtsi-hgi/ansible-conda.git
 	branch = master
-	commit = 599eb907940383b80f0330e82202fd1e5ffe5d5d
-	parent = 52b4ee109e72875fd951bb68db1ce7ce5eebe794
+	commit = 5e609154ecc8cfab15bb4cb896d64d5218a0416d
+	parent = eb8fc4b5e29a0937995031939dcf6f789e617d34
 	cmdver = 0.3.1
