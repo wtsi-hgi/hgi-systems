@@ -32,4 +32,4 @@ nginx_remove_default_vhost: true
 _attached_openstack_tf_volume_id: "{{ (groups['tf_type_openstack_compute_volume_attach_v2'] | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id) | list())[0].tf_volume_id }}"
 _attached_openstack_tf_volume_size: "{{ (groups['tf_type_openstack_blockstorage_volume_v2'] | map('extract', hostvars) | selectattr('tf_id', 'equalto', _attached_openstack_tf_volume_id) | list())[0].tf_size }}"
 
-consul_server_volume_size_gb: "{% if tf_id %}{{ _attached_openstack_tf_volume_size }}{% else %}{{ hostvars[openstack_volume]['openstack_volume_size_gb'] }}{% endif %}"
+consul_server_volume_size_gb: "{% if tf_id is defined %}{{ _attached_openstack_tf_volume_size }}{% else %}{{ hostvars[openstack_volume]['openstack_volume_size_gb'] }}{% endif %}"
