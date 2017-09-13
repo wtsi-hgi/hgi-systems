@@ -1,0 +1,9 @@
+---
+
+tf_type_openstack_compute_instance_v2_volume_id: "{{ (groups['tf_type_openstack_compute_volume_attach_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id | default('')) | list()) | json_query('[0].tf_volume_id') }}"
+tf_type_openstack_compute_instance_v2_volume: "{{ (groups['tf_type_openstack_blockstorage_volume_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_id', 'equalto', tf_type_openstack_compute_instance_v2_volume_id) | list()) | json_query('[0]') }}"
+tf_type_openstack_compute_instance_v2_volume_name: "{{ tf_type_openstack_compute_instance_v2_volume | json_query('.name') }}"
+tf_type_openstack_compute_instance_v2_volume_device: "{{ tf_type_openstack_compute_instance_v2_volume | json_query('.tf_attachment[0].device') }}"
+
+# FIXME this does not belong here
+volume: "{{ hostvars[tf_type_openstack_compute_instance_v2_volume]['inventory_hostname'] }}"
