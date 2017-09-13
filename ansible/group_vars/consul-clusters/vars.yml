@@ -17,6 +17,6 @@ consul_cluster_infoblox_password: "{{ infoblox_credentials_password }}"
 consul_cluster_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
 consul_cluster_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
 
-consul_cluster_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | map('extract', hostvars) | list() }}"
+consul_cluster_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | sort | map('extract', hostvars) | list() }}"
 consul_cluster_server_ips: "{{ consul_cluster_servers | json_query('sort([*].ansible_host)') }}"
 
