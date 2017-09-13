@@ -198,7 +198,11 @@ def delete_runner(runner, projects):
                     break
                 else:
                     raise
-    runner.delete()
+    try:
+        runner.delete()
+    except GitlabDeleteError as e:
+        if e.response_code != 404:
+            raise
 
 
 def get_runner_token(output_toml_path):
