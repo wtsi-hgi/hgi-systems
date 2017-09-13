@@ -21,6 +21,7 @@
 # file: roles/openstack-keypair/tasks/main.yml
 
 - name: create openstack key pair
+  when: managed_by is defined and managed_by == "ansible"
   delegate_to: "{{ openstack_delegate }}"
   os_keypair:
     auth: "{{ openstack_auth }}"

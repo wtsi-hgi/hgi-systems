@@ -11,7 +11,7 @@ function terraform_inventory {
    fi
    
    tenant="$(basename ${terraform_dir})"
-   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="tf.${tenant}.{{ type }}.{{ primary.expanded_attributes.name | default(name) }}"
+   export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="tf.${tenant}.{{ type }}.{{ primary.expanded_attributes.name | default(primary.id) }}"
    
    export TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ type in ["openstack_compute_instance_v2", "openstack_blockstorage_volume_v2", "openstack_compute_volume_attach_v2"] }}'
 

@@ -29,16 +29,16 @@
       os_server: 
         state: present
         auth: "{{ openstack_auth }}"
-        image: "{{ openstack_instance_image }}"
+        image: "{{ openstack_instance_image_name }}"
         name: "{{ openstack_name }}"
         wait: yes
         auto_ip: yes
         reuse_ips: no
         flavor: "{{ openstack_instance_flavor }}"
-        key_name: "{{ openstack_instance_key }}"
-        network: "{{ openstack_instance_network }}"
+        key_name: "{{ openstack_instance_key_name }}"
+        network: "{{ openstack_instance_network_name }}"
         security_groups: "{{ openstack_instance_security_groups }}"
-        volumes: "{{ openstack_instance_volumes }}"
+        volumes: "{{ openstack_instance_volume_names }}"
         meta: "managed_by=ansible,user={{ openstack_instance_ssh_user }},host={{ openstack_name }}.hgi.sanger.ac.uk,port=22"
       tags: 
           - openstack-instance
