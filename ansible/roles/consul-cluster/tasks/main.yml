@@ -23,7 +23,7 @@
 # file: roles/consul-cluster/tasks/main.yml
 
 - name: gather consul cluster info
-  delegate_to: "{{ item }}"
+  delegate_to: "{{ item['inventory_hostname'] }}"
   vars:
     ansible_python_interpreter: python3
   consul_info_facts: 
@@ -35,7 +35,7 @@
   when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
 - name: gather consul cluster info again
-  delegate_to: "{{ item }}"
+  delegate_to: "{{ item['inventory_hostname'] }}"
   vars:
     ansible_python_interpreter: python3
   consul_info_facts: 

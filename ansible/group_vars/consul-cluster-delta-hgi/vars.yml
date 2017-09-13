@@ -1,0 +1,4 @@
+consul_cluster_group_name: consul-clusters-delta-hgi
+consul_datacenter: delta-hgi
+consul_cluster_dns_name: consul-delta-hgi
+

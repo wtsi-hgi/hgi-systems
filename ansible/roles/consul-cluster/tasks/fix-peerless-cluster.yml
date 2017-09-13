@@ -22,7 +22,7 @@
 # file: roles/consul-cluster/tasks/fix-peerless-cluster.yml
 
 - name: stop consul service on all servers when cluster has no peers
-  delegate_to: "{{ item }}"
+  delegate_to: "{{ item['inventory_hostname'] }}"
   become: yes
   service:
     name: consul
@@ -30,7 +30,7 @@
   with_items: "{{ consul_cluster_servers }}"
 
 - name: add peers.json to re-bootstrap when cluster has no peers
-  delegate_to: "{{ item }}"
+  delegate_to: "{{ item['inventory_hostname'] }}"
   become: yes
   template: 
     src: peers.json.j2
@@ -38,7 +38,7 @@
   with_items: "{{ consul_cluster_servers }}"
 
 - name: start consul service on all servers when cluster has no peers
-  delegate_to: "{{ item }}"
+  delegate_to: "{{ item['inventory_hostname'] }}"
   become: yes
   service:
     name: consul
