@@ -23,7 +23,7 @@ consul_client_address_bind: true
 consul_data_mountpoint: /data/consul
 consul_data_dir: "{{ consul_data_mountpoint }}/data"
 
-consul_servers: "{{ consul_cluster_servers | json_query('sort([*].consul_advertise_address)') }}"
+consul_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | sort | map('extract', hostvars) | json_query('sort([*].consul_advertise_address)') }}"
 
 consul_dns_allow_stale: true
 consul_dns_max_stale: 30s
