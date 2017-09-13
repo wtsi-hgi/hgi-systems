@@ -1,0 +1,1 @@
+cloud_resource_name: "{{ terraform_name | default(openstack_name) }}"

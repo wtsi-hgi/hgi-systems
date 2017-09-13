@@ -31,6 +31,7 @@
 [bamboosians]
 [batonistas]
 [canaries]
+[cloud-resource]
 [cookie-monsters]
 [cookie-jars]
 [consul-credentials]
@@ -114,3 +115,7 @@ openstack-instances
 
 [non-hosts:children]
 canaries
+
+[cloud-resource:children]
+openstack
+terraform

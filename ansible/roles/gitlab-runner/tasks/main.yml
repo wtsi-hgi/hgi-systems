@@ -132,7 +132,7 @@
     executor: "{{ item[0].executor }}"
     limit: "{{ item[0].limit }}"
     # FIXME: The below is a repeat of `gitlab_runner_descriptions`, which is dangerous if it is different
-    description: "{{ item[0].name }}-{{ openstack_name }}"
+    description: "{{ item[0].name }}-{{ cloud_resource_name }}"
     tags: "{{ group_names | union(item[0].extratags | default([])) | join(',') }}"
     extra_args: "{{ item[0].extraargs | default('') }}"
   with_nested:

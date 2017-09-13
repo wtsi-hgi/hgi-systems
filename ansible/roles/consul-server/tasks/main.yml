@@ -32,7 +32,7 @@
     name: s3-backup
   vars:
     s3_backup_source: "{{ consul_data_dir }}"
-    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ hostvars[volume]['openstack_name'] }}"
+    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ hostvars[volume]['cloud_resource_name'] }}"
     s3_backup_s3_host: "{{ consul_server_s3_host }}"
     s3_backup_s3_access_key: "{{ consul_server_s3_access_key }}"
     s3_backup_s3_secret_key: "{{ consul_server_s3_secret_key }}"
