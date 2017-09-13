@@ -1,4 +1,4 @@
-consul_cluster_group_name: consul-clusters-delta-hgiarvados
+consul_cluster_group_name: consul-cluster-delta-hgiarvados
 consul_datacenter: delta-hgiarvados
 consul_cluster_dns_name: consul-delta-hgiarvados
 
