@@ -6,4 +6,4 @@ tf_type_openstack_compute_instance_v2_volume_name: "{{ tf_type_openstack_compute
 tf_type_openstack_compute_instance_v2_volume_device: "{{ tf_type_openstack_compute_instance_v2_volume | json_query('.tf_attachment[0].device') }}"
 
 # FIXME this does not belong here
-volume: "{{ hostvars[tf_type_openstack_compute_instance_v2_volume]['inventory_hostname'] }}"
+volume: "{{ tf_type_openstack_compute_instance_v2_volume['inventory_hostname'] }}"
