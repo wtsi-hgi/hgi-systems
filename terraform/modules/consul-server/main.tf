@@ -48,7 +48,7 @@ resource "openstack_compute_instance_v2" "consul-server" {
   user_data = "#cloud-config\nhostname: consul-server-${var.consul_datacenter}-${count.index}\nfqdn: consul-server-${var.consul_datacenter}-${count.index}.${var.domain}"
 
   metadata = {
-    ansible_groups = "consul-servers consul-clusters consul-cluster-${var.consul_datacenter} hgi-credentials"
+    ansible_groups = "consul-servers consul-cluster-${var.consul_datacenter} hgi-credentials"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
