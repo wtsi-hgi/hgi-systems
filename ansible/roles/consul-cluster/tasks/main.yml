@@ -23,24 +23,24 @@
 # file: roles/consul-cluster/tasks/main.yml
 
 - name: gather consul cluster info
-  delegate_to: "{{ item['inventory_hostname'] }}"
+  delegate_to: "{{ item }}"
   vars:
     ansible_python_interpreter: python3
   consul_info_facts: 
     consul_bin: /opt/consul/bin/consul
-  with_items: "{{ consul_cluster_servers }}"
+  with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
   register: consul_cluster_info
 
 - include: fix-peerless-cluster.yml
   when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
 - name: gather consul cluster info again
-  delegate_to: "{{ item['inventory_hostname'] }}"
+  delegate_to: "{{ item }}"
   vars:
     ansible_python_interpreter: python3
   consul_info_facts: 
     consul_bin: /opt/consul/bin/consul
-  with_items: "{{ consul_cluster_servers }}"
+  with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
   register: consul_cluster_info
 
 - name: add DNS entry for cluster

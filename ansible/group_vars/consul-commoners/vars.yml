@@ -7,10 +7,8 @@ consul_version: 0.8.4
 
 consul_home: /opt/consul
 
-consul_advertise_address: "{{ os_public_v4 | default(tf_access_ip_v4) | default(ansible_default_ipv4.address) }}"
-
-# TODO: this should probably not be hardcoded here
-consul_datacenter: delta-hgi
+consul_commoners_advertise_address: "{{ os_public_v4 | default(tf_access_ip_v4) | default(ansible_default_ipv4.address) }}"
+consul_advertise_address: "{{ consul_commoners_advertise_address }}"
 
 consul_use_systemd: true
 consul_use_upstart: false
@@ -23,7 +21,9 @@ consul_client_address_bind: true
 consul_data_mountpoint: /data/consul
 consul_data_dir: "{{ consul_data_mountpoint }}/data"
 
-consul_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | sort | map('extract', hostvars) | json_query('sort([*].consul_advertise_address)') }}"
+consul_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort }}"
+consul_server_advertise_addresses: "{{ consul_server_inventory_hostnames | map('extract', hostvars) | list() | json_query('[*].consul_commoners_advertise_address') }}"
+consul_servers: "{{ consul_server_advertise_addresses }}"
 
 consul_dns_allow_stale: true
 consul_dns_max_stale: 30s

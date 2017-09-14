@@ -24,11 +24,11 @@
 
 - name: Install Consul
   become: yes
-  include_role:
+  import_role:
     name: wtsi-hgi.ansible-consul
 
 - name: Setup S3 to backup Consul
-  include_role:
+  import_role:
     name: s3-backup
   vars:
     s3_backup_source: "{{ consul_data_dir }}"
@@ -56,6 +56,9 @@
   with_items:
     - python-consul
     - pyhcl
+
+- name: flush handlers so that consul restart is called before attempting to create ACL
+  meta: flush_handlers
 
 - name: create ACL token required for the server to communicate fully with the rest of the cluster
   consul_acl:
