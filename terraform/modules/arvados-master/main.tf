@@ -23,6 +23,11 @@ variable "bastion" {
   default = {}
 }
 
+variable "ansible_groups" {
+  type    = "list"
+  default = ["arvados-masters", "arvados-cluster-${var.arvados_cluster_id}-members", "consul-agents", "hgi-credentials"]
+}
+
 variable "extra_ansible_groups" {
   type    = "list"
   default = []
@@ -51,7 +56,7 @@ resource "openstack_compute_instance_v2" "arvados-master" {
   user_data = "#cloud-config\nhostname: arvados-master-${var.arvados_cluster_id}\nfqdn: arvados-master-${var.arvados_cluster_id}.${var.domain}"
 
   metadata = {
-    ansible_groups = "${join(" ", distinct(concat(["arvados-masters", "arvados-cluster-${var.arvados_cluster_id}-members", "consul-agents", "hgi-credentials"], var.extra_ansible_groups)))}"
+    ansible_groups = "${join(" ", distinct(concat(var.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
