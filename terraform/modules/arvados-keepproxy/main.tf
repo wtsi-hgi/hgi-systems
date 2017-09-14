@@ -83,9 +83,9 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "arvados-keepproxy" {
- provider = "openstack"
- floating_ip = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
- instance_id = "${openstack_compute_instance_v2.arvados-keepproxy.id}"
+  provider    = "openstack"
+  floating_ip = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
+  instance_id = "${openstack_compute_instance_v2.arvados-keepproxy.id}"
 }
 
 resource "infoblox_record" "arvados-keepproxy" {

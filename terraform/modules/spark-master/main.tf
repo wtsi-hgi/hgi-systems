@@ -70,9 +70,9 @@ resource "openstack_compute_instance_v2" "spark-master" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "spark-master" {
-    provider    = "openstack"
-    floating_ip = "${openstack_networking_floatingip_v2.spark-master.address}"
-    instance_id = "${openstack_compute_instance_v2.spark-master.id}"
+  provider    = "openstack"
+  floating_ip = "${openstack_networking_floatingip_v2.spark-master.address}"
+  instance_id = "${openstack_compute_instance_v2.spark-master.id}"
 }
 
 resource "infoblox_record" "spark-master-dns" {

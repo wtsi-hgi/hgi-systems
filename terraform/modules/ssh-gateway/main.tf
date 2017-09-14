@@ -59,8 +59,8 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "ssh-gateway" {
-    floating_ip = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
-    instance_id = "${openstack_compute_instance_v2.ssh-gateway.id}"
+  floating_ip = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
+  instance_id = "${openstack_compute_instance_v2.ssh-gateway.id}"
 }
 
 resource "infoblox_record" "ssh-gateway" {
