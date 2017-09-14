@@ -24,7 +24,7 @@ variable "bastion" {
   default = {}
 }
 
-resource "openstack_compute_floatingip_v2" "spark-master" {
+resource "openstack_networking_floatingip_v2" "spark-master" {
   provider = "openstack"
   pool     = "nova"
 }
@@ -40,7 +40,6 @@ resource "openstack_compute_instance_v2" "spark-master" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.spark-master.address}"
     access_network = true
   }
 
@@ -68,6 +67,12 @@ resource "openstack_compute_instance_v2" "spark-master" {
       bastion_user = "${var.bastion["user"]}"
     }
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "spark-master" {
+    provider    = "openstack"
+    floating_ip = "${openstack_networking_floatingip_v2.spark-master.address}"
+    instance_id = "${openstack_compute_instance_v2.spark-master.id}"
 }
 
 resource "infoblox_record" "spark-master-dns" {

@@ -37,7 +37,7 @@ locals {
   ]
 }
 
-resource "openstack_compute_floatingip_v2" "arvados-master" {
+resource "openstack_networking_floatingip_v2" "arvados-master" {
   provider = "openstack"
   pool     = "nova"
 }
@@ -53,7 +53,6 @@ resource "openstack_compute_instance_v2" "arvados-master" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.arvados-master.address}"
     access_network = true
   }
 
@@ -81,6 +80,12 @@ resource "openstack_compute_instance_v2" "arvados-master" {
       bastion_user = "${var.bastion["user"]}"
     }
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "arvados-master" {
+  provider    = "openstack"
+  floating_ip = "${openstack_networking_floatingip_v2.arvados-master.address}"
+  instance_id = "${openstack_compute_instance_v2.arvados-master.id}"
 }
 
 resource "infoblox_record" "arvados-master" {

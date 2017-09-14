@@ -1,4 +1,4 @@
-resource "openstack_compute_floatingip_v2" "ssh-gateway-emedlab-arvados" {
+resource "openstack_networking_floatingip_v2" "ssh-gateway-emedlab-arvados" {
   provider = "openstack.emedlab-arvados"
   pool     = "arvados-net"
 }
@@ -14,7 +14,6 @@ resource "openstack_compute_instance_v2" "ssh-gateway-emedlab-arvados" {
 
   network {
     uuid           = "${openstack_networking_network_v2.main_emedlab-arvados.id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.ssh-gateway-emedlab-arvados.address}"
     access_network = true
   }
 
@@ -35,6 +34,12 @@ resource "openstack_compute_instance_v2" "ssh-gateway-emedlab-arvados" {
       timeout = "2m"
     }
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "ssh-gateway-emedlab-arvados" {
+  provider    = " openstack.emedlab-arvados"
+  floating_ip = "${openstack_networking_floatingip_v2.ssh-gateway-emedlab-arvados.address}"
+  instance_id = "${openstack_compute_instance_v2.ssh-gateway-emedlab-arvados.id}"
 }
 
 output "ssh_gateway_emedlab-arvados_ip" {

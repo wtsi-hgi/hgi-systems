@@ -37,7 +37,7 @@ locals {
   ]
 }
 
-resource "openstack_compute_floatingip_v2" "arvados-keepproxy" {
+resource "openstack_networking_floatingip_v2" "arvados-keepproxy" {
   provider = "openstack"
   pool     = "nova"
 }
@@ -53,7 +53,6 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.arvados-keepproxy.address}"
     access_network = true
   }
 
@@ -81,6 +80,12 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
       bastion_user = "${var.bastion["user"]}"
     }
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "arvados-keepproxy" {
+ provider = "openstack"
+ floating_ip = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
+ instance_id = "${openstack_compute_instance_v2.arvados-keepproxy.id}"
 }
 
 resource "infoblox_record" "arvados-keepproxy" {

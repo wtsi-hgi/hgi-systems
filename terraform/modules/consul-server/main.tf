@@ -24,7 +24,7 @@ variable "bastion" {
   default = {}
 }
 
-resource "openstack_compute_floatingip_v2" "consul-server" {
+resource "openstack_networking_floatingip_v2" "consul-server" {
   provider = "openstack"
   pool     = "nova"
   count    = "${var.count}"
@@ -41,7 +41,6 @@ resource "openstack_compute_instance_v2" "consul-server" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.consul-server.*.address[count.index]}"
     access_network = true
   }
 
@@ -69,6 +68,12 @@ resource "openstack_compute_instance_v2" "consul-server" {
       bastion_user = "${var.bastion["user"]}"
     }
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "consul-server" {
+  provider    = "openstack"
+  floating_ip = "${openstack_networking_floatingip_v2.consul-server.*.address[count.index]}"
+  instance_id = "${openstack_compute_instance_v2.consul-server.id}"
 }
 
 resource "infoblox_record" "consul-server" {

@@ -17,7 +17,7 @@ variable "image" {
   default = {}
 }
 
-resource "openstack_compute_floatingip_v2" "ssh-gateway" {
+resource "openstack_networking_floatingip_v2" "ssh-gateway" {
   provider = "openstack"
   pool     = "nova"
 }
@@ -33,7 +33,6 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
 
   network {
     uuid           = "${var.network_id}"
-    floating_ip    = "${openstack_compute_floatingip_v2.ssh-gateway.address}"
     access_network = true
   }
 
@@ -57,6 +56,11 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
       timeout = "2m"
     }
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "ssh-gateway" {
+    floating_ip = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
+    instance_id = "${openstack_compute_instance_v2.ssh-gateway.id}"
 }
 
 resource "infoblox_record" "ssh-gateway" {
