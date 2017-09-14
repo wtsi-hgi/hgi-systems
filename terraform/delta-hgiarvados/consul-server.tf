@@ -1,6 +1,6 @@
 module "consul-server" {
   source = "../modules/consul-server"
-  count  = 3
+  count  = 1
 
   image = {
     name = "${var.base_image_name}"
