@@ -72,8 +72,9 @@ resource "openstack_compute_instance_v2" "consul-server" {
 
 resource "openstack_compute_floatingip_associate_v2" "consul-server" {
   provider    = "openstack"
+  count       = "${var.count}"
   floating_ip = "${openstack_networking_floatingip_v2.consul-server.*.address[count.index]}"
-  instance_id = "${openstack_compute_instance_v2.consul-server.id}"
+  instance_id = "${openstack_compute_instance_v2.consul-server.*.id[count.index]}"
 }
 
 resource "infoblox_record" "consul-server" {
