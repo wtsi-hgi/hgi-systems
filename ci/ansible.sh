@@ -13,7 +13,7 @@ cd ansible
 export ANSIBLE_CONFIG="${CI_PROJECT_DIR}/ansible/ansible-minimal.cfg"
 inventory=terraform-${REGION}-${ENV}_hosts.d
 echo "Calling ansible-playbook on inventory ${inventory}"
-ansible-playbook -i ${inventory} --vault-password-file "${ANSIBLE_VAULT_PASSWORD_FILE}" site.yml
+ansible-playbook -i ${inventory} --vault-password-file "${ANSIBLE_VAULT_PASSWORD_FILE}" site.yml -l terraform
 playbook_exit_status=$?
 
 if [[ ${playbook_exit_status} -eq 0 ]]; then
