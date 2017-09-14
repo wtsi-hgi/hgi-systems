@@ -78,6 +78,7 @@ resource "openstack_compute_floatingip_associate_v2" "consul-server" {
 }
 
 resource "infoblox_record" "consul-server" {
+  count  = "${var.count}"
   value  = "${openstack_networking_floatingip_v2.consul-server.*.address[count.index]}"
   name   = "consul-server-${var.consul_datacenter}-${count.index}"
   domain = "${var.domain}"
