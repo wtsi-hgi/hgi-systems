@@ -2,9 +2,9 @@
 
 set -euf -o pipefail
 
-export GOLANG_VERSION=1.8.1
+export GOLANG_VERSION=1.9
 export GOLANG_DOWNLOAD_URL=https://golang.org/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
-export GOLANG_DOWNLOAD_SHA256=a579ab19d5237e263254f1eac5352efcf1d70b9dacadb6d6bb12b0911ede8994
+export GOLANG_DOWNLOAD_SHA256=d70eadefce8e160638a9a6db97f7192d8463069ab33138893ad3bf31b0650a79
 
 export TMPDIR=$(mktemp -d)
 
