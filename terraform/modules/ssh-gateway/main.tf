@@ -64,7 +64,7 @@ resource "openstack_compute_floatingip_associate_v2" "ssh-gateway" {
 }
 
 resource "infoblox_record" "ssh-gateway" {
-  value  = "${openstack_compute_instance_v2.ssh-gateway.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
   name   = "ssh"
   domain = "${var.domain}"
   type   = "A"
@@ -72,7 +72,7 @@ resource "infoblox_record" "ssh-gateway" {
 }
 
 output "host" {
-  value      = "${openstack_compute_instance_v2.ssh-gateway.access_ip_v4}"
+  value      = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
   depends_on = ["${openstack_compute_instance_v2.ssh-gateway}"]
 }
 

@@ -89,7 +89,7 @@ resource "openstack_compute_floatingip_associate_v2" "arvados-keepproxy" {
 }
 
 resource "infoblox_record" "arvados-keepproxy" {
-  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
   name   = "arvados-keepproxy-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -97,7 +97,7 @@ resource "infoblox_record" "arvados-keepproxy" {
 }
 
 resource "infoblox_record" "arvados-keep" {
-  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
   name   = "arvados-keep-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -105,7 +105,7 @@ resource "infoblox_record" "arvados-keep" {
 }
 
 resource "infoblox_record" "arvados-download" {
-  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
   name   = "arvados-download-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -113,7 +113,7 @@ resource "infoblox_record" "arvados-download" {
 }
 
 resource "infoblox_record" "arvados-collections" {
-  value  = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
   name   = "arvados-collections-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -121,5 +121,5 @@ resource "infoblox_record" "arvados-collections" {
 }
 
 output "ip" {
-  value = "${openstack_compute_instance_v2.arvados-keepproxy.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
 }

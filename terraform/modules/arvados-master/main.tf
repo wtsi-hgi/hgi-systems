@@ -89,7 +89,7 @@ resource "openstack_compute_floatingip_associate_v2" "arvados-master" {
 }
 
 resource "infoblox_record" "arvados-master" {
-  value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-master.address}"
   name   = "arvados-master-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -97,7 +97,7 @@ resource "infoblox_record" "arvados-master" {
 }
 
 resource "infoblox_record" "arvados-api" {
-  value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-master.address}"
   name   = "arvados-api-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -105,7 +105,7 @@ resource "infoblox_record" "arvados-api" {
 }
 
 resource "infoblox_record" "arvados-ws" {
-  value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-master.address}"
   name   = "arvados-ws-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -113,7 +113,7 @@ resource "infoblox_record" "arvados-ws" {
 }
 
 resource "infoblox_record" "arvados-git" {
-  value  = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-master.address}"
   name   = "arvados-git-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -121,5 +121,5 @@ resource "infoblox_record" "arvados-git" {
 }
 
 output "ip" {
-  value = "${openstack_compute_instance_v2.arvados-master.access_ip_v4}"
+  value = "${openstack_networking_floatingip_v2.arvados-master.address}"
 }

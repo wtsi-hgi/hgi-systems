@@ -89,7 +89,7 @@ resource "openstack_compute_floatingip_associate_v2" "arvados-workbench" {
 }
 
 resource "infoblox_record" "arvados-workbench" {
-  value  = "${openstack_compute_instance_v2.arvados-workbench.access_ip_v4}"
+  value  = "${openstack_networking_floatingip_v2.arvados-workbench.address}"
   name   = "arvados-workbench-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -97,5 +97,5 @@ resource "infoblox_record" "arvados-workbench" {
 }
 
 output "ip" {
-  value = "${openstack_compute_instance_v2.arvados-workbench.access_ip_v4}"
+  value = "${openstack_networking_floatingip_v2.arvados-workbench.address}"
 }
