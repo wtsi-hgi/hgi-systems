@@ -17,8 +17,8 @@ module "arvados-master" {
     user = "${module.ssh-gateway.user}"
   }
 
-  arvados_cluster_id = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
 module "arvados-sso" {
@@ -40,8 +40,8 @@ module "arvados-sso" {
     user = "${module.ssh-gateway.user}"
   }
 
-  arvados_cluster_id = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
 module "arvados-workbench" {
@@ -63,8 +63,8 @@ module "arvados-workbench" {
     user = "${module.ssh-gateway.user}"
   }
 
-  arvados_cluster_id = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
 module "arvados-keepproxy" {
@@ -86,8 +86,8 @@ module "arvados-keepproxy" {
     user = "${module.ssh-gateway.user}"
   }
 
-  arvados_cluster_id = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
 module "arvados-keep" {
@@ -110,6 +110,6 @@ module "arvados-keep" {
     user = "${module.ssh-gateway.user}"
   }
 
-  arvados_cluster_id = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
