@@ -41,6 +41,8 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   metadata = {
     ansible_groups = "ssh-gateways"
     user           = "${var.image["user"]}"
+    bastion_host   = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
+    bastion_user   = "${var.image["user"]}"
   }
 
   # wait for host to be available via ssh
