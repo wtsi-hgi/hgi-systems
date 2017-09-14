@@ -23,6 +23,16 @@ variable "bastion" {
   default = {}
 }
 
+variable "ansible_groups" {
+  type    = "list"
+  default = ["arvados-ssos", "arvados-cluster-${var.arvados_cluster_id}-members", "consul-agents", "hgi-credentials"]
+}
+
+variable "extra_ansible_groups" {
+  type    = "list"
+  default = []
+}
+
 resource "openstack_compute_floatingip_v2" "arvados-sso" {
   provider = "openstack"
   pool     = "nova"
@@ -46,7 +56,7 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
   user_data = "#cloud-config\nhostname: arvados-sso-${var.arvados_cluster_id}\nfqdn: arvados-sso-${var.arvados_cluster_id}.${var.domain}"
 
   metadata = {
-    ansible_groups = "arvados-ssos arvados-cluster-${var.arvados_cluster_id}-members consul-agents hgi-credentials"
+    ansible_groups = "${join(" ", distinct(concat(var.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"

@@ -18,6 +18,7 @@ module "arvados-master" {
   }
 
   arvados_cluster_id = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
 }
 
 module "arvados-sso" {
@@ -40,6 +41,7 @@ module "arvados-sso" {
   }
 
   arvados_cluster_id = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
 }
 
 module "arvados-workbench" {
@@ -62,6 +64,7 @@ module "arvados-workbench" {
   }
 
   arvados_cluster_id = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
 }
 
 module "arvados-keepproxy" {
@@ -84,6 +87,7 @@ module "arvados-keepproxy" {
   }
 
   arvados_cluster_id = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
 }
 
 module "arvados-keep" {
@@ -107,4 +111,5 @@ module "arvados-keep" {
   }
 
   arvados_cluster_id = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados]
 }
