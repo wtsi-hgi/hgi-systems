@@ -24,6 +24,10 @@ variable "bastion" {
   default = {}
 }
 
+locals {
+  hostname_format = "${format("consul-server-%s", var.consul_datacenter)}-%02d"
+}
+
 resource "openstack_networking_floatingip_v2" "consul-server" {
   provider = "openstack"
   pool     = "nova"
@@ -33,7 +37,7 @@ resource "openstack_networking_floatingip_v2" "consul-server" {
 resource "openstack_compute_instance_v2" "consul-server" {
   provider        = "openstack"
   count           = "${var.count}"
-  name            = "consul-server-${var.consul_datacenter}-${count.index}"
+  name            = "${format(locals.hostname_format, count.index + 1)}"
   image_name      = "${var.image["name"]}"
   flavor_name     = "${var.flavour}"
   key_pair        = "${var.key_pair_ids["mercury"]}"
@@ -44,7 +48,7 @@ resource "openstack_compute_instance_v2" "consul-server" {
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: consul-server-${var.consul_datacenter}-${count.index}\nfqdn: consul-server-${var.consul_datacenter}-${count.index}.${var.domain}"
+  user_data = "#cloud-config\nhostname: ${format(locals.hostname_format, count.index + 1)}\nfqdn: ${format(locals.hostname_format, count.index + 1)}.${var.domain}"
 
   metadata = {
     ansible_groups = "consul-servers consul-cluster-${var.consul_datacenter} hgi-credentials"
@@ -80,14 +84,14 @@ resource "openstack_compute_floatingip_associate_v2" "consul-server" {
 resource "infoblox_record" "consul-server" {
   count  = "${var.count}"
   value  = "${openstack_networking_floatingip_v2.consul-server.*.address[count.index]}"
-  name   = "consul-server-${var.consul_datacenter}-${count.index}"
+  name   = "${format(locals.hostname_format, count.index + 1)}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
 }
 
 resource "openstack_blockstorage_volume_v2" "consul-server" {
-  name  = "consul-server-${var.consul_datacenter}-${count.index}"
+  name  = "${format(locals.hostname_format, count.index + 1)}"
   count = "${var.count}"
   size  = 10
 }
