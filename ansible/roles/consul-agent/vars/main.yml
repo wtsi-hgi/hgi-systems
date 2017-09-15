@@ -4,5 +4,6 @@ consul_is_ui: false
 consul_is_server: false
 consul_dns_config: true
 consul_install_nginx: false
-# TODO: the consul role does not support multiple retry join servers, so this just passes the first
+
+# TODO: the ansible-consul role is broken and does not support multiple retry join servers, so this just passes the first
 consul_retry_join: "{{ (groups['consul-servers'] | map('extract', hostvars, 'consul_advertise_address') | list())[0] }}"

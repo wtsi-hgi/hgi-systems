@@ -7,13 +7,11 @@ consul_version: 0.8.4
 
 consul_home: /opt/consul
 
-consul_commoners_advertise_address: "{{ os_public_v4 | default(tf_access_ip_v4) | default(ansible_default_ipv4.address) }}"
+consul_commoners_advertise_address: "{{ cloud_resource_ip }}"
 consul_advertise_address: "{{ consul_commoners_advertise_address }}"
 
 consul_use_systemd: true
 consul_use_upstart: false
-
-consul_retry_join: true
 
 consul_client_address: 0.0.0.0
 consul_client_address_bind: true

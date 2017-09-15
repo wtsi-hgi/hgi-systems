@@ -22,6 +22,12 @@
 # file: roles/consul-server/tasks/main.yml
 ---
 
+- name: Sanity check consul vars
+  assert:
+    that:
+      - '(consul_bootstrap_expect == "3") or (consul_bootstrap_expect == "5") or (consul_bootstrap_expect == "7")'
+    msg: "must have 3, 5, or 7 unique consul_servers, but have consul_bootstrap_expect: {{ consul_bootstrap_expect }} ({{ consul_servers }})."
+
 - name: Install Consul
   become: yes
   import_role:
@@ -32,7 +38,8 @@
     name: s3-backup
   vars:
     s3_backup_source: "{{ consul_data_dir }}"
-    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ hostvars[volume]['cloud_resource_name'] }}"
+#    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ hostvars[volume]['cloud_resource_name'] }}"
+    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ volume }}"
     s3_backup_s3_host: "{{ consul_server_s3_host }}"
     s3_backup_s3_access_key: "{{ consul_server_s3_access_key }}"
     s3_backup_s3_secret_key: "{{ consul_server_s3_secret_key }}"

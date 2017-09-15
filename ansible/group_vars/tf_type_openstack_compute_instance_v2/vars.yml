@@ -7,3 +7,5 @@ tf_type_openstack_compute_instance_v2_volume_device: "{{ tf_type_openstack_compu
 
 # FIXME this does not belong here
 volume: "{{ tf_type_openstack_compute_instance_v2_volume['inventory_hostname'] }}"
+
+tf_type_openstack_compute_instance_v2_floating_ip: "{{ (groups['tf_type_openstack_compute_floatingip_associate_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id | default('')) | list()) | json_query('[0].tf_floating_ip') }}"
