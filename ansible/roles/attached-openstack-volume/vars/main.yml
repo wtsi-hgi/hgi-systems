@@ -6,4 +6,4 @@ _attached_openstack_tf_volume_id: "{{ (groups['tf_type_openstack_compute_volume_
 _attached_openstack_tf_volume: "{{ (groups['tf_type_openstack_blockstorage_volume_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_id', 'equalto', _attached_openstack_tf_volume_id) | list()) | json_query('[0].tf_attachment[0]') }}"
 
 # N.B. this is called pvs because it can be a list of PVs from which to create an LVM VG, but we only support one for now
-attached_openstack_volume_pvs: "{{ _attached_openstack_tf_volume.device if tf_id is defined else os_volumes[0].device }}"
+attached_openstack_volume_pvs: "{{ (_attached_openstack_tf_volume | json_query('device')) if tf_id is defined else (os_volumes | json_query('[0].device')) }}"
