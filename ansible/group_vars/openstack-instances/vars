@@ -8,7 +8,7 @@ openstack_instance_router: "{{ (groups[netgroup] | map('extract', hostvars) | se
 
 openstack_instance_image_name: "{{ openstack_instance_image['openstack_name'] }}"
 openstack_instance_key_name: "{{ openstack_instance_key['openstack_name'] }}"
-openstack_instance_volume_names: "{{ openstack_instance_volumes | json_query('[*].openstack_name') }}"
+openstack_instance_volume_names: "{{ openstack_instance_volumes | map(attribute='openstack_name') | list }}"
 openstack_instance_network_name: "{{ openstack_instance_network.openstack_name }}"
 openstack_instance_subnet_name: "{{ openstack_instance_subnet['openstack_name'] }}"
 openstack_instance_router_name: "{{ openstack_instance_router['openstack_name'] }}"

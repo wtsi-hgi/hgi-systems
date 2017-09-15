@@ -22,7 +22,7 @@
 # file: roles/consul-server/tasks/main.yml
 ---
 
-- name: Sanity check consul vars
+- name: sanity check consul vars
   assert:
     that:
       - '(consul_bootstrap_expect == "3") or (consul_bootstrap_expect == "5") or (consul_bootstrap_expect == "7")'

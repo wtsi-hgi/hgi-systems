@@ -46,6 +46,7 @@
 [openstack]
 [openstack-instances]
 [terraform]
+[tf_type_openstack_compute_instance_v2]
 
 [hgs4:children]
 mesos-masters
@@ -115,6 +116,6 @@ openstack-instances
 [non-hosts:children]
 canaries
 
-[cloud-resource:children]
-openstack
-terraform
+[cloud-resources:children]
+openstack-instances
+tf_type_openstack_compute_instance_v2
