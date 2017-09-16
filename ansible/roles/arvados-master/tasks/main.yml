@@ -483,6 +483,7 @@
   become: yes
   cron: 
     state: present
+    name: arvados-git-sync
     cron_file: /etc/cron.d/arvados-git-sync
     minute: "*/5"
     hour: "*"
