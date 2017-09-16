@@ -1,1 +1,1 @@
-../terraform-production_hosts.d/terraform-delta-hgi-production.sh
+../production_hosts.d/terraform-delta-hgi-production.sh
