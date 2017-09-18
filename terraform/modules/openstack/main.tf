@@ -176,6 +176,7 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
 
 output "security_group_ids" {
   value = {
+    consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
     consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
     http          = "${openstack_compute_secgroup_v2.http.id}"
     https         = "${openstack_compute_secgroup_v2.https.id}"
