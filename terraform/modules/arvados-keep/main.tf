@@ -39,16 +39,17 @@ locals {
 }
 
 resource "openstack_compute_instance_v2" "arvados-keep" {
-  provider        = "openstack"
-  count           = "${var.count}"
-  name            = "arvados-keep${count.index}-${var.arvados_cluster_id}"
-  image_name      = "${var.image["name"]}"
-  flavor_name     = "${var.flavour}"
-  key_pair        = "${var.key_pair_ids["mercury"]}"
+  provider    = "openstack"
+  count       = "${var.count}"
+  name        = "arvados-keep${count.index}-${var.arvados_cluster_id}"
+  image_name  = "${var.image["name"]}"
+  flavor_name = "${var.flavour}"
+  key_pair    = "${var.key_pair_ids["mercury"]}"
+
   security_groups = [
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["https"]}",
-    "${var.security_group_ids["consul-client"]}"
+    "${var.security_group_ids["consul-client"]}",
   ]
 
   network {

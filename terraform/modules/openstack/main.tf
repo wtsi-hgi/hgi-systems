@@ -108,7 +108,6 @@ resource "openstack_compute_secgroup_v2" "consul-client" {
   }
 }
 
-
 resource "openstack_compute_secgroup_v2" "http" {
   provider    = "openstack"
   name        = "http_${var.region}_${var.env}"
