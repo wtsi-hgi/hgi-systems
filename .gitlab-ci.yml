@@ -193,6 +193,15 @@ os-images-validate-production-delta-hgiarvados:
 os-images-validate-staging-delta-hgiarvados:
   <<: *os-images-validate-def
   <<: *staging-delta-hgiarvados-def
+    
+terraform-validate-modules:
+  stage: validate
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - ci/terraform-fmt.sh "terraform/modules"
+  dependencies: []
 
 .terraform: &terraform-def
   stage: terraform
