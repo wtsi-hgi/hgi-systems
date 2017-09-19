@@ -25,9 +25,9 @@ consul_dns_node_ttl: 30s
 consul_dns_only_passing: true
 consul_recursors: "{{ sanger_network_dns_servers }}"
 
-
 consul_commoners_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort }}"
 consul_commoners_server_advertise_addresses: "{{ consul_commoners_server_inventory_hostnames | map('extract', hostvars) | list() | map(attribute='consul_commoners_advertise_address') | list }}"
 consul_servers: "{{ consul_commoners_server_advertise_addresses }}"
 consul_retry_join: true
 
+consul_node_name: "{{ cloud_resource_name }}"
