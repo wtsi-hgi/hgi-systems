@@ -17,6 +17,18 @@ variable "image" {
   default = {}
 }
 
+variable "extra_ansible_groups" {
+  type    = "list"
+  default = []
+}
+
+locals {
+  ansible_groups = [
+    "ssh-gateways",
+    "consul-agents",
+  ]
+}
+
 resource "openstack_networking_floatingip_v2" "ssh-gateway" {
   provider = "openstack"
   pool     = "nova"
@@ -39,7 +51,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   user_data = "#cloud-config\nhostname: ssh\nfqdn: ssh.${var.domain}"
 
   metadata = {
-    ansible_groups = "ssh-gateways"
+    ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
     bastion_user   = "${var.image["user"]}"

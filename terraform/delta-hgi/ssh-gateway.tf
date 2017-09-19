@@ -11,4 +11,6 @@ module "ssh-gateway" {
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
+
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
 }
