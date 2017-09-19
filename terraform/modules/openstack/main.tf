@@ -86,6 +86,29 @@ resource "openstack_compute_secgroup_v2" "consul-server" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "consul-client" {
+  provider    = "openstack"
+  name        = "consul-client_${var.region}_${var.env}"
+  description = "Access to consul client agent"
+
+  # serf LAN TCP
+  rule {
+    from_port   = 8301
+    to_port     = 8301
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  # serf LAN UDP
+  rule {
+    from_port   = 8301
+    to_port     = 8301
+    ip_protocol = "udp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
+
 resource "openstack_compute_secgroup_v2" "http" {
   provider    = "openstack"
   name        = "http_${var.region}_${var.env}"
@@ -153,6 +176,7 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
 
 output "security_group_ids" {
   value = {
+    consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
     consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
     http          = "${openstack_compute_secgroup_v2.http.id}"
     https         = "${openstack_compute_secgroup_v2.https.id}"
