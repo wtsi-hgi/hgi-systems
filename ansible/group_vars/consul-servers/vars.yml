@@ -13,11 +13,6 @@ consul_acl_token: "{{ consul_server_acl_token }}"
 consul_acl_default_policy: "deny"
 consul_acl_datacenter: "{{ consul_datacenter }}"
 
-consul_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort }}"
-consul_server_advertise_addresses: "{{ consul_server_inventory_hostnames | map('extract', hostvars) | list() | map(attribute='consul_commoners_advertise_address') | list }}"
-consul_servers: "{{ consul_server_advertise_addresses }}"
-consul_retry_join: true
-
 consul_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
 consul_server_advertise_addresses_wan: "{{ consul_server_inventory_hostnames_wan | map('extract', hostvars) | list() | map(attribute='consul_commoners_advertise_address') | list }}"
 consul_servers_wan: "{{ consul_server_advertise_addresses_wan }}"
