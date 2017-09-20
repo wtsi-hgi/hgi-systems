@@ -35,6 +35,7 @@ locals {
     "arvados-cluster-${var.arvados_cluster_id}-members",
     "consul-agents",
     "hgi-credentials",
+    "s3-credentials",
   ]
 }
 
