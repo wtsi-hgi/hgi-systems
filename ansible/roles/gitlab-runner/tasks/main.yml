@@ -88,18 +88,19 @@
     owner: root
     mode: 0600
 
-# - name: ensure gitlab-runner S3 bucket exists
-#   tags:
-#     - gitlab-runner
-#     - s3
-#   delegate_to: localhost
-#   s3_bucket:
-#     ceph: yes
-#     s3_url: "{{ gitlab_runner_s3_endpoint }}"
-#     aws_access_key: "{{ gitlab_runner_s3_access_key }}"
-#     aws_secret_key: "{{ gitlab_runner_s3_secret_key }}"
-#     name: "{{ gitlab_runner_s3_bucket }}"
-#     state: present
+- name: ensure gitlab-runner S3 bucket exists
+  tags:
+    - gitlab-runner
+    - s3
+  delegate_to: localhost
+  aws_s3:
+    rgw: true
+    s3_url: "{{ gitlab_runner_s3_endpoint }}"
+    aws_access_key: "{{ gitlab_runner_s3_access_key }}"
+    aws_secret_key: "{{ gitlab_runner_s3_secret_key }}"
+    bucket: "{{ gitlab_runner_s3_bucket }}"
+    permission: private
+    mode: create
 
 - name: create gitlab runner configuration fragment directory
   tags:
