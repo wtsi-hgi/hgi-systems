@@ -67,7 +67,7 @@ arvados_cluster_max_body_size_m: 128
 
 arvados_cluster_admin_user_email: "mercury-admin@{{ arvados_cluster_id }}"
 
-arvados_cluster_s3_endpoint: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
+arvados_cluster_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
 arvados_cluster_s3_access_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_access_key'] }}"
 arvados_cluster_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_secret_key'] }}"
 arvados_cluster_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"

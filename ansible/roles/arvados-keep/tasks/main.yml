@@ -110,7 +110,7 @@
   delegate_to: localhost
   aws_s3:
     rgw: true
-    s3_url: "https://{{ arvados_keep_s3_endpoint }}"
+    s3_url: "{{ arvados_keep_s3_endpoint }}"
     aws_access_key: "{{ arvados_keep_s3_access_key }}"
     aws_secret_key: "{{ arvados_keep_s3_secret_key }}"
     bucket: "{{ arvados_keep_s3_bucket }}"
