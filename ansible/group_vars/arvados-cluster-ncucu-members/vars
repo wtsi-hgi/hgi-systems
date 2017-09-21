@@ -34,9 +34,10 @@
 # arvados_cluster_git_ssh_private_key
 # arvados_cluster_admin_user_password
 # arvados_cluster_anonymous_api_token
+# arvados_cluster_data_manager_api_token
 
 arvados_cluster_id: ncucu
-arvados_cluster_site_name: "HGI Arvados ncucu"
+arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
 
 arvados_cluster_sso_app_id: arvados-server
 
@@ -65,4 +66,10 @@ arvados_cluster_git_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/om5
 arvados_cluster_max_body_size_m: 128
 
 arvados_cluster_admin_user_email: "mercury-admin@{{ arvados_cluster_id }}"
+
+arvados_cluster_s3_endpoint: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
+arvados_cluster_s3_access_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_access_key'] }}"
+arvados_cluster_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_secret_key'] }}"
+arvados_cluster_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
+arvados_cluster_s3_replication: 3
 

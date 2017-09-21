@@ -20,15 +20,19 @@
     name: arvados-git-httpd
     state: restarted
 
-- name: create superuser api token
+- name: create api tokens
   become: yes
   become_user: www-data
-  shell: "bundle exec ./script/create_superuser_token.rb {{ arvados_cluster_superuser_api_token }}"
+  shell: "bundle exec ./script/create_superuser_token.rb $(cat {{ item }})"
   args:
+    executable: /bin/sh
     chdir: /var/www/arvados-api/current
   environment:
     HOME: /var/www
     RAILS_ENV: production
+  with_items:
+    - "{{ arvados_master_superuser_token_file }}"
+    - "{{ arvados_master_data_manager_token_file }}"
 
 - name: create trusted workbench api client
   become: yes

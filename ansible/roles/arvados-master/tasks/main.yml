@@ -172,7 +172,7 @@
     - arvados-api-server
   notify:
     - reconfigure arvados-api-server
-    - create superuser api token
+    - create api tokens
 
 - name: create directories for arvados
   become: yes
@@ -196,7 +196,27 @@
     - database.yml
   notify:
     - reconfigure arvados-api-server
-    - create superuser api token
+    - create api tokens
+
+- name: copy superuser token 
+  become: yes
+  copy:
+    content: "{{ arvados_cluster_superuser_api_token }}"
+    dest: "{{ arvados_master_superuser_token_file }}"
+    owner: www-data
+    mode: 0600
+  notify:
+    - create api tokens
+
+- name: copy data manager token 
+  become: yes
+  copy:
+    content: "{{ arvados_cluster_data_manager_api_token }}"
+    dest: "{{ arvados_master_data_manager_token_file }}"
+    owner: www-data
+    mode: 0600
+  notify:
+    - create api tokens
 
 - name: copy ssl certificate
   become: yes
@@ -531,3 +551,4 @@
     owner: www-data
   notify:
    - restart nginx
+

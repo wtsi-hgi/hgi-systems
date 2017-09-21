@@ -1,0 +1,18 @@
+#!/bin/sh
+
+exec 2>&1
+exec GOGC=10 keepstore \
+ -enforce-permissions=true \
+ -blob-signing-key-file={{ arvados_keep_blob_signing_key_file }} \
+ -blob-signature-ttl={{ arvados_keep_blob_signature_ttl_s }} \
+ -data-manager-token-file={{ arvados_keep_data_manager_token_file }} \
+ -max-buffers={{ arvados_keep_max_buffers }} \
+ -never-delete=false \
+ -s3-access-key-file={{ arvados_keep_s3_access_key_file }} \
+ -s3-bucket-volume={{ arvados_keep_s3_bucket }} \
+ -s3-endpoint={{ arvados_keep_s3_endpoint }} \
+ -s3-replication={{ arvados_keep_s3_replication }} \
+ -s3-secret-key-file={{ arvados_keep_s3_secret_key_file }} \
+ -s3-unsafe-delete=true \
+ -trash-check-interval={{ arvados_keep_trash_check_interval }} \
+ -trash-lifetime={{ arvados_keep_trash_lifetime }}  
