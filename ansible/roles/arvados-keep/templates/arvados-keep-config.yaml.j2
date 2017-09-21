@@ -1,0 +1,29 @@
+BlobSignatureTTL: {{ arvados_keep_blob_signature_ttl }}
+BlobSigningKeyFile: {{ arvados_keep_blob_signing_key_file }}
+Debug: false
+EnableDelete: true
+Listen: :25107
+LogFormat: json
+ManagementToken: ""
+MaxBuffers: {{ arvados_keep_max_buffers }}
+MaxRequests: 0
+PIDFile: ""
+RequireSignatures: true
+SystemAuthTokenFile: {{ arvados_keep_data_manager_token_file }}
+TrashCheckInterval: {{ arvados_keep_trash_check_interval }}
+TrashLifetime: {{ arvados_keep_trash_lifetime }}
+Volumes:
+- AccessKeyFile: {{ arvados_keep_s3_access_key_file }}
+  Bucket: {{ arvados_keep_s3_bucket }}
+  ConnectTimeout: 0s
+  Endpoint: {{ arvados_keep_s3_endpoint }}
+  IndexPageSize: 1000
+  LocationConstraint: false
+  RaceWindow: 24h0m0s
+  ReadOnly: false
+  ReadTimeout: 0s
+  Region: ""
+  S3Replication: {{ arvados_keep_s3_replication }}
+  SecretKeyFile: {{ arvados_keep_s3_secret_key_file }}
+  Type: S3
+  UnsafeDelete: true

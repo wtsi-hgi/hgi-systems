@@ -40,6 +40,15 @@
     path: /etc/sv/arvados-keepstore
     state: directory
 
+- name: create arvados keep config YAML file
+  become: yes
+  template:
+    src: "arvados-keep-config.yaml.j2"
+    dest: "{{ arvados_keep_config_file }}"
+    mode: 0755
+  notify:
+   - restart arvados-keepstore
+
 - name: install runit service for arvados-keepstore
   become: yes
   template:
