@@ -336,7 +336,7 @@
 - name: verify arvados-ws is functional remotely via https
   delegate_to: "{{ arvados_master_remote_check_delegate }}"
   uri:
-    url: "https://{{ arvados_cluster_ws_host }}.{{ arvados_cluster_domain }}/status.json"
+    url: "https://{{ arvados_cluster_ws_host }}/status.json"
     return_content: yes
   register: wss
 

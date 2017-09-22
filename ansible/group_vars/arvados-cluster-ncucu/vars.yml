@@ -39,31 +39,12 @@
 arvados_cluster_id: ncucu
 arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
 
-arvados_cluster_sso_app_id: arvados-server
-
-arvados_cluster_db_user_sso: arvados_sso
-arvados_cluster_db_name_sso: arvados_sso_production
-
-arvados_cluster_db_user_api: arvados
-arvados_cluster_db_name_api: arvados_api_production
+arvados_cluster_domain: "hgi.sanger.ac.uk"
 
 arvados_cluster_internal_nets: 
   - 10.101.0.0/24
 
-arvados_cluster_sso_host: "arvados-sso-{{ arvados_cluster_id }}"
-arvados_cluster_api_host: "arvados-api-{{ arvados_cluster_id }}"
-arvados_cluster_ws_host: "arvados-ws-{{ arvados_cluster_id }}"
-arvados_cluster_git_host: "arvados-git-{{ arvados_cluster_id }}"
-arvados_cluster_workbench_host: "arvados-workbench-{{ arvados_cluster_id }}"
-arvados_cluster_keepproxy_host: "arvados-keep-{{ arvados_cluster_id }}"
-arvados_cluster_download_host: "arvados-download-{{ arvados_cluster_id }}"
-arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}"
-
-arvados_cluster_domain: "hgi.sanger.ac.uk"
-
 arvados_cluster_git_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/om5890+bvDjwi13B11ECyeIjTJuwscjlwGLBBmDgiC7SA/vtbQE9beNR6NWiMpRyQQcUkc3HkXEnxOBwSq/LRX/e+6qncXxXGKPMjjJjm7RxQ4Jf05B0s6GvRwyQYpz1r5HlcTBkWTyDupWZfQj6VNq2Y3NX+bSQAOZxTGtoB2Cxq+PssLgtGSISAb478TDgVOn2KgK0XgROYGvT+0oh3N2AbODArVBEHo26SusW512TR2LbXt2WToj2bVLldaML724c6f3yAbd6Cfy9rYOt7Fg05YEHFBzefgJx2rm8L+o6x6q9jEubVffD+dSC0A3HwWMsRaOk9X3SbYc5yDvn git@{{ arvados_cluster_git_host }}"
-
-arvados_cluster_max_body_size_m: 128
 
 arvados_cluster_admin_user_email: "mercury-admin@{{ arvados_cluster_id }}"
 

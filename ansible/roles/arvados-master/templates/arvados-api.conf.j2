@@ -41,7 +41,7 @@ geo $external_client {
 
 server {
   listen       0.0.0.0:443 ssl;
-  server_name  {{ arvados_cluster_api_host }}.{{ arvados_cluster_domain }};
+  server_name  {{ arvados_cluster_api_host }};
 
   ssl on;
   ssl_certificate     {{ arvados_master_cert_file }};

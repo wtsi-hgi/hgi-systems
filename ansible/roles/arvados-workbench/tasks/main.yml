@@ -222,7 +222,7 @@
 - name: verify arvados-workbench is functional
   delegate_to: "{{ arvados_workbench_remote_check_delegate }}"
   uri:
-    url: "https://{{ arvados_cluster_workbench_host }}.{{ arvados_cluster_domain }}/"
+    url: "https://{{ arvados_cluster_workbench_host }}/"
     return_content: yes
   register: workbench_backend
 

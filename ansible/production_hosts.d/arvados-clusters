@@ -1,8 +1,8 @@
 [arvados-clusters]
-arvados-cluster-ncucu
+arvados-cluster-ncucu-arvados-cluster
 
-[arvados-cluster-ncucu-members]
-arvados-cluster-ncucu
+[arvados-cluster-ncucu]
+arvados-cluster-ncucu-arvados-cluster
 
 [hgi-credentials:children]
 arvados-clusters

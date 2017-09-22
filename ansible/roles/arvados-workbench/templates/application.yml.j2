@@ -15,13 +15,13 @@ production:
   secret_token: {{ arvados_cluster_workbench_secret_token }}
 
   # You probably also want to point to your API server.
-  arvados_login_base: https://{{ arvados_cluster_api_host }}.{{ arvados_cluster_domain }}/login
-  arvados_v1_base: https://{{ arvados_cluster_api_host }}.{{ arvados_cluster_domain }}/arvados/v1
+  arvados_login_base: https://{{ arvados_cluster_api_host }}/login
+  arvados_v1_base: https://{{ arvados_cluster_api_host }}/arvados/v1
   arvados_insecure_https: false
 
   site_name: "{{ arvados_cluster_site_name }}"
 
   # You need to configure at least one of these:
-  keep_web_download_url: https://{{ arvados_cluster_download_host }}.{{ arvados_cluster_domain }}/c=%{uuid_or_pdh}
-  keep_web_url: https://{{ arvados_cluster_collections_host }}.{{ arvados_cluster_domain }}/c=%{uuid_or_pdh}
+  keep_web_download_url: https://{{ arvados_cluster_download_host }}/c=%{uuid_or_pdh}
+  keep_web_url: https://{{ arvados_cluster_collections_host }}/c=%{uuid_or_pdh}
 

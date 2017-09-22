@@ -4,7 +4,7 @@ upstream keepproxy {
 
 server {
   listen       0.0.0.0:443 ssl;
-  server_name  {{ arvados_cluster_keepproxy_host }}.{{ arvados_cluster_domain }};
+  server_name  {{ arvados_cluster_keepproxy_host }};
 
   proxy_connect_timeout 90s;
   proxy_read_timeout    300s;
