@@ -20,3 +20,11 @@
 ---
 # file: roles/arvados-cluster/tasks/main.yml
 
+
+- name: create keep_service entries for keep hosts
+  arvados_keep_service:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    service_host: "{{ item }}"
+    service_type: blob
+  with_items: "{{ arvados_cluster_keep_hosts }}"

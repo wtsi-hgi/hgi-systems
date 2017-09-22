@@ -31,7 +31,7 @@ variable "extra_ansible_groups" {
 locals {
   ansible_groups = [
     "arvados-ssos",
-    "arvados-cluster-${var.arvados_cluster_id}-members",
+    "arvados-cluster-${var.arvados_cluster_id}",
     "consul-agents",
     "hgi-credentials",
   ]
