@@ -20,8 +20,11 @@
 ---
 # file: roles/arvados-cluster/tasks/main.yml
 
+- debug:
+    msg: "using arvados delegate {{ arvados_cluster_delegate }}"
 
 - name: create keep_service entries for keep hosts
+  delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_keep_service:
     api_host: "{{ arvados_cluster_api_host }}"
     api_token: "{{ arvados_cluster_superuser_api_token }}"

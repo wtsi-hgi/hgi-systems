@@ -38,9 +38,10 @@ arvados_cluster_compute_node_hosts: "{{ arvados_cluster_compute_nodes | map(attr
 arvados_cluster_sso_host: "arvados-sso-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_api_host: "arvados-api-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_ws_host: "arvados-ws-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
-arvados_cluster_git_host: "arvados-git-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }"}
+arvados_cluster_git_host: "arvados-git-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_workbench_host: "arvados-workbench-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_keepproxy_host: "arvados-keep-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_download_host: "arvados-download-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 
+arvados_cluster_delegate: "{{ arvados_cluster_masters[0]['inventory_hostname'] }}"
