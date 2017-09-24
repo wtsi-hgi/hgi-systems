@@ -80,7 +80,7 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
       type         = "ssh"
       user         = "${var.image["user"]}"
       agent        = "true"
-      timeout      = "2m"
+      timeout      = "10m"
       bastion_host = "${var.bastion["host"]}"
       bastion_user = "${var.bastion["user"]}"
     }
