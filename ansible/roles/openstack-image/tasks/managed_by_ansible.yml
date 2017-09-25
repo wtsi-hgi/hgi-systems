@@ -21,13 +21,15 @@
 # file: roles/openstack-image/tasks/managed_by_ansible.yml
 
 # workaround for ansible s3 module bug: https://github.com/ansible/ansible/issues/5442
-- name: check if image already cached on delegate
+- name: check if image already cached on delegate 
+  when: os_id is not defined
   delegate_to: "{{ openstack_delegate }}"
   stat: 
-    path: "{{ openstack_image_tmp_dir }}/{{ openstack_name }}"
+    path: "{{ lookup('env', 'TMPDIR') | default(openstack_image_tmp_dir) }}/{{ openstack_name }}"
   register: cached_image
 
 - name: fetch image from s3
+  when: os_id is not defined and not cached_image.stat.exists
   tags: s3
   delegate_to: "{{ openstack_delegate }}"
   s3:
@@ -40,9 +42,9 @@
     aws_secret_key: "{{ openstack_image_s3_secret_key }}"    
     object: "{{ openstack_name }}"
     dest: "{{ openstack_image_tmp_dir }}/{{ openstack_name }}"
-  when: not cached_image.stat.exists
 
 - name: ensure image is present in glance
+  when: os_id is not defined
   tags: s3
   delegate_to: "{{ openstack_delegate }}"
   os_image: 
