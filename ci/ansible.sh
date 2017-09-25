@@ -10,9 +10,9 @@ ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD_FILE
 echo "Changing to ansible directory"
 cd ansible
 
-export ANSIBLE_CONFIG="${CI_PROJECT_DIR}/ansible/ansible-minimal.cfg"
+export ANSIBLE_CONFIG="${CI_PROJECT_DIR}/ansible/ansible.cfg"
 inventory=terraform-${REGION}-${ENV}_hosts.d
-echo "Calling ansible-playbook on inventory ${inventory}"
+echo "Calling ansible-playbook site.yml on inventory ${inventory}"
 ansible-playbook -i ${inventory} --vault-password-file "${ANSIBLE_VAULT_PASSWORD_FILE}" site.yml -l terraform
 playbook_exit_status=$?
 
