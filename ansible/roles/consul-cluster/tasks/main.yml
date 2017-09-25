@@ -43,6 +43,11 @@
   with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
   register: consul_cluster_info
 
+- debug:
+    msg: "addresses: {{ consul_cluster_server_ips }}"
+
+- fail:
+
 - name: add DNS entry for cluster
   delegate_to: "{{ consul_cluster_infoblox_delegate }}"
   infoblox:
