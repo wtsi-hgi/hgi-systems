@@ -22,93 +22,96 @@
 ---
 # file: roles/consul-cluster/tasks/main.yml
 
-- name: gather consul cluster info
-  delegate_to: "{{ item }}"
-  vars:
-    ansible_python_interpreter: python3
-  consul_info_facts: 
-    consul_bin: /opt/consul/bin/consul
-  with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
-  register: consul_cluster_info
+- name: configure consul-cluster only when there are servers configured
+  when: "(consul_cluster_server_ips | length) > 0"
+  block:
+    - name: gather consul cluster info
+      delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts: 
+        consul_bin: /opt/consul/bin/consul
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+      register: consul_cluster_info
 
-- include: fix-peerless-cluster.yml
-  when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
+    - include: fix-peerless-cluster.yml
+      when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
-- name: gather consul cluster info again
-  delegate_to: "{{ item }}"
-  vars:
-    ansible_python_interpreter: python3
-  consul_info_facts: 
-    consul_bin: /opt/consul/bin/consul
-  with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
-  register: consul_cluster_info
+    - name: gather consul cluster info again
+      delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts: 
+        consul_bin: /opt/consul/bin/consul
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+      register: consul_cluster_info
 
-- name: add DNS entry for cluster
-  delegate_to: "{{ consul_cluster_infoblox_delegate }}"
-  infoblox:
-    action: set_a_record
-    server: "{{ consul_cluster_infoblox_api_server }}"
-    dns_view: "{{ consul_cluster_infoblox_dns_view }}"
-    api_version: "{{ consul_cluster_infoblox_api_version }}"
-    username: "{{ consul_cluster_infoblox_username }}"
-    password: "{{ consul_cluster_infoblox_password }}"
-    name: "{{ consul_cluster_dns_name }}.hgi.sanger.ac.uk"
-    addresses: "{{ consul_cluster_server_ips }}"
-    ttl: "{{ consul_cluster_dns_ttl_in_seconds }}"
+    - name: add DNS entry for cluster
+      delegate_to: "{{ consul_cluster_infoblox_delegate }}"
+      infoblox:
+        action: set_a_record
+        server: "{{ consul_cluster_infoblox_api_server }}"
+        dns_view: "{{ consul_cluster_infoblox_dns_view }}"
+        api_version: "{{ consul_cluster_infoblox_api_version }}"
+        username: "{{ consul_cluster_infoblox_username }}"
+        password: "{{ consul_cluster_infoblox_password }}"
+        name: "{{ consul_cluster_dns_name }}.hgi.sanger.ac.uk"
+        addresses: "{{ consul_cluster_server_ips }}"
+        ttl: "{{ consul_cluster_dns_ttl_in_seconds }}"
 
-- name: create a management ACL token
-  delegate_to: "{{ consul_cluster_leader }}"
-  consul_acl:
-    name: "{{ consul_cluster_acl_management_name }}"
-    token: "{{ consul_cluster_acl_management_token }}"
-    mgmt_token: "{{ consul_cluster_leader_acl_master_token }}"
-    token_type: management
-    rules:
-      - agent: ""
-        policy: write
-      - event: ""
-        policy: write
-      - key: ""
-        policy: write
-      - keyring: write
-      - node: ""
-        policy: write
-      - operator: write
-      - query: ""
-        policy: write
-      - service: ""
-        policy: write
-      - session: ""
-        policy: write
+    - name: create a management ACL token
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_management_name }}"
+        token: "{{ consul_cluster_acl_management_token }}"
+        mgmt_token: "{{ consul_cluster_leader_acl_master_token }}"
+        token_type: management
+        rules:
+          - agent: ""
+            policy: write
+          - event: ""
+            policy: write
+          - key: ""
+            policy: write
+          - keyring: write
+          - node: ""
+            policy: write
+          - operator: write
+          - query: ""
+            policy: write
+          - service: ""
+            policy: write
+          - session: ""
+            policy: write
 
-- name: create a client ACL token for terraform
-  delegate_to: "{{ consul_cluster_leader }}"
-  consul_acl:
-    name: "{{ consul_cluster_acl_terraform_name }}"
-    token: "{{ consul_cluster_acl_terraform_token }}"
-    mgmt_token: "{{ consul_cluster_acl_management_token }}"
-    token_type: client
-    rules:
-      - key: "" 
-        policy: read
-      - session: ""
-        policy: write
-      - key: "terraform" 
-        policy: write
-      - node: ""
-        policy: write
-      - service: ""
-        policy: write
+    - name: create a client ACL token for terraform
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_terraform_name }}"
+        token: "{{ consul_cluster_acl_terraform_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - key: "" 
+            policy: read
+          - session: ""
+            policy: write
+          - key: "terraform" 
+            policy: write
+          - node: ""
+            policy: write
+          - service: ""
+            policy: write
 
-- name: create a client ACL token for agents
-  delegate_to: "{{ consul_cluster_leader }}"
-  consul_acl:
-    name: "{{ consul_cluster_acl_agent_name }}"
-    token: "{{ consul_cluster_acl_agent_token }}"
-    mgmt_token: "{{ consul_cluster_acl_management_token }}"
-    token_type: client
-    rules:
-      - node: ""
-        policy: write
-      - key: ""
-        policy: write
+    - name: create a client ACL token for agents
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_agent_name }}"
+        token: "{{ consul_cluster_acl_agent_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - node: ""
+            policy: write
+          - key: ""
+            policy: write
