@@ -20,6 +20,17 @@
 ---
 # file: site.yml
 
+# Sanity check that dynamic inventories have run
+- hosts: 
+    - canaries
+  gather_facts: no
+  tasks:
+    - assert:
+        that: groups[item] is defined
+        msg: "dynamic inventory does not appear to have run (group '{{ item }}' not present)"
+      with_items: "{{ canary_groups }}"
+      any_errors_fatal: yes
+
 # create openstack netgroups (networks, subnets, and routers)
 - include: openstack-netgroups-bootstrap.yml
 
@@ -38,3 +49,9 @@
 # bring up openstack instances
 - include: openstack-instances-bootstrap.yml
 
+# Playbooks that only support root hosts
+- include: consul-servers.yml
+- include: gitlab-runners.yml
+
+# Higher-level infrastructure built on top of hosts
+- include: consul-clusters.yml

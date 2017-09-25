@@ -34,10 +34,6 @@
 # Set up non-host infrastructure
 - include: gitlab-projects.yml
 
-# Make sure openstack instances are bootstrapped and facts are set
-# TODO: migrate to dynamic inventory?
-- include: openstack-instances-bootstrap.yml
-
 # Create dynamic groups for hosts based on OS
 - hosts: all:!non-hosts
   tasks:
@@ -55,9 +51,6 @@
 - hosts: image-building
   roles:
     - common
-
-# Critical infrastructure
-- include: ssh-gateways.yml
 
 # Playbooks that need nonroot host hgi infrastructure
 - include: mesos-masters.yml
