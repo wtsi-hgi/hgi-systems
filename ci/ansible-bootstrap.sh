@@ -8,6 +8,8 @@ source "${SCRIPT_DIRECTORY}/common.sh"
 ensureSet CI_PROJECT_DIR ANSIBLE_VAULT_PASSWORD_FILE
 
 export TMPDIR="${CI_PROJECT_DIR}/tmp"
+echo "Ensuring TMPDIR=${TMPDIR} exists"
+mkdir -p "${TMPDIR}"
 
 echo "Changing to ansible directory"
 cd ansible
