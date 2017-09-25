@@ -82,7 +82,7 @@ resource "openstack_compute_floatingip_associate_v2" "ssh-gateway" {
 }
 
 resource "infoblox_record" "ssh-gateway" {
-  value  = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
+  value  = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
   name   = "ssh"
   domain = "${var.domain}"
   type   = "A"
