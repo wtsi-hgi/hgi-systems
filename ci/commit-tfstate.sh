@@ -9,8 +9,8 @@ tfstate_paths=$3
 echo "Current git remotes are:"
 git remote -v
 
-echo "Pulling ${CI_BUILD_REF_NAME} from git"
-git pull origin ${CI_BUILD_REF_NAME}
+echo "Pulling ${CI_COMMIT_REF_NAME} from git"
+git pull origin ${CI_COMMIT_REF_NAME}
 
 echo "Setting git config"
 git config user.name "Mercury"
@@ -26,9 +26,9 @@ status=$(git status --porcelain | awk '$1!="??"')
 if [ -n "${status}" ]; then
     git commit -m "${commit_message}" || (echo "Failed to commit changes to ${tfstate_paths}" && exit 1)
     echo "Pushing to ${GITHUB_REPO}..."
-    subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME} || (echo "Failed to push to github" && exit 1)
+    subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_COMMIT_REF_NAME} || (echo "Failed to push to github" && exit 1)
     echo "Pushing to ${GITLAB_REPO}..."
-    subrepos/gitlab-ci-git-push/git-push ${GITLAB_REPO} ${CI_BUILD_REF_NAME} || (echo "Failed to push to gitlab" && exit 1)
+    subrepos/gitlab-ci-git-push/git-push ${GITLAB_REPO} ${CI_COMMIT_REF_NAME} || (echo "Failed to push to gitlab" && exit 1)
 else
     echo "No changes to terraform state"
 fi

@@ -156,6 +156,11 @@ openstack-vars-validate-staging-delta-hgiarvados:
   image: mercury/taos
   script:
     - ci/ansible-bootstrap.sh
+  cache:
+    paths:
+    - tmp
+   variables:
+     TMPDIR: "${CI_PROJECT_DIR}/tmp"
   artifacts:
     paths:
       - artifacts
@@ -325,7 +330,7 @@ github-sync:
     - docker
   image: mercury/gitlab-ci-git-push
   script:
-    - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_BUILD_REF_NAME}
+    - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_COMMIT_REF_NAME}
   dependencies: []
   only:
     - master
