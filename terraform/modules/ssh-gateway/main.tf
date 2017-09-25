@@ -71,7 +71,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
       type    = "ssh"
       user    = "${var.image["user"]}"
       agent   = "true"
-      timeout = "10m"
+      timeout = "2m"
     }
   }
 }
