@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Genome Research Ltd.
+# Copyright (c) 2014, 2015, 2016, 2017 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -20,33 +20,14 @@
 ---
 # file: site.yml
 
-# Sanity check that dynamic inventories have run
-- hosts: canaries
-  gather_facts: no
-  tasks:
-    - assert:
-        that: groups[item] is defined
-        msg: "dynamic inventory does not appear to have run (group '{{ item }}' not present)"
-      with_items: "{{ canary_groups }}"
-      any_errors_fatal: yes
-
+# Check dynamic inventory and set dynamic groups and facts
+- include: dynamic-inventory-sanity-check.yml
+- include: dynamic-groups.yml
+- include: set-facts.yml
 
 # Set up non-host infrastructure
 - include: gitlab-projects.yml
 
-# Create dynamic groups for hosts based on OS
-- hosts: all:!non-hosts
-  tasks:
-    - group_by: key=os_{{ ansible_distribution }}-{{ ansible_distribution_version }} # e.g. "os_Ubuntu_14.04"
-    - group_by: key=os_{{ ansible_distribution }} # e.g. "os_Ubuntu"
-    - group_by: key=os_family_{{ ansible_os_family }} # e.g. "os_Debian"
-
-# Set facts on all cloud resources so they will be expanded and referencable via hostvars
-- hosts: cloud-resources
-  gather_facts: no
-  roles:
-    - cloud-resource
-    
 # When image-building, make sure we apply common role even if no other groups apply
 - hosts: image-building
   roles:
