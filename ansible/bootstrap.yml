@@ -31,6 +31,12 @@
       with_items: "{{ canary_groups }}"
       any_errors_fatal: yes
 
+# Set facts on all cloud resources so they will be expanded and referencable via hostvars
+- hosts: cloud-resources
+  gather_facts: no
+  roles:
+    - cloud-resource
+
 # create openstack netgroups (networks, subnets, and routers)
 - include: openstack-netgroups-bootstrap.yml
 
