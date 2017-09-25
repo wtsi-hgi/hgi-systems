@@ -18,5 +18,5 @@ consul_cluster_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
 consul_cluster_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
 
 consul_cluster_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
-consul_cluster_server_ips: "{{ consul_cluster_servers | map(attribute='consul_commoners_advertise_address') | list }}"
+consul_cluster_server_ips: "{{ consul_cluster_servers | map(attribute='cloud_resource_ip') | list }}"
 
