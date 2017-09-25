@@ -90,8 +90,8 @@ resource "infoblox_record" "ssh-gateway" {
 }
 
 output "host" {
-  value      = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
-  depends_on = ["${openstack_compute_instance_v2.ssh-gateway}", "${openstack_networking_floatingip_v2.ssh-gateway}", "${openstack_compute_floatingip_associate_v2.ssh-gateway}"]
+  value      = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
+  depends_on = ["${openstack_compute_floatingip_associate_v2.ssh-gateway}"]
 }
 
 output "user" {
