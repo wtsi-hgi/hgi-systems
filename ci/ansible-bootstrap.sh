@@ -5,7 +5,9 @@ set -euf -o pipefail
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet CI_PROJECT_DIR ANSIBLE_VAULT_PASSWORD_FILE TMPDIR
+ensureSet CI_PROJECT_DIR ANSIBLE_VAULT_PASSWORD_FILE
+
+export TMPDIR="${CI_PROJECT_DIR}/tmp"
 
 echo "Changing to ansible directory"
 cd ansible

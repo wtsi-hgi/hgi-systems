@@ -159,8 +159,6 @@ openstack-vars-validate-staging-delta-hgiarvados:
   cache:
     paths:
     - tmp
-   variables:
-     TMPDIR: "${CI_PROJECT_DIR}/tmp"
   artifacts:
     paths:
       - artifacts
