@@ -1,5 +1,5 @@
 
-- name: ensure we have openstack-delta-hgi dynamic inventory ran
+- name: ensure we have openstack-delta-hgi dynamic inventory
   assert:
     that: groups['canary-openstack-delta-hgi'] is defined
     msg: "openstack-delta-hgi dynamic inventory does not appear to have run (group 'canary-openstack-delta-hgi' not present)"
