@@ -149,7 +149,7 @@ openstack-vars-validate-staging-delta-hgiarvados:
 ###############################################################################
 # Stage: bootstrap
 ###############################################################################
-ansible-bootstrap: 
+.ansible-bootstrap: &ansible-bootstrap-def
   stage: bootstrap
   tags:
     - docker
@@ -160,6 +160,10 @@ ansible-bootstrap:
     paths:
       - artifacts
     when: always
+
+ansible-bootstrap-production-delta-hgi:
+  <<: *ansible-bootstrap-def
+  <<: *production-delta-hgi-def
 
 ###############################################################################
 # Stage: validate
