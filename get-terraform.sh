@@ -34,7 +34,7 @@ mkdir -p $GOPATH/src/github.com/prudhvitella
 cd $GOPATH/src/github.com/prudhvitella
 git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
-git checkout adabc328f9a811acaa09cd9d4b4da650c9026048
+git checkout d387a51c2113ad2816f165c954983ae7e70c85a8
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
