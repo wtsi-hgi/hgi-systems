@@ -60,6 +60,25 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
     bastion_host   = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
     bastion_user   = "${var.image["user"]}"
   }
+}
+
+resource "openstack_compute_floatingip_associate_v2" "ssh-gateway" {
+  floating_ip = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
+  instance_id = "${openstack_compute_instance_v2.ssh-gateway.id}"
+}
+
+resource "infoblox_record" "ssh-gateway" {
+  value  = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
+  name   = "ssh"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
+}
+
+resource "null_resource" "ssh-gateway" {
+  triggers {
+    ssh-host = "${openstack_compute_instance_v2.ssh-gateway.id}"
+  }
 
   # wait for host to be available via ssh
   provisioner "remote-exec" {
@@ -75,19 +94,6 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
       timeout = "2m"
     }
   }
-}
-
-resource "openstack_compute_floatingip_associate_v2" "ssh-gateway" {
-  floating_ip = "${openstack_networking_floatingip_v2.ssh-gateway.address}"
-  instance_id = "${openstack_compute_instance_v2.ssh-gateway.id}"
-}
-
-resource "infoblox_record" "ssh-gateway" {
-  value  = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
-  name   = "ssh"
-  domain = "${var.domain}"
-  type   = "A"
-  ttl    = 600
 }
 
 output "host" {
