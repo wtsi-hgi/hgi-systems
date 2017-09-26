@@ -91,8 +91,7 @@ resource "infoblox_record" "ssh-gateway" {
 }
 
 output "host" {
-  value      = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
-  depends_on = ["${openstack_compute_floatingip_associate_v2.ssh-gateway}"]
+  value = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
 }
 
 output "user" {
