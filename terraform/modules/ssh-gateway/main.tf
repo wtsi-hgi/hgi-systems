@@ -69,6 +69,7 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
 
     connection {
       type    = "ssh"
+      host    = "${openstack_compute_floatingip_associate_v2.ssh-gateway.floating_ip}"
       user    = "${var.image["user"]}"
       agent   = "true"
       timeout = "2m"
