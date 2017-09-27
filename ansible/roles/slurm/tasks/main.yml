@@ -56,13 +56,24 @@
   notify:
     - reload slurm
 
-- name: enable slurm service
+- name: enable slurmd service
   when: "not 'image-building' in group_names"
   tags:
     - slurm
   become: yes
   service:
-    name: slurm-llnl
+    name: slurmd
+    enabled: yes 
+  notify:
+    - reload slurm
+
+- name: enable slurmctld service
+  when: "not 'image-building' in group_names"
+  tags:
+    - slurm
+  become: yes
+  service:
+    name: slurmctld
     enabled: yes 
   notify:
     - reload slurm
