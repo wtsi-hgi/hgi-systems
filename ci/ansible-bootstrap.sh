@@ -5,7 +5,21 @@ set -euf -o pipefail
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet CI_PROJECT_DIR ANSIBLE_VAULT_PASSWORD_FILE
+ensureSet CI_PROJECT_DIR REGION ANSIBLE_VAULT_PASSWORD_FILE TERRAFORM_CONSUL_TOKEN
+
+# ansible bootstrapping only necessary for gitlab runner and consul (terraform remote state)
+# if we've made it this far, gitlab runner must be working
+# check to see if terraform remote state is working
+echo "Testing terraform remote state for ${REGION}"
+tstate=$(cd terraform/${REGION} terraform init && echo "ok")
+if [[ "${tstate}" == "ok" ]]; then
+    echo "Terraform remote state is ok, no need to bootstrap with ansible"
+    exit 0
+fi
+
+echo "Terraform remote state was not ok:"
+echo "${tstate}"
+echo "Bootstrapping with ansible..."
 
 export TMPDIR="${CI_PROJECT_DIR}/tmp"
 echo "Ensuring TMPDIR=${TMPDIR} exists"
