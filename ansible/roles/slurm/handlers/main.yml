@@ -1,0 +1,6 @@
+- name: reload slurm
+  become: yes
+  service:
+    name: slurm-llnl
+    state: reloaded
+

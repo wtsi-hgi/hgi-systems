@@ -28,6 +28,8 @@
     - slurm-llnl
     - munge
   when: ansible_os_family == 'Debian'
+  notify:
+    - reload slurm
 
 - name: set munge key
   when: "not 'image-building' in group_names"
@@ -39,6 +41,8 @@
     dest: /etc/munge/munge.key
     content: "{{ slurm_munge_key_base64 | b64decode }}"
     mode: 0400
+  notify:
+    - reload slurm
 
 - name: configure slurm 
   when: "not 'image-building' in group_names"
@@ -49,4 +53,18 @@
     src: slurm.conf.j2
     dest: /etc/slurm-llnl/slurm.conf
     mode: 0644
+  notify:
+    - reload slurm
+
+- name: enable slurm service
+  when: "not 'image-building' in group_names"
+  tags:
+    - slurm
+  become: yes
+  service:
+    name: slurm-llnl
+    enabled: yes 
+  notify:
+    - reload slurm
+
 
