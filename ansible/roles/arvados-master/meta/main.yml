@@ -23,7 +23,4 @@
 dependencies:
   - { role: common }
   - { role: arvados-common }
-  - role: slurm
-    slurm_munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
-    slurm_control_machine: "{{ arvados_cluster_slurm_control_machine }}"
-    slurm_nodename_pattern: "{{ arvados_cluster_compute_node_pattern }}"
+  - { role: arvados-slurm }

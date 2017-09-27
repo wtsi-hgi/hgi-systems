@@ -18,10 +18,12 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/arvados-keepproxy/meta/main.yml
+# file: roles/arvados-slurm/meta/main.yml
 
 dependencies:
   - { role: common }
   - { role: arvados-common }
-  - { role: docker }
-  - { role: arvados-slurm }
+  - role: slurm
+    slurm_munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
+    slurm_control_machine: "{{ arvados_cluster_slurm_control_machine }}"
+    slurm_nodename_pattern: "{{ arvados_cluster_compute_node_pattern }}"
