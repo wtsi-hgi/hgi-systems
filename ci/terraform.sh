@@ -5,7 +5,7 @@ set -euf -o pipefail
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD
+ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD CONSUL_HTTP_TOKEN
 
 artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 mkdir -p "${artifacts_dir}"
