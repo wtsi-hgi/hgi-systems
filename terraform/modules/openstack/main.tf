@@ -173,6 +173,39 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "slurm-master" {
+  provider    = "openstack"
+  name        = "slurm-master_${var.region}_${var.env}"
+  description = "Slurm master node"
+
+  rule {
+    from_port   = 6817
+    to_port     = 6817
+    ip_protocol = "tcp"
+    cidr        = "192.168.0.0/16"
+  }
+
+  rule {
+    from_port   = 7321
+    to_port     = 7321
+    ip_protocol = "tcp"
+    cidr        = "192.168.0.0/16"
+  }
+}
+
+resource "openstack_compute_secgroup_v2" "slurm-compute" {
+  provider    = "openstack"
+  name        = "slurm-compute_${var.region}_${var.env}"
+  description = "Slurm compute node"
+
+  rule {
+    from_port   = 6818
+    to_port     = 6818
+    ip_protocol = "tcp"
+    cidr        = "192.168.0.0/16"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
@@ -182,6 +215,8 @@ output "security_group_ids" {
     ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
     tcp-local     = "${openstack_compute_secgroup_v2.tcp-local.id}"
     udp-local     = "${openstack_compute_secgroup_v2.udp-local.id}"
+    slurm-master  = "${openstack_compute_secgroup_v2.slurm-master.id}"
+    slurm-compute = "${openstack_compute_secgroup_v2.slurm-compute.id}"
   }
 
   depends_on = ["${openstack_compute_secgroup_v2.consul-server}", "${openstack_compute_secgroup_v2.http}", "${openstack_compute_secgroup_v2.https}", "${openstack_compute_secgroup_v2.ssh}", "${openstack_compute_secgroup_v2.tcp-local}", "${openstack_compute_secgroup_v2.udp-local}"]
