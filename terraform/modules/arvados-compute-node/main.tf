@@ -36,6 +36,7 @@ locals {
     "consul-agents",
     "hgi-credentials",
   ]
+
   hostname_format = "arvados-compute-node-%03d-${var.arvados_cluster_id}"
 }
 
@@ -51,6 +52,7 @@ resource "openstack_compute_instance_v2" "arvados-compute" {
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",
+    "${var.security_group_ids["slurm-compute"]}",
   ]
 
   network {
