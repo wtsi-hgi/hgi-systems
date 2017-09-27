@@ -44,7 +44,7 @@
     regexp: '^GRUB_CMDLINE_LINUX='
     state: present
     line: GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
-    register: grubconf
+  register: grubconf
 
 - name: update-grub
   become: yes
