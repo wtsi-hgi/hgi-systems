@@ -1,10 +1,10 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Colin Nolan <colin.nolan@sanger.ac.uk>
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -18,7 +18,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
+# file: roles/arvados-keepproxy/meta/main.yml
 
-- hosts: arvados-crunchers
-  roles:
-    - arvados-cruncher
+dependencies:
+  - { role: common }
+  - { role: arvados-common }
+  - { role: docker }
+  - role: slurm
+    munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
+    slurm_control_machine: "{{ arvados_cluster_api_host }}"
+    slurm_nodename_pattern: "{{ arvados_cluster_compute_node_pattern }}"

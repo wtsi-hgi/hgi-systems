@@ -1,0 +1,75 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/arvados-compute-node/tasks/main.yml
+
+################################################################################
+# arvados-compute-node
+################################################################################
+- name: install arvados-crunch-run and it prerequisites and friends
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - python-arvados-python-client
+    - crunch-run
+    - arvados-docker-cleaner
+
+# TODO maybe set ulimit in docker  --default-ulimit nofile=10000:10000
+
+- name: setup cgroup accounting in grub
+  become: yes
+  lineinfile: 
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX='
+    state: present
+    line: GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
+    register: grubconf
+
+- name: update-grub
+  become: yes
+  when: grubconf|changed
+  command: update-grub
+
+- name: configure FUSE
+  become: yes
+  template:
+    src: "fuse.conf.j2"
+    dest: "/etc/fuse.conf"
+    mode: 0755
+
+- name: create docker-cleaner config directory
+  become: yes
+  file:
+    state: directory
+    path: /etc/arvados/docker-cleaner
+
+- name: configure docker cleaner
+  become: yes
+  template: 
+    src: docker-cleaner.json.j2
+    dest: /etc/arvados/docker-cleaner/docker-cleaner.json
+    mode: 0755  
+  notify:
+    - restart arvados-docker-cleaner
+

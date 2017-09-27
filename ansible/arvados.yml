@@ -41,9 +41,9 @@
   roles:
     - arvados-workbench
 
-- hosts: arvados-computers
+- hosts: arvados-compute-nodes
   roles:
-    - arvados-compute
+    - arvados-compute-node
 
 # non-host playbooks
 - hosts: arvados-clusters

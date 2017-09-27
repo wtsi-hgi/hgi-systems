@@ -1,0 +1,6 @@
+- name: restart arvados-docker-cleaner
+  become: yes
+  systemd:
+    name: arvados-docker-cleaner
+    enabled: yes
+    state: restarted

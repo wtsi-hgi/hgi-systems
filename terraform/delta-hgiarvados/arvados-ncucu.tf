@@ -113,3 +113,27 @@ module "arvados-keep" {
   arvados_cluster_id   = "ncucu"
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
+
+module "arvados-compute-node" {
+  source = "../modules/arvados-compute-node"
+
+  image = {
+    name = "${var.base_image_name}"
+    user = "${var.base_image_user}"
+  }
+
+  count              = 3
+  flavour            = "m1.xlarge"
+  domain             = "node.hgi-delta.consul"
+  security_group_ids = "${module.openstack.security_group_ids}"
+  key_pair_ids       = "${module.openstack.key_pair_ids}"
+  network_id         = "${module.openstack.network_id}"
+
+  bastion = {
+    host = "${module.ssh-gateway.host}"
+    user = "${module.ssh-gateway.user}"
+  }
+
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+}

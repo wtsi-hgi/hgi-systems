@@ -1,0 +1,44 @@
+ControlMachine={{ slurm_control_machine }}
+SlurmctldPort=6817
+SlurmdPort=6818
+AuthType=auth/munge
+StateSaveLocation=/tmp
+SlurmdSpoolDir=/tmp/slurmd
+SwitchType=switch/none
+MpiDefault=none
+SlurmctldPidFile=/var/run/slurmctld.pid
+SlurmdPidFile=/var/run/slurmd.pid
+ProctrackType=proctrack/pgid
+CacheGroups=0
+ReturnToService=2
+TaskPlugin=task/affinity
+#
+# TIMERS
+SlurmctldTimeout=300
+SlurmdTimeout=300
+InactiveLimit=0
+MinJobAge=300
+KillWait=30
+Waittime=0
+#
+# SCHEDULING
+SchedulerType=sched/backfill
+SchedulerPort=7321
+SelectType=select/linear
+FastSchedule=0
+#
+# LOGGING
+SlurmctldDebug=3
+#SlurmctldLogFile=
+SlurmdDebug=3
+#SlurmdLogFile=
+JobCompType=jobcomp/none
+#JobCompLoc=
+JobAcctGatherType=jobacct_gather/none
+#
+# COMPUTE NODES
+NodeName=DEFAULT
+PartitionName=DEFAULT MaxTime=INFINITE State=UP
+
+NodeName={{ slurm_nodename_pattern }}
+PartitionName=compute Nodes={{ slurm_nodename_pattern }} Default=YES Shared=YES

@@ -18,12 +18,35 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/arvados-master/meta/main.yml
+# file: roles/slurm/tasks/main.yml
 
-dependencies:
-  - { role: common }
-  - { role: arvados-common }
-  - role: slurm
-    slurm_munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
-    slurm_control_machine: "{{ arvados_cluster_slurm_control_machine }}"
-    slurm_nodename_pattern: "{{ arvados_cluster_compute_node_pattern }}"
+- name: install slurm and munge (apt)
+  tags: slurm
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  with_items:
+    - slurm-llnl
+    - munge
+  when: ansible_os_family == 'Debian'
+
+- name: set munge key
+  when: "not 'image-building' in group_names"
+  tags: 
+    - slurm
+    - munge    
+  become: yes
+  copy: 
+    dest: /etc/munge/munge.key
+    content: "{{ slurm_munge_key_base64 | b64decode }}"
+    mode: 0400
+
+- name: configure slurm 
+  when: "not 'image-building' in group_names"
+  tags: 
+    - slurm
+  become: yes
+  template:
+    src: slurm.conf.j2
+    dest: /etc/slurm-llnl/slurm.conf
+    mode: 0644
+

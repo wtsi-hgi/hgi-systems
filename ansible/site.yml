@@ -43,7 +43,6 @@
 
 # Playbooks that only support root hosts
 - include: arvados.yml
-- include: arvados-crunchers.yml
 - include: consul-agents.yml
 - include: consul-servers.yml
 - include: cookie-jars.yml

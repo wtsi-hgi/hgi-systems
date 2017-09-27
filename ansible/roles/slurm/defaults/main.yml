@@ -18,5 +18,5 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/arvados-compute/tasks/main.yml
+# file: roles/slurm/defaults/main.yml
 
