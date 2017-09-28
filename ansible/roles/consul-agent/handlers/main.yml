@@ -4,3 +4,6 @@
     name: dnsmasq
     state: restarted
 
+- name: update resolvconf
+  become: yes
+  command: resolvconf -u

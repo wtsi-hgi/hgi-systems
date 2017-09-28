@@ -31,11 +31,13 @@
   notify:
    - restart dnsmasq
 
-- name: add consul dns search to resolv.conf
+- name: add consul dns search to resolvconf base
   become: yes
   lineinfile:
-    path: /etc/resolv.conf
+    path: /etc/resolvconf/resolv.conf.d/base
     state: present
     regexp: "^search node.{{ consul_datacenter }}.consul$"
     line: "search node.{{ consul_datacenter }}.consul"
+  notify:
+    - update resolvconf
 
