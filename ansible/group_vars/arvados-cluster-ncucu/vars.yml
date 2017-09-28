@@ -104,6 +104,6 @@ arvados_cluster_download_host: "arvados-download-{{ arvados_cluster_id }}.{{ arv
 arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 
 arvados_cluster_slurm_control_machine: "arvados-master-{{ arvados_cluster_id }}"
-arvados_cluster_compute_node_pattern: "arvados-compute-node-[000-255]-{{ arvados_cluster_id }}"
+arvados_cluster_compute_node_pattern: "arvados-compute-node-{{ arvados_cluster_id }}-[001-999]"
 
 arvados_cluster_delegate: "{{ arvados_cluster_masters[0]['inventory_hostname'] }}"

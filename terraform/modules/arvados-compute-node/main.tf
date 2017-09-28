@@ -37,7 +37,7 @@ locals {
     "hgi-credentials",
   ]
 
-  hostname_format = "arvados-compute-node-%03d-${var.arvados_cluster_id}"
+  hostname_format = "arvados-compute-node-${var.arvados_cluster_id}-%03d"
 }
 
 resource "openstack_compute_instance_v2" "arvados-compute" {
