@@ -170,7 +170,7 @@ resource "openstack_compute_secgroup_v2" "tcp-local" {
     from_port   = 1
     to_port     = 65535
     ip_protocol = "tcp"
-    cidr        = "192.168.0.0/16"
+    cidr        = "10.0.0.0/8"
   }
 }
 
@@ -183,7 +183,7 @@ resource "openstack_compute_secgroup_v2" "udp-local" {
     from_port   = 1
     to_port     = 65535
     ip_protocol = "udp"
-    cidr        = "192.168.0.0/16"
+    cidr        = "10.0.0.0/8"
   }
 }
 
@@ -196,14 +196,14 @@ resource "openstack_compute_secgroup_v2" "slurm-master" {
     from_port   = 6817
     to_port     = 6817
     ip_protocol = "tcp"
-    cidr        = "192.168.0.0/16"
+    cidr        = "10.0.0.0/8"
   }
 
   rule {
     from_port   = 7321
     to_port     = 7321
     ip_protocol = "tcp"
-    cidr        = "192.168.0.0/16"
+    cidr        = "10.0.0.0/8"
   }
 }
 
@@ -216,7 +216,7 @@ resource "openstack_compute_secgroup_v2" "slurm-compute" {
     from_port   = 6818
     to_port     = 6818
     ip_protocol = "tcp"
-    cidr        = "192.168.0.0/16"
+    cidr        = "10.0.0.0/8"
   }
 }
 
