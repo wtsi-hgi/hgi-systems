@@ -50,7 +50,6 @@ resource "openstack_compute_instance_v2" "arvados-compute" {
 
   security_groups = [
     "${var.security_group_ids["ssh"]}",
-    "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",
     "${var.security_group_ids["slurm-compute"]}",
   ]
