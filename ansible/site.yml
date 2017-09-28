@@ -41,9 +41,13 @@
 - include: mesos-slaves.yml
 - include: bamboosians.yml
 
+# We need consul-agents for DNS functionality
+# some subsequent roles may not work if they 
+# come before (I'm looking at you SLURM)
+- include: consul-agents.yml
+
 # Playbooks that only support root hosts
 - include: arvados.yml
-- include: consul-agents.yml
 - include: consul-servers.yml
 - include: cookie-jars.yml
 - include: cookie-monsters.yml
