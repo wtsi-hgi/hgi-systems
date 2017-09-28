@@ -48,6 +48,7 @@ resource "openstack_compute_instance_v2" "arvados-keep" {
   key_pair    = "${var.key_pair_ids["mercury"]}"
 
   security_groups = [
+    "${var.security_group_ids["ping"]}",
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",

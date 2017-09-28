@@ -32,6 +32,18 @@ output "key_pair_ids" {
 # Security Groups
 ###############################################################################
 
+resource "openstack_compute_secgroup_v2" "ping" {
+  provider    = "openstack"
+  name        = "icmp_ping_${var.region}_${var.env}"
+  description = "ICMP ping"
+
+  # All ICMP
+  rule {
+    ip_protocol = "icmp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 resource "openstack_compute_secgroup_v2" "consul-server" {
   provider    = "openstack"
   name        = "consul-server_${var.region}_${var.env}"
@@ -212,14 +224,13 @@ output "security_group_ids" {
     consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
     http          = "${openstack_compute_secgroup_v2.http.id}"
     https         = "${openstack_compute_secgroup_v2.https.id}"
+    ping          = "${openstack_compute_secgroup_v2.ping.id}"
     ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
     tcp-local     = "${openstack_compute_secgroup_v2.tcp-local.id}"
     udp-local     = "${openstack_compute_secgroup_v2.udp-local.id}"
     slurm-master  = "${openstack_compute_secgroup_v2.slurm-master.id}"
     slurm-compute = "${openstack_compute_secgroup_v2.slurm-compute.id}"
   }
-
-  depends_on = ["${openstack_compute_secgroup_v2.consul-server}", "${openstack_compute_secgroup_v2.http}", "${openstack_compute_secgroup_v2.https}", "${openstack_compute_secgroup_v2.ssh}", "${openstack_compute_secgroup_v2.tcp-local}", "${openstack_compute_secgroup_v2.udp-local}"]
 }
 
 ###############################################################################

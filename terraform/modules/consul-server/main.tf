@@ -35,13 +35,18 @@ resource "openstack_networking_floatingip_v2" "consul-server" {
 }
 
 resource "openstack_compute_instance_v2" "consul-server" {
-  provider        = "openstack"
-  count           = "${var.count}"
-  name            = "${format(local.hostname_format, count.index + 1)}"
-  image_name      = "${var.image["name"]}"
-  flavor_name     = "${var.flavour}"
-  key_pair        = "${var.key_pair_ids["mercury"]}"
-  security_groups = ["${var.security_group_ids["ssh"]}", "${var.security_group_ids["consul-server"]}"]
+  provider    = "openstack"
+  count       = "${var.count}"
+  name        = "${format(local.hostname_format, count.index + 1)}"
+  image_name  = "${var.image["name"]}"
+  flavor_name = "${var.flavour}"
+  key_pair    = "${var.key_pair_ids["mercury"]}"
+
+  security_groups = [
+    "${var.security_group_ids["ping"]}",
+    "${var.security_group_ids["ssh"]}",
+    "${var.security_group_ids["consul-server"]}",
+  ]
 
   network {
     uuid           = "${var.network_id}"
