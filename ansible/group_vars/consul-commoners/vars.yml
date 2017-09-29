@@ -7,8 +7,8 @@ consul_version: 0.8.4
 
 consul_home: /opt/consul
 
-consul_commoners_advertise_address: "{{ cloud_resource_ip }}"
-consul_advertise_address: "{{ consul_commoners_advertise_address }}"
+consul_advertise_address: "{{ cloud_resource_private_ip }}"
+consul_advertise_address_wan: "{{ cloud_resource_public_ip }}"
 
 consul_use_systemd: true
 consul_use_upstart: false
@@ -26,7 +26,7 @@ consul_dns_only_passing: true
 consul_recursors: "{{ sanger_network_dns_servers }}"
 
 consul_commoners_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort }}"
-consul_commoners_server_advertise_addresses: "{{ consul_commoners_server_inventory_hostnames | map('extract', hostvars) | list() | map(attribute='consul_commoners_advertise_address') | list }}"
+consul_commoners_server_advertise_addresses: "{{ consul_commoners_server_inventory_hostnames | map('extract', hostvars) | list() | map(attribute='cloud_resource_private_ip') | list }}"
 consul_servers: "{{ consul_commoners_server_advertise_addresses }}"
 consul_retry_join: true
 

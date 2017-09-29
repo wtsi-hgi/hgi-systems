@@ -17,4 +17,3 @@ consul_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]
 consul_server_advertise_addresses_wan: "{{ consul_server_inventory_hostnames_wan | map('extract', hostvars) | list() | map(attribute='consul_commoners_advertise_address') | list }}"
 consul_servers_wan: "{{ consul_server_advertise_addresses_wan }}"
 onsul_retry_join_wan: true
-
