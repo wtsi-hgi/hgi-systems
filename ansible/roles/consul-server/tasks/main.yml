@@ -67,6 +67,14 @@
 - name: flush handlers so that consul restart is called before attempting to create ACL
   meta: flush_handlers
 
+- name: ensure consul server is running (i.e. after a restart) before continuing
+  wait_for:
+    port: 8500
+    connect_timeout: 1
+    sleep: 1
+    state: started
+    timeout: 30
+
 - name: create ACL token required for the server to communicate fully with the rest of the cluster
   consul_acl:
     # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
