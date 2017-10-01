@@ -38,11 +38,6 @@
     - include: fix-peerless-cluster.yml
       when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
-    - assert: 
-        that:
-          - 'consul_cluster_leader is defined and consul_cluster_leader != ""'
-        msg: "consul cluster must have a leader to continue with cluster configuration"
-
     - name: create ACL token required for the server to communicate fully with the rest of the cluster
       delegate_to: "{{ item }}"
       consul_acl:

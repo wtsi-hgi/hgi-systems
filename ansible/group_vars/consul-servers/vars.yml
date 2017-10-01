@@ -9,6 +9,7 @@ consul_acl_default_policy: "deny"
 consul_acl_datacenter: "{{ consul_datacenter }}"
 
 consul_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
-consul_server_advertise_addresses_wan: "{{ consul_server_inventory_hostnames_wan | map('extract', hostvars) | list() | map(attribute='consul_commoners_advertise_address') | list }}"
+consul_server_advertise_addresses_wan: "{{ consul_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') }}"
 consul_servers_wan: "{{ consul_server_advertise_addresses_wan }}"
-onsul_retry_join_wan: true
+consul_join_wan: true
+consul_retry_join_wan: true
