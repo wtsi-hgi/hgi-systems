@@ -1,10 +1,8 @@
-# vault contains:
-# consul_cluster_acl_management_token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
-
 ---
 
 
 consul_cluster_acl_management_name: mercury
+consul_cluster_acl_management_token: "{{ consul_credentials['acl-management'].token }}"
 
 consul_cluster_acl_terraform_name: mercury_terraform
 consul_cluster_acl_terraform_token: "{{ consul_credentials['terraform'].token }}"
@@ -18,5 +16,9 @@ consul_cluster_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
 consul_cluster_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
 
 consul_cluster_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
-consul_cluster_server_ips: "{{ consul_cluster_servers | map(attribute='cloud_resource_ip') | list }}"
+consul_cluster_server_ips: "{{ consul_cluster_servers | map(attribute='cloud_resource_private_ip') | list }}"
+consul_cluster_server_wan_ips: "{{ consul_cluster_servers | map(attribute='cloud_resource_public_ip') | list }}"
 
+consul_cluster_acl_agent_master_token: "{{ consul_credentials['agent-master'].token }}"
+consul_cluster_server_acl_token: "{{ consul_credentials['default'].token }}"
+consul_cluster_acl_master_token: "{{ consul_credentials['master'].token }}"

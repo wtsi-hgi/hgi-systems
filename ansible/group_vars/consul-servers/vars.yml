@@ -1,15 +1,10 @@
-# Vault contains:
-# consul_server_acl_master_token: xxxx
-# consul_server_acl_token: xxxx
-
 ---
-
-consul_server_acl_name: server_token
 
 consul_bootstrap_expect: "{{ consul_servers | count }}"
 
-consul_acl_master_token: "{{ consul_server_acl_master_token }}"
-consul_acl_token: "{{ consul_server_acl_token }}"
+consul_acl_master_token: "{{ consul_credentials['master'].token }}"
+consul_acl_agent_master_token: "{{ consul_credentials['agent-master'].token }}"
+consul_acl_token: "{{ consul_credentials['default'].token }}"
 consul_acl_default_policy: "deny"
 consul_acl_datacenter: "{{ consul_datacenter }}"
 

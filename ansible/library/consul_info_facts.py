@@ -9,6 +9,9 @@ description:
 author:
   - Joshua C. Randall <jcrandall@alum.mit.edu>
 options:
+  mgmt_token:
+    description:
+      - a management token is required to manipulate the acl lists
   consul_bin:
     description: 
       - Path to the consul command
@@ -31,12 +34,15 @@ def main():
     module = AnsibleModule(
         argument_spec={
             "consul_bin": {"required": False, "default": "/usr/bin/consul", type: "bytes"},
+            "mgmt_token": {"required": False, "default": "", type: "bytes"},
         },
         supports_check_mode=True
     )
-
+    consul_info_cmdline = [module.params["consul_bin"], "info"]
+    if module.params["mgmt_token"] != "":
+        consul_info_cmdline.extend(["-token=%s" % (module.params["mgmt_token"])])
     try:
-        consul_info_process = subprocess.run([module.params["consul_bin"], "info"], shell=False, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        consul_info_process = subprocess.run(consul_info_cmdline, shell=False, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError as cpe:
         module.fail_json(msg="consul info exited with status %s with stdout %s and stderr %s" % (cpe.returncode, cpe.stdout, cpe.stderr))
     except OSError as ose:

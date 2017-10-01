@@ -75,18 +75,3 @@
     state: started
     timeout: 30
 
-- name: create ACL token required for the server to communicate fully with the rest of the cluster
-  consul_acl:
-    # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
-    host: localhost
-    name: "{{ consul_server_acl_name }}"
-    token: "{{ consul_server_acl_token }}"
-    mgmt_token: "{{ consul_server_acl_master_token }}"
-    token_type: client
-    rules:
-      - agent: ""
-        policy: write
-      - node: ""
-        policy: write
-      - service: "consul"
-        policy: write

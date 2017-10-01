@@ -26,4 +26,3 @@ consul_cluster_dns_ttl_in_seconds: 60
 
 consul_cluster_leader: "{% for server in consul_cluster_info.results %}{% if server.consul_info.consul.leader == 'true' %}{{ server.item }}{% endif %}{% endfor %}"
 
-consul_cluster_leader_acl_master_token: "{{ hostvars[consul_cluster_leader].consul_server_acl_master_token }}"

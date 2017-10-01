@@ -80,6 +80,7 @@ openstack-instance-gitlab-runners
 
 [consul-credentials:children]
 consul-agents
+consul-servers
 
 [consul-commoners:children]
 consul-agents

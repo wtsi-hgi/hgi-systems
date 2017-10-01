@@ -126,6 +126,9 @@
 {% if consul_acl_master_token is defined %}
   "acl_master_token": "{{ consul_acl_master_token }}",
 {% endif %}
+{% if consul_acl_agent_master_token is defined %}
+  "acl_agent_master_token": "{{ consul_acl_agent_master_token }}",
+{% endif %}
 {% if consul_acl_token is defined %}
   "acl_token": "{{ consul_acl_token }}",
 {% endif %}
