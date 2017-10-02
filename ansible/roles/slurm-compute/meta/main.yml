@@ -18,9 +18,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/arvados-master/meta/main.yml
+# file: roles/slurm-compute/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: arvados-common }
-  - { role: arvados-slurm-master }
+  - { role: slurm-common }

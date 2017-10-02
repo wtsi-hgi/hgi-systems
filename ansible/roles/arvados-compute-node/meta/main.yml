@@ -24,4 +24,4 @@ dependencies:
   - { role: common }
   - { role: arvados-common }
   - { role: docker }
-  - { role: arvados-slurm }
+  - { role: arvados-slurm-compute }

@@ -1,0 +1,7 @@
+- name: reload slurm
+  become: yes
+  service:
+    name: "{{ item }}"
+    state: reloaded
+  with_items:
+    - slurmd

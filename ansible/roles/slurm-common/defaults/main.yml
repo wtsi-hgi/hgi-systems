@@ -18,5 +18,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/slurm/defaults/main.yml
+# file: roles/slurm-common/defaults/main.yml
 
+slurm_state_save_location: /var/spool/slurm.state
+slurm_spool_dir: /var/spool/slurmd.spool
