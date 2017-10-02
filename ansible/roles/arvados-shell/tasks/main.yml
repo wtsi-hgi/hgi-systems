@@ -89,7 +89,8 @@
   become: yes
   gem: 
     name: arvados-cli
-    state: latest
+    state: present
+    user_install: no
 
 - name: install arvados shell packages
   become: yes
@@ -123,7 +124,8 @@
   become: yes
   gem: 
     name: arvados-login-sync
-    state: latest
+    state: present
+    user_install: no
 
 - name: configure cron to run arvados-login-sync every two minutes
   become: yes
