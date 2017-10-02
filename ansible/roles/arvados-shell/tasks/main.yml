@@ -85,11 +85,11 @@
     creates: /usr/local/bin/ruby
     chdir: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}
 
-- name: install bundler
+- name: install arvados-cli
   become: yes
-  command: gem install bundler
-  args:
-    creates: /usr/local/bin/bundler
+  gem: 
+    name: arvados-cli
+    state: latest
 
 - name: install arvados shell packages
   become: yes
