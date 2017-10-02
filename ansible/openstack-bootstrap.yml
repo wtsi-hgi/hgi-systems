@@ -18,21 +18,22 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
+# file: openstack-bootstrap.yml
 
-# Bootstrap openstack resources managed by ansible before doing anything else
-- include: openstack-bootstrap.yml
+# create openstack netgroups (networks, subnets, and routers)
+- include: openstack-netgroups-bootstrap.yml
 
-# Check dynamic inventory and set dynamic groups and facts
-- include: dynamic-inventory-sanity-check.yml
-- include: set-facts.yml
+# create openstack volumes
+- include: openstack-volumes-bootstrap.yml
 
-# Set dynamic groups (and gather facts)
-- include: dynamic-groups.yml
+# create openstack security groups
+- include: openstack-security-groups-bootstrap.yml
 
-# Playbooks that only support root hosts
-- include: consul-servers.yml
-- include: gitlab-runners.yml
+# create openstack images
+- include: openstack-images-bootstrap.yml
 
-# Higher-level infrastructure built on top of hosts
-- include: consul-clusters.yml
+# create openstack keypairs
+- include: openstack-keypairs-bootstrap.yml
+
+# bring up openstack instances
+- include: openstack-instances-bootstrap.yml
