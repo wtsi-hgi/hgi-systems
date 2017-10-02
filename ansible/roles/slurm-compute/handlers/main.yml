@@ -1,8 +1,8 @@
-- name: reload munge
+- name: restart munge
   become: yes
   service:
     name: munge
-    state: reloaded
+    state: restarted
   listen: "reload slurm"
 
 - name: reload slurmd
