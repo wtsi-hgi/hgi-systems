@@ -1,13 +1,14 @@
-- name: restart munge
+- name: restart munge as it does not support reload
   become: yes
   service:
     name: munge
     state: restarted
   listen: "reload slurm"
 
-- name: reload slurmctld
+- name: restart slurmctld as it does not support reload
   become: yes
   service:
     name: slurmctld
-    state: reloaded
+    state: restarted
   listen: "reload slurm"
+
