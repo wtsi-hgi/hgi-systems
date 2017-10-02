@@ -55,35 +55,35 @@
     
 - name: download ruby source archive
   get_url:
-    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
-    dest: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_shell_ruby_version }}.tar.gz
+    dest: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}.tar.gz
     checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
 
 - name: expand ruby source archive
   unarchive:
-    src: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    src: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}.tar.gz
     dest: /usr/local/src
     remote_src: true
-    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    creates: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}
 
 - name: configure ruby source
   command: ./configure --disable-install-rdoc
   args:
-    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/Makefile
-    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    creates: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}/Makefile
+    chdir: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}
 
 - name: build ruby
   command: make
   args:
-    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/ruby
-    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    creates: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}
 
 - name: install ruby
   become: yes
   command: make install
   args:
     creates: /usr/local/bin/ruby
-    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    chdir: /usr/local/src/ruby-{{ arvados_shell_ruby_version }}
 
 - name: install bundler
   become: yes
@@ -128,27 +128,27 @@
 - name: configure cron to run arvados-login-sync every two minutes
   become: yes
   block:
-      cron:
+    - cron:
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_API_HOST
         value: "{{ arvados_cluster_api_host }}"
-      cron:
+    - cron:
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_API_TOKEN
         value: "{{ arvados_cluster_login_sync_api_token }}"
-      cron:
+    - cron:
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_VIRTUAL_MACHINE_UUID
         value: "{{ arvados_cluster_shell_server_uuid }}"
-      cron:
+    - cron:
         cron_file: arvados-login-sync
         user: root
         name: arvados-login-sync
-        minute: */2
-        hour: *
-        day: *
+        minute: "*/2"
+        hour: "*"
+        day: "*"
         job: arvados-login-sync
 
