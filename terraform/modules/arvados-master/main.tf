@@ -56,7 +56,9 @@ resource "openstack_compute_instance_v2" "arvados-master" {
     "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",
     "${var.security_group_ids["slurm-master"]}",
-  ]
+    "${var.security_group_ids["tcp-local"]}",
+    "${var.security_group_ids["udp-local"]}",
+ ]
 
   network {
     uuid           = "${var.network_id}"
