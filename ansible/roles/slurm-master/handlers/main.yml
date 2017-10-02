@@ -1,7 +1,13 @@
-- name: reload slurm
+- name: reload munge
   become: yes
   service:
-    name: "{{ item }}"
+    name: munge
     state: reloaded
-  with_items:
-    - slurmctld
+  listen: "reload slurm"
+
+- name: reload slurmctld
+  become: yes
+  service:
+    name: slurmctld
+    state: reloaded
+  listen: "reload slurm"
