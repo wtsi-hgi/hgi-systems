@@ -1,0 +1,154 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/arvados-shell/tasks/main.yml
+
+################################################################################
+# arvados-shell
+################################################################################
+- name: install prerequisite packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - bison
+    - build-essential
+    - gettext
+    - libcurl3
+    - libcurl3-gnutls
+    - libcurl4-openssl-dev
+    - libpcre3-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxslt1.1
+    - zlib1g-dev
+    - git
+    - curl
+    - cron
+
+- name: ensure /usr/local/src directory exists
+  become: yes
+  file:
+    path: /usr/local/src
+    state: directory
+    owner: "{{ ansible_user }}"
+    
+- name: download ruby source archive
+  get_url:
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    dest: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
+
+- name: expand ruby source archive
+  unarchive:
+    src: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    dest: /usr/local/src
+    remote_src: true
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: configure ruby source
+  command: ./configure --disable-install-rdoc
+  args:
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/Makefile
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: build ruby
+  command: make
+  args:
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: install ruby
+  become: yes
+  command: make install
+  args:
+    creates: /usr/local/bin/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: install bundler
+  become: yes
+  command: gem install bundler
+  args:
+    creates: /usr/local/bin/bundler
+
+- name: install arvados shell packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - python-arvados-python-client
+    - python-arvados-fuse
+    - crunchrunner
+
+- name: configure git to use the ARVADOS_API_TOKEN environment variable to authenticate to arv-git-httpd
+  become: yes
+  git_config:
+    scope: system
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - name: credential.https://{{ arvados_cluster_git_host }}/.username
+      value: none
+    - name: credential.https://{{ arvados_cluster_git_host }}/.helper
+      value: '!cred(){ cat >/dev/null; if [ "$1" = get ]; then echo password=$ARVADOS_API_TOKEN; fi; };cred'
+
+# TODO create arvados_cluster_shell_server_uuid
+# apiserver:~$ arv --format=uuid virtual_machine create --virtual-machine '{"hostname":"your.shell.server.hostname"}'
+# zzzzz-2x53u-zzzzzzzzzzzzzzz
+
+- name: install arvados-login-sync
+  become: yes
+  gem: 
+    name: arvados-login-sync
+    state: latest
+
+- name: configure cron to run arvados-login-sync every two minutes
+  become: yes
+  block:
+      cron:
+        cron_file: arvados-login-sync
+        user: root
+        name: ARVADOS_API_HOST
+        value: "{{ arvados_cluster_api_host }}"
+      cron:
+        cron_file: arvados-login-sync
+        user: root
+        name: ARVADOS_API_TOKEN
+        value: "{{ arvados_cluster_login_sync_api_token }}"
+      cron:
+        cron_file: arvados-login-sync
+        user: root
+        name: ARVADOS_VIRTUAL_MACHINE_UUID
+        value: "{{ arvados_cluster_shell_server_uuid }}"
+      cron:
+        cron_file: arvados-login-sync
+        user: root
+        name: arvados-login-sync
+        minute: */2
+        hour: *
+        day: *
+        job: arvados-login-sync
+
