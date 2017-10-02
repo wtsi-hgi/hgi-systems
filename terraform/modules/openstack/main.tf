@@ -200,6 +200,13 @@ resource "openstack_compute_secgroup_v2" "slurm-master" {
   }
 
   rule {
+    from_port   = 6819
+    to_port     = 6819
+    ip_protocol = "tcp"
+    cidr        = "10.0.0.0/8"
+  }
+
+  rule {
     from_port   = 7321
     to_port     = 7321
     ip_protocol = "tcp"
