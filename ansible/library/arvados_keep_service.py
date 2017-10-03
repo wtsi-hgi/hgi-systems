@@ -96,12 +96,12 @@ def main():
         module.fail_json(msg="multiple keep_service entries for service_host %s" % (module.params["service_host"]))
     
     if keep_service is None:
-        keep_service = dict(keep_service=module.params["service_host"])
+        keep_service = dict(service_host=module.params["service_host"])
 
     assert keep_service["service_host"] == module.params["service_host"]
 
     for property in ["service_port", "service_ssl_flag", "service_type"]:
-        if property not in keep_service or keep_service[property] != module.params[property]:
+        if property not in keep_service or str(keep_service[property]) != str(module.params[property]):
             update_required = True
             keep_service[property] = module.params[property]
 
@@ -113,15 +113,15 @@ def main():
         else:
             if exists:
                 try:
-                    api.keep_service().update(uuid=keep_service["uuid"], body=keep_service).execute()
+                    api.keep_services().update(uuid=keep_service["uuid"], body=keep_service).execute()
                 except Exception as e:
                     module.fail_json(msg="Error while attempting to update keep_service %s (service_host %s): %s" % (keep_service["uuid"], keep_service["service_host"], str(e)))
                 module.exit_json(changed=True, msg="keep_service resource updated")
             else:
                 try:
-                    api.keep_service().create(body=keep_service).execute()
+                    api.keep_services().create(body=keep_service).execute()
                 except Exception as e:
-                    module.fail_json(msg="Error while attempting to create keep_service %s (service_host %s): %s" % (keep_service["uuid"], keep_service["service_host"], str(e)))
+                    module.fail_json(msg="Error while attempting to create keep_service (service_host %s): %s" % (keep_service["service_host"], str(e)))
                 module.exit_json(changed=True, msg="keep_service resource created")
 
 if __name__ == "__main__":
