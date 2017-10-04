@@ -146,7 +146,7 @@
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_VIRTUAL_MACHINE_UUID
-        value: "{{ arvados_cluster_shell_server_uuid }}"
+        value: "{{ arvados_cluster_id }}-2x53u-{{ cloud_resource_fqdn | hash('md5') | truncate(15, True, '') }}"
         env: yes
     - cron:
         cron_file: arvados-login-sync
