@@ -26,7 +26,7 @@ consul_dns_only_passing: true
 consul_recursors: "{{ sanger_network_dns_servers }}"
 
 consul_commoners_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort }}"
-consul_commoners_server_advertise_addresses: "{{ consul_commoners_server_inventory_hostnames | map('extract', hostvars) | list() | map(attribute='cloud_resource_private_ip') | list }}"
+consul_commoners_server_advertise_addresses: "{{ consul_commoners_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
 consul_servers: "{{ consul_commoners_server_advertise_addresses }}"
 consul_retry_join: true
 

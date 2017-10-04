@@ -18,7 +18,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: consul-servers.yml
-- hosts: consul-servers
-  roles:
-    - consul-server
+# file: roles/consul-agent/meta/main.yml
+
+dependencies:
+  - role: common
+

@@ -1,0 +1,44 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: consul.yml
+
+# Ensure that all consul servers are included in the host limit or refuse to run this playbook
+- hosts: consul-agents,consul-servers
+  tasks:
+    - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
+      assert:
+        that: consul_commoners_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
+        msg: "one or more consul servers ({{ consul_commoners_server_inventory_hostnames }}) are not active in this play, please ensure the limit includes consul-servers"
+
+# We need consul-agents for DNS functionality
+# some subsequent roles may not work if they 
+# come before (I'm looking at you SLURM)
+- hosts: consul-agents
+  roles:
+    - consul-agent
+
+# Consul servers
+- hosts: consul-servers
+  roles:
+    - consul-server
+
+# Higher-level infrastructure built on top of hosts
+- include: consul-clusters.yml

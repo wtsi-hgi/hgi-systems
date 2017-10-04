@@ -49,11 +49,10 @@
 # We need consul-agents for DNS functionality
 # some subsequent roles may not work if they 
 # come before (I'm looking at you SLURM)
-- include: consul-agents.yml
+- include: consul.yml
 
 # Playbooks that only support root hosts
 - include: arvados.yml
-- include: consul-servers.yml
 - include: cookie-jars.yml
 - include: cookie-monsters.yml
 - include: dockerers.yml
@@ -62,5 +61,3 @@
 - include: openstack-tenant-cleaners.yml
 - include: spark.yml
 
-# Higher-level infrastructure built on top of hosts
-- include: consul-clusters.yml
