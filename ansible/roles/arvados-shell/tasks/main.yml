@@ -135,19 +135,19 @@
         user: root
         name: ARVADOS_API_HOST
         value: "{{ arvados_cluster_api_host }}"
-	env: yes
+        env: yes
     - cron:
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_API_TOKEN
         value: "{{ arvados_cluster_login_sync_api_token }}"
-	env: yes
+        env: yes
     - cron:
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_VIRTUAL_MACHINE_UUID
         value: "{{ arvados_cluster_shell_server_uuid }}"
-	env: yes
+        env: yes
     - cron:
         cron_file: arvados-login-sync
         user: root
