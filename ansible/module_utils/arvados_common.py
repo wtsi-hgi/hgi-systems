@@ -23,38 +23,40 @@ COMMON_ARGUMENT_SPECIFICATION = {
 }
 
 
-class TooManyFilteredServicesException(Exception):
+class TooManyItemsFilteredException(Exception):
     """
-    TODO
+    Exception to indicate more items than expected have been encountered.
     """
-    def __init__(self, items, service_filter):
+    def __init__(self, items, filters):
         """
-        TODO
-        :param items:
-        :param service_filter:
+        Constructor.
+        :param items: the items encountered
+        :type items: List[Dict]
+        :param filters: the filter that resulted in the items
+        :type filters: List[List[str]]
         """
         self.items = items
-        self.service_filter = service_filter
-        super(TooManyFilteredServicesException, self).__init__(
-            "Multiple service items retrieved with the filter: %s. Items: %s" % (self.service_filter, self.items))
+        self.filters = filters
+        super(TooManyItemsFilteredException, self).__init__(
+            "Multiple service items retrieved with the filter: %s. Items: %s" % (self.filters, self.items))
 
 
 class ServiceUpdateException(Exception):
     """
-    TODO
+    Exception when updating a service.
     """
 
 class ServiceCreateException(Exception):
     """
-    TODO
+    Exception when creating a service.
     """
 
 
 def _fail_if_missing_modules(module):
     """
-    TODO
-    :param module:
-    :return:
+    Triggers Ansible to fail if any required modules are missing.
+    :param module: the Ansible module
+    :type module: AnsibleModule
     """
     if not HAS_ARVADOS:
         module.fail_json(
@@ -67,59 +69,74 @@ def _fail_if_missing_modules(module):
 
 def get_service(api, filters):
     """
-    TODO
-    :param api:
-    :param filters: the filter must be such that it will result in either 0 or 1 services being returned
-    :return:
-    :raises TooManyFilteredServicesException:
+    Gets a service through the given API using the given filters.
+    :param api: the Arvados API
+    :type api: arvados.api
+    :param filters: the service filter, which must result in either 0 or 1 services being returned
+    :type filters: List[List[str]]
+    :return: the service else None if not found
+    :rtype: Optional[Dict]
+    :raises TooManyItemsFilteredException: raised if the filter resulted in too many items being filtered out
     """
+    # TODO: Wrap in try
     result = api.keep_services().list(filters=filters).execute()
     items = result["items"]
     if len(items) > 1:
-        raise TooManyFilteredServicesException(items, filters)
+        raise TooManyItemsFilteredException(items, filters)
     elif len(items) == 1:
         return result["items"][0]
     else:
         return None
 
 
-def default_needs_update_decider(value_1, value_2):
+def default_value_equator(value_1, value_2):
     """
-    TODO
-    :return:
+    Returns whether the first given value is equal to the second.
+    :param value_1: first value
+    :type value_1: Any
+    :param value_2: second value
+    :type value_2: Any
+    :return: `True` if
+    :rtype: bool
     """
     if type(value_1) != type(value_2):
-        return True
+        return False
     elif isinstance(value_1, list):
-        return sorted(value_1) == sorted(value_2)
+        return sorted(value_1) != sorted(value_2)
     else:
-        return str(value_1) != str(value_2)
+        return str(value_1) == str(value_2)
 
 
-def prepare_update(service, required_property_value_map, needs_update_decider=default_needs_update_decider):
+def prepare_update(service, required_property_value_map, property_value_equator=default_value_equator):
     """
-    TODO
-    :param service:
-    :param module:
-    :param required_property_value_map:
-    :param needs_update_decider: true
-    :return:
+    Perpares an update to the given service using the given property values.
+    :param service: the service to update
+    :type service: Dict
+    :param required_property_value_map: map where the service property name is the key and the value is the value that
+    property should take
+    :type required_property_value_map: Dict[str, str]
+    :param property_value_equator: returns `True` if the given two values are to be considered as equal
+    :type property_value_equator: Callable[[Any, Any], bool]
+    :return: `True` is an update has occurred
+    :rtype: bool
     """
-    update_required = False
+    updated = False
     for key, value in required_property_value_map.items():
-        if key not in service or needs_update_decider(service[key], value):
-            update_required = True
+        if key not in service or not property_value_equator(service[key], value):
+            updated = True
             service[key] = value
-    return update_required
+    return updated
 
 
-def commit_update(api, service, exists):
+def commit_service(api, service, exists):
     """
-    TODO
-    :param api:
-    :param service:
-    :param exists:
-    :return:
+    Commit the given service using the given API.
+    :param api: the API to use to commit the change
+    :type api: arvados.api
+    :param service: the service to commit
+    :type service: Dict
+    :param exists: `True` if the service already exists and thus the commit should be an update
+    :type exists: bool
     """
     if exists:
         try:
@@ -134,11 +151,21 @@ def commit_update(api, service, exists):
 
 
 def process(additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_sevice_parameter_map, needs_update_decider=default_needs_update_decider):
+            module_parameter_to_service_parameter_map, value_equator=default_value_equator):
     """
     TODO
-    :param additional_argument_spec:
-    :return:
+    :param additional_argument_spec: specification for additional Ansible module arguments
+    :type additional_argument_spec: Dict[str, Dict]
+    :param filter_property: the property to filter on when getting the service that is to be updated
+    :type filter_property: str
+    :param filter_value_module_parameter: the name of the module parameter from which the value of the given
+    `filter_property` should be equal to
+    :type filter_value_module_parameter: str
+    :param module_parameter_to_service_parameter_map: map where the value is is the name of the service parameter that
+    is to be set from the value of module parameter identified by the key
+    :type module_parameter_to_service_parameter_map: Dict[str, str]
+    :param value_equator: optional function that can be used to decide if the give value associated to a service
+    parameter is equal to the given expected value
     """
     # Yey outdated Python 2 dict concat...
     argument_specification = COMMON_ARGUMENT_SPECIFICATION.copy()
@@ -162,8 +189,8 @@ def process(additional_argument_spec, filter_property, filter_value_module_param
     assert service[filter_property] == filter_value
 
     update_required = prepare_update(
-        service, {key: module.params[value] for key, value in module_parameter_to_sevice_parameter_map.items()},
-        needs_update_decider)
+        service, {key: module.params[value] for key, value in module_parameter_to_service_parameter_map.items()},
+        value_equator)
 
     if module.check_mode:
         module.exit_json(changed=update_required)
@@ -171,7 +198,7 @@ def process(additional_argument_spec, filter_property, filter_value_module_param
         module.exit_json(changed=False, msg="keep_service resource already exists with the desired properties")
     else:
         try:
-            commit_update(api, service, exists)
+            commit_service(api, service, exists)
         except ServiceUpdateException as e:
             # module.fail_json(msg="Error while attempting to update keep_service %s (service_host %s): %s"
             #                      % (service["uuid"], service["service_host"], str(e)))
