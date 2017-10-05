@@ -52,7 +52,7 @@ def _fail_if_missing_modules(module):
     """
     if not HAS_ARVADOS:
         module.fail_json(
-            msg="arvados is required for this module (try `pip install arvados-python-client` or "
+            msg="arvados is required for this module (try `pip install arvados-§python-client` or "
                 "`apt-get install python-arvados-python-client`)")
 
 
@@ -74,7 +74,7 @@ def get_service(api, filters):
         return None
 
 
-def default_needs_update_decider(value_1, value_2) -> bool:
+def default_needs_update_decider(value_1, value_2):
     """
     TODO
     :return:
