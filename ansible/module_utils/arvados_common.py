@@ -23,7 +23,7 @@ COMMON_ARGUMENT_SPECIFICATION = {
 }
 
 
-class TooManyItemsFilteredException(Exception):
+class TooManyServicesSelectedException(Exception):
     """
     Exception to indicate more items than expected have been encountered.
     """
@@ -37,8 +37,8 @@ class TooManyItemsFilteredException(Exception):
         """
         self.items = items
         self.filters = filters
-        super(TooManyItemsFilteredException, self).__init__(
-            "Multiple service items retrieved with the filter: %s. Items: %s" % (self.filters, self.items))
+        super(TooManyServicesSelectedException, self).__init__(
+            "Multiple service items retrieved with the filters: %s. Items: %s" % (self.filters, self.items))
 
 
 class ServiceUpdateException(Exception):
@@ -46,10 +46,24 @@ class ServiceUpdateException(Exception):
     Exception when updating a service.
     """
 
+
 class ServiceCreateException(Exception):
     """
     Exception when creating a service.
     """
+
+
+class ServiceListException(Exception):
+    """
+    TODO
+    """
+    def __init__(self, filters):
+        """
+        TODO
+        :param filters:
+        """
+        self.filters = filters
+        super(ServiceListException, self).__init__("Failed to list services using filters: %s" % self.filters)
 
 
 def _fail_if_missing_modules(module):
@@ -67,26 +81,35 @@ def _fail_if_missing_modules(module):
             msg="future is required for this module (try `pip install python-future`)")
 
 
-def get_service(api, filters):
+def get_service(api, property, value):
     """
-    Gets a service through the given API using the given filters.
+    Gets a service, through the given API, where the given property takes the given value.
     :param api: the Arvados API
     :type api: arvados.api
-    :param filters: the service filter, which must result in either 0 or 1 services being returned
-    :type filters: List[List[str]]
-    :return: the service else None if not found
+    :param property: the property to select on
+    :type property: str
+    :param value: the value the property must take
+    :type value: str
+    :return: tuple where the first element is the service and the second is whether the service already exists
     :rtype: Optional[Dict]
-    :raises TooManyItemsFilteredException: raised if the filter resulted in too many items being filtered out
+    :raises TooManyItemsFilteredException: raised if multiple services have the given property with the given value
     """
-    # TODO: Wrap in try
-    result = api.keep_services().list(filters=filters).execute()
+    filters = [[property, "=", value]]
+    try:
+        result = api.keep_services().list(filters=filters).execute()
+    except Exception as e:
+        raise raise_from(ServiceListException(filters), e)
     items = result["items"]
     if len(items) > 1:
-        raise TooManyItemsFilteredException(items, filters)
+        raise TooManyServicesSelectedException(items, filters)
     elif len(items) == 1:
-        return result["items"][0]
+        exists = True
+        service = result["items"][0]
     else:
-        return None
+        exists = False
+        service = {property: value}
+    assert service[property] == value
+    return service, exists
 
 
 def default_value_equator(value_1, value_2):
@@ -180,13 +203,7 @@ def process(additional_argument_spec, filter_property, filter_value_module_param
                       token=module.params["api_token"], insecure=module.params["api_host_insecure"])
 
     filter_value = module.params[filter_value_module_parameter]
-    service = get_service(api, [[filter_property, "=", filter_value]])
-    if service is None:
-        exists = False
-        service = {filter_property: filter_value}
-    else:
-        exists = True
-    assert service[filter_property] == filter_value
+    service, exists = get_service(api, filter_property, filter_value)
 
     update_required = prepare_update(
         service, {key: module.params[value] for key, value in module_parameter_to_service_parameter_map.items()},
