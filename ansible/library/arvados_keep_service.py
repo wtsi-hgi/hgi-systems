@@ -70,14 +70,14 @@ def main():
     filter_property = "service_host"
     filter_value_module_parameter = "service_host"
 
-    module_parameter_to_sevice_parameter_map = {
+    module_parameter_to_service_parameter_map = {
         "service_port": "service_port",
         "service_ssl_flag": "service_ssl_flag",
         "service_type": "service_type"
     }
 
     process(additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_sevice_parameter_map)
+            module_parameter_to_service_parameter_map)
 
 
 if __name__ == "__main__":

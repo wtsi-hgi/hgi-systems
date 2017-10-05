@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Callable, Any
 
 try:
     import arvados
@@ -10,6 +10,8 @@ except ImportError:
 from ansible.module_utils.basic import AnsibleModule
 
 ServiceFilter = List[List[str]]
+UpdateDecider = Callable[[str, str], bool]
+
 
 COMMON_ARGUMENT_SPECIFICATION = {
     "api_host": dict(required=True, type="str"),
@@ -76,17 +78,32 @@ def get_service(api: arvados.api, filters: ServiceFilter) -> Optional[Dict]:
         return None
 
 
-def prepare_update(service: Dict, required_property_value_map: Dict) -> bool:
+def default_needs_update_decider(value_1: Any, value_2: Any) -> bool:
+    """
+    TODO
+    :return:
+    """
+    if type(value_1) != type(value_2):
+        return True
+    elif isinstance(value_1, list):
+        return sorted(value_1) == sorted(value_2)
+    else:
+        return str(value_1) != str(value_2)
+
+
+def prepare_update(service: Dict, required_property_value_map: Dict,
+                   needs_update_decider: UpdateDecider=default_needs_update_decider) -> bool:
     """
     TODO
     :param service:
     :param module:
     :param required_property_value_map:
+    :param needs_update_decider: true
     :return:
     """
     update_required = False
     for key, value in required_property_value_map.items():
-        if key not in service or str(service[key]) != str(value):
+        if key not in service or needs_update_decider(service[key], value):
             update_required = True
             service[key] = value
     return update_required
@@ -113,7 +130,8 @@ def commit_update(api, service, exists):
 
 
 def process(additional_argument_spec: Dict[Dict], filter_property: str, filter_value_module_parameter: str,
-            module_parameter_to_sevice_parameter_map: Dict[str, str]):
+            module_parameter_to_sevice_parameter_map: Dict[str, str],
+            needs_update_decider: UpdateDecider=default_needs_update_decider):
     """
     TODO
     :param additional_argument_spec:
@@ -138,7 +156,8 @@ def process(additional_argument_spec: Dict[Dict], filter_property: str, filter_v
     assert service[filter_property] == filter_value
 
     update_required = prepare_update(
-        service, {key: module.params[value] for key, value in module_parameter_to_sevice_parameter_map.items()})
+        service, {key: module.params[value] for key, value in module_parameter_to_sevice_parameter_map.items()},
+        needs_update_decider)
 
     if module.check_mode:
         module.exit_json(changed=update_required)
