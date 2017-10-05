@@ -105,6 +105,8 @@
     - crunchrunner
 
 - name: install bash profile for mercury user (including arvados admin credentials)
+  become: yes
+  become_user: mercury
   template:
     dest: /home/mercury/.bash_profile
     src: bash_profile.j2
