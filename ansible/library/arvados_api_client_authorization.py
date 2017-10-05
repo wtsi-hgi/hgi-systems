@@ -33,12 +33,10 @@ options:
       - Client authorization token to create/update
     required: true
   uuid:
-    description:
-      - UUID to use for virtual machine (format is <cluster_id>-2x53u-[0-9a-z]{15})
     required: true
-  owner_uuid:
+  scopes:
     description:
-      - UUID of owner of the virtual machine (default: None which means Arvados will assign the current user as owner)
+      - List of scopes to allow the client token to acess (default: ['all'])
     required: false
 requirements:
   - "python >= 3"
@@ -46,81 +44,34 @@ requirements:
 """
 
 EXAMPLES = """
-- name: Create Arvados virtual machine
+- name: Create Arvados api client authorization
   arvados_api_client_authorization: 
     api_host: api.abcde.example.com
     api_token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    hostname: shell.abcde.example.com
-    uuid: abcde-2x53u-shellserver0001
+    uuid: abcde-gj3su-0123456789abcde
+    scopes:
+      - "GET /arvados/v1/virtual_machines/{{ arvados_cluster_id }}-2x53u-{{ item | hash('md5') | truncate(15, True, '') }}/logins"
+    client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados-login-sync-{{ item }}', 32) | b36encode }}"
 """
-
-try:
-    import arvados
-    HAS_ARVADOS = True
-except ImportError:
-    HAS_ARVADOS = False
-
-from ansible.module_utils.basic import AnsibleModule
-
+from ansible.module_utils.arvados_common import process
 
 def main():
-    module = AnsibleModule(
-        argument_spec={
-            "api_host": dict(required=True, type="str"),
-            "api_token": dict(required=True, type="str"),
-            "api_host_insecure": dict(required=False, type="bool", default=False),
-            "cache": dict(required=False, type="str", default="~/.cache/arvados/discovery"),
-            "hostname": dict(required=True, type="str"),
-            "uuid": dict(required=True, type="str"),
-            "scopes": dict(required=True, type="list"),
-            "client_token": dict(required=True, type="str"),
-        },
-        supports_check_mode=True
-    )
+    additional_argument_spec={
+        "uuid": dict(required=True, type="str"),
+        "scopes": dict(required=False, type="list", default=['all']),
+        "client_token": dict(required=True, type="str"),
+    }
 
-    if not HAS_ARVADOS:
-        module.fail_json(msg="arvados is required for this module (try `pip install arvados-python-client` or `apt-get install python-arvados-python-client`)")
+    filter_property = "uuid"
+    filter_value_module_parameter = "uuid"
 
-    api = arvados.api(version="v1", cache=module.params["cache"], host=module.params["api_host"], token=module.params["api_token"], insecure=module.params["api_host_insecure"])
+    module_parameter_to_sevice_parameter_map = {
+        "scopes": "scopes",
+        "client_token": "client_token",
+    }
 
-    api_client_authorization = None
-    update_required = False
-    exists = False
-    result = api.api_client_authorizations().list(filters=[["uuid","=", module.params["uuid"]]]).execute()
-    assert len(result["items"]) <= 1
-    if len(result["items"]) > 0:
-        api_client_authorization = result["items"][0]
-        exists = True
-    
-    if api_client_authorization is None:
-        api_client_authorization = dict(uuid=module.params["uuid"])
-
-    assert api_client_authorization["uuid"] == module.params["uuid"]
-
-    for property in ["scopes", "client_token"]:
-        if module.params[property] is not None:
-            if property not in api_client_authorization or str(api_client_authorization[property]) != str(module.params[property]):
-                update_required = True
-                api_client_authorization[property] = module.params[property]
-
-    if module.check_mode:
-        module.exit_json(changed=update_required)
-    else:
-        if not update_required:
-            module.exit_json(changed=False, msg="api_client_authorization resource already exists with the desired properties")
-        else:
-            if exists:
-                try:
-                    api.api_client_authorizations().update(uuid=api_client_authorization["uuid"], body=api_client_authorization).execute()
-                except Exception as e:
-                    module.fail_json(msg="Error while attempting to update api_client_authorization %s (hostname %s): %s" % (api_client_authorization["uuid"], api_client_authorization["hostname"], str(e)))
-                module.exit_json(changed=True, msg="api_client_authorization resource updated with uuid %s" % (api_client_authorization["uuid"]))
-            else:
-                try:
-                    api.api_client_authorizations().create(body=api_client_authorization).execute()
-                except Exception as e:
-                    module.fail_json(msg="Error while attempting to create api_client_authorization %s (hostname %s): %s" % (api_client_authorization["uuid"], api_client_authorization["hostname"], str(e)))
-                module.exit_json(changed=True, msg="api_client_authorization resource created with uuid %s" % (api_client_authorization["uuid"]))
+    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_sevice_parameter_map)
 
 if __name__ == "__main__":
     main()
