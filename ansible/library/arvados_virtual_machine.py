@@ -67,13 +67,13 @@ def main():
     filter_property = "uuid"
     filter_value_module_parameter = "uuid"
 
-    module_parameter_to_sevice_parameter_map = {
+    module_parameter_to_service_parameter_map = {
         "hostname": "hostname",
         "owner_uuid": "owner_uuid"
     }
 
     process(additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_sevice_parameter_map)
+            module_parameter_to_service_parameter_map)
 
 
 if __name__ == "__main__":
