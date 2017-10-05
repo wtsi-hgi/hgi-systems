@@ -6,6 +6,8 @@ try:
 except ImportError:
     HAS_ARVADOS = False
 
+from future.utils import raise_from
+
 from ansible.module_utils.basic import AnsibleModule
 
 
@@ -116,12 +118,12 @@ def commit_update(api, service, exists):
         try:
             api.keep_services().update(uuid=service["uuid"], body=service).execute()
         except Exception as e:
-            raise ServiceUpdateException() from e
+            raise raise_from(ServiceUpdateException(), e)
     else:
         try:
             api.keep_services().create(body=service).execute()
         except Exception as e:
-            raise ServiceCreateException() from e
+            raise raise_from(ServiceCreateException(), e)
 
 
 def process(additional_argument_spec, filter_property, filter_value_module_parameter,
