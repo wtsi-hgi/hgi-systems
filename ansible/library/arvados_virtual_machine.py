@@ -72,7 +72,7 @@ def main():
         "owner_uuid": "owner_uuid"
     }
 
-    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+    process("virtual_machines", additional_argument_spec, filter_property, filter_value_module_parameter,
             module_parameter_to_service_parameter_map)
 
 

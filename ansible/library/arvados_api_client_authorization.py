@@ -70,7 +70,7 @@ def main():
         "client_token": "client_token",
     }
 
-    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+    process("api_client_authorizations", additional_argument_spec, filter_property, filter_value_module_parameter,
             module_parameter_to_sevice_parameter_map)
 
 if __name__ == "__main__":

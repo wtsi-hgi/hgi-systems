@@ -48,6 +48,8 @@
 [terraform]
 [terraform-ci]
 [tf_type_openstack_compute_instance_v2]
+[consul-clusters]
+[arvados-clusters]
 
 [hgs4:children]
 mesos-masters
@@ -122,10 +124,8 @@ canaries
 openstack-instances
 tf_type_openstack_compute_instance_v2
 
-[terraform-ci]
-consul-cluster-delta-hgiarvados
-
 [terraform-ci:children]
 terraform
 consul-servers
 arvados-clusters
+consul-cluster-delta-hgiarvados

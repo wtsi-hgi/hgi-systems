@@ -76,7 +76,7 @@ def main():
         "service_type": "service_type"
     }
 
-    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+    process("keep_services", additional_argument_spec, filter_property, filter_value_module_parameter,
             module_parameter_to_service_parameter_map)
 
 

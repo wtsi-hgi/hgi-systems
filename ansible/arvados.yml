@@ -21,6 +21,12 @@
 
 # file: arvados.yml
 
+# set cloud-resource facts as some arvados playbooks require them
+- include: set-facts.yml
+
+# set dynamic groups (and gather facts) as some arvados playbooks require them
+- include: dynamic-groups.yml
+
 - hosts: arvados-ssos
   roles:
     - arvados-sso

@@ -148,6 +148,8 @@ def prepare_update(resource, required_property_value_map, property_value_equator
     updated = False
     updated_properties = []
     for key, value in required_property_value_map.items():
+        if value is None:
+            continue
         if key not in resource or not property_value_equator(resource[key], value):
             updated = True
             resource[key] = value
