@@ -23,7 +23,7 @@ COMMON_ARGUMENT_SPECIFICATION = {
 }
 
 
-class TooManyServicesSelectedException(Exception):
+class TooManyResourcesSelectedException(Exception):
     """
     Exception to indicate more items than expected have been encountered.
     """
@@ -37,23 +37,23 @@ class TooManyServicesSelectedException(Exception):
         """
         self.items = items
         self.filters = filters
-        super(TooManyServicesSelectedException, self).__init__(
-            "Multiple service items retrieved with the filters: %s. Items: %s" % (self.filters, self.items))
+        super(TooManyResourcesSelectedException, self).__init__(
+            "Multiple resource items retrieved with the filters: %s. Items: %s" % (self.filters, self.items))
 
 
-class ServiceUpdateException(Exception):
+class ResourceUpdateException(Exception):
     """
-    Exception when updating a service.
-    """
-
-
-class ServiceCreateException(Exception):
-    """
-    Exception when creating a service.
+    Exception when updating a resource.
     """
 
 
-class ServiceListException(Exception):
+class ResourceCreateException(Exception):
+    """
+    Exception when creating a resource.
+    """
+
+
+class ResourceListException(Exception):
     """
     TODO
     """
@@ -63,7 +63,7 @@ class ServiceListException(Exception):
         :param filters:
         """
         self.filters = filters
-        super(ServiceListException, self).__init__("Failed to list services using filters: %s" % self.filters)
+        super(ResourceListException, self).__init__("Failed to list resources using filters: %s" % self.filters)
 
 
 def _fail_if_missing_modules(module):
@@ -81,35 +81,37 @@ def _fail_if_missing_modules(module):
             msg="future is required for this module (try `pip install python-future`)")
 
 
-def get_service(api, property, value):
+def get_resource(objtype, api, property, value):
     """
-    Gets a service, through the given API, where the given property takes the given value.
+    Gets a resource, through the given API, where the given property takes the given value.
+    :param objtype: the type of object to commit
+    :type objtype: string
     :param api: the Arvados API
     :type api: arvados.api
     :param property: the property to select on
     :type property: str
     :param value: the value the property must take
     :type value: str
-    :return: tuple where the first element is the service and the second is whether the service already exists
+    :return: tuple where the first element is the resource and the second is whether the resource already exists
     :rtype: Optional[Dict]
-    :raises TooManyItemsFilteredException: raised if multiple services have the given property with the given value
+    :raises TooManyItemsFilteredException: raised if multiple resources have the given property with the given value
     """
     filters = [[property, "=", value]]
     try:
-        result = api.keep_services().list(filters=filters).execute()
+        result = getattr(api, objtype)().list(filters=filters).execute()
     except Exception as e:
-        raise raise_from(ServiceListException(filters), e)
+        raise raise_from(ResourceListException(filters), e)
     items = result["items"]
     if len(items) > 1:
-        raise TooManyServicesSelectedException(items, filters)
+        raise TooManyResourcesSelectedException(items, filters)
     elif len(items) == 1:
         exists = True
-        service = result["items"][0]
+        resource = result["items"][0]
     else:
         exists = False
-        service = {property: value}
-    assert service[property] == value
-    return service, exists
+        resource = {property: value}
+    assert resource[property] == value
+    return resource, exists
 
 
 def default_value_equator(value_1, value_2):
@@ -125,17 +127,17 @@ def default_value_equator(value_1, value_2):
     if type(value_1) != type(value_2):
         return False
     elif isinstance(value_1, list):
-        return sorted(value_1) != sorted(value_2)
+        return sorted(value_1) == sorted(value_2)
     else:
         return str(value_1) == str(value_2)
 
 
-def prepare_update(service, required_property_value_map, property_value_equator=default_value_equator):
+def prepare_update(resource, required_property_value_map, property_value_equator=default_value_equator):
     """
-    Perpares an update to the given service using the given property values.
-    :param service: the service to update
-    :type service: Dict
-    :param required_property_value_map: map where the service property name is the key and the value is the value that
+    Prepares an update to the given resource using the given property values.
+    :param resource: the resource to update
+    :type resource: Dict
+    :param required_property_value_map: map where the resource property name is the key and the value is the value that
     property should take
     :type required_property_value_map: Dict[str, str]
     :param property_value_equator: returns `True` if the given two values are to be considered as equal
@@ -144,50 +146,56 @@ def prepare_update(service, required_property_value_map, property_value_equator=
     :rtype: bool
     """
     updated = False
+    updated_properties = []
     for key, value in required_property_value_map.items():
-        if key not in service or not property_value_equator(service[key], value):
+        if key not in resource or not property_value_equator(resource[key], value):
             updated = True
-            service[key] = value
-    return updated
+            resource[key] = value
+            updated_properties.append(key)
+    return updated, updated_properties
 
 
-def commit_service(api, service, exists):
+def commit_resource(objtype, api, resource, exists):
     """
-    Commit the given service using the given API.
+    Commit the given resource using the given API.
+    :param objtype: the type of object to commit
+    :type objtype: string
     :param api: the API to use to commit the change
     :type api: arvados.api
-    :param service: the service to commit
-    :type service: Dict
-    :param exists: `True` if the service already exists and thus the commit should be an update
+    :param resource: the resource to commit
+    :type resource: Dict
+    :param exists: `True` if the resource already exists and thus the commit should be an update
     :type exists: bool
     """
     if exists:
         try:
-            api.keep_services().update(uuid=service["uuid"], body=service).execute()
+            getattr(api, objtype)().update(uuid=resource["uuid"], body=resource).execute()
         except Exception as e:
-            raise raise_from(ServiceUpdateException(), e)
+            raise raise_from(ResourceUpdateException(), e)
     else:
         try:
-            api.keep_services().create(body=service).execute()
+            getattr(api, objtype)().create(body=resource).execute()
         except Exception as e:
-            raise raise_from(ServiceCreateException(), e)
+            raise raise_from(ResourceCreateException(), e)
 
 
-def process(additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_service_parameter_map, value_equator=default_value_equator):
+def process(objtype, additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_resource_parameter_map, value_equator=default_value_equator):
     """
     TODO
+    :param objtype: the type of object to commit
+    :type objtype: string
     :param additional_argument_spec: specification for additional Ansible module arguments
     :type additional_argument_spec: Dict[str, Dict]
-    :param filter_property: the property to filter on when getting the service that is to be updated
+    :param filter_property: the property to filter on when getting the resource that is to be updated
     :type filter_property: str
     :param filter_value_module_parameter: the name of the module parameter from which the value of the given
     `filter_property` should be equal to
     :type filter_value_module_parameter: str
-    :param module_parameter_to_service_parameter_map: map where the value is is the name of the service parameter that
+    :param module_parameter_to_resource_parameter_map: map where the value is is the name of the resource parameter that
     is to be set from the value of module parameter identified by the key
-    :type module_parameter_to_service_parameter_map: Dict[str, str]
-    :param value_equator: optional function that can be used to decide if the give value associated to a service
+    :type module_parameter_to_resource_parameter_map: Dict[str, str]
+    :param value_equator: optional function that can be used to decide if the give value associated to a resource
     parameter is equal to the given expected value
     """
     # Yey outdated Python 2 dict concat...
@@ -201,27 +209,36 @@ def process(additional_argument_spec, filter_property, filter_value_module_param
 
     api = arvados.api(version="v1", cache=module.params["cache"], host=module.params["api_host"],
                       token=module.params["api_token"], insecure=module.params["api_host_insecure"])
-
+    try:
+        getattr(api, objtype)
+    except AttributeError as e:
+        module.fail_json(msg="Arvados API does not appear to support objects of type %s: %s" 
+                         % (objtype, str(e)))
+        
     filter_value = module.params[filter_value_module_parameter]
-    service, exists = get_service(api, filter_property, filter_value)
+    try:
+        resource, exists = get_resource(objtype, api, filter_property, filter_value)
+    except ResourceListException as e:
+        module.fail_json(msg="Error getting %s resource: %s"
+                         % (objtype, str(e)))
 
-    update_required = prepare_update(
-        service, {key: module.params[value] for key, value in module_parameter_to_service_parameter_map.items()},
+    update_required, updated_properties = prepare_update(
+        resource, {key: module.params[value] for key, value in module_parameter_to_resource_parameter_map.items()},
         value_equator)
 
     if module.check_mode:
         module.exit_json(changed=update_required)
     elif not update_required:
-        module.exit_json(changed=False, msg="keep_service resource already exists with the desired properties")
+        module.exit_json(changed=False, msg="%s resource already exists with the desired properties" % (objtype))
     else:
         try:
-            commit_service(api, service, exists)
-        except ServiceUpdateException as e:
-            # module.fail_json(msg="Error while attempting to update keep_service %s (service_host %s): %s"
-            #                      % (service["uuid"], service["service_host"], str(e)))
-            raise e
-        except ServiceCreateException as e:
-            # module.fail_json(msg="Error while attempting to create keep_service (service_host %s): %s"
-            #                      % (service["service_host"], str(e)))
-            raise e
-        module.exit_json(changed=True, msg="service resource created")
+            commit_resource(objtype, api, resource, exists)
+        except ResourceUpdateException as e:
+            module.fail_json(msg="Error while attempting to update %s %s=%s (%s): %s"
+                                  % (objtype, filter_property, filter_value,
+                                     ', '.join(["%s=%s" % (prop, resource[prop]) for prop in updated_properties]), str(e)))
+        except ResourceCreateException as e:
+            module.fail_json(msg="Error while attempting to create %s %s=%s (%s): %s"
+                                  % (objtype, filter_property, filter_value,
+                                     ', '.join(["%s=%s" % (prop, resource[prop]) for prop in updated_properties]), str(e)))
+        module.exit_json(changed=True, msg="%s resource created" % (objtype))
