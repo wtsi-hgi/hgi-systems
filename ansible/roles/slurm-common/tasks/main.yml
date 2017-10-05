@@ -36,7 +36,7 @@
   file:
     path: "{{ slurm_state_save_location | dirname }}"
     state: directory
-    mode: 0744
+    mode: 0755
   notify:
     - reload slurm
 
@@ -45,7 +45,7 @@
   file:
     path: "{{ slurm_spool_dir }}"
     state: directory
-    mode: 0744
+    mode: 0755
   notify:
     - reload slurm
 

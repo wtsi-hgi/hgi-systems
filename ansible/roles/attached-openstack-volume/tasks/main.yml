@@ -9,6 +9,17 @@
     - lvm2
     - xfsprogs
 
+- assert:
+    that: 
+      - (attached_openstack_volume_pvs | length) > 0
+      - attached_openstack_volume_pvs[0] != ""
+    msg: "attached_openstack_volume_pvs must be set to configure attached-openstack-volume:  _attached_openstack_tf_volume_attachment={{ _attached_openstack_tf_volume_attachment | default('') }} _attached_openstack_tf_volume_id={{ _attached_openstack_tf_volume_id | default('') }} os_volumes={{ os_volumes | default('') }}"
+
+- assert:
+    that: 
+      - attached_openstack_volume_vg != ""
+    msg: "attached_openstack_volume_vg must be set to configure attached-openstack-volume"
+
 - name: configure disk array physical volume and volume group
   become: yes
   lvg: pvs={{ attached_openstack_volume_pvs }} state=present vg={{ attached_openstack_volume_vg }}

@@ -2,10 +2,10 @@
 
 DOCUMENTATION = """
 ---
-module: arvados_virtual_machine
-short_description: Sets up Arvados virtual_machine
+module: arvados_api_client_authorization
+short_description: Sets up Arvados client_authorization
 description:
-  - Creates or modifies an Arvados virtual_machine.
+  - Creates or modifies an Arvados client_authorization.
 author:
   - Joshua C. Randall <jcrandall@alum.mit.edu>
   - Colin Nolan <colin.nolan@sanger.ac.uk>
@@ -28,17 +28,15 @@ options:
       - path to use for Arvados discovery document cache
     required: false
     default: ~/.cache/arvados/discovery
-  hostname:
+  client_token:
     description:
-      - Hostname (FQDN) of virtual machine
+      - Client authorization token to create/update
     required: true
   uuid:
-    description:
-      - UUID to use for virtual machine (format is <cluster_id>-2x53u-[0-9a-z]{15})
     required: true
-  owner_uuid:
+  scopes:
     description:
-      - UUID of owner of the virtual machine (default: None which means Arvados will assign the current user as owner)
+      - List of scopes to allow the client token to acess (default: ['all'])
     required: false
 requirements:
   - "python >= 3"
@@ -46,35 +44,34 @@ requirements:
 """
 
 EXAMPLES = """
-- name: Create Arvados virtual machine
-  arvados_virtual_machine: 
+- name: Create Arvados api client authorization
+  arvados_api_client_authorization: 
     api_host: api.abcde.example.com
     api_token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    hostname: shell.abcde.example.com
-    uuid: abcde-2x53u-shellserver0001
+    uuid: abcde-gj3su-0123456789abcde
+    scopes:
+      - "GET /arvados/v1/virtual_machines/{{ arvados_cluster_id }}-2x53u-{{ item | hash('md5') | truncate(15, True, '') }}/logins"
+    client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados-login-sync-{{ item }}', 32) | b36encode }}"
 """
-
 from ansible.module_utils.arvados_common import process
-
 
 def main():
     additional_argument_spec={
-        "hostname": dict(required=True, type="str"),
-        "uuid": dict(required=False, type="str"),
-        "owner_uuid": dict(required=False, type="str", default=None),
+        "uuid": dict(required=True, type="str"),
+        "scopes": dict(required=False, type="list", default=['all']),
+        "client_token": dict(required=True, type="str"),
     }
 
     filter_property = "uuid"
     filter_value_module_parameter = "uuid"
 
-    module_parameter_to_service_parameter_map = {
-        "hostname": "hostname",
-        "owner_uuid": "owner_uuid"
+    module_parameter_to_sevice_parameter_map = {
+        "scopes": "scopes",
+        "client_token": "client_token",
     }
 
     process(additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_service_parameter_map)
-
+            module_parameter_to_sevice_parameter_map)
 
 if __name__ == "__main__":
     main()

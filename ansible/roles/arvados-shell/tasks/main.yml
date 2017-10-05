@@ -104,6 +104,14 @@
     - python-arvados-fuse
     - crunchrunner
 
+- name: install bash profile for mercury user (including arvados admin credentials)
+  become: yes
+  become_user: mercury
+  template:
+    dest: /home/mercury/.bash_profile
+    src: bash_profile.j2
+    mode: 0644
+
 - name: configure git to use the ARVADOS_API_TOKEN environment variable to authenticate to arv-git-httpd
   become: yes
   git_config:
@@ -115,10 +123,6 @@
       value: none
     - name: credential.https://{{ arvados_cluster_git_host }}/.helper
       value: '!cred(){ cat >/dev/null; if [ "$1" = get ]; then echo password=$ARVADOS_API_TOKEN; fi; };cred'
-
-# TODO create arvados_cluster_shell_server_uuid
-# apiserver:~$ arv --format=uuid virtual_machine create --virtual-machine '{"hostname":"your.shell.server.hostname"}'
-# zzzzz-2x53u-zzzzzzzzzzzzzzz
 
 - name: install arvados-login-sync
   become: yes
@@ -146,7 +150,7 @@
         cron_file: arvados-login-sync
         user: root
         name: ARVADOS_VIRTUAL_MACHINE_UUID
-        value: "{{ arvados_cluster_shell_server_uuid }}"
+        value: "{{ arvados_cluster_id }}-2x53u-{{ cloud_resource_fqdn | hash('md5') | truncate(15, True, '') }}"
         env: yes
     - cron:
         cron_file: arvados-login-sync
