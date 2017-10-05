@@ -33,8 +33,8 @@ class TooManyFilteredServicesException(Exception):
         """
         self.items = items
         self.service_filter = service_filter
-        super().__init__(
-            f"Multiple service items retrieved with the filter: {self.service_filter}. Items: {self.items}")
+        super().__init__("Multiple service items retrieved with the filter: %s. Items: %s"
+                         % (self.service_filter, self.items))
 
 
 class ServiceUpdateException(Exception):
@@ -109,7 +109,7 @@ def prepare_update(service: Dict, required_property_value_map: Dict,
     return update_required
 
 
-def commit_update(api, service, exists):
+def commit_update(api: arvados.api, service: Dict, exists: bool):
     """
     TODO
     :param api:
@@ -175,4 +175,3 @@ def process(additional_argument_spec: Dict[Dict], filter_property: str, filter_v
             #                      % (service["service_host"], str(e)))
             raise e
         module.exit_json(changed=True, msg="service resource created")
-
