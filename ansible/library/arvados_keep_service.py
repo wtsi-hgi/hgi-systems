@@ -56,6 +56,7 @@ EXAMPLES = """
     service_host: keep0.abcde.example.com
 """
 
+from ansible.module_utils.arvados_common import process
 
 
 def main():
@@ -67,7 +68,7 @@ def main():
     }
 
     filter_property = "service_host"
-    filter_value_parameter = "service_host"
+    filter_value_module_parameter = "service_host"
 
     module_parameter_to_sevice_parameter_map = {
         "service_port": "service_port",
@@ -75,7 +76,8 @@ def main():
         "service_type": "service_type"
     }
 
-
+    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_sevice_parameter_map)
 
 
 if __name__ == "__main__":

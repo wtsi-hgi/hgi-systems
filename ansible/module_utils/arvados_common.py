@@ -110,12 +110,10 @@ def commit_update(api, service, exists):
             api.keep_services().create(body=service).execute()
         except Exception as e:
             raise ServiceCreateException() from e
-            module.fail_json(msg="Error while attempting to create keep_service (service_host %s): %s" % (service["service_host"], str(e)))
 
 
-
-def main(additional_argument_spec: Dict[Dict], filter_property: str, filter_value_module_parameter: str,
-         module_parameter_to_sevice_parameter_map: Dict[str, str]):
+def process(additional_argument_spec: Dict[Dict], filter_property: str, filter_value_module_parameter: str,
+            module_parameter_to_sevice_parameter_map: Dict[str, str]):
     """
     TODO
     :param additional_argument_spec:
@@ -150,10 +148,12 @@ def main(additional_argument_spec: Dict[Dict], filter_property: str, filter_valu
         try:
             commit_update(api, service, exists)
         except ServiceUpdateException as e:
-            module.fail_json(msg="Error while attempting to update keep_service %s (service_host %s): %s"
-                                 % (service["uuid"], service["service_host"], str(e)))
-            pass
+            # module.fail_json(msg="Error while attempting to update keep_service %s (service_host %s): %s"
+            #                      % (service["uuid"], service["service_host"], str(e)))
+            raise e
         except ServiceCreateException as e:
-            pass
+            # module.fail_json(msg="Error while attempting to create keep_service (service_host %s): %s"
+            #                      % (service["service_host"], str(e)))
+            raise e
         module.exit_json(changed=True, msg="service resource created")
 

@@ -54,6 +54,8 @@ EXAMPLES = """
     uuid: abcde-2x53u-shellserver0001
 """
 
+from ansible.module_utils.arvados_common import process
+
 
 def main():
     additional_argument_spec={
@@ -63,13 +65,16 @@ def main():
     }
 
     filter_property = "uuid"
-    filter_value_parameter = "uuid"
+    filter_value_module_parameter = "uuid"
 
     module_parameter_to_sevice_parameter_map = {
         "hostname": "hostname",
         "owner_uuid": "owner_uuid"
     }
 
+    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_sevice_parameter_map)
 
-__":
+
+if __name__ == "__main__":
     main()
