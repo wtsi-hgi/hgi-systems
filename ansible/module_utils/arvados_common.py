@@ -140,8 +140,11 @@ def process(additional_argument_spec, filter_property, filter_value_module_param
     :param additional_argument_spec:
     :return:
     """
+    # Yey outdated Python 2 dict concat...
+    argument_specification = COMMON_ARGUMENT_SPECIFICATION.copy()
+    argument_specification.update(additional_argument_spec)
     module = AnsibleModule(
-        argument_spec={**COMMON_ARGUMENT_SPECIFICATION, **additional_argument_spec},
+        argument_spec=argument_specification,
         supports_check_mode=True
     )
     _fail_if_missing_modules(module)
