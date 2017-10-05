@@ -106,7 +106,7 @@
 
 - name: install bash profile for mercury user (including arvados admin credentials)
   template:
-    path: /home/mercury/.bash_profile
+    dest: /home/mercury/.bash_profile
     src: bash_profile.j2
     mode: 0644
 
