@@ -54,72 +54,27 @@ EXAMPLES = """
     uuid: abcde-2x53u-shellserver0001
 """
 
-try:
-    import arvados
-    HAS_ARVADOS = True
-except ImportError:
-    HAS_ARVADOS = False
-
-from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.arvados_common import process
 
 
 def main():
-    module = AnsibleModule(
-        argument_spec={
-            "api_host": dict(required=True, type="str"),
-            "api_token": dict(required=True, type="str"),
-            "api_host_insecure": dict(required=False, type="bool", default=False),
-            "cache": dict(required=False, type="str", default="~/.cache/arvados/discovery"),
-            "hostname": dict(required=True, type="str"),
-            "uuid": dict(required=False, type="str"),
-            "owner_uuid": dict(required=False, type="str", default=None),
-        },
-        supports_check_mode=True
-    )
+    additional_argument_spec={
+        "hostname": dict(required=True, type="str"),
+        "uuid": dict(required=False, type="str"),
+        "owner_uuid": dict(required=False, type="str", default=None),
+    }
 
-    if not HAS_ARVADOS:
-        module.fail_json(msg="arvados is required for this module (try `pip install arvados-python-client` or `apt-get install python-arvados-python-client`)")
+    filter_property = "uuid"
+    filter_value_module_parameter = "uuid"
 
-    api = arvados.api(version="v1", cache=module.params["cache"], host=module.params["api_host"], token=module.params["api_token"], insecure=module.params["api_host_insecure"])
+    module_parameter_to_sevice_parameter_map = {
+        "hostname": "hostname",
+        "owner_uuid": "owner_uuid"
+    }
 
-    virtual_machine = None
-    update_required = False
-    exists = False
-    result = api.virtual_machines().list(filters=[["uuid","=", module.params["uuid"]]]).execute()
-    assert len(result["items"]) <= 1
-    if len(result["items"]) > 0:
-        virtual_machine = result["items"][0]
-        exists = True
-    
-    if virtual_machine is None:
-        virtual_machine = dict(uuid=module.params["uuid"])
+    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_sevice_parameter_map)
 
-    assert virtual_machine["uuid"] == module.params["uuid"]
-
-    for property in ["hostname", "owner_uuid"]:
-        if module.params[property] is not None:
-            if property not in virtual_machine or str(virtual_machine[property]) != str(module.params[property]):
-                update_required = True
-                virtual_machine[property] = module.params[property]
-
-    if module.check_mode:
-        module.exit_json(changed=update_required)
-    else:
-        if not update_required:
-            module.exit_json(changed=False, msg="virtual_machine resource already exists with the desired properties")
-        else:
-            if exists:
-                try:
-                    api.virtual_machines().update(uuid=virtual_machine["uuid"], body=virtual_machine).execute()
-                except Exception as e:
-                    module.fail_json(msg="Error while attempting to update virtual_machine %s (hostname %s): %s" % (virtual_machine["uuid"], virtual_machine["hostname"], str(e)))
-                module.exit_json(changed=True, msg="virtual_machine resource updated with uuid %s" % (virtual_machine["uuid"]))
-            else:
-                try:
-                    api.virtual_machines().create(body=virtual_machine).execute()
-                except Exception as e:
-                    module.fail_json(msg="Error while attempting to create virtual_machine %s (hostname %s): %s" % (virtual_machine["uuid"], virtual_machine["hostname"], str(e)))
-                module.exit_json(changed=True, msg="virtual_machine resource created with uuid %s" % (virtual_machine["uuid"]))
 
 if __name__ == "__main__":
     main()

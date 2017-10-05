@@ -56,73 +56,29 @@ EXAMPLES = """
     service_host: keep0.abcde.example.com
 """
 
-try:
-    import arvados
-    HAS_ARVADOS = True
-except ImportError:
-    HAS_ARVADOS = False
-
-from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.arvados_common import process
 
 
 def main():
-    module = AnsibleModule(
-        argument_spec={
-            "api_host": dict(required=True, type="str"),
-            "api_token": dict(required=True, type="str"),
-            "api_host_insecure": dict(required=False, type="bool", default=False),
-            "cache": dict(required=False, type="str", default="~/.cache/arvados/discovery"),
-            "service_host": dict(required=True, type="str"),
-            "service_port": dict(required=False, type="int", default=25107),
-            "service_ssl_flag": dict(required=False, type="str", default=False),
-            "service_type": dict(required=False, type="str", choices=["disk", "blob", "proxy"], default="disk"),
-        },
-        supports_check_mode=True
-    )
+    additional_argument_spec = {
+        "service_host": dict(required=True, type="str"),
+        "service_port": dict(required=False, type="int", default=25107),
+        "service_ssl_flag": dict(required=False, type="str", default=False),
+        "service_type": dict(required=False, type="str", choices=["disk", "blob", "proxy"], default="disk")
+    }
 
-    if not HAS_ARVADOS:
-        module.fail_json(msg="arvados is required for this module (try `pip install arvados-python-client` or `apt-get install python-arvados-python-client`)")
+    filter_property = "service_host"
+    filter_value_module_parameter = "service_host"
 
-    api = arvados.api(version="v1", cache=module.params["cache"], host=module.params["api_host"], token=module.params["api_token"], insecure=module.params["api_host_insecure"])
+    module_parameter_to_sevice_parameter_map = {
+        "service_port": "service_port",
+        "service_ssl_flag": "service_ssl_flag",
+        "service_type": "service_type"
+    }
 
-    keep_service = None
-    update_required = False
-    exists = False
-    result = api.keep_services().list(filters=[["service_host","=", module.params["service_host"]]]).execute()
-    if len(result["items"]) > 0:
-        keep_service = result["items"][0]
-        exists = True
-    if len(result["items"]) > 1:
-        module.fail_json(msg="multiple keep_service entries for service_host %s" % (module.params["service_host"]))
-    
-    if keep_service is None:
-        keep_service = dict(service_host=module.params["service_host"])
+    process(additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_sevice_parameter_map)
 
-    assert keep_service["service_host"] == module.params["service_host"]
-
-    for property in ["service_port", "service_ssl_flag", "service_type"]:
-        if property not in keep_service or str(keep_service[property]) != str(module.params[property]):
-            update_required = True
-            keep_service[property] = module.params[property]
-
-    if module.check_mode:
-        module.exit_json(changed=update_required)
-    else:
-        if not update_required:
-            module.exit_json(changed=False, msg="keep_service resource already exists with the desired properties")
-        else:
-            if exists:
-                try:
-                    api.keep_services().update(uuid=keep_service["uuid"], body=keep_service).execute()
-                except Exception as e:
-                    module.fail_json(msg="Error while attempting to update keep_service %s (service_host %s): %s" % (keep_service["uuid"], keep_service["service_host"], str(e)))
-                module.exit_json(changed=True, msg="keep_service resource updated")
-            else:
-                try:
-                    api.keep_services().create(body=keep_service).execute()
-                except Exception as e:
-                    module.fail_json(msg="Error while attempting to create keep_service (service_host %s): %s" % (keep_service["service_host"], str(e)))
-                module.exit_json(changed=True, msg="keep_service resource created")
 
 if __name__ == "__main__":
     main()
