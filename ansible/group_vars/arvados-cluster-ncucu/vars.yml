@@ -22,21 +22,29 @@
 # file: group_vars/arvados-cluster-ncucu/vars
 
 # vault contents:
-# arvados_cluster_db_password_sso
-# arvados_cluster_db_password_api
-# arvados_cluster_api_secret_token
-# arvados_cluster_workbench_secret_token
-# arvados_cluster_blob_signing_key
-# arvados_cluster_sso_app_secret
 # arvados_cluster_sso_google_oauth_client_id
 # arvados_cluster_sso_google_oauth_client_secret
-# arvados_cluster_superuser_api_token
 # arvados_cluster_git_ssh_private_key
-# arvados_cluster_admin_user_password
-# arvados_cluster_anonymous_api_token
-# arvados_cluster_data_manager_api_token
-# arvados_cluster_login_sync_api_token
-# arvados_cluster_munge_key_base64
+
+arvados_cluster_root_key: "{{ arvados_cluster_git_ssh_private_key }}"
+
+# generate credentials from the root key
+arvados_cluster_admin_user_password: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_admin_user_password', 16) | b36encode }}"
+arvados_cluster_db_password_sso: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_db_password_sso', 16) | b36encode }}"
+arvados_cluster_db_password_api: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_db_password_api', 16) | b36encode }}"
+
+arvados_cluster_sso_app_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_sso_app_secret', 50) | b36encode }}"
+arvados_cluster_api_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_api_secret_token', 50) | b36encode }}"
+arvados_cluster_workbench_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_workbench_secret_token', 50) | b36encode }}"
+arvados_cluster_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_blob_signing_key', 50) | b36encode }}"
+
+arvados_cluster_superuser_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_superuser_api_token', 32) | b36encode }}"
+arvados_cluster_anonymous_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_anonymous_api_token', 32) | b36encode }}"
+arvados_cluster_data_manager_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_data_manager_api_token', 32) | b36encode }}"
+arvados_cluster_login_sync_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_login_sync_api_token', 32) | b36encode }}"
+
+arvados_cluster_munge_key_base64: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_munge_key_base64', 1024) | b64encode }}"
+
 
 arvados_cluster_id: ncucu
 arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
