@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-from typing import Dict, List, Optional, Callable, Any
+#!/usr/bin/python2
 
 try:
     import arvados
@@ -8,9 +7,6 @@ except ImportError:
     HAS_ARVADOS = False
 
 from ansible.module_utils.basic import AnsibleModule
-
-ServiceFilter = List[List[str]]
-UpdateDecider = Callable[[str, str], bool]
 
 
 COMMON_ARGUMENT_SPECIFICATION = {
@@ -25,7 +21,7 @@ class TooManyFilteredServicesException(Exception):
     """
     TODO
     """
-    def __init__(self, items: List, service_filter: ServiceFilter):
+    def __init__(self, items, service_filter):
         """
         TODO
         :param items:
@@ -33,8 +29,8 @@ class TooManyFilteredServicesException(Exception):
         """
         self.items = items
         self.service_filter = service_filter
-        super().__init__("Multiple service items retrieved with the filter: %s. Items: %s"
-                         % (self.service_filter, self.items))
+        super(TooManyFilteredServicesException, self).__init__(
+            "Multiple service items retrieved with the filter: %s. Items: %s" % (self.service_filter, self.items))
 
 
 class ServiceUpdateException(Exception):
@@ -48,7 +44,7 @@ class ServiceCreateException(Exception):
     """
 
 
-def _fail_if_missing_modules(module: AnsibleModule):
+def _fail_if_missing_modules(module):
     """
     TODO
     :param module:
@@ -60,7 +56,7 @@ def _fail_if_missing_modules(module: AnsibleModule):
                 "`apt-get install python-arvados-python-client`)")
 
 
-def get_service(api: arvados.api, filters: ServiceFilter) -> Optional[Dict]:
+def get_service(api, filters):
     """
     TODO
     :param api:
@@ -78,7 +74,7 @@ def get_service(api: arvados.api, filters: ServiceFilter) -> Optional[Dict]:
         return None
 
 
-def default_needs_update_decider(value_1: Any, value_2: Any) -> bool:
+def default_needs_update_decider(value_1, value_2) -> bool:
     """
     TODO
     :return:
@@ -91,8 +87,7 @@ def default_needs_update_decider(value_1: Any, value_2: Any) -> bool:
         return str(value_1) != str(value_2)
 
 
-def prepare_update(service: Dict, required_property_value_map: Dict,
-                   needs_update_decider: UpdateDecider=default_needs_update_decider) -> bool:
+def prepare_update(service, required_property_value_map, needs_update_decider=default_needs_update_decider):
     """
     TODO
     :param service:
@@ -109,7 +104,7 @@ def prepare_update(service: Dict, required_property_value_map: Dict,
     return update_required
 
 
-def commit_update(api: arvados.api, service: Dict, exists: bool):
+def commit_update(api, service, exists):
     """
     TODO
     :param api:
@@ -129,9 +124,8 @@ def commit_update(api: arvados.api, service: Dict, exists: bool):
             raise ServiceCreateException() from e
 
 
-def process(additional_argument_spec: Dict[Dict], filter_property: str, filter_value_module_parameter: str,
-            module_parameter_to_sevice_parameter_map: Dict[str, str],
-            needs_update_decider: UpdateDecider=default_needs_update_decider):
+def process(additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_sevice_parameter_map, needs_update_decider=default_needs_update_decider):
     """
     TODO
     :param additional_argument_spec:
