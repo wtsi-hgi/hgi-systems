@@ -125,3 +125,4 @@ tf_type_openstack_compute_instance_v2
 [terraform-ci:children]
 terraform
 consul-servers
+consul-cluster-delta-hgiarvados
