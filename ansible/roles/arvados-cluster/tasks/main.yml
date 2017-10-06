@@ -69,6 +69,25 @@
     link_class: permission
     name: can_read
 
+- name: check if arvados repository is empty
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: git ls-remote https://{{ arvados_cluster_git_host }}arvados.git
+  changed_when: false
+  always_run: yes
+  register: arvados_cluster_git_ls_remote_arvados
+
+- name: populate arvados repository when empty
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: git clone --bare https://github.com/curoverse/arvados.git
+    chdir: /tmp  
+  when: arvados_cluster_git_ls_remote_arvados.stdout == ""
+
+- name: populate arvados repository when empty
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: git --git-dir arvados.git push https://{{ arvados_cluster_git_host }}/arvados.git '*:*'
+    chdir: /tmp  
+  when: arvados_cluster_git_ls_remote_arvados.stdout == ""
+
 - name: create group to own docker images by default
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_group:
