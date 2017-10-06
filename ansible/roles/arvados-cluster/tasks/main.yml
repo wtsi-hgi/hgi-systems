@@ -79,12 +79,14 @@
 - name: populate arvados repository when empty
   delegate_to: "{{ arvados_cluster_delegate }}"
   command: git clone --bare https://github.com/curoverse/arvados.git
+  args:
     chdir: /tmp  
   when: arvados_cluster_git_ls_remote_arvados.stdout == ""
 
 - name: populate arvados repository when empty
   delegate_to: "{{ arvados_cluster_delegate }}"
   command: git --git-dir arvados.git push https://{{ arvados_cluster_git_host }}/arvados.git '*:*'
+  args:
     chdir: /tmp  
   when: arvados_cluster_git_ls_remote_arvados.stdout == ""
 
@@ -108,3 +110,4 @@
     link_class: permission
     name: can_read
 
+- name: 
