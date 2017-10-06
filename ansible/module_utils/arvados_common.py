@@ -124,9 +124,7 @@ def default_value_equator(value_1, value_2):
     :return: `True` if
     :rtype: bool
     """
-    if type(value_1) != type(value_2):
-        return False
-    elif isinstance(value_1, list):
+    if isinstance(value_1, list):
         return sorted(value_1) == sorted(value_2)
     else:
         return str(value_1) == str(value_2)
@@ -146,15 +144,16 @@ def prepare_update(resource, required_property_value_map, property_value_equator
     :rtype: bool
     """
     updated = False
-    updated_properties = []
+    property_updates = dict()
     for key, value in required_property_value_map.items():
         if value is None:
             continue
         if key not in resource or not property_value_equator(resource[key], value):
             updated = True
+            old_value = resource.get(key, None)
             resource[key] = value
-            updated_properties.append(key)
-    return updated, updated_properties
+            property_updates[key] = "%s=>%s" % (old_value, value)
+    return updated, property_updates
 
 
 def commit_resource(objtype, api, resource, exists):
@@ -173,12 +172,12 @@ def commit_resource(objtype, api, resource, exists):
         try:
             getattr(api, objtype)().update(uuid=resource["uuid"], body=resource).execute()
         except Exception as e:
-            raise raise_from(ResourceUpdateException(), e)
+            raise raise_from(ResourceUpdateException("Failed to update %s: %s" % (objtype, str(e))), e)
     else:
         try:
             getattr(api, objtype)().create(body=resource).execute()
         except Exception as e:
-            raise raise_from(ResourceCreateException(), e)
+            raise raise_from(ResourceCreateException("Failed to create %s: %s" % (objtype, str(e))), e)
 
 
 def process(objtype, additional_argument_spec, filter_property, filter_value_module_parameter,
@@ -224,7 +223,7 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
         module.fail_json(msg="Error getting %s resource: %s"
                          % (objtype, str(e)))
 
-    update_required, updated_properties = prepare_update(
+    update_required, property_updates = prepare_update(
         resource, {key: module.params[value] for key, value in module_parameter_to_resource_parameter_map.items()},
         value_equator)
 
@@ -238,9 +237,22 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
         except ResourceUpdateException as e:
             module.fail_json(msg="Error while attempting to update %s %s=%s (%s): %s"
                                   % (objtype, filter_property, filter_value,
-                                     ', '.join(["%s=%s" % (prop, resource[prop]) for prop in updated_properties]), str(e)))
+                                     ', '.join(["%s:%s" 
+                                                % (prop, property_updates[prop]) 
+                                                for prop in property_updates.keys()]), str(e)))
         except ResourceCreateException as e:
             module.fail_json(msg="Error while attempting to create %s %s=%s (%s): %s"
                                   % (objtype, filter_property, filter_value,
-                                     ', '.join(["%s=%s" % (prop, resource[prop]) for prop in updated_properties]), str(e)))
-        module.exit_json(changed=True, msg="%s resource created" % (objtype))
+                                     ', '.join(["%s:%s" 
+                                                % (prop, resource[prop]) 
+                                                for prop in property_updates.keys()]), str(e)))
+        except Exception as e:
+            module.fail_json(msg="Error while committing %s %s=%s (%s): %s"
+                                  % (objtype, filter_property, filter_value,
+                                     ', '.join(["%s:%s" 
+                                                % (prop, property_updates[prop]) 
+                                                for prop in property_updates.keys()]), str(e)))
+        module.exit_json(changed=True, msg="%s resource created: %s"
+                         % (objtype, ', '.join(["%s:%s" 
+                                                % (prop, property_updates[prop]) 
+                                                for prop in property_updates.keys()])))

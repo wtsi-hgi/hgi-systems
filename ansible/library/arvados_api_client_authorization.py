@@ -65,13 +65,13 @@ def main():
     filter_property = "uuid"
     filter_value_module_parameter = "uuid"
 
-    module_parameter_to_sevice_parameter_map = {
+    module_parameter_to_resource_parameter_map = {
         "scopes": "scopes",
-        "client_token": "client_token",
+        "client_token": "api_token",
     }
 
     process("api_client_authorizations", additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_sevice_parameter_map)
+            module_parameter_to_resource_parameter_map)
 
 if __name__ == "__main__":
     main()
