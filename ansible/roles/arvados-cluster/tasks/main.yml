@@ -71,23 +71,27 @@
 
 - name: check if arvados repository is empty
   delegate_to: "{{ arvados_cluster_delegate }}"
-  command: git ls-remote https://{{ arvados_cluster_git_host }}arvados.git
-  changed_when: false
-  always_run: yes
+  command: git ls-remote https://{{ arvados_cluster_git_host }}/arvados.git
+  environment:
+    ARVADOS_API_TOKEN: "{{ arvados_cluster_superuser_api_token }}"
   register: arvados_cluster_git_ls_remote_arvados
+  check_mode: no
+  changed_when: false
 
-- name: populate arvados repository when empty
+- name: populate arvados repository when empty (clone from github)
   delegate_to: "{{ arvados_cluster_delegate }}"
   command: git clone --bare https://github.com/curoverse/arvados.git
   args:
     chdir: /tmp  
   when: arvados_cluster_git_ls_remote_arvados.stdout == ""
 
-- name: populate arvados repository when empty
+- name: populate arvados repository when empty (push to arvados git)
   delegate_to: "{{ arvados_cluster_delegate }}"
   command: git --git-dir arvados.git push https://{{ arvados_cluster_git_host }}/arvados.git '*:*'
   args:
     chdir: /tmp  
+  environment:
+    ARVADOS_API_TOKEN: "{{ arvados_cluster_superuser_api_token }}"
   when: arvados_cluster_git_ls_remote_arvados.stdout == ""
 
 - name: create group to own docker images by default
@@ -110,4 +114,12 @@
     link_class: permission
     name: can_read
 
-- name: 
+- name: download and tag the latest arvados/jobs docker image
+  become: yes
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: arv-keepdocker --pull arvados/jobs latest
+  environment:
+    ARVADOS_API_TOKEN: "{{ arvados_cluster_superuser_api_token }}"
+    ARVADOS_API_HOST: "{{ arvados_cluster_api_host }}"
+  register: arv_keepdocker_result
+  changed_when: "not (arv_keepdocker_result.stdout | search('Status: Image is up to date'))"
