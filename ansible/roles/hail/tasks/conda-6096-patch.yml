@@ -9,17 +9,18 @@
   changed_when: False
   register: conda_version
 
-- name: find Conda package's metadata files
-  find:
-    paths: "{{ hail_anaconda_installation_location }}/conda-meta/"
-    patterns: '*.json'
-  register: package_metadata_files
+- block:
+    - name: find Conda package's metadata files
+      find:
+        paths: "{{ hail_anaconda_installation_location }}/conda-meta/"
+        patterns: '*.json'
+      register: package_metadata_files
 
-- name: patch timestamps in package metadata files to remove any decimal places that Conda < 4.3.29 cannot parse
-  become: yes
-  replace:
-    path: "{{ item }}"
-    regexp: '"timestamp": ([0-9]+)\.[0-9]+'
-    replace: '"timestamp": \1'
-  with_items: "{{ package_metadata_files.files | json_query('[].path') }}"
+    - name: patch timestamps in package metadata files to remove any decimal places that Conda < 4.3.29 cannot parse
+      become: yes
+      replace:
+        path: "{{ item }}"
+        regexp: '"timestamp": ([0-9]+)\.[0-9]+'
+        replace: '"timestamp": \1'
+      with_items: "{{ package_metadata_files.files | json_query('[].path') }}"
   when: conda_version.stdout | version_compare('4.3.29', '<')
