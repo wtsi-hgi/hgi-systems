@@ -224,7 +224,7 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
                          % (objtype, str(e)))
 
     update_required, property_updates = prepare_update(
-        resource, {key: module.params[value] for key, value in module_parameter_to_resource_parameter_map.items()},
+        resource, {resource_param: module.params[module_param] for module_param, resource_param in module_parameter_to_resource_parameter_map.items()},
         value_equator)
 
     if module.check_mode:

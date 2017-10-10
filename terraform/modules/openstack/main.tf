@@ -227,6 +227,19 @@ resource "openstack_compute_secgroup_v2" "slurm-compute" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "keep-service" {
+  provider    = "openstack"
+  name        = "keep-service_${var.region}_${var.env}"
+  description = "Arvados keep service"
+
+  rule {
+    from_port   = 25107
+    to_port     = 25107
+    ip_protocol = "tcp"
+    cidr        = "10.0.0.0/8"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
@@ -239,6 +252,7 @@ output "security_group_ids" {
     udp-local     = "${openstack_compute_secgroup_v2.udp-local.id}"
     slurm-master  = "${openstack_compute_secgroup_v2.slurm-master.id}"
     slurm-compute = "${openstack_compute_secgroup_v2.slurm-compute.id}"
+    keep-service  = "${openstack_compute_secgroup_v2.keep-service.id}"
   }
 }
 

@@ -38,7 +38,7 @@
     hostname: "{{ item }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
 
-- name: create api_client_authorizations for arvados-login-sync
+- name: create api_client_authorization for arvados-login-sync
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_api_client_authorization:
     api_host: "{{ arvados_cluster_api_host }}"
@@ -48,6 +48,16 @@
       - "GET /arvados/v1/virtual_machines/{{ arvados_cluster_id }}-2x53u-{{ item | hash('md5') | truncate(15, True, '') }}/logins"
     client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados-login-sync-{{ item }}', 32) | b36encode }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
+
+- name: create api_client_authorization for data manager (keep-balance)
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_api_client_authorization:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-gj3su-{{ 'data_manager_api_token' | hash('md5') | truncate(15, True, '') }}"
+    scopes: 
+      - "all"
+    client_token: "{{ arvados_cluster_data_manager_api_token }}"
 
 - name: create arvados repository
   delegate_to: "{{ arvados_cluster_delegate }}"
@@ -69,3 +79,57 @@
     link_class: permission
     name: can_read
 
+- name: check if arvados repository is empty
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: git ls-remote https://{{ arvados_cluster_git_host }}/arvados.git
+  environment:
+    ARVADOS_API_TOKEN: "{{ arvados_cluster_superuser_api_token }}"
+  register: arvados_cluster_git_ls_remote_arvados
+  check_mode: no
+  changed_when: false
+
+- name: populate arvados repository when empty (clone from github)
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: git clone --bare https://github.com/curoverse/arvados.git
+  args:
+    chdir: /tmp  
+  when: arvados_cluster_git_ls_remote_arvados.stdout == ""
+
+- name: populate arvados repository when empty (push to arvados git)
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: git --git-dir arvados.git push https://{{ arvados_cluster_git_host }}/arvados.git '*:*'
+  args:
+    chdir: /tmp  
+  environment:
+    ARVADOS_API_TOKEN: "{{ arvados_cluster_superuser_api_token }}"
+  when: arvados_cluster_git_ls_remote_arvados.stdout == ""
+
+- name: create group to own docker images by default
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_group:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-j7d0g-{{ 'arvados_docker_project' | hash('md5') | truncate(15, True, '') }}"
+    owner_uuid: "{{ arvados_cluster_id }}-tpzed-000000000000000"
+    name: "Arvados Standard Docker Images"
+
+- name: make docker project readable by all users
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_link:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-o0j2j-{{ 'arvados_docker_project_all_link' | hash('md5') | truncate(15, True, '') }}"
+    head_uuid: "{{ arvados_cluster_id }}-j7d0g-{{ 'arvados_docker_project' | hash('md5') | truncate(15, True, '') }}"
+    tail_uuid: "{{ arvados_cluster_id }}-j7d0g-fffffffffffffff"
+    link_class: permission
+    name: can_read
+
+- name: download and tag the latest arvados/jobs docker image
+  become: yes
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  command: arv-keepdocker --pull arvados/jobs latest
+  environment:
+    ARVADOS_API_TOKEN: "{{ arvados_cluster_superuser_api_token }}"
+    ARVADOS_API_HOST: "{{ arvados_cluster_api_host }}"
+  register: arv_keepdocker_result
+  changed_when: "not (arv_keepdocker_result.stdout | search('Status: Image is up to date'))"
