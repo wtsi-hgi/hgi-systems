@@ -24,7 +24,7 @@ production:
   websocket_address: "wss://{{ arvados_cluster_ws_host }}/websocket"
   git_repositories_dir: {{ arvados_master_git_repositories_dir }}
   git_internal_dir: {{ arvados_master_git_internal_dir }}
-  git_repo_ssh_base: "git@arvados-git-{{ arvados_cluster_id }}:"
+  git_repo_ssh_base: "git@{{ arvados_cluster_git_host }}:"
   git_repo_https_base: "https://{{ arvados_cluster_git_host }}/"
 
   # These two settings control how frequently log events are flushed to the
