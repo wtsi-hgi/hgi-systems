@@ -11,7 +11,7 @@ gitlabbuildvariables_version=0.2.0
 boto3_version=1.4.7
 boto_version=2.46.1-hotfix.1
 yatadis_version=1.0.0
-openstack_info_version=5.4.0
+openstack_info_version=5.5.0
 yaosadis_version=2.0.1
 
 echo "Installing ansible using pip3 from github..."
