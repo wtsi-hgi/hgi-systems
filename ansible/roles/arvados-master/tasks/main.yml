@@ -275,17 +275,6 @@
   notify:
     - create mercury admin user
   
-- name: add entry to /etc/hosts for arvados api server
-  become: yes
-  lineinfile: 
-    regexp: '{{ arvados_cluster_api_host }}$'
-    state: present
-    line: '{{ arvados_cluster_master_private_ips[0] }} {{ arvados_cluster_api_host }}'
-    path: /etc/hosts
-    owner: root
-    group: root
-    mode: 0644
-
 ##############################################################################
 # arvados-ws
 ##############################################################################
