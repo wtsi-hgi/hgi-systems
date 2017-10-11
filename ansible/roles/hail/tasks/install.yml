@@ -13,6 +13,8 @@
     - make
     - build-essential
 
+- include: conda-6096-patch.yml
+
 - name: install conda prerequisites
   become: yes
   conda:
