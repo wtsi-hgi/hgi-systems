@@ -83,3 +83,18 @@
     owner: root
     group: root
     mode: 0644
+
+- name: create crunch group
+  become: yes
+  group:
+    name: crunch
+    gid: 1001
+    state: present
+
+- name: create crunch user
+  become: yes
+  user:
+    name: crunch
+    group: crunch
+    uid: 1001
+    state: present
