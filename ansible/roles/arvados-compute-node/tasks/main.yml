@@ -34,6 +34,7 @@
     - python-arvados-python-client
     - crunch-run
     - arvados-docker-cleaner
+    - curl
 
 # TODO maybe set ulimit in docker  --default-ulimit nofile=10000:10000
 
@@ -57,6 +58,13 @@
     src: "fuse.conf.j2"
     dest: "/etc/fuse.conf"
     mode: 0755
+
+- name: create fuse group
+  become: yes
+  group:
+    name: fuse
+    gid: 200
+    system: yes
 
 - name: create docker-cleaner config directory
   become: yes
@@ -96,5 +104,32 @@
   user:
     name: crunch
     group: crunch
+    groups: 
+      - crunch
+      - fuse
     uid: 1001
     state: present
+
+- name: ensure /dev/fuse permissions are correct
+  become: yes
+  file: 
+    path: /dev/fuse
+    group: fuse
+    mode: 1660
+    state: file
+
+- name: configure cron to run arvados-node-ping every five minutes
+  become: yes
+  cron:
+    cron_file: arvados-node-ping
+    user: root
+    name: arvados-node-ping
+    minute: "*/5"
+    hour: "*"
+    day: "*"
+    job: "/usr/bin/curl -k -d ping_secret={{ arvados_cluster_root_key | pbkdf2_hmac(cloud_resource_name, 32) | b36encode }} https://{{ arvados_cluster_api_host }}/arvados/v1/nodes/{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}/ping"
+  register: node_ping_cron
+
+- name: attempt to ping now
+  command: "/usr/bin/curl -k -d ping_secret={{ arvados_cluster_root_key | pbkdf2_hmac(cloud_resource_name, 32) | b36encode }} https://{{ arvados_cluster_api_host }}/arvados/v1/nodes/{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}/ping"
+  when: node_ping_cron|changed

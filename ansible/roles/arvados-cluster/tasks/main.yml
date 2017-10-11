@@ -38,6 +38,18 @@
     hostname: "{{ item }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
 
+- name: create node entries for compute nodes
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_node:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-7ekkf-{{ item | hash('md5') | truncate(15, True, '') }}"
+    hostname: "{{ item }}"
+    domain: "{{ arvados_cluster_consul_domain }}"
+    info: 
+      ping_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
+  with_items: "{{ arvados_cluster_compute_node_names }}"
+
 - name: create api_client_authorization for arvados-login-sync
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_api_client_authorization:
@@ -46,7 +58,7 @@
     uuid: "{{ arvados_cluster_id }}-gj3su-{{ item | hash('md5') | truncate(15, True, '') }}"
     scopes: 
       - "GET /arvados/v1/virtual_machines/{{ arvados_cluster_id }}-2x53u-{{ item | hash('md5') | truncate(15, True, '') }}/logins"
-    client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados-login-sync-{{ item }}', 32) | b36encode }}"
+    client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
 
 - name: create api_client_authorization for data manager (keep-balance)

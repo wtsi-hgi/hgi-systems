@@ -203,6 +203,8 @@
   notify:
     - reconfigure arvados-api-server
     - create api tokens
+    - restart crunch-dispatch-pipelines
+    - restart crunch-dispatch-jobs
 
 - name: copy superuser token 
   become: yes
