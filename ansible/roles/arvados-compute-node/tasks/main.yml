@@ -21,7 +21,7 @@
 # file: roles/arvados-compute-node/tasks/main.yml
 
 ################################################################################
-# arvados-compute-node
+# arvados-compute-node (containers api)
 ################################################################################
 - name: install arvados-crunch-run and it prerequisites and friends
   become: yes
@@ -34,7 +34,29 @@
     - python-arvados-python-client
     - crunch-run
     - arvados-docker-cleaner
+
+################################################################################
+# arvados-compute-node (deprecated jobs api)
+################################################################################
+- name: install arvados-crunch-run and it prerequisites and friends
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
     - curl
+    - perl
+    - python-virtualenv
+    - fuse
+    - python-arvados-python-client
+    - python-arvados-fuse
+    - crunchrunner
+    - crunchstat
+    - arvados-docker-cleaner
+    - iptables
+    - ca-certificates
 
 # TODO maybe set ulimit in docker  --default-ulimit nofile=10000:10000
 
@@ -107,6 +129,7 @@
     groups: 
       - crunch
       - fuse
+      - docker
     uid: 1001
     state: present
 
