@@ -171,3 +171,13 @@
     owner: root
     group: root
     mode: 0644
+
+- name: install ssh private key for mercury user
+  become: yes
+  become_user: mercury
+  copy:
+    content: "{{ arvados_cluster_mercury_shell_ssh_private_key }}"
+    dest: "/home/mercury/.ssh/id_rsa"
+    owner: mercury
+    mode: 0600
+
