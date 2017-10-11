@@ -133,3 +133,15 @@
     ARVADOS_API_HOST: "{{ arvados_cluster_api_host }}"
   register: arv_keepdocker_result
   changed_when: "not (arv_keepdocker_result.stdout | search('Status: Image is up to date'))"
+
+- name: add authorized_key for mercury on shell node
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_authorized_key:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-fngyi-{{ 'mercury_shell_authorized_key' | hash('md5') | truncate(15, True, '') }}"
+    name: "mercury@shell"
+    key_type: "SSH"
+    authorized_user_uuid: mercury
+    public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
+
