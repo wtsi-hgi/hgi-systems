@@ -95,9 +95,9 @@ arvados_cluster_keeps: "{{ groups['arvados-keeps'] | intersect(groups[arvados_cl
 arvados_cluster_keep_names: "{{ arvados_cluster_keeps | map(attribute='cloud_resource_name') | list }}"
 arvados_cluster_keep_hosts: "{{ arvados_cluster_keeps | map(attribute='cloud_resource_fqdn') | list }}"
 
-arvados_cluster_keepproxys: "{{ groups['arvados-keepproxys'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
-arvados_cluster_keepproxy_names: "{{ arvados_cluster_keepproxys | map(attribute='cloud_resource_name') | list }}"
-arvados_cluster_keepproxy_hosts: "{{ arvados_cluster_keepproxys | map(attribute='cloud_resource_fqdn') | list }}"
+arvados_cluster_keepproxies: "{{ groups['arvados-keepproxies'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
+arvados_cluster_keepproxy_names: "{{ arvados_cluster_keepproxies | map(attribute='cloud_resource_name') | list }}"
+arvados_cluster_keepproxy_hosts: "{{ arvados_cluster_keepproxies | map(attribute='cloud_resource_fqdn') | list }}"
 
 arvados_cluster_ssos: "{{ groups['arvados-ssos'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
 arvados_cluster_sso_names: "{{ arvados_cluster_ssos | map(attribute='cloud_resource_name') | list }}"
