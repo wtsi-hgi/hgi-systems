@@ -43,4 +43,3 @@ module "spark-compute-sjl" {
 
   spark_cluster_id = "sjl"
 }
-
