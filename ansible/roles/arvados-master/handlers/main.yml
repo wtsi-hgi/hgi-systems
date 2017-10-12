@@ -54,3 +54,30 @@
     HOME: /var/www
     RAILS_ENV: production
 
+- name: restart runit
+  become: yes
+  systemd: 
+    name: runit
+    state: restarted
+
+- name: restart crunch-dispatch-pipelines
+  become: yes
+  runit:
+    name: crunch-dispatch-pipelines
+    enabled: yes
+    state: restarted
+    service_dir: /etc/service
+    service_src: /etc/sv
+  notify:
+   - restart runit
+
+- name: restart crunch-dispatch-jobs
+  become: yes
+  runit:
+    name: crunch-dispatch-jobs
+    enabled: yes
+    state: restarted
+    service_dir: /etc/service
+    service_src: /etc/sv
+  notify:
+   - restart runit

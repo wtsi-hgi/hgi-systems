@@ -139,6 +139,12 @@
     path: /var/www
     owner: www-data
 
+- name: set shell for www-data user (required for git repo access using jobs api)
+  become: yes
+  user:
+    name: www-data
+    shell: /bin/bash
+
 - name: activate passenger in nginx configuration
   become: yes
   blockinfile:
@@ -197,6 +203,8 @@
   notify:
     - reconfigure arvados-api-server
     - create api tokens
+    - restart crunch-dispatch-pipelines
+    - restart crunch-dispatch-jobs
 
 - name: copy superuser token 
   become: yes
@@ -267,7 +275,6 @@
   notify:
     - create mercury admin user
   
-
 ##############################################################################
 # arvados-ws
 ##############################################################################
@@ -551,4 +558,99 @@
     owner: www-data
   notify:
    - restart nginx
+
+##############################################################################
+# crunch-dispatch (deprecated jobs API dispatcher)
+##############################################################################
+- name: create crunch group
+  become: yes
+  group:
+    name: crunch
+    gid: 1001
+    state: present
+
+- name: create crunch user
+  become: yes
+  user:
+    name: crunch
+    group: crunch
+    uid: 1001
+    state: present
+    
+- name: install SDKs required for crunch-dispatch
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - libjson-perl
+    - libio-socket-ssl-perl
+    - libwww-perl
+    - libipc-system-simple-perl
+    - libcrypt-ssleay-perl 
+    - libarvados-perl
+    - python-arvados-python-client
+    - runit
+
+- name: create runit directory for crunch-dispatch-jobs
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-jobs
+    state: directory
+
+- name: install runit service for crunch-dispatch-jobs
+  become: yes
+  template:
+    src: "crunch-dispatch-jobs.run.j2"
+    dest: "/etc/sv/crunch-dispatch-jobs/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-jobs
+
+- name: create runit log directory for crunch-dispatch-jobs
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-jobs/log
+    state: directory
+
+- name: install runit log service for crunch-dispatch-jobs
+  become: yes
+  template:
+    src: "crunch-dispatch-jobs.log.run.j2"
+    dest: "/etc/sv/crunch-dispatch-jobs/log/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-jobs
+
+- name: create runit directory for crunch-dispatch-pipelines
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-pipelines
+    state: directory
+
+- name: install runit service for crunch-dispatch-pipelines
+  become: yes
+  template:
+    src: "crunch-dispatch-pipelines.run.j2"
+    dest: "/etc/sv/crunch-dispatch-pipelines/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-pipelines
+
+- name: create runit log directory for crunch-dispatch-pipelines
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-pipelines/log
+    state: directory
+
+- name: install runit log service for crunch-dispatch-pipelines
+  become: yes
+  template:
+    src: "crunch-dispatch-pipelines.log.run.j2"
+    dest: "/etc/sv/crunch-dispatch-pipelines/log/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-pipelines
 

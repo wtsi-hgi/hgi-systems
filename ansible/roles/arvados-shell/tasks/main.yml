@@ -161,13 +161,12 @@
         day: "*"
         job: arvados-login-sync
 
-- name: add entry to /etc/hosts for arvados api server
+- name: install ssh private key for mercury user
   become: yes
-  lineinfile: 
-    regexp: '{{ arvados_cluster_api_host }}$'
-    state: present
-    line: '{{ arvados_cluster_master_private_ips[0] }} {{ arvados_cluster_api_host }}'
-    path: /etc/hosts
-    owner: root
-    group: root
-    mode: 0644
+  become_user: mercury
+  copy:
+    content: "{{ arvados_cluster_mercury_shell_ssh_private_key }}"
+    dest: "/home/mercury/.ssh/id_rsa"
+    owner: mercury
+    mode: 0600
+

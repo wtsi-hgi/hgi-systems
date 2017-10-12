@@ -29,6 +29,15 @@
     service_type: blob
   with_items: "{{ arvados_cluster_keep_hosts }}"
 
+- name: create keep_service entries for keep proxies
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_keep_service:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    service_host: "{{ item }}"
+    service_type: proxy
+  with_items: "{{ arvados_cluster_keepproxy_hosts }}"
+
 - name: create virtual_machine entries for shell hosts
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_virtual_machine:
@@ -38,6 +47,18 @@
     hostname: "{{ item }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
 
+- name: create node entries for compute nodes
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_node:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-7ekkf-{{ item | hash('md5') | truncate(15, True, '') }}"
+    hostname: "{{ item }}"
+    domain: "{{ arvados_cluster_consul_domain }}"
+    info: 
+      ping_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
+  with_items: "{{ arvados_cluster_compute_node_names }}"
+
 - name: create api_client_authorization for arvados-login-sync
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_api_client_authorization:
@@ -46,7 +67,7 @@
     uuid: "{{ arvados_cluster_id }}-gj3su-{{ item | hash('md5') | truncate(15, True, '') }}"
     scopes: 
       - "GET /arvados/v1/virtual_machines/{{ arvados_cluster_id }}-2x53u-{{ item | hash('md5') | truncate(15, True, '') }}/logins"
-    client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados-login-sync-{{ item }}', 32) | b36encode }}"
+    client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
 
 - name: create api_client_authorization for data manager (keep-balance)
@@ -133,3 +154,15 @@
     ARVADOS_API_HOST: "{{ arvados_cluster_api_host }}"
   register: arv_keepdocker_result
   changed_when: "not (arv_keepdocker_result.stdout | search('Status: Image is up to date'))"
+
+- name: add authorized_key for mercury on shell node
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_authorized_key:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    uuid: "{{ arvados_cluster_id }}-fngyi-{{ 'mercury_shell_authorized_key' | hash('md5') | truncate(15, True, '') }}"
+    name: "mercury@shell"
+    key_type: "SSH"
+    authorized_user_uuid: mercury
+    public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
+
