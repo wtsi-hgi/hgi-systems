@@ -29,6 +29,15 @@
     service_type: blob
   with_items: "{{ arvados_cluster_keep_hosts }}"
 
+- name: create keep_service entries for keep proxies
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  arvados_keep_service:
+    api_host: "{{ arvados_cluster_api_host }}"
+    api_token: "{{ arvados_cluster_superuser_api_token }}"
+    service_host: "{{ item }}"
+    service_type: proxy
+  with_items: "{{ arvados_cluster_keepproxy_hosts }}"
+
 - name: create virtual_machine entries for shell hosts
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_virtual_machine:
