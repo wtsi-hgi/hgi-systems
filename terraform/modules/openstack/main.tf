@@ -240,6 +240,19 @@ resource "openstack_compute_secgroup_v2" "keep-service" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "keep-proxy" {
+  provider    = "openstack"
+  name        = "keep-proxy_${var.region}_${var.env}"
+  description = "Arvados keep proxy (keep service accessible from anywhere)"
+
+  rule {
+    from_port   = 25107
+    to_port     = 25107
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"

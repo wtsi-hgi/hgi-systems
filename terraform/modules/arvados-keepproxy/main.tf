@@ -55,7 +55,7 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",
-    "${var.security_group_ids["keep-service"]}",
+    "${var.security_group_ids["keep-proxy"]}",
   ]
 
   network {
