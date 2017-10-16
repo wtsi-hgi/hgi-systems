@@ -131,7 +131,7 @@
   template: 
     src: "arvados-keep-web.yml.j2"
     dest: "/etc/arvados/keep-web.yml"
-    mode: 0640
+    mode: 0644
   notify:
    - restart arvados-keep-web
 
