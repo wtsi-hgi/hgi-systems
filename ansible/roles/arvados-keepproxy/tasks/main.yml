@@ -126,6 +126,15 @@
     path: /etc/sv/arvados-keep-web
     state: directory
 
+- name: configure keep-web
+  become: yes
+  template: 
+    src: "arvados-keep-web.yml.j2"
+    dest: "/etc/arvados/keep-web.yml"
+    mode: 0640
+  notify:
+   - restart arvados-keep-web
+
 - name: install runit service for arvados-keep-web
   become: yes
   template:
