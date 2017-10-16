@@ -88,20 +88,56 @@
     gid: 200
     system: yes
 
-- name: create docker-cleaner config directory
+- name: create arvados-docker-cleaner config directory
   become: yes
   file:
     state: directory
-    path: /etc/arvados/docker-cleaner
+    path: /etc/arvados/arvados-docker-cleaner
+  notify:
+    - restart arvados-docker-cleaner
 
 - name: configure docker cleaner
   become: yes
   template: 
-    src: docker-cleaner.json.j2
-    dest: /etc/arvados/docker-cleaner/docker-cleaner.json
+    src: arvados-docker-cleaner.json.j2
+    dest: /etc/arvados/arvados-docker-cleaner/arvados-docker-cleaner.json
     mode: 0755  
   notify:
     - restart arvados-docker-cleaner
+
+- name: create runit directory for arvados-docker-cleaner
+  become: yes
+  file:
+    path: /etc/sv/arvados-docker-cleaner
+    state: directory
+  notify:
+    - restart arvados-docker-cleaner
+
+- name: install runit service for arvados-docker-cleaner
+  become: yes
+  template:
+    src: "arvados-docker-cleaner.run.j2"
+    dest: "/etc/sv/arvados-docker-cleaner/run"
+    mode: 0755
+  notify:
+    - restart arvados-docker-cleaner
+
+- name: create runit log directory for arvados-docker-cleaner
+  become: yes
+  file:
+    path: /etc/sv/arvados-docker-cleaner/log
+    state: directory
+  notify:
+    - restart arvados-docker-cleaner
+
+- name: install runit log service for arvados-docker-cleaner
+  become: yes
+  template:
+    src: "arvados-docker-cleaner.log.run.j2"
+    dest: "/etc/sv/arvados-docker-cleaner/log/run"
+    mode: 0755
+  notify:
+   - restart arvados-docker-cleaner
 
 - name: create crunch group
   become: yes
