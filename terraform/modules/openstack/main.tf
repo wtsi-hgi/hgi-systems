@@ -266,6 +266,7 @@ output "security_group_ids" {
     slurm-master  = "${openstack_compute_secgroup_v2.slurm-master.id}"
     slurm-compute = "${openstack_compute_secgroup_v2.slurm-compute.id}"
     keep-service  = "${openstack_compute_secgroup_v2.keep-service.id}"
+    keep-proxy    = "${openstack_compute_secgroup_v2.keep-proxy.id}"
   }
 }
 
