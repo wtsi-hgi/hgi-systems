@@ -145,7 +145,7 @@ module "arvados-compute-node" {
     user = "${var.base_image_user}"
   }
 
-  count              = 3
+  count              = 10
   flavour            = "m1.xlarge"
   domain             = "node.hgi-delta.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
