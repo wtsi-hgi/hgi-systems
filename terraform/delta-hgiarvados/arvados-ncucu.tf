@@ -98,7 +98,7 @@ module "arvados-keep" {
     user = "${var.base_image_user}"
   }
 
-  count              = 2
+  count              = 8
   flavour            = "m1.medium"
   domain             = "node.hgi-delta.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
