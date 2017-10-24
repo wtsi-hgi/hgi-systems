@@ -2,4 +2,5 @@
 
 set -e
 
-exec sudo -u nobody -E keep-web -config /etc/arvados/keep-web.yml 2>&1
+exec 2>&1 
+exec sudo -u nobody -E keep-web -config /etc/arvados/keep-web.yml
