@@ -75,6 +75,7 @@ module "arvados-keepproxy" {
     user = "${var.base_image_user}"
   }
 
+  count              = 4
   flavour            = "m1.medium"
   domain             = "hgi.sanger.ac.uk"
   security_group_ids = "${module.openstack.security_group_ids}"

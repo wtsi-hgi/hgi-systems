@@ -1,3 +1,4 @@
+variable "count" {}
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
@@ -35,17 +36,20 @@ locals {
     "consul-agents",
     "hgi-credentials",
   ]
+
+  hostname_format = "${format("arvados-keepproxy-%s", var.arvados_cluster_id)}-%02d"
 }
 
 resource "openstack_networking_floatingip_v2" "arvados-keepproxy" {
   provider = "openstack"
   pool     = "nova"
+  count    = "${var.count}"
 }
 
 resource "openstack_compute_instance_v2" "arvados-keepproxy" {
   provider    = "openstack"
-  count       = 1
-  name        = "arvados-keepproxy-${var.arvados_cluster_id}"
+  count       = "${var.count}"
+  name        = "${format(local.hostname_format, count.index + 1)}"
   image_name  = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${var.key_pair_ids["mercury"]}"
@@ -63,7 +67,7 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: arvados-keepproxy-${var.arvados_cluster_id}\nfqdn: arvados-keepproxy-${var.arvados_cluster_id}.${var.domain}"
+  user_data = "#cloud-config\nhostname: ${format(local.hostname_format, count.index + 1)}\nfqdn: ${format(local.hostname_format, count.index + 1)}.${var.domain}"
 
   metadata = {
     ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
@@ -91,20 +95,23 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
 
 resource "openstack_compute_floatingip_associate_v2" "arvados-keepproxy" {
   provider    = "openstack"
-  floating_ip = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
-  instance_id = "${openstack_compute_instance_v2.arvados-keepproxy.id}"
+  count       = "${var.count}"
+  floating_ip = "${openstack_networking_floatingip_v2.arvados-keepproxy.*.address[count.index]}"
+  instance_id = "${openstack_compute_instance_v2.arvados-keepproxy.*.id[count.index]}"
 }
 
 resource "infoblox_record" "arvados-keepproxy" {
-  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
-  name   = "arvados-keepproxy-${var.arvados_cluster_id}"
+  count  = "${var.count}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.*.address[count.index]}"
+  name   = "${format(local.hostname_format, count.index + 1)}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
 }
 
+# FIXME: add infoblox provider support for multiple A records
 resource "infoblox_record" "arvados-keep" {
-  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.0.address}"
   name   = "arvados-keep-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -112,7 +119,7 @@ resource "infoblox_record" "arvados-keep" {
 }
 
 resource "infoblox_record" "arvados-download" {
-  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.0.address}"
   name   = "arvados-download-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -120,7 +127,7 @@ resource "infoblox_record" "arvados-download" {
 }
 
 resource "infoblox_record" "arvados-collections" {
-  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
+  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.0.address}"
   name   = "arvados-collections-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -128,5 +135,6 @@ resource "infoblox_record" "arvados-collections" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.arvados-keepproxy.address}"
+  count = "${var.count}"
+  value = "${openstack_networking_floatingip_v2.arvados-keepproxy.*.address}[count.index]"
 }
