@@ -1,16 +1,6 @@
-- name: restart runit
-  become: yes
-  systemd: 
-    name: runit
-    state: restarted
-
 - name: restart arvados-docker-cleaner
   become: yes
   runit:
     name: arvados-docker-cleaner
-    enabled: yes
     state: restarted
-    service_dir: /etc/service
-    service_src: /etc/sv
-  notify:
-   - restart runit
+
