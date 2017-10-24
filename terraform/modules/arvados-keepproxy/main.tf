@@ -133,4 +133,3 @@ resource "infoblox_record" "arvados-collections" {
   type   = "A"
   ttl    = 600
 }
-
