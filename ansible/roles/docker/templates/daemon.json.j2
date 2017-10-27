@@ -1,4 +1,5 @@
 {
     "bip": "{{ docker_bip }}",
-    "mtu": 1400
+    "mtu": 1400,
+    "dns": ["{{ docker_bip | ipaddr('address') }}"],
 }

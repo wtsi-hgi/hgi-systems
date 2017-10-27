@@ -43,6 +43,14 @@
   notify:
    - restart dnsmasq
 
+- name: configure dnsmasq listen interfaces
+  become: yes
+  template:
+    src: 5-interfaces.j2
+    dest: /etc/dnsmasq.d/5-interfaces
+  notify:
+   - restart dnsmasq
+
 - name: configure dnsmasq for .consul
   become: yes
   template:
