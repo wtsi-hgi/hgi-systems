@@ -33,6 +33,7 @@
   with_items:
     - python-arvados-python-client
     - crunch-run
+    - runit
     - arvados-docker-cleaner
 
 ################################################################################
