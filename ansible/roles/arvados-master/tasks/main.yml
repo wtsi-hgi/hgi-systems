@@ -298,6 +298,12 @@
   with_items:
     - crunch-dispatch-slurm
 
+- name: create crunch-dispatch-slurm conf dir
+  become: yes
+  file:
+    path: "/etc/arvados/crunch-dispatch-slurm"
+    state: directory
+
 - name: configure crunch-dispatch-slurm
   become: yes
   template:
