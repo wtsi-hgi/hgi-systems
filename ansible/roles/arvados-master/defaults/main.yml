@@ -8,6 +8,7 @@ arvados_master_git_home: /var/lib/arvados/git
 arvados_master_git_repositories_dir: "{{ arvados_master_git_home }}/repositories"
 arvados_master_git_internal_dir: /var/lib/arvados/internal.git
 arvados_master_superuser_token_file: /etc/arvados/superuser.token
+arvados_master_crunch_dispatcher_token_file: /etc/arvados/crunch-dispatcher.token
 arvados_master_data_manager_token_file: /etc/arvados/data-manager.token
 arvados_master_create_workbench_api_client_script: /etc/arvados/create-workbench-api-client.rb
 arvados_master_create_mercury_admin_user_script: /etc/arvados/create-mercury-admin-user.rb

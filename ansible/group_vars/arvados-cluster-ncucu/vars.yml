@@ -40,6 +40,7 @@ arvados_cluster_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('ar
 
 arvados_cluster_superuser_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_superuser_api_token', 32) | b36encode }}"
 arvados_cluster_anonymous_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_anonymous_api_token', 32) | b36encode }}"
+arvados_cluster_crunch_dispatcher_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_crunch_dispatcher_api_token', 32) | b36encode }}"
 arvados_cluster_data_manager_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_data_manager_api_token', 32) | b36encode }}"
 arvados_cluster_login_sync_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_login_sync_api_token', 32) | b36encode }}"
 

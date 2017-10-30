@@ -216,6 +216,16 @@
   notify:
     - create api tokens
 
+- name: copy crunch dispatcher token 
+  become: yes
+  copy:
+    content: "{{ arvados_cluster_crunch_dispatcher_api_token }}"
+    dest: "{{ arvados_master_crunch_dispatcher_token_file }}"
+    owner: www-data
+    mode: 0600
+  notify:
+    - create api tokens
+
 - name: copy data manager token 
   become: yes
   copy:
@@ -275,6 +285,29 @@
   notify:
     - create mercury admin user
   
+##############################################################################
+# crunch-dispatch-slurm (crunch v2 slurm dispatcher)
+##############################################################################
+- name: install crunch-dispatch-slurm
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - crunch-dispatch-slurm
+
+- name: configure crunch-dispatch-slurm
+  become: yes
+  template:
+    src: "crunch-dispatch-slurm.yml.j2"
+    dest: "/etc/arvados/crunch-dispatch-slurm/crunch-dispatch-slurm.yml"
+    mode: 0700
+    owner: www-data
+  notify:
+    - restart crunch-dispatch-slurm
+
 ##############################################################################
 # crunch-dispatch (deprecated jobs API dispatcher)
 ##############################################################################
