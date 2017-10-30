@@ -59,21 +59,20 @@
     - iptables
     - ca-certificates
 
-# TODO maybe set ulimit in docker  --default-ulimit nofile=10000:10000
-
 - name: setup cgroup accounting in grub
   become: yes
   lineinfile: 
     path: /etc/default/grub
     regexp: '^GRUB_CMDLINE_LINUX='
     state: present
-    line: GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
+    line: GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1 "
   register: grubconf
 
 - name: update-grub
   become: yes
   when: grubconf|changed
   command: update-grub
+  notify: reboot host
 
 - name: configure FUSE
   become: yes

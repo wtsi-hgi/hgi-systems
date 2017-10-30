@@ -4,3 +4,20 @@
     name: arvados-docker-cleaner
     state: restarted
 
+- name: reboot host
+  become: yes
+  command: shutdown -r now "Ansible rebooting host"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  listen: reboot compute node
+
+- name: wait for reboot to complete
+  become: no
+  local_action:
+    module: wait_for
+      host={{ ansible_ssh_host }}
+      port={{ ansible_ssh_port }}
+      delay=30
+      timeout=300
+  listen: reboot compute node
