@@ -24,6 +24,14 @@
 - include: dynamic-inventory-sanity-check.yml
 - include: set-facts.yml
 
+# Dump ssh extra args and control_path values for debugging
+- hosts: all
+  gather_facts: no
+  - debug:
+      var: ansible_ssh_extra_args
+  - debug:
+      var: control_path
+
 # Configure critical ssh bastion host infrastructure before gathering facts
 - include: ssh-gateways.yml
 
