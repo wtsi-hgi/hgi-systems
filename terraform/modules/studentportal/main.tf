@@ -50,7 +50,7 @@ resource "openstack_compute_instance_v2" "studentportal" {
   user_data = "#cloud-config\nhostname: studentportal\nfqdn: studentportal.${var.domain}"
 
   metadata = {
-    ansible_groups = "docker"
+    ansible_groups = "common docker"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
