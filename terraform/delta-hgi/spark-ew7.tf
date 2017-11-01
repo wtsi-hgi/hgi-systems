@@ -23,7 +23,7 @@ module "spark-master-ew7" {
 
 module "spark-compute-ew7" {
   source = "../modules/spark-compute"
-  count  = 0
+  count  = 2
 
   image = {
     name = "${var.base_image_name}"
