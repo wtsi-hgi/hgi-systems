@@ -56,13 +56,9 @@ sanger_http_proxy: http://wwwcache.sanger.ac.uk:3128
 sanger_https_proxy: http://wwwcache.sanger.ac.uk:3128
 sanger_ftp_proxy: http://wwwcache.sanger.ac.uk:3128
 
-all_ssh_proxy_args: "{% if bastion_host is defined and bastion_host != ansible_host %}-o ProxyCommand=\"ssh -W %h:%p -o StrictHostKeyChecking=no -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
+ansible_ssh_common_args: "{% if bastion_host is defined and bastion_host != ansible_host %}-o ProxyCommand=\"ssh -W %h:%p -o StrictHostKeyChecking=no -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
 
-ansible_ssh_extra_args: "{{ all_ssh_proxy_args }}"
-ansible_scp_extra_args: "{{ all_ssh_proxy_args }}"
-ansible_sftp_extra_args: "{{ all_ssh_proxy_args }}"
-
-control_path: "{% if bastion_host is defined and bastion_host != ansible_host %}%(directory)s/ansible-ssh-{{ bastion_host }}-%%h-%%p-%%r{% else %}%(directory)s/ansible-ssh-%%h-%%p-%%r{% endif %}"
+control_path: "{% if bastion_host is defined and bastion_host != ansible_host %}%(directory)s/ansible-ssh-{{ bastion_host }}-%%h-%%p-%%r{% else %}%(directory)s/ansible-ssh-direct-%%h-%%p-%%r{% endif %}"
 
 pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
