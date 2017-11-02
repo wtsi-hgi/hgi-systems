@@ -71,21 +71,16 @@
 #    - common
 #  when: ansible_os_family == 'Debian'
 
-- name: disable sshd support for PAM
+- name: add cron job to clean up leaking systemd login unit files (https://github.com/systemd/systemd/issues/1961)
   become: yes
-  lineinfile:
-    dest: /etc/ssh/sshd_config
-    regexp: '^UsePAM '
-    line: 'UsePAM no'
-  notify:
-    - restart sshd
-
-- name: add LC_ALL=C to /etc/environment
-  become: yes
-  lineinfile:
-    dest: /etc/environment
-    regexp: '^LC_ALL='
-    line: 'LC_ALL=C'
+  cron:
+    name: remove systemd scope files
+    weekday: *
+    minute: 0
+    hour: */4
+    user: root
+    job: "/bin/rm -f /run/systemd/system/*.scope"
+    cron_file: systemd-fix-1961-leaking-login-units
 
 - name: common root configuration not to be baked into images
   include: root-post-image-building.yml
