@@ -71,6 +71,15 @@
 #    - common
 #  when: ansible_os_family == 'Debian'
 
+- name: disable sshd support for PAM
+  become: yes
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: '^UsePAM '
+    line: 'UsePAM no'
+  notify:
+    - restart sshd
+
 - name: common root configuration not to be baked into images
   include: root-post-image-building.yml
   when: "not 'image-building' in group_names"
