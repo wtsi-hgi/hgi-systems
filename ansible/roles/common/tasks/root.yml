@@ -80,6 +80,13 @@
   notify:
     - restart sshd
 
+- name: add LC_ALL=C to /etc/environment
+  become: yes
+  lineinfile:
+    dest: /etc/environment
+    regexp: '^LC_ALL='
+    line: 'LC_ALL=C'
+
 - name: common root configuration not to be baked into images
   include: root-post-image-building.yml
   when: "not 'image-building' in group_names"
