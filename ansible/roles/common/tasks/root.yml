@@ -75,12 +75,12 @@
   become: yes
   cron:
     name: remove systemd scope files
-    weekday: *
-    minute: 0
-    hour: */4
+    weekday: "*"
+    minute: "0"
+    hour: "*/4"
     user: root
     job: "/bin/rm -f /run/systemd/system/*.scope"
-    cron_file: systemd-fix-1961-leaking-login-units
+    cron_file: "systemd-fix-1961-leaking-login-units"
 
 - name: common root configuration not to be baked into images
   include: root-post-image-building.yml
