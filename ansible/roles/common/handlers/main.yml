@@ -36,6 +36,7 @@
   shell: /usr/sbin/update-ca-certificates
 
 - name: restart sshd
+  become: yes
   service: 
     name: sshd
     state: restarted
