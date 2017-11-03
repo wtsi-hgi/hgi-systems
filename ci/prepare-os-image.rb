@@ -119,7 +119,7 @@ def main(positional_arguments)
     
     os_image, s3_image_bucket = positional_arguments[0, CLI_PARAMETERS.length]
     image_source_url = ""
-    if positional_arguments > CLI_PARAMETERS.length
+    if positional_arguments.length > CLI_PARAMETERS.length
         image_source_url = positional_arguments[CLI_PARAMETERS.length]
     end
 
