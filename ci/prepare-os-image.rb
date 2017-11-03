@@ -48,7 +48,7 @@ def find_in_object_store(possible_images, image_bucket)
 end
 
 
-def fetch_url_to_object_store(image, s3_image_bucket, image_source_url)
+def fetch_url_to_object_store(image, image_bucket, image_source_url)
     s3_dest = "s3://#{image_bucket}/#{image}"
     STDERR.puts("Downloading #{image} from #{image_source_url} to #{s3_dest}")
     case File.extname(image_source_url)
@@ -97,7 +97,7 @@ def run(os_image:, s3_image_bucket:, image_source_url: nil)
     end
     if image_id.nil? and not image_source_url.nil?
         image = possible_images[0]
-        STDERR.puts('No matching images found in either OpenStack or in the object store, attempting to fetch from source URL (#{image_source_url}) and save to object store as #{image}')
+        STDERR.puts("No matching images found in either OpenStack or in the object store, attempting to fetch from source URL (#{image_source_url}) and save to object store as #{image}")
         fetch_url_to_object_store(image, s3_image_bucket, image_source_url)
         image_id = load_from_object_store(image, s3_image_bucket)
     end
