@@ -13,7 +13,7 @@ RUN apt-get -q=2 update \
 	gzip \
 	xz-utils \
     && apt-get autoremove \
-    && apt-get clean && \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set workdir and entrypoint
