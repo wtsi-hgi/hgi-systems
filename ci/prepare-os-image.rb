@@ -61,7 +61,7 @@ def fetch_url_to_object_store(image, image_bucket, image_source_url)
         else 
           decompressor = ''
     end
-    if not decompressor.nil?
+    if decompressor != ''
         STDERR.puts("Source image is compressed, decompressing with #{decompressor}")
     end
     system("curl '#{image_source_url}' #{decompressor} | s3cmd put --force - '#{s3_dest}' >&2") or abort
