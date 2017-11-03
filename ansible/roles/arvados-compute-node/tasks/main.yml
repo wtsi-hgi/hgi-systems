@@ -72,7 +72,7 @@
   become: yes
   when: grubconf|changed
   command: update-grub
-  notify: reboot host
+  notify: reboot compute node
 
 - name: configure FUSE
   become: yes
