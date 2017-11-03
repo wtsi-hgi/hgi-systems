@@ -141,6 +141,12 @@
     - "{{ gitlab_runner_tokens }}"
   when: "not 'image-building' in group_names"
 
+- name: ensure gitlab-runner conf dir exists
+  become: yes
+  file:
+    path: /etc/gitlab-runner
+    state: directory
+
 - name: assemble gitlab runner configuration
   tags:
     - gitlab-runner
