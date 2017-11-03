@@ -69,6 +69,9 @@ arvados_cluster_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
 arvados_cluster_s3_replication: 3
 
 # FIXME: Generic stuff below, figure out how to DRY this out
+
+arvados_cluster_sso_user_uuid: {{ arvados_cluster_id }}-tpzed-mercuryadminsso
+
 arvados_cluster_shell_server_uuid: "{{ arvados_cluster_id }}-2x53u-shellserver0001"
 arvados_cluster_group_name: "arvados-cluster-{{ arvados_cluster_id }}"
 arvados_cluster_sso_app_id: arvados-server
