@@ -13,6 +13,9 @@ mkdir -p "$GOPATH/src" "$GOPATH/bin"
 chmod -R 777 "$GOPATH"
 cd ${GOPATH}
 
+echo "getting gox"
+go get github.com/mitchellh/gox
+
 echo "getting packer source"
 mkdir -p $GOPATH/src/github.com/hashicorp
 cd $GOPATH/src/github.com/hashicorp
@@ -23,6 +26,7 @@ git checkout v1.1.1
 echo "building packer"
 export XC_ARCH="amd64"
 export XC_OS="linux"
+export PACKER_DEV=1
 /bin/bash scripts/build.sh || (echo "failed to build packer"; exit 1)
 cp ${GOPATH}/bin/packer /usr/local/bin/
 
