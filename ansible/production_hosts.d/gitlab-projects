@@ -6,6 +6,7 @@ gitlab-sanger-hgi-hgi-base-image-builder gitlab_project=hgi/hgi-base-image-build
 gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-builder
 gitlab-sanger-hgi-hgi-arvados-compute-image-builder gitlab_project=hgi/hgi-arvados-compute-image-builder
 gitlab-sanger-hgi-hgi-gitlab-runner-image-builder gitlab_project=hgi/gitlab-runner-image-builder
+gitlab-freebsd-bsd-cloudinit-image-builder gitlab_project=hgi/freebsd-bsd-cloudinit-image-builder
 
 [gitlab-projects:children]
 sanger-image-builder-gitlab
