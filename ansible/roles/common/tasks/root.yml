@@ -20,7 +20,7 @@
 ---
 # file: roles/common/tasks/root.yml
 
-- block:
+  - block:
     - name: ensure we have essential Debian/Ubuntu packages
       become: yes
       apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
@@ -74,7 +74,7 @@
         - common
       with_items:
         - pkg
-	- bash
+        - bash
         - ca_root_nss
         - python
         - python2
