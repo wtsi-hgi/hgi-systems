@@ -74,6 +74,7 @@
         - common
       with_items:
         - pkg
+	- bash
         - ca_root_nss
         - python
         - python2
