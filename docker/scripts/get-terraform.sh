@@ -32,8 +32,9 @@ go get github.com/fanatic/go-infoblox
 echo "building terraform-provider-infoblox"
 mkdir -p $GOPATH/src/github.com/prudhvitella
 cd $GOPATH/src/github.com/prudhvitella
-git clone --depth 1 --branch master https://github.com/prudhvitella/terraform-provider-infoblox.git
+git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
+git checkout a02e6cd45f5495e22bbe87e82885fa07baca0cce
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
