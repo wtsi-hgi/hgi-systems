@@ -7,8 +7,12 @@ gitlab-sanger-hgi-hgi-docker-image-builder gitlab_project=hgi/hgi-docker-image-b
 gitlab-sanger-hgi-hgi-arvados-compute-image-builder gitlab_project=hgi/hgi-arvados-compute-image-builder
 gitlab-sanger-hgi-hgi-gitlab-runner-image-builder gitlab_project=hgi/gitlab-runner-image-builder
 
+[sanger-software-builder-gitlab]
+gitlab-sanger-hgi-hgi-software-builder gitlab_project=hgi/hgi-software-builder
+
 [gitlab-projects:children]
 sanger-image-builder-gitlab
+sanger-software-builder-gitlab
 hgi-systems-gitlab
 
 [openstack:children]
