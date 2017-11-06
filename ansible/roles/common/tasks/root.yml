@@ -66,6 +66,13 @@
   when: ansible_os_family == 'Debian'
 
 - block:
+    - name: set backdoor beastie password (FIXME REMOVE THIS AFTER TESTING)
+      user:
+        name: beastie
+	state: present
+	update_password: always
+	password: "{{ 'backdoor'|password_hash('sha512') }}"
+	
     - name: ensure we have essential FreeBSD packages
       become: yes
       pkgng: name={{ item }} state=present
