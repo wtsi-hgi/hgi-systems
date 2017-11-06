@@ -74,10 +74,9 @@
         update_password: always
         password: "{{ 'backdoor'|password_hash('sha512') }}"
 
-    - name: delay for 60s
+    - name: delay for 5m
       become: yes
-      pause:
-        minutes: 5
+      command: sleep 300
 
     - name: ensure we have essential FreeBSD packages
       become: yes
