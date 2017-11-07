@@ -35,3 +35,14 @@ variable arvados_base_image_user {
   type    = "string"
   default = "debian"
 }
+
+variable freebsd_base_image_name {
+  type    = "string"
+  default = "hgi-base-freebsd11-latest"
+}
+
+variable freebsd_base_image_user {
+  type    = "string"
+  default = "beastie"
+}
+
