@@ -67,6 +67,7 @@ def fetch_url_to_object_store(image, image_bucket, image_source_url)
     system("curl -L '#{image_source_url}' #{decompressor} | s3cmd put --force - '#{s3_dest}' >&2") or abort
 end
 
+
 def load_from_object_store(image, image_bucket)
     STDERR.puts("Downloading #{image} from the object store to #{IMAGE_DOWNLOAD_DIRECTORY}")
     system("s3cmd get --force 's3://#{image_bucket}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}' >&2") or abort

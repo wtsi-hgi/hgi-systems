@@ -22,4 +22,3 @@ else
 fi
 
 ci/terraform-fmt.sh "terraform/${REGION}"
-
