@@ -1,0 +1,26 @@
+---
+
+# Conda 4.3.27/28 is currently broken due to: https://github.com/conda/conda/issues/6096. The bug is such that Conda
+# is not going to be able to upgrade to 4.3.29 (when it is uploaded into the Conda package repository) without this
+# patch
+
+- name: get Conda version
+  shell: "{{ hail_anaconda_installation_location }}/bin/conda --version 2>&1 | cut -d ' ' -f 2"
+  changed_when: False
+  register: conda_version
+
+- block:
+    - name: find Conda package's metadata files
+      find:
+        paths: "{{ hail_anaconda_installation_location }}/conda-meta/"
+        patterns: '*.json'
+      register: package_metadata_files
+
+    - name: patch timestamps in package metadata files to remove any decimal places that Conda < 4.3.29 cannot parse
+      become: yes
+      replace:
+        path: "{{ item }}"
+        regexp: '"timestamp": ([0-9]+)\.[0-9]+'
+        replace: '"timestamp": \1'
+      with_items: "{{ package_metadata_files.files | json_query('[].path') }}"
+  when: conda_version.stdout | version_compare('4.3.29', '<')

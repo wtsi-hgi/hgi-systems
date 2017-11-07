@@ -68,27 +68,3 @@
     dest: "{{ hail_installation_location }}/jars"
     state: link
 
-- name: create data directory for Jupyter user
-  become: yes
-  file:
-    path: "{{ hail_data_directory }}"
-    state: directory
-    mode: 0700
-    owner: "{{ hail_user }}"
-    group: "{{ hail_user }}"
-
-- name: provide link to Hail tutorials
-  become: yes
-  file:
-    src: "{{ hail_installation_location }}/python/hail/docs/tutorials/"
-    dest: "{{ hail_data_directory }}/tutorials"
-    state: link
-
-- name: set configuration for Jupyter
-  become: yes
-  template:
-    src: jupyter_notebook_config.py.j2
-    dest: "{{ hail_jupyter_configuration_location }}"
-    owner: "{{ hail_user }}"
-    mode: "0600"
-  notify: restart hail

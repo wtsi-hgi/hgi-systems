@@ -1,0 +1,7 @@
+# Vault contains:
+#   hail_jupyter_token: xxx
+
+---
+
+hail_cluster_id: ew7
+hail_cluster_server_name: "hail-{{ hail_cluster_id }}-master.hgi.sanger.ac.uk"
