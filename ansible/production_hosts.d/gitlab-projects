@@ -8,8 +8,12 @@ gitlab-sanger-hgi-hgi-arvados-compute-image-builder gitlab_project=hgi/hgi-arvad
 gitlab-sanger-hgi-hgi-gitlab-runner-image-builder gitlab_project=hgi/gitlab-runner-image-builder
 gitlab-freebsd-bsd-cloudinit-image-builder gitlab_project=hgi/freebsd-bsd-cloudinit-image-builder
 
+[sanger-software-builder-gitlab]
+gitlab-sanger-hgi-hgi-software-builder gitlab_project=hgi/hgi-software-builder
+
 [gitlab-projects:children]
 sanger-image-builder-gitlab
+sanger-software-builder-gitlab
 hgi-systems-gitlab
 
 [openstack:children]

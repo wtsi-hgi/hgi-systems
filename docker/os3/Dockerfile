@@ -11,6 +11,7 @@ RUN apt-get -q=2 update \
 	curl \
 	bzip2 \
 	gzip \
+        xorriso \
 	xz-utils \
     && apt-get autoremove \
     && apt-get clean \
