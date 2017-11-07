@@ -23,6 +23,6 @@ export TF_VAR_docker_image_user=ubuntu
 export TF_VAR_arvados_base_image_name=hgi-base-jessie-d806d486 
 export TF_VAR_arvados_base_image_user=debian
 
-export TF_VAR_freebsd_base_image_name=hgi-base-freebsd11-3fc2282e
+export TF_VAR_freebsd_base_image_name=hgi-base-freebsd11-a53c7ac9
 export TF_VAR_freebsd_base_image_user=beastie
 
