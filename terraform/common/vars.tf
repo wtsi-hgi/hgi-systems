@@ -45,4 +45,3 @@ variable freebsd_base_image_user {
   type    = "string"
   default = "beastie"
 }
-
