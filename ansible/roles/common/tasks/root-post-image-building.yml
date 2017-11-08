@@ -75,6 +75,19 @@
     owner: root
     group: root
     mode: 0440
+  when: ansible_os_family == 'Debian'
+
+- name: give mercury NOPASSWD sudo access
+  tags: common
+  become: yes
+  template:
+    src: mercury_sudoers.j2
+    dest: /usr/local/etc/sudoers.d/mercury-nopasswd
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440
+  when: ansible_os_family == 'FreeBSD'
 
 - name: set authorized keys for mercury
   tags: common
