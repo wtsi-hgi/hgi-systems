@@ -7,7 +7,7 @@ variable "region" {
 }
 
 variable "base_image_name" {
-  type    = "string"
+  type = "string"
 }
 
 variable "base_image_user" {
@@ -16,7 +16,7 @@ variable "base_image_user" {
 }
 
 variable docker_image_name {
-  type    = "string"
+  type = "string"
 }
 
 variable docker_image_user {
@@ -25,7 +25,7 @@ variable docker_image_user {
 }
 
 variable arvados_base_image_name {
-  type    = "string"
+  type = "string"
 }
 
 variable arvados_base_image_user {
@@ -34,7 +34,7 @@ variable arvados_base_image_user {
 }
 
 variable freebsd_base_image_name {
-  type    = "string"
+  type = "string"
 }
 
 variable freebsd_base_image_user {
