@@ -14,7 +14,7 @@ RUN apt-get update \
          r-base-dev \
          maven \
          libopenblas-base \
-         libatlas4-base \
+         libatlas3-base \
          libnetlib-java \
     && rm -rf /var/lib/apt/lists/*
 
