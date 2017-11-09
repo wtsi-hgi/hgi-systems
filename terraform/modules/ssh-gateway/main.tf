@@ -25,7 +25,6 @@ variable "extra_ansible_groups" {
 locals {
   ansible_groups = [
     "ssh-gateways",
-    "consul-agents",
   ]
 }
 
