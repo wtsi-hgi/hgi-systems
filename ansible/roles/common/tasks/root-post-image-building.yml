@@ -85,7 +85,7 @@
     dest: /usr/local/etc/sudoers.d/mercury-nopasswd
     validate: "visudo -cf %s"
     owner: root
-    group: root
+    group: wheel
     mode: 0440
   when: ansible_os_family == 'FreeBSD'
 
