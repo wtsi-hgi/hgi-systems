@@ -34,7 +34,7 @@ mkdir -p $GOPATH/src/github.com/prudhvitella
 cd $GOPATH/src/github.com/prudhvitella
 git clone https://github.com/wtsi-hgi/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
-git checkout fix/23-error-type-check
+git checkout hgi-integration
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
