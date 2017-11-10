@@ -1,5 +1,15 @@
 ---
 
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - nginx
+
 - name: create data directory for Jupyter user
   become: yes
   file:

@@ -6,12 +6,19 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+    cache_valid_time: "{{ apt_cache_valid_time }}"
   with_items:
     - g++
     - cmake
     - make
     - build-essential
+    - openjdk-8-jre-headless
+    - openjdk-8-jdk
+    - git-all
+    - libopenblas-base
+    - libatlas3-base
+    - libnetlib-java
+    - r-base
 
 - include: conda-6096-patch.yml
 
