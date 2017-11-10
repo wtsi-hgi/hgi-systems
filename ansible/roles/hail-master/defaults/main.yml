@@ -6,10 +6,8 @@
 hail_master_jupyter_binary: "{{ hail_installation_location }}/scripts/jhail"
 hail_master_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
 
-hail_master_user: spark
-
 hail_master_service_start: "{{ hail_master_jupyter_binary }} --config={{ hail_master_jupyter_configuration_location }}"
-hail_master_service_user: "{{ hail_master_user }}"
+hail_master_service_user: "{{ hail_user }}"
 hail_master_service_environment_variables:
   PATH: "{{ hail_master_default_path }}:{{ hail_master_anaconda_installation_location }}/bin:{{ hail_installation_location }}/bin"
   HAIL_MASTER_HOME: "{{ hail_installation_location }}"

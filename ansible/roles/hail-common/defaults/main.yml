@@ -13,3 +13,5 @@ hail_check_installed: "{{ hail_installation_location }}/jars/hail-all-spark.jar"
 hail_anaconda_version: 4.4.0
 hail_anaconda_installation_location: "/usr/local/anaconda-{{ hail_anaconda_version }}"
 
+hail_user: spark
+
