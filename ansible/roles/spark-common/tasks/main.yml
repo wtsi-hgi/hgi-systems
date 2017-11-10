@@ -61,6 +61,7 @@
     url: "https://www-eu.apache.org/dist/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}.tgz.md5"
     method: GET
     follow_redirects: safe
+    return_content: yes
   register: spark_common_checksum
 
 - name: download spark source
