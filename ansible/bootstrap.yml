@@ -31,7 +31,7 @@
 - include: dynamic-groups.yml
 
 # Playbooks that only support root hosts
-- include: consul-servers.yml
+- include: consul.yml
 - include: gitlab-runners.yml
 
 # Higher-level infrastructure built on top of hosts
