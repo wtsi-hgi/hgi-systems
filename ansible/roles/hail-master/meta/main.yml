@@ -1,11 +1,12 @@
 ---
 
 dependencies:
-  - role: hail-common
   - role: spark-master
     vars:
       spark_common_version: "{{ hail_spark_version }}"
       spark_common_prefix: "{{ hail_spark_home }}"
+
+  - role: hail-common
 
   - role: attached-openstack-volume
     attached_openstack_volume_vg: hail-vg

@@ -22,6 +22,6 @@
 
 dependencies:
   - { role: common }
-  - { role: hail-common }
   - { role: spark-compute }
+  - { role: hail-common }
 
