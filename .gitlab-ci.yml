@@ -39,7 +39,8 @@ stages:
   - bootstrap-validate
   - bootstrap
   - validate
-  - terraform
+  - terraform-hgi
+  - terraform-hgiarvados
   - ansible
   - sync
 
@@ -243,7 +244,7 @@ terraform-validate-modules:
 # Stage: terraform
 ###############################################################################
 .terraform: &terraform-def
-  stage: terraform
+#  stage: terraform
   tags:
     - docker
   image: mercury/taos
@@ -255,18 +256,22 @@ terraform-validate-modules:
     when: always
 
 terraform-production-delta-hgi:
+  stage: terraform-hgi
   <<: *terraform-def
   <<: *production-delta-hgi-def
 
 terraform-staging-delta-hgi:
+  stage: terraform-hgi
   <<: *terraform-def
   <<: *staging-delta-hgi-def
 
 terraform-production-delta-hgiarvados:
+  stage: terraform-hgiarvados
   <<: *terraform-def
   <<: *production-delta-hgiarvados-def
 
 terraform-staging-delta-hgiarvados:
+  stage: terraform-hgiarvados
   <<: *terraform-def
   <<: *staging-delta-hgiarvados-def
 
