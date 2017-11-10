@@ -24,9 +24,9 @@
 
 - name: check if Hail download is required
   stat:
-    path: "{{ hail_jupyter_binary }}"
+    path: "{{ hail_check_installed }}"
   changed_when: false
-  register: jhail_binary
+  register: hail_installed
 
 - block:
     - name: checkout Hail from GitHub
@@ -46,7 +46,7 @@
       command: "mv {{ hail_temp_directory }} {{ hail_installation_location }}"
       notify: restart hail
 
-  when: not jhail_binary.stat.exists
+  when: not hail_installed.stat.exists
   always:
     - name: remove temp directory
       file:

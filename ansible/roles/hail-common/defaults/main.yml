@@ -7,6 +7,8 @@ hail_installation_location: "/usr/local/hail-{{ hail_version }}"
 hail_repository: https://github.com/hail-is/hail.git
 hail_seaborn_version: 0.8.0
 
+hail_check_installed: "{{ hail_installation_location }}/jars/hail-all-spark.jar"
+
 hail_anaconda_version: 4.4.0
 hail_anaconda_installation_location: "/usr/local/anaconda-{{ hail_anaconda_version }}"
 
