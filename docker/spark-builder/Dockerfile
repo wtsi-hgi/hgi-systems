@@ -10,6 +10,7 @@ RUN apt-get update \
          openjdk-8-jdk \
          python \
          python-pip \
+	 python-setuptools \
          curl \
          r-base-dev \
          maven \
