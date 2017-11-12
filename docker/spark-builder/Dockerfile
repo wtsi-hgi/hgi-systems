@@ -23,6 +23,9 @@ RUN pip install j2cli
 
 RUN (curl -L "https://raw.githubusercontent.com/wtsi-hgi/tarbomb-disposal/master/tbd" > /usr/bin/tbd) && chmod a+x /usr/bin/tbd
 
+RUN curl -L -o /usr/local/bin/mc https://dl.minio.io/client/mc/release/linux-amd64/mc && \
+    chmod a+x /usr/local/bin/mc
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
