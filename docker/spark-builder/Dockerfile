@@ -21,7 +21,7 @@ RUN apt-get update \
 
 RUN pip install j2cli
 
-RUN curl -L "https://raw.githubusercontent.com/wtsi-hgi/tarbomb-disposal/master/tbd" > /usr/bin/tbd
+RUN (curl -L "https://raw.githubusercontent.com/wtsi-hgi/tarbomb-disposal/master/tbd" > /usr/bin/tbd) && chmod a+x /usr/bin/tbd
 
 # Set workdir and entrypoint
 WORKDIR /tmp
