@@ -1,7 +1,7 @@
 ---
 
 # Requires:
-# hail_master_jupyter_token:
+#   - hail_master_jupyter_token
 
 hail_master_jupyter_binary: "{{ hail_installation_location }}/scripts/jhail"
 hail_master_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
