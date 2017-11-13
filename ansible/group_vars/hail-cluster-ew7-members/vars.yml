@@ -4,4 +4,7 @@
 ---
 
 hail_cluster_id: ew7
-spark_master_server_name: "hail-{{ hail_cluster_id }}-master.hgi.sanger.ac.uk"
+hail_cluster_server_name: "hail-{{ hail_cluster_id }}-master.hgi.sanger.ac.uk"
+
+spark_cluster_id: "{{ hail_cluster_id }}"
+spark_master_server_name: "{{ hail_cluster_server_name }}"
