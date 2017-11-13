@@ -1,6 +1,5 @@
 ---
 
-spark_common_version: 2.1.1
-spark_common_hadoop_version: 2.7
+spark_common_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
+spark_common_software_s3_bucket: hgi-software
 
-spark_common_prefix: "/usr/local/spark-{{ spark_common_version }}"

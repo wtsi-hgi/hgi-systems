@@ -56,22 +56,40 @@
     - git-all
     - libatlas-base-dev
 
-- name: get spark source checksum
-  uri:
-    url: "{{ spark_common_apache_mirror }}/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz.md5"
-    method: GET
-    follow_redirects: safe
-    return_content: yes
-  register: spark_common_checksum
+- name: get spark tgz checksum from hgi-software s3 bucket
+  tags: s3
+  s3:
+    mode: getstr
+    rgw: true
+    bucket: "{{ spark_common_software_s3_bucket }}"
+    region: ""
+    s3_url: "{{ spark_common_s3_endpoint }}"
+    aws_access_key: "{{ spark_common_s3_access_key }}"
+    aws_secret_key: "{{ spark_common_s3_secret_key }}"
+    object: "spark-{{ spark_common_version }}.md5"
+  register: spark_common_tgz_checksum
 
-- name: download spark source
+- name: get spark tgz url
+  tags: s3
+  s3:
+    mode: geturl
+    rgw: true
+    bucket: "{{ spark_common_software_s3_bucket }}"
+    region: ""
+    s3_url: "{{ spark_common_s3_endpoint }}"
+    aws_access_key: "{{ spark_common_s3_access_key }}"
+    aws_secret_key: "{{ spark_common_s3_secret_key }}"
+    object: "spark-{{ spark_common_version }}.tgz"
+  register: spark_common_tgz_url
+
+- name: download spark tgz
   become: yes
   get_url:
-    url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}.tgz"
-    dest: "/tmp/spark-{{ spark_common_version }}.tgz"
-    checksum: "md5:{{ spark_common_checksum.content | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+    url: "{{ spark_common_tgz_url.contents }}"
+    checksum: "{{ spark_common_tgz_checksum.contents }}"
+    dest: "/home/spark/spark-{{ spark_common_version }}.tgz"
     mode: 0644
-    owner: root
+    owner: spark    
 
 - name: create spark directory
   become: yes
@@ -83,7 +101,7 @@
 - name: expand spark
   become: yes
   unarchive:
-    src: "/tmp/spark-{{ spark_common_version }}.tgz"
+    src: "/home/spark/spark-{{ spark_common_version }}.tgz"
     dest: "/usr/src/spark-{{ spark_common_version }}"
     remote_src: yes
     extra_opts: ['--strip-components=1']
@@ -92,9 +110,3 @@
   notify:
     - restart_spark
   
-- name: compile spark
-  become: yes
-  become_user: spark
-  command: ./dev/make-distribution.sh --name spark-2.1.2-bin-hadoop2.8.2-netlib-lgpl --tgz -Phadoop-2.7 -Psparkr -Phive -Phive-thriftserver -Pyarn -Pmesos -DzincPort=3036 -Pnetlib-lgpl -Dhadoop.version=2.8.2
-    chdir:  "/usr/src/spark-{{ spark_common_version }}"
-    creates: 
