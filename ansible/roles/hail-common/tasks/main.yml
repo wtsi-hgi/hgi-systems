@@ -6,12 +6,19 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+    cache_valid_time: "{{ apt_cache_valid_time }}"
   with_items:
     - g++
     - cmake
     - make
     - build-essential
+    - openjdk-8-jre-headless
+    - openjdk-8-jdk
+    - git-all
+    - libopenblas-base
+    - libatlas3-base
+    - libnetlib-java
+    - r-base
 
 - include: conda-6096-patch.yml
 
@@ -24,9 +31,9 @@
 
 - name: check if Hail download is required
   stat:
-    path: "{{ hail_jupyter_binary }}"
+    path: "{{ hail_check_installed }}"
   changed_when: false
-  register: jhail_binary
+  register: hail_installed
 
 - block:
     - name: checkout Hail from GitHub
@@ -46,7 +53,7 @@
       command: "mv {{ hail_temp_directory }} {{ hail_installation_location }}"
       notify: restart hail
 
-  when: not jhail_binary.stat.exists
+  when: not hail_installed.stat.exists
   always:
     - name: remove temp directory
       file:
@@ -68,27 +75,3 @@
     dest: "{{ hail_installation_location }}/jars"
     state: link
 
-- name: create data directory for Jupyter user
-  become: yes
-  file:
-    path: "{{ hail_data_directory }}"
-    state: directory
-    mode: 0700
-    owner: "{{ hail_user }}"
-    group: "{{ hail_user }}"
-
-- name: provide link to Hail tutorials
-  become: yes
-  file:
-    src: "{{ hail_installation_location }}/python/hail/docs/tutorials/"
-    dest: "{{ hail_data_directory }}/tutorials"
-    state: link
-
-- name: set configuration for Jupyter
-  become: yes
-  template:
-    src: jupyter_notebook_config.py.j2
-    dest: "{{ hail_jupyter_configuration_location }}"
-    owner: "{{ hail_user }}"
-    mode: "0600"
-  notify: restart hail

@@ -1,0 +1,49 @@
+---
+
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time }}"
+  with_items:
+    - nginx
+
+- name: create data directory for Jupyter user
+  become: yes
+  file:
+    path: "{{ hail_data_directory }}"
+    state: directory
+    mode: 0700
+    owner: "{{ hail_user }}"
+    group: "{{ hail_user }}"
+
+- name: provide link to Hail tutorials
+  become: yes
+  file:
+    src: "{{ hail_installation_location }}/python/hail/docs/tutorials/"
+    dest: "{{ hail_data_directory }}/tutorials"
+    state: link
+
+- name: set configuration for Jupyter
+  become: yes
+  template:
+    src: jupyter_notebook_config.py.j2
+    dest: "{{ hail_jupyter_configuration_location }}"
+    owner: "{{ hail_user }}"
+    mode: "0600"
+  notify: restart hail
+
+- name: setup systemd entry to control Hail
+  become: yes
+  template:
+    src: hail.service.j2
+    dest: "{{ hail_systemd_service_directory }}/hail.service"
+  notify: restart hail
+  register: hail_service
+
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+  when: hail_service.changed

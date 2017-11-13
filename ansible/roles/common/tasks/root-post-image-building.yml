@@ -28,7 +28,26 @@
   tags:
     - common
   notify: update ca certificates
+  when: ansible_os_family == 'Debian'
 
+- name: ensure CA cert dir exists (freebsd)
+  become: yes
+  file:
+    path: /usr/local/etc/ssl/certs
+    state: directory
+  tags:
+    - common
+  when: ansible_os_family == 'FreeBSD'
+  
+- name: install GRL CA cert (freebsd)
+  become: yes
+  copy:
+    src: grl-cacert.pem
+    dest: /usr/local/etc/ssl/certs/grl-cacert.crt
+  tags:
+    - common
+  when: ansible_os_family == 'FreeBSD'
+  
 - name: create hgi group
   tags: common
   become: yes
@@ -56,6 +75,19 @@
     owner: root
     group: root
     mode: 0440
+  when: ansible_os_family == 'Debian'
+
+- name: give mercury NOPASSWD sudo access
+  tags: common
+  become: yes
+  template:
+    src: mercury_sudoers.j2
+    dest: /usr/local/etc/sudoers.d/mercury-nopasswd
+    validate: "visudo -cf %s"
+    owner: root
+    group: wheel
+    mode: 0440
+  when: ansible_os_family == 'FreeBSD'
 
 - name: set authorized keys for mercury
   tags: common

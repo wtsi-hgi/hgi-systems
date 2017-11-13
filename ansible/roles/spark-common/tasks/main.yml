@@ -56,12 +56,20 @@
     - git-all
     - libatlas-base-dev
 
-- name: download spark
+- name: get spark source checksum
+  uri:
+    url: "https://www-eu.apache.org/dist/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}.tgz.md5"
+    method: GET
+    follow_redirects: safe
+    return_content: yes
+  register: spark_common_checksum
+
+- name: download spark source
   become: yes
   get_url:
     url: "{{ spark_common_apache_mirror }}/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz"
     dest: "/tmp/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz"
-    checksum: "{{ spark_common_tar_checksum }}"
+    checksum: "{{ spark_common_checksum.content }}"
     mode: 0644
     owner: root
 

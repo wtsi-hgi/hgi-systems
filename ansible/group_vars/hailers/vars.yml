@@ -1,3 +1,3 @@
----
 
-hail_apt_cache_valid_time: "{{ apt_cache_valid_time }}"
+hail_version: 0.1
+hail_spark_version: 2.1.2

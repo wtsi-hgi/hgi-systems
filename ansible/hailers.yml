@@ -1,5 +1,9 @@
 ---
 
-- hosts: hailers
+- hosts: hail-masters
   roles:
-    - hail
+    - hail-master
+
+- hosts: hail-computers
+  roles:
+    - hail-compute

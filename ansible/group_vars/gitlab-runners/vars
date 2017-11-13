@@ -21,12 +21,12 @@
 ---
 # file: group_vars/gitlab-runners
 
-gitlab_runner_concurrent: 4
-gitlab_runner_idle_machines: 2
+gitlab_runner_concurrent: 30
+gitlab_runner_idle_machines: 3
 gitlab_runner_idle_time: 3600
 gitlab_runner_max_builds: 0
 
-gitlab_runner_os_flavor_name: "m1.xlarge"
+gitlab_runner_os_flavor_name: "m1.small"
 gitlab_runner_os_auth_url: "{{ openstack_auth.auth_url }}"
 gitlab_runner_os_project_name: "{{ openstack_auth.project_name }}"
 gitlab_runner_os_username: "{{ openstack_auth.username }}"

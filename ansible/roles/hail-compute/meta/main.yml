@@ -18,21 +18,10 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: site.yml
+# file: roles/hail-compute/meta/main.yml
 
-# Bootstrap openstack resources managed by ansible before doing anything else
-- include: openstack-bootstrap.yml
+dependencies:
+  - { role: common }
+  - { role: spark-compute }
+  - { role: hail-common }
 
-# Check dynamic inventory and set dynamic groups and facts
-- include: dynamic-inventory-sanity-check.yml
-- include: set-facts.yml
-
-# Set dynamic groups (and gather facts)
-- include: dynamic-groups.yml
-
-# Playbooks that only support root hosts
-- include: consul.yml
-- include: gitlab-runners.yml
-
-# Higher-level infrastructure built on top of hosts
-- include: consul-clusters.yml

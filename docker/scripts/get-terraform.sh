@@ -26,15 +26,12 @@ export XC_OS="linux"
 /bin/bash scripts/build.sh || (echo "failed to build terraform"; exit 1)
 cp ${GOPATH}/bin/terraform /usr/local/bin/
 
-echo "installing go-infoblox"
-go get github.com/fanatic/go-infoblox
-
 echo "building terraform-provider-infoblox"
 mkdir -p $GOPATH/src/github.com/prudhvitella
 cd $GOPATH/src/github.com/prudhvitella
-git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
+git clone https://github.com/wtsi-hgi/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
-git checkout a02e6cd45f5495e22bbe87e82885fa07baca0cce
+git checkout hgi-integration
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
