@@ -1,3 +1,8 @@
+---
+
+# Must define:
+#  - spark_master_ssh_key
+
 spark_master_key_file: /etc/ssl.key
 spark_master_cert_file: /etc/ssl.cert
 
