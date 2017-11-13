@@ -6,7 +6,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ hail_common_apt_cache_valid_time }}"
   with_items:
     - g++
     - cmake
@@ -26,52 +26,52 @@
   become: yes
   conda:
     name: seaborn
-    version: "{{ hail_seaborn_version }}"
-    executable: "{{ hail_anaconda_installation_location }}/bin/conda"
+    version: "{{ hail_common_seaborn_version }}"
+    executable: "{{ hail_common_anaconda_installation_location }}/bin/conda"
 
 - name: check if Hail download is required
   stat:
-    path: "{{ hail_check_installed }}"
+    path: "{{ hail_common_check_installed }}"
   changed_when: false
   register: hail_installed
 
 - block:
     - name: checkout Hail from GitHub
       git:
-        repo: "{{ hail_repository }}"
-        dest: "{{ hail_temp_directory }}"
-        version: "{{ hail_version }}"
+        repo: "{{ hail_common_repository }}"
+        dest: "{{ hail_common_temp_directory }}"
+        version: "{{ hail_common_version }}"
 
     - name: compile Hail
-      command: "./gradlew -Dspark.version={{ hail_spark_version }} shadowJar archiveZip"
+      command: "./gradlew -Dspark.version={{ hail_common_spark_version }} shadowJar archiveZip"
       args:
-        chdir: "{{ hail_temp_directory }}"
+        chdir: "{{ hail_common_temp_directory }}"
 
     # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
     - name: install Hail
       become: yes
-      command: "mv {{ hail_temp_directory }} {{ hail_installation_location }}"
+      command: "mv {{ hail_common_temp_directory }} {{ hail_common_installation_location }}"
       notify: restart hail
 
   when: not hail_installed.stat.exists
   always:
     - name: remove temp directory
       file:
-        path: "{{ hail_temp_directory }}"
+        path: "{{ hail_common_temp_directory }}"
         state: absent
 
 - name: set installation permissions
   become: yes
   file:
-    path: "{{ hail_installation_location }}"
-    owner: "{{ hail_user }}"
+    path: "{{ hail_common_installation_location }}"
+    owner: "{{ hail_common_user }}"
     recurse: yes
   notify: restart hail
 
 - name: create link to jars directory expected by Hail
   become: yes
   file:
-    src: "{{ hail_installation_location }}/build/libs"
-    dest: "{{ hail_installation_location }}/jars"
+    src: "{{ hail_common_installation_location }}/build/libs"
+    dest: "{{ hail_common_installation_location }}/jars"
     state: link
 
