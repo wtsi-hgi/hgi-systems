@@ -424,6 +424,16 @@
   notify:
    - restart arvados-ws
 
+# FIXME: need to modify arvados-ws service file based on version of systemd (CN)
+# $cat /lib/systemd/system/arvados-ws.service
+# # systemd<230
+# StartLimitInterval=0
+# # systemd>=230
+# StartLimitIntervalSec=0
+# $ systemctl --version
+# systemd 229
+# +PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ -LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN
+
 - name: ensure ws configuration directory exists
   become: yes
   file:
