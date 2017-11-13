@@ -424,15 +424,24 @@
   notify:
    - restart arvados-ws
 
-# FIXME: need to modify arvados-ws service file based on version of systemd (CN)
-# $cat /lib/systemd/system/arvados-ws.service
-# # systemd<230
-# StartLimitInterval=0
-# # systemd>=230
-# StartLimitIntervalSec=0
-# $ systemctl --version
-# systemd 229
-# +PAM +AUDIT +SELINUX +IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS +ACL +XZ -LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD -IDN
+- name: query systemd version
+  become: yes
+  command: systemd --version
+  changed_when: false
+  register: systemd_version
+
+- name: determine what version of systemd to remove
+  set_fact:
+    # TODO: Make this more readable!
+    incorrect_ansible_ws_service_line: "{{ 'StartLimitInterval' if (systemd_version.split('\n')[0].split(' ')[1] | version_compare('230', '>=')) else 'StartLimitIntervalSec' }}.*"
+  changed_when: false
+
+- name: correct ansible-ws.service for version of systemd
+  become: yes
+  lineinfile:
+    path: /lib/systemd/system/arvados-ws.service
+    regexp: "{{ incorrect_ansible_ws_service_line }}"
+    state: absent
 
 - name: ensure ws configuration directory exists
   become: yes
