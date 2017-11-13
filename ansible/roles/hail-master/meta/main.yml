@@ -9,6 +9,8 @@ dependencies:
   - role: hail-common
     vars:
       hail_common_user: "{{ hail_master_user }}"
+      hail_common_spark_version: "{{ hail_master_spark_version }}"
+      hail_common_spark_home: "{{ hail_master_spark_home }}"
 
   - role: attached-openstack-volume
     attached_openstack_volume_vg: hail-vg
