@@ -69,7 +69,7 @@
   get_url:
     url: "{{ spark_common_apache_mirror }}/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz"
     dest: "/tmp/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz"
-    checksum: "{{ spark_common_checksum.content }}"
+    checksum: "md5:{{ spark_common_checksum.content.split(':')[1].replace(' ', '') }}"
     mode: 0644
     owner: root
 
