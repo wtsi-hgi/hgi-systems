@@ -2,6 +2,8 @@
 
 # Requires:
 #   - hail_master_jupyter_token
+#   - hail_master_version
+#   - hail_master_spark_version
 
 hail_master_apt_cache_valid_time: 3600
 
