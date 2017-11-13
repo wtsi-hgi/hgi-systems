@@ -67,28 +67,34 @@
 - name: download spark source
   become: yes
   get_url:
-    url: "{{ spark_common_apache_mirror }}/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz"
-    dest: "/tmp/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz"
-    checksum: "{{ spark_common_checksum.content }}"
+    url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}.tgz"
+    dest: "/tmp/spark-{{ spark_common_version }}.tgz"
+    checksum: "md5:{{ spark_common_checksum.content | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
     mode: 0644
     owner: root
 
 - name: create spark directory
   become: yes
   file:
-    path: "{{ spark_common_prefix }}"
+    path: "/usr/src/spark-{{ spark_common_version }}"
     state: directory
     owner: spark
 
 - name: expand spark
   become: yes
   unarchive:
-    src: "/tmp/spark-{{ spark_common_version }}-bin-hadoop2.7.tgz"
-    dest: "{{ spark_common_prefix }}"
+    src: "/tmp/spark-{{ spark_common_version }}.tgz"
+    dest: "/usr/src/spark-{{ spark_common_version }}"
     remote_src: yes
     extra_opts: ['--strip-components=1']
     owner: spark
-    creates: "{{ spark_common_prefix }}/bin/spark-shell"
+    creates: "/usr/src/spark-{{ spark_common_version }}/README.md"
   notify:
     - restart_spark
-
+  
+- name: compile spark
+  become: yes
+  become_user: spark
+  command: ./dev/make-distribution.sh --name spark-2.1.2-bin-hadoop2.8.2-netlib-lgpl --tgz -Phadoop-2.7 -Psparkr -Phive -Phive-thriftserver -Pyarn -Pmesos -DzincPort=3036 -Pnetlib-lgpl -Dhadoop.version=2.8.2
+    chdir:  "/usr/src/spark-{{ spark_common_version }}"
+    creates: 

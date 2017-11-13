@@ -4,7 +4,7 @@ dependencies:
   - role: spark-master
     vars:
       spark_common_version: "{{ hail_spark_version }}"
-      spark_common_prefix: "{{ hail_spark_home }}"
+      spark_master_ssh_key: "{{ hail_master_ssh_key }}"
 
   - role: hail-common
 

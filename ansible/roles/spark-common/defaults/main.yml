@@ -1,5 +1,4 @@
 spark_common_version: 2.1.1
 spark_common_hadoop_version: 2.7
-spark_common_apache_mirror: "https://archive.apache.org/dist"
 
 spark_common_prefix: "/usr/local/spark-{{ spark_common_version }}"
