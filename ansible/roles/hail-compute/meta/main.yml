@@ -21,7 +21,7 @@
 # file: roles/hail-compute/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: spark-compute }
-  - { role: hail-common }
+  - role: common
+  - role: spark-compute
+  - role: hail-common
 

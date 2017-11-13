@@ -199,7 +199,7 @@
 #c.NotebookApp.nbserver_extensions = {}
 
 ## The directory to use for notebooks and kernels.
-c.NotebookApp.notebook_dir = '{{ hail_data_directory }}'
+c.NotebookApp.notebook_dir = '{{ hail_master_data_directory }}'
 
 ## Whether to open in a browser after starting. The specific browser used is
 #  platform dependent and determined by the python standard library `webbrowser`
@@ -258,7 +258,7 @@ c.NotebookApp.open_browser = False
 #  
 #  Setting to an empty string disables authentication altogether, which is NOT
 #  RECOMMENDED.
-c.NotebookApp.token = '{{ hail_jupyter_token }}'
+c.NotebookApp.token = '{{ hail_master_jupyter_token }}'
 
 ## Supply overrides for the tornado.web.Application that the Jupyter notebook
 #  uses.

@@ -32,4 +32,3 @@ if [ -n "${status}" ]; then
 else
     echo "No changes to terraform state"
 fi
-

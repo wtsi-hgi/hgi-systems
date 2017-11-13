@@ -43,6 +43,10 @@
   become: yes
   command: dpkg-reconfigure arvados-api-server
 
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+
 - name: restart arvados-ws
   become: yes
   systemd:

@@ -5,14 +5,14 @@
 # patch
 
 - name: get Conda version
-  shell: "{{ hail_anaconda_installation_location }}/bin/conda --version 2>&1 | cut -d ' ' -f 2"
+  shell: "{{ hail_common_anaconda_installation_location }}/bin/conda --version 2>&1 | cut -d ' ' -f 2"
   changed_when: False
   register: conda_version
 
 - block:
     - name: find Conda package's metadata files
       find:
-        paths: "{{ hail_anaconda_installation_location }}/conda-meta/"
+        paths: "{{ hail_common_anaconda_installation_location }}/conda-meta/"
         patterns: '*.json'
       register: package_metadata_files
 

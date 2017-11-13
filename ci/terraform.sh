@@ -81,4 +81,3 @@ else
     >&2 echo "terraform apply failed: ${apply_exit_code}"
     exit ${apply_exit_code}
 fi
-

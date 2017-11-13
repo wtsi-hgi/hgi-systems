@@ -17,7 +17,7 @@ map $http_upgrade $connection_upgrade {
 
 server {
   listen       0.0.0.0:443 ssl;
-  server_name  {{ spark_cluster_server_name }};
+  server_name  {{ spark_master_server_name }};
 
   client_max_body_size 0;
 
@@ -68,4 +68,3 @@ server {
     proxy_set_header Connection $connection_upgrade;
   }
 }
-

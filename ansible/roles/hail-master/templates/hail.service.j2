@@ -2,9 +2,9 @@
 Description=Hail Manager
 
 [Service]
-ExecStart={{ hail_service_start }}
-User={{ hail_service_user }}
-{% for key, value in hail_service_environment_variables.items() %}
+ExecStart={{ hail_master_service_start }}
+User={{ hail_master_service_user }}
+{% for key, value in hail_master_service_environment_variables.items() %}
 Environment={{ key }}={{ value }}
 {% endfor %}
 

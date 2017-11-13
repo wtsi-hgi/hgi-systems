@@ -3,10 +3,16 @@
 dependencies:
   - role: spark-master
     vars:
-      spark_common_version: "{{ hail_spark_version }}"
+      spark_common_version: "{{ hail_master_spark_version }}"
       spark_master_ssh_key: "{{ hail_master_ssh_key }}"
 
   - role: hail-common
+    vars:
+      hail_common_user: "{{ hail_master_user }}"
+      hail_common_spark_version: "{{ hail_master_spark_version }}"
+      hail_common_spark_home: "{{ hail_master_spark_home }}"
+      hail_common_version: "{{ hail_master_version }}"
+      hail_common_installation_location: "{{ hail_master_installation_location }}"
 
   - role: attached-openstack-volume
     attached_openstack_volume_vg: hail-vg
@@ -15,8 +21,7 @@ dependencies:
         # FIXME: The volume size in GB should come from Terraform
         size: "{{ (100 * 1024) - 4 }}M"
         fstype: xfs
-        mountpoint: "{{ hail_data_directory }}"
+        mountpoint: "{{ hail_master_data_directory }}"
     # FIXME: The device should come from Terraform
     attached_openstack_volumes:
       - device: "/dev/vdb"
-

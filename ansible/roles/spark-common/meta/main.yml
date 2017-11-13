@@ -21,4 +21,4 @@
 # file: roles/spark-common/meta/main.yml
 
 dependencies:
-  - { role: common }
+  - role: common

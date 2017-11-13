@@ -1,17 +1,20 @@
 ---
 
-hail_apt_cache_valid_time: 3600
+hail_common_apt_cache_valid_time: 3600
 
-hail_version: 0.1
-hail_spark_version: 2.1.1
-hail_installation_location: "/usr/local/hail-{{ hail_version }}"
-hail_repository: https://github.com/hail-is/hail.git
-hail_seaborn_version: 0.8.0
+hail_common_version: 0.1
+hail_common_installation_location: "/usr/local/hail-{{ hail_common_version }}"
+hail_common_repository: https://github.com/hail-is/hail.git
+hail_common_seaborn_version: 0.8.0
 
-hail_check_installed: "{{ hail_installation_location }}/jars/hail-all-spark.jar"
+# XXX: it feels like we should be more DRY here - values same as: spark_common_version, spark_common_prefix
+hail_common_spark_version: 2.1.1
+hail_common_spark_home: "/usr/local/spark-{{ hail_common_spark_version }}"
 
-hail_anaconda_version: 4.4.0
-hail_anaconda_installation_location: "/usr/local/anaconda-{{ hail_anaconda_version }}"
+hail_common_check_installed: "{{ hail_common_installation_location }}/jars/hail-all-spark.jar"
 
-hail_user: spark
+hail_common_anaconda_version: 4.4.0
+hail_common_anaconda_installation_location: "/usr/local/anaconda-{{ hail_common_anaconda_version }}"
+
+hail_common_user: spark
 

@@ -58,7 +58,7 @@
 
 - name: get spark source checksum
   uri:
-    url: "https://www-eu.apache.org/dist/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}.tgz.md5"
+    url: "{{ spark_common_apache_mirror }}/spark/spark-{{ spark_common_version }}/spark-{{ spark_common_version }}-bin-hadoop{{ spark_common_hadoop_version }}.tgz.md5"
     method: GET
     follow_redirects: safe
     return_content: yes

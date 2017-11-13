@@ -1,3 +1,4 @@
+---
 
-hail_version: 0.1
-hail_spark_version: 2.1.2
+hail_master_version: 0.1
+hail_master_spark_version: 2.1.2

@@ -1,7 +1,7 @@
 # Vault contains:
-#   hail_jupyter_token: xxx
+#   hail_master_jupyter_token: xxx
 
 ---
 
 spark_cluster_id: as45
-spark_cluster_server_name: "spark-{{ spark_cluster_id }}-master.hgi.sanger.ac.uk"
+spark_master_server_name: "spark-{{ spark_cluster_id }}-master.hgi.sanger.ac.uk"
