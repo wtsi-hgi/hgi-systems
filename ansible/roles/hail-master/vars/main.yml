@@ -1,5 +1,5 @@
 ---
 
-hail_temp_directory: /tmp/hail
-hail_default_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-hail_systemd_service_directory: /etc/systemd/system
+hail_master_temp_directory: /tmp/hail
+hail_master_default_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+hail_master_systemd_service_directory: /etc/systemd/system
