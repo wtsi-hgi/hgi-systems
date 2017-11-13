@@ -4,7 +4,7 @@ dependencies:
   - role: wtsi-hgi.ansible-anaconda
     vars:
       anaconda_python_ver: 2
-      anaconda_ver: "{{ hail_anaconda_version }}"
+      anaconda_ver: "{{ hail_common_anaconda_version }}"
       anaconda_pkg_update: no
-      anaconda_parent_dir: "{{ hail_anaconda_installation_location | dirname }}"
-      anaconda_link_subdir: "{{ hail_anaconda_installation_location | basename }}"
+      anaconda_parent_dir: "{{ hail_common_anaconda_installation_location | dirname }}"
+      anaconda_link_subdir: "{{ hail_common_anaconda_installation_location | basename }}"
