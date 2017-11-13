@@ -11,6 +11,8 @@ dependencies:
       hail_common_user: "{{ hail_master_user }}"
       hail_common_spark_version: "{{ hail_master_spark_version }}"
       hail_common_spark_home: "{{ hail_master_spark_home }}"
+      hail_common_version: "{{ hail_master_version }}"
+      hail_common_installation_location: "{{ hail_master_installation_location }}"
 
   - role: attached-openstack-volume
     attached_openstack_volume_vg: hail-vg

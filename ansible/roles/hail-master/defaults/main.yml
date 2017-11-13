@@ -10,8 +10,10 @@ hail_master_apt_cache_valid_time: 3600
 hail_master_jupyter_binary: "{{ hail_installation_location }}/scripts/jhail"
 hail_master_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
 
-# XXX: it feels like we should be more DRY here - values same as: spark_common_prefix and similar in hail_common_spark_home!
+# XXX: it feels like we should be more DRY here
 hail_master_spark_home: "/usr/local/spark-{{ hail_master_spark_version }}"
+hail_master_version: 0.1
+hail_master_installation_location: "/usr/local/hail-{{ hail_master_version }}"
 
 hail_master_service_start: "{{ hail_master_jupyter_binary }} --config={{ hail_master_jupyter_configuration_location }}"
 hail_master_service_user: "{{ hail_user }}"
