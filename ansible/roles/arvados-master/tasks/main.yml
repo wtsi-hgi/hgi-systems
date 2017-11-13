@@ -433,7 +433,7 @@
 - name: determine what version of systemd to remove
   set_fact:
     # TODO: Make this more readable!
-    incorrect_ansible_ws_service_line: "{{ 'StartLimitInterval' if (systemd_version.split('\n')[0].split(' ')[1] | version_compare('230', '>=')) else 'StartLimitIntervalSec' }}.*"
+    incorrect_ansible_ws_service_line: "{{ 'StartLimitInterval' if (systemd_version.stdout.split('\n')[0].split(' ')[1] | version_compare('230', '>=')) else 'StartLimitIntervalSec' }}.*"
   changed_when: false
 
 - name: correct ansible-ws.service for version of systemd
