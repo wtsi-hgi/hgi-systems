@@ -4,5 +4,5 @@
 ---
 
 spark_cluster_id: sjl
-spark_cluster_server_name: "spark-{{ spark_cluster_id }}-master.hgi.sanger.ac.uk"
+spark_master_server_name: "spark-{{ spark_cluster_id }}-master.hgi.sanger.ac.uk"
 

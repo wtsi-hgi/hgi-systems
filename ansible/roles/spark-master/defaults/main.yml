@@ -5,7 +5,7 @@
 #  - spark_master_cert
 #  - spark_master_key
 #  - spark_master_cluster_workers
-#  - spark_cluster_server_name
+#  - spark_master_server_name
 
 spark_master_key_file: /etc/ssl.key
 spark_master_cert_file: /etc/ssl.cert
