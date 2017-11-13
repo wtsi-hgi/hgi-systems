@@ -442,6 +442,8 @@
     path: /lib/systemd/system/arvados-ws.service
     regexp: "{{ incorrect_ansible_ws_service_line }}"
     state: absent
+  notify:
+    - reload systemd
 
 - name: ensure ws configuration directory exists
   become: yes
