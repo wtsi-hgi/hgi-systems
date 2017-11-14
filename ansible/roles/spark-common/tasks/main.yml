@@ -63,9 +63,8 @@
   pip:
     name: "{{ item }}"
   with_items:
-    # NOTE: boto is currently required to download from S3 but it has also been considered useful to the end user
-    - boto
-    - botocore
+    # NOTE: boto3 is currently required to download from S3 but it has also been considered useful to the end user
+    - boto3
 
 - name: get spark tgz checksum from hgi-software s3 bucket
   tags: s3
