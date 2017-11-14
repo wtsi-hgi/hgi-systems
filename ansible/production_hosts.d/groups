@@ -52,9 +52,9 @@
 [arvados-clusters]
 [consul-cluster-delta-hgi]
 [consul-cluster-delta-hgiarvados]
-[spark-commoners]
 [spark-masters]
 [spark-computers]
+[sparkers]
 [hail-masters]
 [hail-computers]
 
@@ -111,7 +111,7 @@ consul-commoners
 [s3-credentials:children]
 gitlab-runners
 consul-servers
-spark-commoners
+sparkers
 
 # OpenStack instances to be created by Ansible
 [openstack-instances:children]
@@ -137,9 +137,6 @@ terraform
 consul-servers
 arvados-clusters
 consul-cluster-delta-hgiarvados
-
-[spark-commoners:children]
-sparkers
 
 [spark-masters:children]
 hail-masters
