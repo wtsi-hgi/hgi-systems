@@ -1,6 +1,7 @@
 ---
 
-# set cloud-resource facts as some arvados playbooks require them
+# Check dynamic inventory and set dynamic groups and facts (must all be gather_facts: no)
+- include: dynamic-inventory-sanity-check.yml
 - include: set-facts.yml
 
 # Configure critical ssh bastion host infrastructure before gathering facts
