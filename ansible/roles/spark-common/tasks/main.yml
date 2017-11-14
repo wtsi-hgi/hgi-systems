@@ -79,6 +79,9 @@
     object: "spark-{{ spark_common_version }}.tgz.md5"
   register: spark_common_tgz_checksum
 
+- debug:
+    msg: "{{ spark_common_tgz_checksum }}"
+
 - name: get spark tgz url
   tags: s3
   aws_s3:
@@ -91,6 +94,9 @@
     aws_secret_key: "{{ spark_common_s3_secret_key }}"
     object: "spark-{{ spark_common_version }}.tgz"
   register: spark_common_tgz_url
+
+- debug:
+    msg: "{{ spark_common_tgz_url }}"
 
 - name: download spark tgz
   become: yes
