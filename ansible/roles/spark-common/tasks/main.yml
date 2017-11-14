@@ -42,7 +42,7 @@
   with_file:
     - public_keys/spark
 
-- name: install spark/hail prerequisites
+- name: install apt prerequisites
   become: yes
   apt:
     name: "{{ item }}"
@@ -55,6 +55,15 @@
     - openjdk-8-jdk
     - git-all
     - libatlas-base-dev
+
+- name: install pip prerequisites
+  become: yes
+  pip:
+    name: "{{ item }}"
+  with_items:
+    # NOTE: boto is currently required to download from S3 but it has also been considered useful to the end user
+    - boto
+    - botocore
 
 - name: get spark tgz checksum from hgi-software s3 bucket
   tags: s3
