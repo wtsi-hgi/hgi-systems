@@ -16,8 +16,8 @@
     path: "{{ hail_master_data_directory }}"
     state: directory
     mode: 0700
-    owner: "{{ hail_master_user }}"
-    group: "{{ hail_master_user }}"
+    owner: "{{ hail_common_user }}"
+    group: "{{ hail_common_user }}"
 
 - name: provide link to Hail tutorials
   become: yes
@@ -31,7 +31,7 @@
   template:
     src: jupyter_notebook_config.py.j2
     dest: "{{ hail_master_jupyter_configuration_location }}"
-    owner: "{{ hail_master_user }}"
+    owner: "{{ hail_common_user }}"
     mode: 0600
   notify: restart hail
 

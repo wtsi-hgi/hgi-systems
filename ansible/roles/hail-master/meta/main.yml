@@ -1,18 +1,16 @@
 ---
 
 dependencies:
+  - role: hail-common
+
   - role: spark-master
     vars:
-      spark_common_version: "{{ hail_master_spark_version }}"
       spark_master_ssh_key: "{{ hail_master_ssh_key }}"
-
-  - role: hail-common
-    vars:
-      hail_common_user: "{{ hail_master_user }}"
-      hail_common_spark_version: "{{ hail_master_spark_version }}"
-      hail_common_spark_home: "{{ hail_master_spark_home }}"
-      hail_common_version: "{{ hail_master_version }}"
-      hail_common_installation_location: "{{ hail_master_installation_location }}"
+      spark_master_cert: "{{ hail_master_cert }}"
+      spark_master_key: "{{ hail_master_key }}"
+      spark_master_server_name: "{{ hail_cluster_server_name }}"
+      spark_master_cluster_workers: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='ansible_host') | list() }}"
+      spark_common_version: "{{ hail_common_spark_version }}"
 
   - role: attached-openstack-volume
     attached_openstack_volume_vg: hail-vg

@@ -7,8 +7,8 @@ After=network-online.target
 [Service]
 User=spark
 Type=forking
-ExecStart={{ spark_common_prefix }}/sbin/start-all.sh
-ExecStop={{ spark_common_prefix }}/sbin/stop-all.sh
+ExecStart={{ spark_common_home }}/sbin/start-all.sh
+ExecStop={{ spark_common_home }}/sbin/stop-all.sh
 TimeoutSec=30
 Restart=on-failure
 RestartSec=30

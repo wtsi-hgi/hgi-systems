@@ -79,7 +79,7 @@
   become: yes
   template:
     src: slaves.j2
-    dest: "{{ spark_common_prefix }}/conf/slaves"
+    dest: "{{ spark_common_home }}/conf/slaves"
     mode: 0644
     owner: spark
   notify:

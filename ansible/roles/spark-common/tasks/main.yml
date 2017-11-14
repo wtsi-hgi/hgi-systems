@@ -84,29 +84,29 @@
 
 - name: download spark tgz
   become: yes
+  become_user: spark
   get_url:
     url: "{{ spark_common_tgz_url.contents }}"
     checksum: "{{ spark_common_tgz_checksum.contents }}"
     dest: "/home/spark/spark-{{ spark_common_version }}.tgz"
     mode: 0644
-    owner: spark    
 
 - name: create spark directory
   become: yes
   file:
-    path: "/usr/src/spark-{{ spark_common_version }}"
+    path: "{{ spark_common_home }}"
     state: directory
     owner: spark
 
 - name: expand spark
   become: yes
+  become_user: spark
   unarchive:
     src: "/home/spark/spark-{{ spark_common_version }}.tgz"
-    dest: "/usr/src/spark-{{ spark_common_version }}"
+    dest: "{{ spark_common_home }}"
     remote_src: yes
     extra_opts: ['--strip-components=1']
-    owner: spark
-    creates: "/usr/src/spark-{{ spark_common_version }}/README.md"
+    creates: "{{ spark_common_home }}/README.md"
   notify:
     - restart_spark
   

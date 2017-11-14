@@ -1,5 +1,14 @@
 ---
 
+# set cloud-resource facts as some arvados playbooks require them
+- include: set-facts.yml
+
+# Configure critical ssh bastion host infrastructure before gathering facts
+- include: ssh-gateways.yml
+
+# set dynamic groups (and gather facts) as some arvados playbooks require them
+- include: dynamic-groups.yml
+
 - hosts: hail-masters
   roles:
     - hail-master

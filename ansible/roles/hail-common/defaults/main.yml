@@ -7,9 +7,7 @@ hail_common_installation_location: "/usr/local/hail-{{ hail_common_version }}"
 hail_common_repository: https://github.com/hail-is/hail.git
 hail_common_seaborn_version: 0.8.0
 
-# XXX: it feels like we should be more DRY here - values same as: spark_common_version, spark_common_prefix
-hail_common_spark_version: 2.1.1
-hail_common_spark_home: "/usr/local/spark-{{ hail_common_spark_version }}"
+hail_common_spark_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
 
 hail_common_check_installed: "{{ hail_common_installation_location }}/jars/hail-all-spark.jar"
 

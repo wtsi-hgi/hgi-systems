@@ -9,4 +9,3 @@
 hail_master_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
 hail_master_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
 
-hail_master_cluster_workers: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='ansible_host') | list() }}"
