@@ -1,6 +1,5 @@
----
-
 spark_common_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
 spark_common_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
 spark_common_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
 spark_common_software_s3_bucket: hgi-software
+
