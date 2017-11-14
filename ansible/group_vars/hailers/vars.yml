@@ -1,4 +1,4 @@
 ---
 
 hail_master_version: 0.1
-hail_master_spark_version: 2.1.2
+hail_master_spark_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
