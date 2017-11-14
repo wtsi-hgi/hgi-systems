@@ -42,23 +42,33 @@
   with_file:
     - public_keys/spark
 
-- name: install spark/hail prerequisites
+- name: install apt prerequisites
   become: yes
   apt:
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ spark_common_apt_cache_valid_time }}"
   with_items:
     - openjdk-8-jre-headless
     - nginx
     - openjdk-8-jdk
     - git-all
     - libatlas-base-dev
+    # FIXME: python-pip probably be common
+    - python-pip
+
+- name: install pip prerequisites
+  become: yes
+  pip:
+    name: "{{ item }}"
+  with_items:
+    # NOTE: boto3 is currently required to download from S3 but it has also been considered useful to the end user
+    - boto3
 
 - name: get spark tgz checksum from hgi-software s3 bucket
   tags: s3
-  s3:
+  aws_s3:
     mode: getstr
     rgw: true
     bucket: "{{ spark_common_software_s3_bucket }}"
@@ -66,12 +76,12 @@
     s3_url: "{{ spark_common_s3_endpoint }}"
     aws_access_key: "{{ spark_common_s3_access_key }}"
     aws_secret_key: "{{ spark_common_s3_secret_key }}"
-    object: "spark-{{ spark_common_version }}.md5"
+    object: "spark-{{ spark_common_version }}.tgz.md5"
   register: spark_common_tgz_checksum
 
 - name: get spark tgz url
   tags: s3
-  s3:
+  aws_s3:
     mode: geturl
     rgw: true
     bucket: "{{ spark_common_software_s3_bucket }}"
@@ -86,7 +96,7 @@
   become: yes
   become_user: spark
   get_url:
-    url: "{{ spark_common_tgz_url.contents }}"
+    url: "{{ spark_common_tgz_url.url }}"
     checksum: "{{ spark_common_tgz_checksum.contents }}"
     dest: "/home/spark/spark-{{ spark_common_version }}.tgz"
     mode: 0644

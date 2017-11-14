@@ -1,5 +1,0 @@
----
-
-- hosts: localhost
-  tasks:
-    - arvados_keep_service:
