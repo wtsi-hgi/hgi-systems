@@ -1,5 +1,27 @@
 ---
 
+- name: create hail group
+  become: yes
+  group:
+    name: "{{ hail_common_user }}"
+
+- name: create hail user account
+  become: yes
+  user:
+    name: "{{ hail_common_user }}"
+    group: "{{ hail_common_user }}"
+    shell: /bin/bash
+
+- name: set authorized keys for hail
+  become: yes
+  authorized_key:
+    user: "{{ hail_common_user }}"
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_file:
+    - public_keys/hail
+
 - name: install apt prerequisites
   become: yes
   apt:
