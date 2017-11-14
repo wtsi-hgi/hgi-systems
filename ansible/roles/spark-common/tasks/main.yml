@@ -102,7 +102,7 @@
   become: yes
   get_url:
     url: "{{ spark_common_tgz_url.contents }}"
-    checksum: "{{ spark_common_tgz_checksum.contents }}"
+    checksum: "{{ spark_common_tgz_checksum['contents'] }}"
     dest: "/home/spark/spark-{{ spark_common_version }}.tgz"
     mode: 0644
     owner: spark    
