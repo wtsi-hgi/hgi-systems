@@ -55,6 +55,8 @@
     - openjdk-8-jdk
     - git-all
     - libatlas-base-dev
+    # FIXME: python-pip probably be common
+    - python-pip
 
 - name: install pip prerequisites
   become: yes
