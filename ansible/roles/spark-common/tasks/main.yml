@@ -79,9 +79,6 @@
     object: "spark-{{ spark_common_version }}.tgz.md5"
   register: spark_common_tgz_checksum
 
-- debug:
-    msg: "{{ spark_common_tgz_checksum }}"
-
 - name: get spark tgz url
   tags: s3
   aws_s3:
@@ -95,14 +92,11 @@
     object: "spark-{{ spark_common_version }}.tgz"
   register: spark_common_tgz_url
 
-- debug:
-    msg: "{{ spark_common_tgz_url }}"
-
 - name: download spark tgz
   become: yes
   get_url:
-    url: "{{ spark_common_tgz_url.contents }}"
-    checksum: "{{ spark_common_tgz_checksum['contents'] }}"
+    url: "{{ spark_common_tgz_url.url }}"
+    checksum: "{{ spark_common_tgz_checksum.contents }}"
     dest: "/home/spark/spark-{{ spark_common_version }}.tgz"
     mode: 0644
     owner: spark    
