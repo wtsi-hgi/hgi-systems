@@ -1,0 +1,4 @@
+---
+
+# TODO: Remove hardcoded: "sanger-ceph-mercurykeep"
+spark_common_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"

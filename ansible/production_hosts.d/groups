@@ -52,6 +52,7 @@
 [arvados-clusters]
 [consul-cluster-delta-hgi]
 [consul-cluster-delta-hgiarvados]
+[spark-commoners]
 [spark-masters]
 [spark-computers]
 [hail-masters]
@@ -135,6 +136,9 @@ terraform
 consul-servers
 arvados-clusters
 consul-cluster-delta-hgiarvados
+
+[spark-commoners:children]
+sparkers
 
 [spark-masters:children]
 hail-masters
