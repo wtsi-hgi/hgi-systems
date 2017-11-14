@@ -111,6 +111,7 @@ consul-commoners
 [s3-credentials:children]
 gitlab-runners
 consul-servers
+spark-commoners
 
 # OpenStack instances to be created by Ansible
 [openstack-instances:children]
