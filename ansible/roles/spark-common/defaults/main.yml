@@ -1,5 +1,7 @@
 ---
 
-spark_common_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
-spark_common_software_s3_bucket: hgi-software
+# Requires:
+#   - spark_common_s3_endpoint
+#   - spark_common_software_s3_bucket
 
+spark_common_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
