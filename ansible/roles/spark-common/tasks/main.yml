@@ -58,7 +58,7 @@
 
 - name: get spark tgz checksum from hgi-software s3 bucket
   tags: s3
-  s3:
+  aws_s3:
     mode: getstr
     rgw: true
     bucket: "{{ spark_common_software_s3_bucket }}"
@@ -71,7 +71,7 @@
 
 - name: get spark tgz url
   tags: s3
-  s3:
+  aws_s3:
     mode: geturl
     rgw: true
     bucket: "{{ spark_common_software_s3_bucket }}"
