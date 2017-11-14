@@ -1,7 +1,5 @@
 ---
 
-hail_common_apt_cache_valid_time: 3600
-
 hail_common_version: 0.1
 hail_common_installation_location: "/usr/local/hail-{{ hail_common_version }}"
 hail_common_repository: https://github.com/hail-is/hail.git

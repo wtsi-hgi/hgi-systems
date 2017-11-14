@@ -5,8 +5,6 @@
 #   - hail_master_version
 #   - hail_master_spark_version
 
-hail_master_apt_cache_valid_time: 3600
-
 hail_master_jupyter_binary: "{{ hail_common_installation_location }}/scripts/jhail"
 hail_master_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
 

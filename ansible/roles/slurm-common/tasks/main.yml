@@ -23,7 +23,7 @@
 - name: install slurm and munge (apt)
   tags: slurm
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
   with_items:
     - slurm-llnl
     - munge

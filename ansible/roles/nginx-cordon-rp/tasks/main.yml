@@ -20,7 +20,7 @@
 # file: roles/nginx-cordon-rp/tasks/main.yml
 
 - name: Install nginx
-  apt: pkg=nginx state=present update_cache=true cache_valid_time={{ apt_cache_valid_time }}
+  apt: pkg=nginx state=present update_cache=true cache_valid_time={{ all_apt_cache_valid_time }}
   become: true
   register: nginx
   notify:

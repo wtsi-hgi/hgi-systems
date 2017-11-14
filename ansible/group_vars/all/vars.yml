@@ -22,7 +22,9 @@
 ---
 # file: group_vars/all
 
-apt_cache_valid_time: 86400
+all_apt_cache_valid_time: 86400
+
+# FIXME: everything below should be namespaced into `all_` (or moved elsewhere)
 
 hgi_conf_dir: "{{ hgi_dir }}/etc"
 hgi_log_dir: "{{ hgi_dir }}/log"
