@@ -43,7 +43,7 @@
         version: "{{ hail_common_version }}"
 
     - name: compile Hail
-      command: "./gradlew -Dspark.version={{ hail_common_spark_version }} shadowJar archiveZip"
+      command: "./gradlew -Dspark.version={{ hail_common_spark_version | regex_replace('([0-9.]+)-.*', '\\1') }} shadowJar archiveZip"
       args:
         chdir: "{{ hail_common_temp_directory }}"
 
