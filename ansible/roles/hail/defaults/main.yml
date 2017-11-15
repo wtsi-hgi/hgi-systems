@@ -1,0 +1,98 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/hail/defaults/main.yml
+
+###############################################################################
+# In addition to the defaults set below, hail requires these variables be set
+###############################################################################
+#
+# hail_jupyter_token: 
+#   an authentication token used to login to Jupyter notebook
+#
+# hail_ssh_key:
+#   a private ssh key used to authenticate between nodes in the hail cluster
+#
+# hail_ssl_cert:
+#   an SSL certificate for the master host
+#
+# hail_ssl_key:
+#   the SSL private key corresponding to hail_ssl_cert
+#
+# hail_master_host_list:
+#   list of (usually only one) master host for this cluster
+#
+# hail_computer_host_list:
+#   list of computer (worker) hosts in this cluster
+#
+# hail_master_data_dir:
+#   directory in which to store hail data locally on master
+#
+# hail_master_external_hostname:
+#   hostname by which the master host is externally accessible
+#
+# hail_master_external_domain:
+#   domain under which the master host is externally accessible
+#   
+###############################################################################
+
+###############################################################################
+# Versions
+###############################################################################
+hail_version: 0.1
+hail_spark_build_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
+hail_spark_version: "{{ hail_spark_build_version | regex_replace('([0-9.]+)-.*', '\\1') }}"
+hail_seaborn_version: 0.8.0
+hail_anaconda_version: 4.4.0
+
+###############################################################################
+# Directories
+###############################################################################
+hail_temp_dir: /tmp/hail
+hail_home_dir: "/usr/local/hail-{{ hail_version }}"
+hail_systemd_service_dir: /etc/systemd/system
+hail_anaconda_prefix_dir: "/usr/local/anaconda-{{ hail_anaconda_version }}"
+
+###############################################################################
+# Users/Groups
+###############################################################################
+hail_user: hail
+hail_group: "{{ hail_user }}"
+
+###############################################################################
+# Source repo
+###############################################################################
+hail_repository: https://github.com/hail-is/hail.git
+hail_check_installed: "{{ hail_home_directory }}/jars/hail-all-spark.jar"
+
+###############################################################################
+# Hail Jupyter service
+###############################################################################
+hail_jupyter_bin_file: "{{ hail_home_directory }}/scripts/jhail"
+hail_jupyter_config_file: "/etc/opt/jupyter_config_file.py"
+hail_service_start: "{{ hail_jupyter_bin_file }} --config={{ hail_jupyter_config_file }}"
+hail_service_user: "{{ hail_user }}"
+hail_service_initial_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+hail_service_environment_variables:
+  PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_installation_location }}/bin:{{ hail_home_directory }}/bin"
+  HAIL_HOME: "{{ hail_home_directory }}"
+  SPARK_HOME: "{{ hail_spark_home }}"
+  PYTHONPATH: "{{ hail_home_directory }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
+

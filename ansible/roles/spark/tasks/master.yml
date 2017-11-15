@@ -1,0 +1,86 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/spark-master/tasks/main.yml
+
+- name: set private key for spark
+  become: yes
+  copy:
+    content: "{{ spark_ssh_key }}"
+    dest: /home/spark/.ssh/id_rsa
+    owner: spark
+    mode: 0600
+
+- name: install systemd spark service
+  become: yes
+  template:
+    src: spark.service.j2
+    dest: /etc/systemd/system/spark.service
+    owner: root
+  notify:
+    - restart_spark
+    - reload systemd
+
+- name: enable and start spark service
+  become: yes
+  service:
+    name: spark
+    enabled: yes
+    state: started
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ spark_ssl_cert }}"
+    dest: "{{ spark_ssl_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ spark_ssl_key }}"
+    dest: "{{ spark_ssl_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for spark
+  become: yes
+  template:
+    src: "spark.conf.j2"
+    dest: /etc/nginx/conf.d/spark.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+
+- name: configure spark slaves
+  become: yes
+  template:
+    src: slaves.j2
+    dest: "{{ spark_home }}/conf/slaves"
+    mode: 0644
+    owner: spark
+  notify:
+   - restart_spark

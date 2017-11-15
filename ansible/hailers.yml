@@ -1,19 +1,137 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
 ---
+# file: hailers.yml
 
-# Check dynamic inventory and set dynamic groups and facts (must all be gather_facts: no)
-- include: dynamic-inventory-sanity-check.yml
-- include: set-facts.yml
-
-# Configure critical ssh bastion host infrastructure before gathering facts
-- include: ssh-gateways.yml
-
-# set dynamic groups (and gather facts) as some arvados playbooks require them
-- include: dynamic-groups.yml
+- include: hgi-preamble-playbook.yml
 
 - hosts: hail-masters
-  roles:
-    - hail-master
+  tasks:
+    - name: assert hail_cluster_id is defined
+      assert:
+        that:
+          - "hail_cluster_id is defined"
+        msg: "hail_cluster_id must be defined (probably in group hail-cluster-<hail_cluster_id>)"
+    - name: assert terraform volume variables are set"
+      assert:
+        that:
+          - "tf_type_openstack_compute_instance_v2_volume_name is defined"
+          - "tf_type_openstack_compute_instance_v2_volume_size is defined"
+          - "tf_type_openstack_compute_instance_v2_volume_device is defined"
+          - "tf_type_openstack_compute_instance_v2_volume_name != ''"
+          - "tf_type_openstack_compute_instance_v2_volume_size != ''"
+          - "tf_type_openstack_compute_instance_v2_volume_device != ''"
+    - name: configure attached openstack volume for hail
+      import_role: 
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: hail-vg
+        attached_openstack_volume_vols:
+          - name: hail-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_volume_size | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "/mnt/{{ tf_type_openstack_compute_instance_v2_volume_name }}"
+        attached_openstack_volumes:
+          - device: "{{ tf_type_openstack_compute_instance_v2_volume_device }}"
 
-- hosts: hail-computers
-  roles:
-    - hail-compute
+- hosts: hailers
+  tasks:
+    - name: assert essential hail group membership
+      assert:
+        that: 
+          - "ansible_host in groups['hail-masters'] or
+             ansible_host in groups['hail-computers']"
+        msg: "all hosts in hailers group must also be in group hail-masters and/or hail-computers"
+    - name: assert required vars defined in hail-cluster-<hail_cluster_id>
+      assert:
+        that: 
+          - "hail_cluster_id is defined"
+          - "hail_cluster_jupyter_token is defined"
+          - "hail_cluster_spark_build is defined"
+          - "hail_cluster_ssh_key is defined"
+        msg: "'hail_cluster_id', 'hail_cluster_jupyter_token', 'hail_cluster_spark_build', and 'hail_cluster_ssh_key' must all be defined (probably in group hail-cluster-{% if hail_cluster_id is defined %}{{ hail_cluster_id }}{% else %}<hail_cluster_id>{% endif %})"
+    - name: assert required vars defined in hgi-credentials
+      assert:
+        that: 
+          - "hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert is defined"
+          - "hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key is defined"
+        msg: "'hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert' and 'hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key' must all be defined (probably in group hgi-credentials)"
+    - name: assert required vars defined in hgi
+      assert:
+        that: 
+          - "hgi_software_s3_bucket is defined"
+          - "hgi_software_s3_credentials is defined"
+        msg: "'hgi_software_s3_bucket' and 'hgi_software_s3_credentials' must be defined (probably in group hgi)"
+    - name: assert s3 credentials are available
+      assert:
+        that: 
+          - "'s3_host' in hgi_software_s3_credentials"
+          - "'s3_access_key' in hgi_software_s3_credentials"
+          - "'s3_secret_key' in hgi_software_s3_credentials"
+        msg: "'s3_host', 's3_access_key', and 's3_secret_key' must all be set in hgi_software_s3_credentials (is host a member of s3-credentials group?)"
+    - name: assert volume (non-host) inventory entry exists for this cluster and has a name
+      assert:
+        that: 
+          - "'tf.{{ terraform_tenant }}.openstack_blockstorage_volume_v2.hail-{{ hail_cluster_id }}-volume in hostvars"
+          - "'tf_name' in hostvars['tf.'+terraform_tenant+'.openstack_blockstorage_volume_v2.hail-'+hail_cluster_id+'-volume']"
+        msg: "hailers playbook requires an openstack volume for this cluster"
+        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_name'] }}"
+        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_domain'] }}"
+    - name: get spark tgz checksum from hgi-software s3 bucket
+      tags: s3
+      aws_s3:
+        mode: getstr
+        rgw: true
+        bucket: hgi-software
+        region: ""
+        s3_url: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
+        aws_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
+        aws_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
+        object: "spark-{{ hail_cluster_spark_build }}.tgz.md5"
+      register: hailers_playbook_spark_tgz_checksum
+    - name: get spark tgz url from hgi-software s3 bucket
+      tags: s3
+      aws_s3:
+        mode: geturl
+        rgw: true
+        bucket: hgi-software
+        region: ""
+        s3_url: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
+        aws_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
+        aws_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
+        object: "spark-{{ hail_cluster_spark_build }}.tgz"
+      register: hailers_playbook_spark_tgz_url
+    - name: import role hail
+      import_role:
+        name: hail
+      vars:
+        hail_jupyter_token: "{{ hail_cluster_jupyter_token }}"
+        hail_ssh_key: "{{ hail_cluster_ssh_key }}"
+        hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='ansible_host') | list() }}"
+        hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='ansible_host') | list() }}"
+        hail_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_volume_name }}"
+        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_name'] }}"
+        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_domain'] }}"
+        hail_ssl_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
+        hail_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+        hail_spark_tgz_url: "{{ hailers_playbook_spark_tgz_url.url }}"
+        hail_spark_tgz_checksum: "{{ hailers_playbook_spark_tgz_checksum.contents }}"
+      tags:
+        - hail

@@ -84,7 +84,7 @@ resource "openstack_compute_floatingip_associate_v2" "hail-master" {
 
 resource "infoblox_record" "hail-master-dns" {
   value  = "${openstack_networking_floatingip_v2.hail-master.address}"
-  name   = "hail-${var.hail_cluster_id}-master"
+  name   = "hail-${var.hail_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600

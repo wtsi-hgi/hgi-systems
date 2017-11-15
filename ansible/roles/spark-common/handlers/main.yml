@@ -1,7 +1,0 @@
----
-
-- name: don't restart spark
-  fail:
-    msg: never gonna give you up
-  listen: restart_spark
-  when: not true

@@ -1,0 +1,17 @@
+---
+
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+
+- name: restart nginx
+  become: yes
+  service:
+    name: nginx
+    state: restarted
+
+- name: restart spark
+  become: yes
+  service:
+    name: spark
+    state: restarted

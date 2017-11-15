@@ -1,0 +1,119 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/hail/tasks/main.yml
+
+- name: create hail group
+  become: yes
+  group:
+    name: "{{ hail_group }}"
+
+- name: create hail user account
+  become: yes
+  user:
+    name: "{{ hail_user }}"
+    group: "{{ hail_group }}"
+    shell: /bin/bash
+
+- name: set authorized keys for hail
+  become: yes
+  authorized_key:
+    user: "{{ hail_user }}"
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_file:
+    - public_keys/hail
+
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - g++
+    - cmake
+    - make
+    - build-essential
+    - openjdk-8-jre-headless
+    - openjdk-8-jdk
+    - git-all
+    - libopenblas-base
+    - libatlas3-base
+    - libnetlib-java
+    - r-base
+
+- include: conda-6096-patch.yml
+
+- name: install conda prerequisites
+  become: yes
+  conda:
+    name: seaborn
+    version: "{{ hail_seaborn_version }}"
+    executable: "{{ hail_anaconda_installation_location }}/bin/conda"
+
+- name: check if Hail download is required
+  stat:
+    path: "{{ hail_check_installed }}"
+  changed_when: false
+  register: hail_installed
+
+- block:
+    - name: checkout Hail from GitHub
+      git:
+        repo: "{{ hail_repository }}"
+        dest: "{{ hail_temp_directory }}"
+        version: "{{ hail_version }}"
+
+    - name: compile Hail
+      command: "./gradlew -Dspark.version={{ hail_spark_version }} shadowJar archiveZip"
+      args:
+        chdir: "{{ hail_temp_directory }}"
+
+    # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
+    - name: install Hail
+      become: yes
+      command: "mv {{ hail_temp_directory }} {{ hail_installation_location }}"
+      notify: restart hail
+
+  when: not hail_installed.stat.exists
+  always:
+    - name: remove temp directory
+      file:
+        path: "{{ hail_temp_directory }}"
+        state: absent
+
+- name: set installation permissions
+  become: yes
+  file:
+    path: "{{ hail_installation_location }}"
+    owner: "{{ hail_user }}"
+    recurse: yes
+  notify: restart hail
+
+- name: create link to jars directory expected by Hail
+  become: yes
+  file:
+    src: "{{ hail_installation_location }}/build/libs"
+    dest: "{{ hail_installation_location }}/jars"
+    state: link
+
