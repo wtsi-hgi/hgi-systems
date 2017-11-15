@@ -67,6 +67,11 @@
           - "hail_cluster_spark_build is defined"
           - "hail_cluster_ssh_key is defined"
         msg: "'hail_cluster_id', 'hail_cluster_jupyter_token', 'hail_cluster_spark_build', and 'hail_cluster_ssh_key' must all be defined (probably in group hail-cluster-{% if hail_cluster_id is defined %}{{ hail_cluster_id }}{% else %}<hail_cluster_id>{% endif %})"
+    - name: assert hail_cluster_id must be a string
+      assert:
+        that:
+          - "hail_cluster_id is string"
+        msg: "hail_cluster_id must be a string (it is {{ hail_cluster_id }}) - did you forget to quote a numeric value?"
     - name: assert required vars defined in hgi-credentials
       assert:
         that: 
