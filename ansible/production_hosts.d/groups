@@ -140,9 +140,6 @@ consul-servers
 arvados-clusters
 consul-cluster-delta-hgiarvados
 
-[spark-masters:children]
-hail-masters
-
 [sparkers:children]
 spark-masters
 spark-computers
