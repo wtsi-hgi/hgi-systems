@@ -5,7 +5,7 @@
 ---
 # file: group_vars/spark-cluster-01-members/vars.yml
 
-hail_cluster_id: 01
+hail_cluster_id: "01"
 hail_cluster_spark_build: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
 
 hail_cluster_user: spark

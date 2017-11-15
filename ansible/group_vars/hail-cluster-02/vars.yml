@@ -5,5 +5,5 @@
 ---
 # file: group_vars/hail-cluster-ew7/vars.yml
 
-hail_cluster_id: ew7
+hail_cluster_id: "02"
 hail_cluster_spark_build: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
