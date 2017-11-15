@@ -57,6 +57,7 @@
 [sparkers]
 [hail-masters]
 [hail-computers]
+[hgi]
 
 [hgs4:children]
 mesos-masters
@@ -112,6 +113,7 @@ consul-commoners
 gitlab-runners
 consul-servers
 sparkers
+hailers
 
 # OpenStack instances to be created by Ansible
 [openstack-instances:children]
@@ -148,3 +150,6 @@ spark-computers
 [hailers:children]
 hail-masters
 hail-computers
+
+[hgi:children]
+hailers

@@ -1,0 +1,45 @@
+- name: ensure python-pip is installed
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - python-pip
+
+- name: ensure boto3 is installed
+  become: yes
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - boto3
+
+- name: get object checksum
+  tags: s3
+  aws_s3:
+    mode: getstr
+    rgw: true
+    bucket: "{{ s3_geturl_bucket }}"
+    region: ""
+    s3_url: "{{ s3_geturl_url }}"
+    aws_access_key: "{{ s3_geturl_access_key }}"
+    aws_secret_key: "{{ s3_geturl_secret_key }}"
+    object: "{{ s3_geturl_object }}.md5"
+  register: s3_geturl_checksum_reg
+
+- name: get object url
+  tags: s3
+  aws_s3:
+    mode: geturl
+    rgw: true
+    bucket: "{{ s3_geturl_bucket }}"
+    region: ""
+    s3_url: "{{ s3_geturl_url }}"
+    aws_access_key: "{{ s3_geturl_access_key }}"
+    aws_secret_key: "{{ s3_geturl_secret_key }}"
+    object: "{{ s3_geturl_object }}"
+  register: s3_geturl_url_reg
+- name: set facts
+  set_fact: "{{ s3_geturl_checksum_var }}={{ s3_geturl_checksum_reg.contents }} {{ s3_geturl_url_var }}={{ s3_geturl_url_reg.url }}"
+    

@@ -4,13 +4,19 @@
 # ansible_vault_password: xxxx
 # mercury_google_password: xxxx
 # mercury_ssh_key: xxxx
-# pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxxx
-# pem_WILDCARD_hgi_sanger_ac_uk_key: xxxx
+# hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxxx
+# hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key: xxxx
 # mercury_hgi_arvados_google_service_account_json_key: xxxx
 
 hgi_credentials_mercury_google_uid: 112543019536584549283
 
-pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
+# FIXME: remove these once references are updated
+pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_cert }}"
+pem_WILDCARD_hgi_sanger_ac_uk_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
+pem_WILDCARD_hgi_internal_sanger_ac_uk_key: "{{ hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_key }}"
+pem_WILDCARD_hgi_sanger_ac_uk_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+
+hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     #
     # X.509 Certificate
     #
@@ -41,7 +47,7 @@ pem_WILDCARD_hgi_internal_sanger_ac_uk_cert: |
     LAUnpHIBWX1L/VrZtNd2npZC
     -----END CERTIFICATE-----
 
-pem_WILDCARD_hgi_sanger_ac_uk_cert: |
+hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert: |
     -----BEGIN CERTIFICATE-----
     MIIGHjCCBAagAwIBAgIUN205x5jkiG3Vtz7nCFVs5iDVrlwwDQYJKoZIhvcNAQEL
     BQAwTTELMAkGA1UEBhMCQk0xGTAXBgNVBAoTEFF1b1ZhZGlzIExpbWl0ZWQxIzAh

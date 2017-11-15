@@ -32,6 +32,10 @@
     group: "{{ spark_group }}"
     shell: /bin/bash
 
+- name: debug sshpubkey
+  debug:
+    msg: "lookup sshpubkey: {{ lookup('sshpubkey', spark_ssh_key) }} {{ spark_user }}@{{ spark_master_server_name }}"
+
 - name: set authorized keys for spark
   become: yes
   authorized_key:
@@ -67,7 +71,7 @@
 - name: create spark directory
   become: yes
   file:
-    path: "{{ spark_home }}"
+    path: "{{ spark_home_dir }}"
     state: directory
     owner: "{{ spark_user }}"
 
@@ -76,10 +80,10 @@
   become_user: "{{ spark_user }}"
   unarchive:
     src: "/home/spark/spark-{{ spark_version }}.tgz"
-    dest: "{{ spark_home }}"
+    dest: "{{ spark_home_dir }}"
     remote_src: yes
     extra_opts: ['--strip-components=1']
-    creates: "{{ spark_home }}/README.md"
+    creates: "{{ spark_home_dir }}/README.md"
   notify:
-    - restart_spark
+    - restart spark
   

@@ -40,3 +40,5 @@ dependencies:
       spark_version: "{{ hail_spark_version }}"
       spark_tgz_url: "{{ hail_spark_tgz_url }}"
       spark_tgz_checksum: "{{ hail_spark_tgz_checksum }}"
+      spark_master_external_hostname: "{{ hail_master_external_hostname }}"
+      spark_master_external_domain: "{{ hail_master_external_domain }}"

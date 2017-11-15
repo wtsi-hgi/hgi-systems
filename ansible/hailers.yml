@@ -56,8 +56,8 @@
     - name: assert essential hail group membership
       assert:
         that: 
-          - "ansible_host in groups['hail-masters'] or
-             ansible_host in groups['hail-computers']"
+          - "inventory_hostname in groups['hail-masters'] or
+             inventory_hostname in groups['hail-computers']"
         msg: "all hosts in hailers group must also be in group hail-masters and/or hail-computers"
     - name: assert required vars defined in hail-cluster-<hail_cluster_id>
       assert:
@@ -86,52 +86,43 @@
           - "'s3_access_key' in hgi_software_s3_credentials"
           - "'s3_secret_key' in hgi_software_s3_credentials"
         msg: "'s3_host', 's3_access_key', and 's3_secret_key' must all be set in hgi_software_s3_credentials (is host a member of s3-credentials group?)"
-    - name: assert volume (non-host) inventory entry exists for this cluster and has a name
+    - name: assert infoblox record is available
       assert:
-        that: 
-          - "'tf.{{ terraform_tenant }}.openstack_blockstorage_volume_v2.hail-{{ hail_cluster_id }}-volume in hostvars"
-          - "'tf_name' in hostvars['tf.'+terraform_tenant+'.openstack_blockstorage_volume_v2.hail-'+hail_cluster_id+'-volume']"
-        msg: "hailers playbook requires an openstack volume for this cluster"
-        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_name'] }}"
-        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_domain'] }}"
-    - name: get spark tgz checksum from hgi-software s3 bucket
+        that:
+          - "'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id in hostvars"
+        msg: "infoblox (non-host) inventory entry not found for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id }}"
+    - name: assert that infoblox record has tf_name and tf_domain hostvars
+      assert:
+        that:
+          - "'tf_name' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]"
+          - "'tf_domain' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]"
+        msg: "'tf_name' and 'tf_domain' are both required hostvars for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id }}"
+    - name: import role s3_geturl to get url and checksum from s3
       tags: s3
-      aws_s3:
-        mode: getstr
-        rgw: true
-        bucket: hgi-software
-        region: ""
-        s3_url: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
-        aws_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
-        aws_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
-        object: "spark-{{ hail_cluster_spark_build }}.tgz.md5"
-      register: hailers_playbook_spark_tgz_checksum
-    - name: get spark tgz url from hgi-software s3 bucket
-      tags: s3
-      aws_s3:
-        mode: geturl
-        rgw: true
-        bucket: hgi-software
-        region: ""
-        s3_url: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
-        aws_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
-        aws_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
-        object: "spark-{{ hail_cluster_spark_build }}.tgz"
-      register: hailers_playbook_spark_tgz_url
+      import_role:
+        name: s3_geturl
+      vars:
+        s3_geturl_bucket: hgi-software
+        s3_geturl_url: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
+        s3_geturl_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
+        s3_geturl_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
+        s3_geturl_object: "spark-{{ hail_cluster_spark_build }}.tgz"
+        s3_geturl_checksum_var: "hailers_playbook_spark_tgz_checksum"
+        s3_geturl_url_var: "hailers_playbook_spark_tgz_url"
     - name: import role hail
       import_role:
         name: hail
       vars:
         hail_jupyter_token: "{{ hail_cluster_jupyter_token }}"
         hail_ssh_key: "{{ hail_cluster_ssh_key }}"
-        hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='ansible_host') | list() }}"
-        hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='ansible_host') | list() }}"
+        hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
+        hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_volume_name }}"
-        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_name'] }}"
-        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id+'-master']['tf_domain'] }}"
+        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_name'] }}"
+        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_domain'] }}"
         hail_ssl_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
         hail_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
-        hail_spark_tgz_url: "{{ hailers_playbook_spark_tgz_url.url }}"
-        hail_spark_tgz_checksum: "{{ hailers_playbook_spark_tgz_checksum.contents }}"
+        hail_spark_tgz_url: "{{ hailers_playbook_spark_tgz_url }}"
+        hail_spark_tgz_checksum: "{{ hailers_playbook_spark_tgz_checksum }}"
       tags:
         - hail
