@@ -1,4 +1,4 @@
-module "hail-master-ew7" {
+module "hail-master-02" {
   source = "../modules/hail-master"
   count  = 1
 
@@ -18,10 +18,10 @@ module "hail-master-ew7" {
     user = "${module.ssh-gateway.user}"
   }
 
-  hail_cluster_id = "ew7"
+  hail_cluster_id = "02"
 }
 
-module "hail-compute-ew7" {
+module "hail-compute-02" {
   source = "../modules/hail-compute"
   count  = 2
 
@@ -41,5 +41,5 @@ module "hail-compute-ew7" {
     user = "${module.ssh-gateway.user}"
   }
 
-  hail_cluster_id = "ew7"
+  hail_cluster_id = "02"
 }
