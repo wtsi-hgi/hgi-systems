@@ -21,11 +21,11 @@
 
 # file: spark.yml
 
-- hosts: spark-masters
-  roles:
-    - spark-master
-
-- hosts: spark-computers
-  roles:
-    - spark-compute
+#- hosts: spark-masters
+#  roles:
+#    - spark-master
+#
+#- hosts: spark-computers
+#  roles:
+#    - spark-compute
 
