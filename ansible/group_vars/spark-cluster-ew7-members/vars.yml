@@ -1,7 +1,9 @@
 # Vault contains:
-#   hail_master_jupyter_token: xxx
+#   hail_cluster_jupyter_token: xxx
+#   hail_cluster_ssh_key: xxx
 
 ---
+# file: group_vars/spark-cluster-ew7-members/vars.yml
 
-spark_cluster_id: ew7
-spark_master_server_name: "spark-{{ spark_cluster_id }}-master.hgi.sanger.ac.uk"
+hail_cluster_id: ew7
+hail_cluster_spark_build: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
