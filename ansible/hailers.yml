@@ -89,14 +89,14 @@
     - name: assert infoblox record is available
       assert:
         that:
-          - "'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id in hostvars"
-        msg: "infoblox (non-host) inventory entry not found for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id }}"
+          - "'tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string) in hostvars"
+        msg: "infoblox (non-host) inventory entry not found for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string) }}"
     - name: assert that infoblox record has tf_name and tf_domain hostvars
       assert:
         that:
-          - "'tf_name' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]"
-          - "'tf_domain' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]"
-        msg: "'tf_name' and 'tf_domain' are both required hostvars for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id }}"
+          - "'tf_name' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string)]"
+          - "'tf_domain' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string)]"
+        msg: "'tf_name' and 'tf_domain' are both required hostvars for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string) }}"
     - name: import role s3_geturl to get url and checksum from s3
       tags: s3
       import_role:
@@ -123,8 +123,8 @@
         hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_volume_name }}"
-        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_name'] }}"
-        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_domain'] }}"
+        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string)]['tf_name'] }}"
+        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+(hail_cluster_id | string)]['tf_domain'] }}"
         hail_backup_s3_host: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
         hail_backup_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
         hail_backup_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
