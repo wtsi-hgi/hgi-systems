@@ -50,15 +50,19 @@ dependencies:
       ###############################################################################
       # Source URL and checksum (use builds on Apache mirrors by default)
       ###############################################################################
-      spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
-      spark_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+      spark_tgz_url: "{{ hail_spark_tgz_url }}"
+      spark_tgz_checksum: "{{ hail_spark_tgz_checksum }}"
       ###############################################################################
       # Directories and Paths
       ###############################################################################
       spark_prefix_dir: "/usr/local/spark-{{ hail_spark_build_version }}"
+      #spark_ssl_key_file: /etc/ssl.key
+      #spark_ssl_cert_file: /etc/ssl.cert
       ###############################################################################
       # Master server settings
       ###############################################################################
+      #spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"
+      #spark_master_backend_port: 8080
       ###############################################################################
       # Users/Groups
       ###############################################################################

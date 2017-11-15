@@ -13,25 +13,43 @@
 - name: create data directory for Jupyter user
   become: yes
   file:
-    path: "{{ hail_master_data_directory }}"
+    path: "{{ hail_master_data_dir }}"
     state: directory
     mode: 0700
-    owner: "{{ hail_common_user }}"
-    group: "{{ hail_common_user }}"
+    owner: "{{ hail_user }}"
+    group: "{{ hail_user }}"
 
-- name: provide link to Hail tutorials
+- name: link /data to data dir for convenience
   become: yes
   file:
-    src: "{{ hail_master_installation_location }}/python/hail/docs/tutorials/"
-    dest: "{{ hail_master_data_directory }}/tutorials"
+    src: "{{ hail_master_data_dir }}"
+    dest: "/data"
     state: link
+
+- name: check if tutorials is a symlink
+  stat:
+    path: "{{ hail_master_data_dir }}/tutorials"
+    follow: no
+  register: tutorials_stat
+
+- name: remove tutorials if it is a symlink
+  become: yes
+  file:
+    path: "{{ hail_master_data_dir }}/tutorials"
+    state: absent
+  when: tutorials_stat.stat.islnk is defined and tutorials_stat.stat.islnk
+
+- name: initially copy hail tutorials into data dir
+  become: yes
+  command: rsync -az "{{ hail_prefix_dir }}/python/hail/docs/tutorials/" "{{ hail_master_data_dir }}/tutorials"
+  creates:  "{{ hail_master_data_dir }}/tutorials"
 
 - name: set configuration for Jupyter
   become: yes
   template:
     src: jupyter_notebook_config.py.j2
-    dest: "{{ hail_master_jupyter_configuration_location }}"
-    owner: "{{ hail_common_user }}"
+    dest: "{{ hail_jupyter_config_file }}"
+    owner: "{{ hail_user }}"
     mode: 0600
   notify: restart hail
 
@@ -39,7 +57,7 @@
   become: yes
   template:
     src: hail.service.j2
-    dest: "{{ hail_master_systemd_service_directory }}/hail.service"
+    dest: "{{ hail_systemd_service_dir }}/hail.service"
   notify: restart hail
   register: hail_service
 
@@ -52,11 +70,10 @@
   import_role:
     name: s3-backup
   vars:
-    s3_backup_source: "{{ consul_data_dir }}"
-#    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ hostvars[volume]['cloud_resource_name'] }}"
-    s3_backup_destination: "s3://{{ consul_server_s3_host }}/{{ consul_server_s3_backup_bucket }}/{{ volume }}"
-    s3_backup_s3_host: "{{ consul_server_s3_host }}"
-    s3_backup_s3_access_key: "{{ consul_server_s3_access_key }}"
-    s3_backup_s3_secret_key: "{{ consul_server_s3_secret_key }}"
-    s3_backup_s3_bucket: "{{ consul_server_s3_backup_bucket }}"
+    s3_backup_source: "{{ hail_master_data_dir }}"
+    s3_backup_destination: "s3://{{ hail_backup_s3_host }}/{{ hail_backup_s3_backup_bucket }}/{{ hail_backup_path }}"
+    s3_backup_s3_host: "{{ hail_backup_s3_host }}"
+    s3_backup_s3_access_key: "{{ hail_backup_s3_access_key }}"
+    s3_backup_s3_secret_key: "{{ hail_backup_s3_secret_key }}"
+    s3_backup_s3_bucket: "{{ hail_backup_s3_backup_bucket }}"
 
