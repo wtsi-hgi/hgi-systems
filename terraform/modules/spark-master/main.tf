@@ -90,6 +90,14 @@ resource "infoblox_record" "spark-master-dns" {
   ttl    = 600
 }
 
+resource "infoblox_record" "hail-dns" {
+  value  = "${openstack_networking_floatingip_v2.spark-master.address}"
+  name   = "hail-${var.spark_cluster_id}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
+}
+
 output "ip" {
   value = "${openstack_networking_floatingip_v2.spark-master.address}"
 }
