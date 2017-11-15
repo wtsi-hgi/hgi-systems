@@ -39,8 +39,9 @@
     manage_dir: yes
     state: present
     key: "{{ item }}"
-  with_file:
-    - public_keys/hail
+  with_items:
+    - "{{ lookup('sshpubkey', hail_ssh_key) }} {{ hail_user }}@{{ hail_master_server_name }}"
+    - "{{ hail_authorized_keys }}"
 
 - name: install apt prerequisites
   become: yes
@@ -48,7 +49,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+    cache_valid_time: "{{ hail_apt_cache_valid_time }}"
   with_items:
     - g++
     - cmake
@@ -62,14 +63,14 @@
     - libnetlib-java
     - r-base
 
-- include: conda-6096-patch.yml
+- include_tasks: conda-6096-patch.yml
 
 - name: install conda prerequisites
   become: yes
   conda:
     name: seaborn
     version: "{{ hail_seaborn_version }}"
-    executable: "{{ hail_anaconda_installation_location }}/bin/conda"
+    executable: "{{ hail_anaconda_prefix_dir }}/bin/conda"
 
 - name: check if Hail download is required
   stat:
@@ -92,7 +93,7 @@
     # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
     - name: install Hail
       become: yes
-      command: "mv {{ hail_temp_directory }} {{ hail_installation_location }}"
+      command: "mv {{ hail_temp_directory }} {{ hail_prefix_dir }}"
       notify: restart hail
 
   when: not hail_installed.stat.exists
@@ -105,7 +106,7 @@
 - name: set installation permissions
   become: yes
   file:
-    path: "{{ hail_installation_location }}"
+    path: "{{ hail_prefix_dir }}"
     owner: "{{ hail_user }}"
     recurse: yes
   notify: restart hail
@@ -113,7 +114,10 @@
 - name: create link to jars directory expected by Hail
   become: yes
   file:
-    src: "{{ hail_installation_location }}/build/libs"
-    dest: "{{ hail_installation_location }}/jars"
+    src: "{{ hail_prefix_dir }}/build/libs"
+    dest: "{{ hail_prefix_dir }}/jars"
     state: link
+
+- import_tasks: master.yml
+  when: hail_master_p
 

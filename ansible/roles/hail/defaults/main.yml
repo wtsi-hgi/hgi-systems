@@ -66,7 +66,7 @@ hail_anaconda_version: 4.4.0
 # Directories
 ###############################################################################
 hail_temp_dir: /tmp/hail
-hail_home_dir: "/usr/local/hail-{{ hail_version }}"
+hail_prefix_dir: "/usr/local/hail-{{ hail_version }}"
 hail_systemd_service_dir: /etc/systemd/system
 hail_anaconda_prefix_dir: "/usr/local/anaconda-{{ hail_anaconda_version }}"
 
@@ -80,19 +80,24 @@ hail_group: "{{ hail_user }}"
 # Source repo
 ###############################################################################
 hail_repository: https://github.com/hail-is/hail.git
-hail_check_installed: "{{ hail_home_directory }}/jars/hail-all-spark.jar"
+hail_check_installed: "{{ hail_prefix_dir }}/jars/hail-all-spark.jar"
 
 ###############################################################################
 # Hail Jupyter service
 ###############################################################################
-hail_jupyter_bin_file: "{{ hail_home_directory }}/scripts/jhail"
+hail_jupyter_bin_file: "{{ hail_prefix_dir }}/scripts/jhail"
 hail_jupyter_config_file: "/etc/opt/jupyter_config_file.py"
 hail_service_start: "{{ hail_jupyter_bin_file }} --config={{ hail_jupyter_config_file }}"
 hail_service_user: "{{ hail_user }}"
 hail_service_initial_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 hail_service_environment_variables:
-  PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_installation_location }}/bin:{{ hail_home_directory }}/bin"
-  HAIL_HOME: "{{ hail_home_directory }}"
+  PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_installation_location }}/bin:{{ hail_prefix_dir }}/bin"
+  HAIL_HOME: "{{ hail_prefix_dir }}"
   SPARK_HOME: "{{ hail_spark_home }}"
-  PYTHONPATH: "{{ hail_home_directory }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
+  PYTHONPATH: "{{ hail_prefix_dir }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
+
+###############################################################################
+# General settings
+###############################################################################
+hail_apt_cache_valid_time: 86400
 

@@ -32,13 +32,40 @@ dependencies:
 
   - role: spark
     vars:
+      ###############################################################################
+      # Variables that have no defaults and must be set
+      ###############################################################################
       spark_ssh_key: "{{ hail_ssh_key }}"
-      spark_cert: "{{ hail_master_cert }}"
-      spark_key: "{{ hail_master_key }}"
+      spark_ssl_cert: "{{ hail_master_cert }}"
+      spark_ssl_key: "{{ hail_master_key }}"
       spark_master_host_list: "{{ hail_master_host_list }}"
       spark_worker_host_list: "{{ hail_computer_host_list }}"
-      spark_version: "{{ hail_spark_version }}"
-      spark_tgz_url: "{{ hail_spark_tgz_url }}"
-      spark_tgz_checksum: "{{ hail_spark_tgz_checksum }}"
       spark_master_external_hostname: "{{ hail_master_external_hostname }}"
       spark_master_external_domain: "{{ hail_master_external_domain }}"
+      ###############################################################################
+      # Versions
+      ###############################################################################
+      spark_version: "{{ hail_spark_version }}"
+      spark_build_version: "{{ hail_spark_build_version }}"
+      ###############################################################################
+      # Source URL and checksum (use builds on Apache mirrors by default)
+      ###############################################################################
+      spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
+      spark_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+      ###############################################################################
+      # Directories and Paths
+      ###############################################################################
+      spark_prefix_dir: "/usr/local/spark-{{ hail_spark_build_version }}"
+      ###############################################################################
+      # Master server settings
+      ###############################################################################
+      ###############################################################################
+      # Users/Groups
+      ###############################################################################
+      spark_user: "{{ hail_user }}"
+      spark_group: "{{ hail_group }}"
+      spark_authorized_keys: "{{ hail_authorized_keys }}"
+      ###############################################################################
+      # General settings
+      ###############################################################################
+      spark_apt_cache_valid_time: "{{ hail_apt_cache_valid_time }}"

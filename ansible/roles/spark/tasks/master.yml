@@ -18,14 +18,15 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/spark-master/tasks/main.yml
+# file: roles/spark/tasks/master.yml
 
 - name: set private key for spark
   become: yes
+  become_user: "{{ spark_user }}"
   copy:
     content: "{{ spark_ssh_key }}"
-    dest: /home/spark/.ssh/id_rsa
-    owner: spark
+    dest: "/home/{{ spark_user }}/.ssh/id_rsa"
+    owner: "{{ spark_user }}"
     mode: 0600
 
 - name: install systemd spark service
@@ -77,10 +78,11 @@
 
 - name: configure spark slaves
   become: yes
+  become_user: "{{ spark_user }}"
   template:
     src: slaves.j2
-    dest: "{{ spark_home }}/conf/slaves"
+    dest: "{{ spark_prefix_dir }}/conf/slaves"
     mode: 0644
-    owner: spark
+    owner: "{{ spark_user }}"
   notify:
    - restart spark

@@ -124,5 +124,7 @@
         hail_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
         hail_spark_tgz_url: "{{ hailers_playbook_spark_tgz_url }}"
         hail_spark_tgz_checksum: "{{ hailers_playbook_spark_tgz_checksum }}"
+        hail_user: "{{ hail_cluster_user | default('hail') }}"
+        hail_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
       tags:
         - hail
