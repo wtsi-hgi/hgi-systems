@@ -190,6 +190,8 @@
         hail_spark_tgz_url: "{{ hailers_PLAYBOOK_spark_tgz_url }}"
         hail_spark_tgz_checksum: "{{ hailers_PLAYBOOK_spark_tgz_checksum }}"
         #hail_spark_master_backend_port: "8080"
+        hail_spark_local_ip: "{{ cloud_resource_private_ip }}"
+        hail_spark_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
         ###############################################################################
         # General settings
         ###############################################################################

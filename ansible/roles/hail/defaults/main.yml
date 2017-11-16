@@ -125,6 +125,8 @@ hail_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_
 hail_spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
 hail_spark_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
 hail_spark_master_backend_port: "8080"
+hail_spark_local_ip: "127.0.0.1"
+hail_spark_master_host: "127.0.0.1"
 
 ###############################################################################
 # General settings
