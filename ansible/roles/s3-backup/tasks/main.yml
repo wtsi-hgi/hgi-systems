@@ -1,5 +1,22 @@
 ---
 
+- name: ensure python-pip is installed
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - python-pip
+
+- name: ensure boto3 is installed
+  become: yes
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - boto3
+
 - name: install duplicity
   become: yes
   apt:
