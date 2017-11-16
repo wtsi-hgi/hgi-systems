@@ -19,12 +19,31 @@
     owner: "{{ hail_user }}"
     group: "{{ hail_user }}"
 
+- name: check if /data is a symlink
+  become: yes
+  stat:
+    path: "/data"
+    follow: no
+  ignore_errors: yes
+  register: data_stat
+
+- name: unmount /data if it is not a link (TODO remove after migration)
+  become: yes
+  command: umount /data
+  when: >-
+    ('stat' in data_stat) and 
+    (data_stat.stat.islnk is defined) and 
+    (not tutorials_stat.stat.islnk)
+  
 - name: link /data to data dir for convenience
   become: yes
   file:
     src: "{{ hail_master_data_dir }}"
     dest: "/data"
     state: link
+  when: >-
+    ('stat' in data_stat) and 
+    (data_stat.stat.islnk is not defined)
 
 - name: check if tutorials is a symlink
   become: yes
