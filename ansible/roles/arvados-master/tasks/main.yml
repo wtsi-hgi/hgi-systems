@@ -466,11 +466,11 @@
 - name: ensure arvados-ws has restarted before checking it is functional
   meta: flush_handlers
 
-- name: wait up to 10s for arvados-ws port
+- name: wait up to 60s for arvados-ws port
   wait_for:
     port: "{{ arvados_master_ws_backend_port }}"
     host: 127.0.0.1
-    timeout: 10
+    timeout: 60
 
 - name: verify arvados-ws is functional
   uri:
