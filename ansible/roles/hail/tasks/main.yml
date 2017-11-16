@@ -48,7 +48,7 @@
       ###############################################################################
       # Directories and Paths
       ###############################################################################
-      spark_prefix_dir: "{{ hail_spark_prefix_dir }}
+      spark_prefix_dir: "{{ hail_spark_prefix_dir }}"
       #spark_ssl_key_file: /etc/ssl.key
       #spark_ssl_cert_file: /etc/ssl.cert
       ###############################################################################
