@@ -67,6 +67,14 @@ spark_ssl_key_file: /etc/ssl.key
 spark_ssl_cert_file: /etc/ssl.cert
 
 ###############################################################################
+# Spark settings
+###############################################################################
+spark_classpath: ""
+spark_master_host: "127.0.0.1"
+spark_master_port: "7077"
+spark_hadoop_default_s3a_endpoint: ""
+
+###############################################################################
 # Master server settings
 ###############################################################################
 spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"

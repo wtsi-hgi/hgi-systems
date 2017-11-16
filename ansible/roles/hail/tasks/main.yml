@@ -52,6 +52,13 @@
       #spark_ssl_key_file: /etc/ssl.key
       #spark_ssl_cert_file: /etc/ssl.cert
       ###############################################################################
+      # Spark settings
+      ###############################################################################
+      spark_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+      spark_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
+      #spark_master_port: "7077"
+      spark_hadoop_default_s3a_endpoint: "cog.sanger.ac.uk"
+      ###############################################################################
       # Master server settings
       ###############################################################################
       #spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"

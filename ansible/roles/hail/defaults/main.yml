@@ -109,8 +109,8 @@ hail_service_user: "{{ hail_user }}"
 hail_service_initial_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 hail_service_environment_variables:
   PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_prefix_dir }}/bin:{{ hail_prefix_dir }}/bin"
-  HAIL_HOME: "{{ hail_prefix_dir }}"
   SPARK_HOME: "{{ hail_spark_prefix_dir }}"
+  HAIL_HOME: "{{ hail_prefix_dir }}"
   PYTHONPATH: "{{ hail_prefix_dir }}/python:{{ hail_prefix_dir }}/python:{{ hail_spark_prefix_dir }}/python/lib/py4j-0.10.4-src.zip"
 
 ###############################################################################
