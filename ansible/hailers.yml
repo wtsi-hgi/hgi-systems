@@ -148,6 +148,7 @@
         ###############################################################################
         #hail_temp_dir: /tmp/hail
         #hail_prefix_dir: "/usr/local/hail-{{ hail_version }}"
+        #hail_spark_prefix_dir: "/usr/local/spark-{{ hail_spark_build_version }}"
         #hail_systemd_service_dir: /etc/systemd/system
         #ail_anaconda_prefix_dir: "/usr/local/anaconda-{{ hail_anaconda_version }}"
         #hail_ssl_key_file: /etc/ssl.key
