@@ -5,10 +5,10 @@ After=systemd-user-sessions.service
 After=network-online.target
 
 [Service]
-User=spark
+User={{ spark_user }}
 Type=forking
-ExecStart={{ spark_common_home }}/sbin/start-all.sh
-ExecStop={{ spark_common_home }}/sbin/stop-all.sh
+ExecStart={{ spark_prefix_dir }}/sbin/start-all.sh
+ExecStop={{ spark_prefix_dir }}/sbin/stop-all.sh
 TimeoutSec=30
 Restart=on-failure
 RestartSec=30

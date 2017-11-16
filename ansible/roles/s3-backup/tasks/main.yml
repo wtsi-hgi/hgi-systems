@@ -1,11 +1,11 @@
 ---
 
-- name: install Duplicity
+- name: install duplicity
   become: yes
   apt:
     name: "{{ item }}"
     update_cache: yes
-    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+    cache_valid_time: "{{ s3_backup_apt_cache_valid_time }}"
   with_items:
     - duplicity
     - s3cmd
@@ -61,7 +61,7 @@
 - name: schedule backup using cron
   become: yes
   cron:
-    name: "backup {{ s3_backup_source }} to {{ s3_backup_destination }}"
+    name: "backup {{ s3_backup_source_dir }} to {{ s3_backup_dest_url }}"
     minute: "{{ s3_backup_minute }}"
     hour: "{{ s3_backup_hour }}"
     day: "{{ s3_backup_day }}"

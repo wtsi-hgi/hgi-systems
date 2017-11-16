@@ -20,8 +20,16 @@
 ---
 # file: roles/hail/handlers/main.yml
 
+- name: restart nginx
+  become: yes
+  service:
+    name: nginx
+    state: restarted
+  when: hail_master_p
+
 - name: restart hail
   become: yes
   service:
     name: hail
     state: restarted
+  when: hail_master_p

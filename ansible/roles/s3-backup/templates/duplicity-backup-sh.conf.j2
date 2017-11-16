@@ -67,7 +67,7 @@
 # This can be / or somewhere else -- I use /home/ because all the
 # directories that I want to backup start with /home/.
 #
-ROOT="{{ s3_backup_source }}"
+ROOT="{{ s3_backup_source_dir }}"
 
 # Set hostname for this duplicity instance, useful for e-mail reports
 #
@@ -88,7 +88,7 @@ HOSTNAME=$(hostname -f)
 # remote file size check will work.
 
 #DEST="s3://host/backup-bucket/backup-folder/"
-DEST="{{ s3_backup_destination }}"
+DEST="{{ s3_backup_dest_url }}"
 
 # Other possible locations
 # Be sure to check duplicity's man page to know how to use them

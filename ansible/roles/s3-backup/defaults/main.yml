@@ -1,19 +1,57 @@
 ---
 
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+# s3_backup_s3_bucket:
+#   
+#
+# s3_backup_s3_endpoint:
+#   
+#
+# s3_backup_s3_access_key:
+#   
+#
+# s3_backup_s3_secret_key:
+#   
+#
+# s3_backup_source_dir:
+#   Directory tree to backup
+#
+# s3_backup_dest_url:
+#   URL to backup to
+#
+###############################################################################
+
+###############################################################################
 # Settings for how often a backup is made (could be a full or incremental backup)
+###############################################################################
 s3_backup_minute: 25
 s3_backup_hour: "*"
 s3_backup_day: "*"
 
+###############################################################################
 # Note: If it's not time for a full backup, an incremental backup is made when the backup cron is ran
+###############################################################################
 s3_backup_full_backup_every_n_days: 7
 s3_backup_keep_last_n_full_backups: 2
 s3_backup_remove_logs_after_n_days: 30
 
+###############################################################################
+# Duplicity
+###############################################################################
 s3_backup_duplicity_backup_sh_git_repository: https://github.com/zertrin/duplicity-backup.sh
 s3_backup_duplicity_backup_sh_version: cc2ae25355b605c983e2431ef7b346de811d218c
 
-# Enable by defining the hook URL
+###############################################################################
+# Slack notifications (enable by defining the hook URL)
+###############################################################################
 s3_backup_slack_hook_url:
 s3_backup_slack_hook_channel:
 s3_backup_slack_hook_username: duplicity-backup
+
+###############################################################################
+# General settings
+###############################################################################
+s3_backup_apt_cache_valid_time: 86400

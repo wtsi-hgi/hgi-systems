@@ -130,17 +130,19 @@
         hail_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_volume_name }}"
         hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_name'] }}"
         hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_domain'] }}"
-        hail_backup_s3_host: "https://{{ hgi_software_s3_credentials['s3_host'] }}"
+        hail_backup_s3_host: "{{ hgi_software_s3_credentials['s3_host'] }}"
         hail_backup_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
         hail_backup_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
         ###############################################################################
         # Versions
         ###############################################################################
-        #hail_version: 0.1
-        #hail_spark_build_version: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
+        hail_version: "{{ hail_cluster_hail_version | default('0.1-0bd1988e') }}"
+        #hail_version_branch: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\1') }}"
+        #hail_version_commit: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\2') }}"
+        hail_spark_build_version: "{{ hail_cluster_spark_build }}"
         #hail_spark_version: "{{ hail_spark_build_version | regex_replace('([0-9.]+)-.*', '\\1') }}"
-        #hail_seaborn_version: 0.8.0
-        #hail_anaconda_version: 4.4.0
+        hail_seaborn_version: "{{ hail_cluster_seaborn_version | default('0.8.0') }}"
+        hail_anaconda_version: "{{ hail_cluster_anaconda_version | default('4.4.0') }}"
         ###############################################################################
         # Directories
         ###############################################################################
@@ -148,11 +150,14 @@
         #hail_prefix_dir: "/usr/local/hail-{{ hail_version }}"
         #hail_systemd_service_dir: /etc/systemd/system
         #ail_anaconda_prefix_dir: "/usr/local/anaconda-{{ hail_anaconda_version }}"
+        #hail_ssl_key_file: /etc/ssl.key
+        #hail_ssl_cert_file: /etc/ssl.cert
         ###############################################################################
         # Users/Groups
         ###############################################################################
         hail_user: "{{ hail_cluster_user | default('hail') }}"
-        #hail_group: "{{ hail_user }}"
+        hail_group: "{{ hail_cluster_group | default(hail_user) }}"
+        hail_authorized_keys: "{{ hail_cluster_authorized_keys | default([]) }}"
         ###############################################################################
         # Source repo
         ###############################################################################
@@ -163,14 +168,16 @@
         ###############################################################################
         #hail_jupyter_bin_file: "{{ hail_prefix_dir }}/scripts/jhail"
         #hail_jupyter_config_file: "/etc/opt/jupyter_config_file.py"
+        #hail_jupyter_server_name: "{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}"
+        #hail_jupyter_backend_port: 8888
         #hail_service_start: "{{ hail_jupyter_bin_file }} --config={{ hail_jupyter_config_file }}"
         #hail_service_user: "{{ hail_user }}"
         #hail_service_initial_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
         #hail_service_environment_variables:
-        #  PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_installation_location }}/bin:{{ hail_prefix_dir }}/bin"
+        #  PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_prefix_dir }}/bin:{{ hail_prefix_dir }}/bin"
         #  HAIL_HOME: "{{ hail_prefix_dir }}"
-        #  SPARK_HOME: "{{ hail_spark_home }}"
-        #  PYTHONPATH: "{{ hail_prefix_dir }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
+        #  SPARK_HOME: "{{ hail_prefix_dir }}"
+        #  PYTHONPATH: "{{ hail_prefix_dir }}/python:{{ hail_prefix_dir }}/python:{{ hail_prefix_dir }}/python/lib/py4j-0.10.4-src.zip"
         ###############################################################################
         # Backup settings
         ###############################################################################
@@ -181,6 +188,7 @@
         ###############################################################################
         hail_spark_tgz_url: "{{ hailers_PLAYBOOK_spark_tgz_url }}"
         hail_spark_tgz_checksum: "{{ hailers_PLAYBOOK_spark_tgz_checksum }}"
+        #hail_spark_master_backend_port: "8080"
         ###############################################################################
         # General settings
         ###############################################################################

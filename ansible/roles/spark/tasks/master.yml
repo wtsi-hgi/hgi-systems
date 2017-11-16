@@ -46,35 +46,47 @@
     enabled: yes
     state: started
 
-- name: copy ssl certificate
-  become: yes
-  copy:
-    content: "{{ spark_ssl_cert }}"
-    dest: "{{ spark_ssl_cert_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart nginx
+- name: configure nginx web ui
+  block:
+    - name: copy ssl certificate
+      become: yes
+      copy:
+        content: "{{ spark_ssl_cert }}"
+        dest: "{{ spark_ssl_cert_file }}"
+        owner: root
+        mode: 0600
+      notify:
+        - restart nginx
 
-- name: copy ssl key
-  become: yes
-  copy:
-    content: "{{ spark_ssl_key }}"
-    dest: "{{ spark_ssl_key_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart nginx
+    - name: copy ssl key
+      become: yes
+      copy:
+        content: "{{ spark_ssl_key }}"
+        dest: "{{ spark_ssl_key_file }}"
+        owner: root
+        mode: 0600
+      notify:
+        - restart nginx
 
-- name: configure nginx for spark
+    - name: configure nginx for spark
+      become: yes
+      template:
+        src: "spark.conf.j2"
+        dest: /etc/nginx/conf.d/spark.conf
+        mode: 0700
+        owner: www-data
+      notify:
+        - restart nginx
+  when: spark_master_webui_p
+
+- name: deconfigure spark webui
   become: yes
-  template:
-    src: "spark.conf.j2"
-    dest: /etc/nginx/conf.d/spark.conf
-    mode: 0700
-    owner: www-data
-  notify:
-   - restart nginx
+  file: 
+    path: /etc/nginx/conf.d/spark.conf
+    state: absent
+  notify: 
+    - restart nginx
+  when: not spark_master_webui_p
 
 - name: configure spark slaves
   become: yes

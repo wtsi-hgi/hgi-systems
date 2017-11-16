@@ -20,6 +20,6 @@
 ---
 # file: roles/spark/vars/main.yml
 
-spark_master_p: "{{ ansible_host in spark_master_host_list }}"
-spark_worker_p: "{{ ansible_host in spark_worker_host_list }}"
+spark_master_p: "{{ inventory_hostname in spark_master_host_list }}"
+spark_worker_p: "{{ inventory_hostname in spark_worker_host_list }}"
 

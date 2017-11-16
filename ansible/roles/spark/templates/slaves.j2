@@ -16,6 +16,6 @@
 #
 
 # A Spark Worker will be started on each of the machines listed below.
-{% for worker in spark_master_cluster_workers %}
-{{ worker }}
+{% for worker in spark_worker_host_list %}
+{{ hostvars[worker]['cloud_resource_private_ip'] }}
 {% endfor %}

@@ -71,6 +71,7 @@ spark_ssl_cert_file: /etc/ssl.cert
 ###############################################################################
 spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"
 spark_master_backend_port: 8080
+spark_master_webui_p: true
 
 ###############################################################################
 # Users/Groups

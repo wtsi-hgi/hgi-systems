@@ -20,6 +20,54 @@
 ---
 # file: roles/hail/tasks/main.yml
 
+- name: import spark role
+  tags: s3
+  import_role:
+    name: spark
+  vars:
+      ###############################################################################
+      # Variables that have no defaults and must be set
+      ###############################################################################
+      spark_ssh_key: "{{ hail_ssh_key }}"
+      spark_ssl_cert: "{{ hail_ssl_cert }}"
+      spark_ssl_key: "{{ hail_ssl_key }}"
+      spark_master_host_list: "{{ hail_master_host_list }}"
+      spark_worker_host_list: "{{ hail_computer_host_list }}"
+      spark_master_external_hostname: "{{ hail_master_external_hostname }}"
+      spark_master_external_domain: "{{ hail_master_external_domain }}"
+      ###############################################################################
+      # Versions
+      ###############################################################################
+      spark_version: "{{ hail_spark_version }}"
+      spark_build_version: "{{ hail_spark_build_version }}"
+      ###############################################################################
+      # Source URL and checksum (use builds on Apache mirrors by default)
+      ###############################################################################
+      spark_tgz_url: "{{ hail_spark_tgz_url }}"
+      spark_tgz_checksum: "{{ hail_spark_tgz_checksum }}"
+      ###############################################################################
+      # Directories and Paths
+      ###############################################################################
+      spark_prefix_dir: "/usr/local/spark-{{ hail_spark_build_version }}"
+      #spark_ssl_key_file: /etc/ssl.key
+      #spark_ssl_cert_file: /etc/ssl.cert
+      ###############################################################################
+      # Master server settings
+      ###############################################################################
+      #spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"
+      spark_master_backend_port: "{{ hail_spark_master_backend_port }}"
+      spark_master_webui_p: false
+      ###############################################################################
+      # Users/Groups
+      ###############################################################################
+      spark_user: "{{ hail_user }}"
+      spark_group: "{{ hail_group }}"
+      spark_authorized_keys: "{{ hail_authorized_keys }}"
+      ###############################################################################
+      # General settings
+      ###############################################################################
+      spark_apt_cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+
 - name: create hail group
   become: yes
   group:
@@ -40,7 +88,7 @@
     state: present
     key: "{{ item }}"
   with_items:
-    - "{{ lookup('sshpubkey', hail_ssh_key) }} {{ hail_user }}@{{ hail_master_server_name }}"
+    - "{{ lookup('sshpubkey', hail_ssh_key) }} {{ hail_user }}@{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}"
     - "{{ hail_authorized_keys }}"
 
 - name: install apt prerequisites
@@ -82,25 +130,25 @@
     - name: checkout Hail from GitHub
       git:
         repo: "{{ hail_repository }}"
-        dest: "{{ hail_temp_directory }}"
-        version: "{{ hail_version }}"
+        dest: "{{ hail_temp_dir }}"
+        version: "{{ hail_version_commit }}"
 
     - name: compile Hail
       command: "./gradlew -Dspark.version={{ hail_spark_version }} shadowJar archiveZip"
       args:
-        chdir: "{{ hail_temp_directory }}"
+        chdir: "{{ hail_temp_dir }}"
 
     # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
     - name: install Hail
       become: yes
-      command: "mv {{ hail_temp_directory }} {{ hail_prefix_dir }}"
+      command: "mv {{ hail_temp_dir }} {{ hail_prefix_dir }}"
       notify: restart hail
 
   when: not hail_installed.stat.exists
   always:
     - name: remove temp directory
       file:
-        path: "{{ hail_temp_directory }}"
+        path: "{{ hail_temp_dir }}"
         state: absent
 
 - name: set installation permissions
@@ -109,7 +157,6 @@
     path: "{{ hail_prefix_dir }}"
     owner: "{{ hail_user }}"
     recurse: yes
-  notify: restart hail
 
 - name: create link to jars directory expected by Hail
   become: yes
