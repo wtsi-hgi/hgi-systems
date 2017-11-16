@@ -34,6 +34,17 @@
     ('stat' in data_stat) and 
     (data_stat.stat.islnk is defined) and 
     (not data_stat.stat.islnk)
+  ignore_errors: yes
+
+- name: remove /data if it is not a link (TODO remove after migration)
+  become: yes
+  file: 
+    path: /data
+    state: absent
+  when: >-
+    ('stat' in data_stat) and 
+    (data_stat.stat.islnk is defined) and 
+    (not data_stat.stat.islnk)
   
 - name: link /data to data dir for convenience
   become: yes
