@@ -463,6 +463,13 @@
   notify:
    - restart arvados-ws
 
+- name: enable and start arvados-ws
+  become: yes
+  systemd:
+    name: arvados-ws
+    enabled: yes
+    state: started
+
 - name: ensure arvados-ws has restarted before checking it is functional
   meta: flush_handlers
 
