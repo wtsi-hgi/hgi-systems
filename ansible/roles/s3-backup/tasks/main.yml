@@ -97,6 +97,11 @@
       become: yes
       command: "/usr/local/bin/{{ s3_backup_duplicity_backup_sh_script_name }} -c {{ s3_backup_duplicity_backup_sh_configuration_file }} --restore {{ s3_backup_source_dir }}"
       when: s3_backup_REGISTER_s3_backup_path.s3_keys | count > 0
+    - name: delete restore indicator
+      become: yes
+      file:
+        path: "{{ s3_backup_restore_indicator_file }}"
+        state: absent
   when: s3_backup_stat.stat.exists
 
 - name: schedule backup using cron
