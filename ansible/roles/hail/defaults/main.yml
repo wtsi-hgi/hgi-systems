@@ -117,7 +117,8 @@ hail_service_environment_variables:
 # Backup settings
 ###############################################################################
 hail_backup_s3_backup_bucket: "hail-backup"
-hail_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}/{{ hail_master_data_dir }}"
+hail_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
+hail_s3_backup_restore_indicator_file: ""
 
 ###############################################################################
 # Spark settings

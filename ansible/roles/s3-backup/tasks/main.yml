@@ -65,7 +65,6 @@
     mode: 0660
 
 - name: ensure s3 backup bucket exists
-  run_once: true
   aws_s3:
     mode: create
     rgw: true
@@ -74,6 +73,31 @@
     s3_url: "https://{{ s3_backup_s3_host }}"
     aws_access_key: "{{ s3_backup_s3_access_key }}"
     aws_secret_key: "{{ s3_backup_s3_secret_key }}"
+
+- name: check if restore indicator is present
+  stat:
+    path: "{{ s3_backup_restore_indicator_file }}"
+  register: s3_backup_stat
+
+- name: restore from s3 when restore indicator is present
+  block: 
+    - name: check if backup path exists in s3
+      aws_s3:
+        mode: list
+        rgw: true
+        bucket: "{{ s3_backup_s3_bucket }}"
+        region: ""
+        s3_url: "https://{{ s3_backup_s3_host }}"
+        aws_access_key: "{{ s3_backup_s3_access_key }}"
+        aws_secret_key: "{{ s3_backup_s3_secret_key }}"
+        prefix: "{{ s3_backup_dest_url | urlsplit('path') | regex_replace('^[/].*?[/](.*)$', '\\1') }}"
+        max_keys: 1
+      register: s3_backup_REGISTER_s3_backup_path
+    - name: restore data from s3
+      become: yes
+      command: "/usr/local/bin/{{ s3_backup_duplicity_backup_sh_script_name }} -c {{ s3_backup_duplicity_backup_sh_configuration_file }} --restore {{ s3_backup_source_dir }}"
+      when: s3_backup_REGISTER_s3_backup_path.s3_keys | count > 0
+  when: s3_backup_stat.stat.exists
 
 - name: schedule backup using cron
   become: yes

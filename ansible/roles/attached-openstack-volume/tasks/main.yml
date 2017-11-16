@@ -61,11 +61,25 @@
     - attached_openstack_volume
     - mkfs
   with_items: "{{ attached_openstack_volume_vols }}"
+  register: attached_openstack_volume_filesystem
 
 - name: mount logical volumes
   become: yes
-  mount: fstype={{ item.fstype }} name={{ item.mountpoint }} src="/dev/{{ attached_openstack_volume_vg }}/{{ item.name }}" state=mounted
+  mount: 
+    fstype: "{{ item.fstype }}"
+    name: "{{ item.mountpoint }}"
+    src: "/dev/{{ attached_openstack_volume_vg }}/{{ item.name }}"
+    state: mounted
   tags:
     - attached_openstack_volume
     - mount
   with_items: "{{ attached_openstack_volume_vols }}"
+
+- name: mark newly created filesystem with create indicator file
+  become: yes
+  file:
+    path: "{{ item.mountpoint }}/{{ attached_openstack_volume_fs_create_indicator_file }}"
+    state: touch
+  when: item.changed and attached_openstack_volume_fs_create_indicator_file != ""
+  with_items: "{{ attached_openstack_volume_filesystem.results }}"
+

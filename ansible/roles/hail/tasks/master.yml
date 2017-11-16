@@ -141,10 +141,17 @@
   import_role:
     name: s3-backup
   vars:
-    s3_backup_source_dir: "{{ hail_master_data_dir }}"
-    s3_backup_dest_url: "s3://{{ hail_backup_s3_host }}/{{ hail_backup_s3_backup_bucket }}/{{ hail_data_backup_path }}"
+    ###############################################################################
+    # Variables that have no defaults and must be set
+    ###############################################################################
+    s3_backup_s3_bucket: "{{ hail_backup_s3_backup_bucket }}"
     s3_backup_s3_host: "{{ hail_backup_s3_host }}"
     s3_backup_s3_access_key: "{{ hail_backup_s3_access_key }}"
     s3_backup_s3_secret_key: "{{ hail_backup_s3_secret_key }}"
-    s3_backup_s3_bucket: "{{ hail_backup_s3_backup_bucket }}"
-
+    s3_backup_source_dir: "{{ hail_master_data_dir }}"
+    s3_backup_dest_path: "{{ hail_data_backup_path }}"
+    ###############################################################################
+    # Restore from s3 if if this file is present (then delete it)
+    ###############################################################################
+    s3_backup_restore_indicator_file: "{{ hail_s3_backup_restore_indicator_file }}"
+    

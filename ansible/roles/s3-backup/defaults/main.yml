@@ -5,24 +5,29 @@
 ###############################################################################
 #
 # s3_backup_s3_bucket:
-#   
+#   S3 bucket for backup
 #
-# s3_backup_s3_endpoint:
-#   
+# s3_backup_s3_host:
+#   S3 host for backup
 #
 # s3_backup_s3_access_key:
-#   
+#   S3 access key for backup
 #
 # s3_backup_s3_secret_key:
-#   
+#   S3 secret key for backup
 #
 # s3_backup_source_dir:
-#   Directory tree to backup
+#   directory tree to backup
 #
-# s3_backup_dest_url:
-#   URL to backup to
+# s3_backup_dest_path:
+#   path within bucket for backup
 #
 ###############################################################################
+
+###############################################################################
+# Restore from s3 if if this file is present (then delete it)
+###############################################################################
+s3_backup_restore_indicator_file: ".restore"
 
 ###############################################################################
 # Settings for how often a backup is made (could be a full or incremental backup)
