@@ -6,12 +6,25 @@
 
 - name: restart nginx
   become: yes
-  service:
+  systemd:
     name: nginx
     state: restarted
+    daemon_reload: yes
 
-- name: restart spark
+- name: restart spark-master
   become: yes
-  service:
-    name: spark
+  systemd:
+    name: spark-master
     state: restarted
+    daemon_reload: yes
+  when: spark_master_p
+  listen: restart spark
+
+- name: restart spark-slave
+  become: yes
+  systemd:
+    name: spark-slave
+    state: restarted
+    daemon_reload: yes
+  when: spark_worker_p
+  listen: restart spark

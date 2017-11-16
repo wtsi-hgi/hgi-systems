@@ -29,15 +29,15 @@
     owner: "{{ spark_user }}"
     mode: 0600
 
-- name: install systemd spark service
+- name: install systemd spark-master service
   become: yes
   template:
-    src: spark.service.j2
-    dest: /etc/systemd/system/spark.service
+    src: spark-master.service.j2
+    dest: /etc/systemd/system/spark-master.service
     owner: root
   notify:
-    - restart spark
     - reload systemd
+    - restart spark
 
 - name: enable and start spark service
   become: yes

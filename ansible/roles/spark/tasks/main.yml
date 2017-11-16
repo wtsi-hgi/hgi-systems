@@ -20,6 +20,13 @@
 ---
 # file: roles/spark/tasks/main.yml
 
+- name: promote hostvars used in handlers to facts
+  set_fact:
+    "{{ item }}": "{{ hostvars[item] }}"
+  with_items: 
+    - spark_master_p
+    - spark_worker_p
+
 - name: create spark group
   become: yes
   group:
@@ -96,6 +103,16 @@
   notify:
     - restart spark
   
+- name: install systemd spark-slave service
+  become: yes
+  template:
+    src: spark-slave.service.j2
+    dest: /etc/systemd/system/spark-slave.service
+    owner: root
+  notify:
+    - reload systemd
+    - restart spark
+
 - import_tasks: master.yml
   when: spark_master_p
 

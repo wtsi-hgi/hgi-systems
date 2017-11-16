@@ -1,3 +1,4 @@
+# {{ ansible_managed }}
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -30,6 +31,8 @@
 spark.master                             spark://{{ spark_master_host }}:{{ spark_master_port }}
 spark.sql.files.maxPartitionBytes        60000000000
 spark.sql.files.openCostInBytes          60000000000
+
+# Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath }}
 spark.driver.extraClassPath		 {{ spark_driver_extra_classpath }}
 
