@@ -82,6 +82,19 @@
     creates: "{{ spark_prefix_dir }}/README.md"
   notify:
     - restart spark
+
+- name: configure spark
+  become: yes
+  become_user: "{{ spark_user }}"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ spark_prefix_dir }}/conf/{{ item }}"
+    owner: "{{ spark_user }}"
+  with_items:
+    - spark-env.sh
+    - spark-defaults.conf
+  notify:
+    - restart spark
   
 - import_tasks: master.yml
   when: spark_master_p
