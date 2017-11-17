@@ -1,8 +1,8 @@
 [arvados-cluster-ncucu]
 arvados-cluster-ncucu-arvados-cluster
 
-[arvados-cluster-wlly8]
-arvados-cluster-wlly8-arvados-cluster
+#[arvados-cluster-wlly8]
+#arvados-cluster-wlly8-arvados-cluster
 
 [arvados-clusters:children]
 arvados-cluster-ncucu
