@@ -58,8 +58,8 @@ consul_binary: consul
 consul_user: consul
 consul_group: consul
 
-consul_use_systemd: false
-consul_use_upstart: true
+consul_use_systemd: {% if ansible_distribution_release == "xenial" %}true{% else %}false{% endif %}
+consul_use_upstart: {% if ansible_distribution_release == "xenial" %}false{% else %}true{% endif %}
 consul_use_initd: false
 
 # Upstart start/stop conditions can vary by distribution and environment

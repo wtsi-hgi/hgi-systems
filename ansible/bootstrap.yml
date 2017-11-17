@@ -27,9 +27,6 @@
 - import_playbook: dynamic-inventory-sanity-check.yml
 - import_playbook: set-facts.yml
 
-# Set dynamic groups (and gather facts)
-- import_playbook: dynamic-groups.yml
-
 # Playbooks that only support root hosts
 - import_playbook: consul.yml
 - import_playbook: gitlab-runners.yml

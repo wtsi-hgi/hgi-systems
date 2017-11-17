@@ -30,7 +30,7 @@
   tags: docker
   become: yes
   apt_repository:
-    repo: "{{ docker_repo }}"
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
     state: present
     update_cache: yes
   when: ansible_os_family == 'Debian'

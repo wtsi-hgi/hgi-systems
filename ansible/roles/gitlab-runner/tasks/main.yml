@@ -34,7 +34,9 @@
   apt_repository:
     repo: "{{ item }}"
     state: present
-  with_items: "{{ gitlab_repos }}"
+  with_items:
+    - deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ {{ ansible_distribution_release }} main
+    - deb-src https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ {{ ansible_distribution_release }} main
   when: ansible_os_family == 'Debian'
 
 - name: install gitlab-runner and docker_container module prereqs (apt)

@@ -7,5 +7,3 @@
 # Configure critical ssh bastion host infrastructure before gathering facts
 - import_playbook: ssh-gateways.yml
 
-# set dynamic groups (and gather facts) as some arvados playbooks require them
-- import_playbook: dynamic-groups.yml
