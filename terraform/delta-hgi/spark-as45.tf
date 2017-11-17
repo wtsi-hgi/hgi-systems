@@ -18,6 +18,7 @@ module "spark-master-as45" {
     user = "${module.ssh-gateway.user}"
   }
 
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
   spark_cluster_id = "as45"
 }
 
@@ -41,5 +42,6 @@ module "spark-compute-as45" {
     user = "${module.ssh-gateway.user}"
   }
 
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
   spark_cluster_id = "as45"
 }

@@ -18,6 +18,7 @@ module "spark-master-ks20" {
     user = "${module.ssh-gateway.user}"
   }
 
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
   spark_cluster_id = "ks20"
 }
 
@@ -41,5 +42,6 @@ module "spark-compute-ks20" {
     user = "${module.ssh-gateway.user}"
   }
 
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
   spark_cluster_id = "ks20"
 }

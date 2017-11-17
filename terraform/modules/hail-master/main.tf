@@ -24,6 +24,20 @@ variable "bastion" {
   default = {}
 }
 
+variable "extra_ansible_groups" {
+  type    = "list"
+  default = []
+}
+
+locals {
+  ansible_groups = [
+    "hail-masters",
+    "hail-cluster-${var.hail_cluster_id}",
+    "consul-agents",
+    "hgi-credentials",
+  ]
+}
+
 resource "openstack_networking_floatingip_v2" "hail-master" {
   provider = "openstack"
   pool     = "nova"
@@ -53,7 +67,7 @@ resource "openstack_compute_instance_v2" "hail-master" {
   user_data = "#cloud-config\nhostname: hail-${var.hail_cluster_id}-master\nfqdn: hail-${var.hail_cluster_id}-master.${var.domain}"
 
   metadata = {
-    ansible_groups = "hail-masters hail-cluster-${var.hail_cluster_id} hgi-credentials consul-agents"
+    ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"

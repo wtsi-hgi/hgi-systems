@@ -24,6 +24,20 @@ variable "bastion" {
   default = {}
 }
 
+variable "extra_ansible_groups" {
+  type    = "list"
+  default = []
+}
+
+locals {
+  ansible_groups = [
+    "hail-computers",
+    "spark-cluster-${var.spark_cluster_id}-members",
+    "consul-agents",
+    "hgi-credentials",
+  ]
+}
+
 resource "openstack_compute_instance_v2" "spark-compute" {
   provider    = "openstack"
   count       = "${var.count}"
@@ -48,7 +62,7 @@ resource "openstack_compute_instance_v2" "spark-compute" {
   user_data = "#cloud-config\nhostname: spark-${var.spark_cluster_id}-compute-${count.index}\nfqdn: spark-${var.spark_cluster_id}-compute-${count.index}.${var.domain}"
 
   metadata = {
-    ansible_groups = "hail-computers spark-cluster-${var.spark_cluster_id}-members hgi-credentials consul-agents"
+    ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
