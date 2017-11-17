@@ -178,7 +178,6 @@
     - arvados-api-server
   notify:
     - reconfigure arvados-api-server
-    - create api tokens
 
 - name: create directories for arvados
   become: yes
@@ -202,39 +201,37 @@
     - database.yml
   notify:
     - reconfigure arvados-api-server
-    - create api tokens
     - restart crunch-dispatch-pipelines
     - restart crunch-dispatch-jobs
 
-- name: copy superuser token 
+- name: copy api token files
   become: yes
   copy:
-    content: "{{ arvados_cluster_superuser_api_token }}"
-    dest: "{{ arvados_master_superuser_token_file }}"
+    content: "{{ item.token }}"
+    dest: "{{ item.file }}"
     owner: www-data
     mode: 0600
-  notify:
-    - create api tokens
+  with_items:
+    - { token: "{{ arvados_cluster_superuser_api_token }}", file: "{{ arvados_master_superuser_token_file }}" }
+    - { token: "{{ arvados_cluster_crunch_dispatcher_api_token }}", file: "{{ arvados_master_crunch_dispatcher_token_file }}" }
+    - { token: "{{ arvados_cluster_data_manager_api_token }}", file: "{{ arvados_master_data_manager_token_file }}" }
+  register: arvados_master_api_token_files
 
-- name: copy crunch dispatcher token 
+- name: create api tokens from files
   become: yes
-  copy:
-    content: "{{ arvados_cluster_crunch_dispatcher_api_token }}"
-    dest: "{{ arvados_master_crunch_dispatcher_token_file }}"
-    owner: www-data
-    mode: 0600
-  notify:
-    - create api tokens
-
-- name: copy data manager token 
-  become: yes
-  copy:
-    content: "{{ arvados_cluster_data_manager_api_token }}"
-    dest: "{{ arvados_master_data_manager_token_file }}"
-    owner: www-data
-    mode: 0600
-  notify:
-    - create api tokens
+  become_user: www-data
+  shell: "bundle exec ./script/create_superuser_token.rb $(cat {{ item }})"
+  args:
+    executable: /bin/sh
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  with_items:
+    - "{{ arvados_master_superuser_token_file }}"
+    - "{{ arvados_master_crunch_dispatcher_token_file }}"
+    - "{{ arvados_master_data_manager_token_file }}"
+  when: arvados_master_api_token_files.changed
 
 - name: copy ssl certificate
   become: yes
@@ -273,7 +270,18 @@
     dest: "{{ arvados_master_create_workbench_api_client_script }}"
     mode: 0700
     owner: www-data
-  notify: create trusted workbench api client
+  register: arvados_master_workbench_api_client_script
+
+- name: run script to create trusted workbench api client
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_workbench_api_client_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  when: arvados_master_workbench_api_client_script.changed
 
 - name: create mercury admin user script
   become: yes
@@ -282,9 +290,19 @@
     dest: "{{ arvados_master_create_mercury_admin_user_script }}"
     mode: 0700
     owner: www-data
-  notify:
-    - create mercury admin user
+  register: arvados_master_mercury_admin_user_script
   
+- name: create mercury admin user
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_mercury_admin_user_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  when: arvados_master_mercury_admin_user_script.changed
+
 ##############################################################################
 # crunch-dispatch-slurm (crunch v2 slurm dispatcher)
 ##############################################################################
@@ -425,25 +443,26 @@
    - restart arvados-ws
 
 - name: query systemd version
-  become: yes
-  command: systemd --version
+  shell: "systemd --version | awk 'NR==1 {print $2}'"
   changed_when: false
-  register: systemd_version
+  register: arvados_master_systemd_version
 
-- name: determine what version of systemd to remove
-  set_fact:
-    # TODO: Make this more readable!
-    incorrect_ansible_ws_service_line: "{{ 'StartLimitInterval' if (systemd_version.stdout.split('\n')[0].split(' ')[1] | version_compare('230', '>=')) else 'StartLimitIntervalSec' }}.*"
-  changed_when: false
-
-- name: correct ansible-ws.service for version of systemd
+- name: comment/uncomment arvados-ws.service lines based on systemd version
   become: yes
-  lineinfile:
+  replace:
     path: /lib/systemd/system/arvados-ws.service
-    regexp: "{{ incorrect_ansible_ws_service_line }}"
-    state: absent
-  notify:
-    - reload systemd
+    regexp: "^(#{{ item.marker }}[\\n])#?(.*?)$"
+    replace: "\\1{% if arvados_master_systemd_version.stdout | version_compare('230', item.comment_when_version) %}#{% endif %}\\2"
+  when: 
+  with_items:
+    - { marker: " systemd<230", comment_when_version: ">=" }
+    - { marker: " systemd>=230", comment_when_version: "<" }
+  register: arvados_master_ws_service
+
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+  when: arvados_master_ws_service.changed
 
 - name: ensure ws configuration directory exists
   become: yes
@@ -583,7 +602,7 @@
   changed_when: false
   register: localhost_host_keys
 
-- name: add localhost host keys to git user's known_hosts
+- name: add localhost host keys to git user known_hosts
   become: yes
   become_user: git
   known_hosts: 
