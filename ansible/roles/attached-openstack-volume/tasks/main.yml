@@ -78,7 +78,7 @@
 - name: mark newly created filesystem with create indicator file
   become: yes
   file:
-    path: "{{ item.mountpoint }}/{{ attached_openstack_volume_fs_create_indicator_file }}"
+    path: "{{ item.item.mountpoint }}/{{ attached_openstack_volume_fs_create_indicator_file }}"
     state: touch
   when: item.changed and attached_openstack_volume_fs_create_indicator_file != ""
   with_items: "{{ attached_openstack_volume_filesystem.results }}"
