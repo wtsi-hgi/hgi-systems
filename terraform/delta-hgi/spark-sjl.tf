@@ -19,7 +19,7 @@ module "spark-master-sjl" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "sjl"
+  spark_cluster_id     = "sjl"
 }
 
 module "spark-compute-sjl" {
@@ -43,5 +43,5 @@ module "spark-compute-sjl" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "sjl"
+  spark_cluster_id     = "sjl"
 }

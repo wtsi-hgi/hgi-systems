@@ -17,9 +17,9 @@ module "hail-master-02" {
     host = "${module.ssh-gateway.host}"
     user = "${module.ssh-gateway.user}"
   }
- 
+
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  hail_cluster_id = "02"
+  hail_cluster_id      = "02"
 }
 
 module "hail-compute-02" {
@@ -43,5 +43,5 @@ module "hail-compute-02" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  hail_cluster_id = "02"
+  hail_cluster_id      = "02"
 }

@@ -19,7 +19,7 @@ module "spark-master-em21" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "em21"
+  spark_cluster_id     = "em21"
 }
 
 module "spark-compute-em21" {
@@ -43,5 +43,5 @@ module "spark-compute-em21" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "em21"
+  spark_cluster_id     = "em21"
 }

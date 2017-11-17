@@ -19,7 +19,7 @@ module "spark-master-ag15" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "ag15"
+  spark_cluster_id     = "ag15"
 }
 
 module "spark-compute-ag15" {
@@ -43,5 +43,5 @@ module "spark-compute-ag15" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "ag15"
+  spark_cluster_id     = "ag15"
 }

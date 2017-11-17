@@ -19,7 +19,7 @@ module "spark-master-ew7" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "ew7"
+  spark_cluster_id     = "ew7"
 }
 
 module "spark-compute-ew7" {
@@ -43,5 +43,5 @@ module "spark-compute-ew7" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "ew7"
+  spark_cluster_id     = "ew7"
 }

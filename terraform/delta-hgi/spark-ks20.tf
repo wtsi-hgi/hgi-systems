@@ -19,7 +19,7 @@ module "spark-master-ks20" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "ks20"
+  spark_cluster_id     = "ks20"
 }
 
 module "spark-compute-ks20" {
@@ -43,5 +43,5 @@ module "spark-compute-ks20" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id = "ks20"
+  spark_cluster_id     = "ks20"
 }
