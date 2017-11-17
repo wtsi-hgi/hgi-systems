@@ -85,6 +85,6 @@
   when: ansible_os_family == 'FreeBSD'
  
 - name: common root configuration not to be baked into images
-  include: root-post-image-building.yml
+  import_tasks: root-post-image-building.yml
   when: "not 'image-building' in group_names"
 

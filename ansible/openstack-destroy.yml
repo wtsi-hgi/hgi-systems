@@ -21,8 +21,8 @@
 # file: openstack-destroy.yml
 
 # destroy openstack instances
-- include: openstack-destroy-instances.yml
+- import_playbook: openstack-destroy-instances.yml
 
 # destroy openstack networks
-- include: openstack-destroy-networks.yml
+- import_playbook: openstack-destroy-networks.yml
 

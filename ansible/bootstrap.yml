@@ -21,18 +21,18 @@
 # file: site.yml
 
 # Bootstrap openstack resources managed by ansible before doing anything else
-- include: openstack-bootstrap.yml
+- import_playbook: openstack-bootstrap.yml
 
 # Check dynamic inventory and set dynamic groups and facts
-- include: dynamic-inventory-sanity-check.yml
-- include: set-facts.yml
+- import_playbook: dynamic-inventory-sanity-check.yml
+- import_playbook: set-facts.yml
 
 # Set dynamic groups (and gather facts)
-- include: dynamic-groups.yml
+- import_playbook: dynamic-groups.yml
 
 # Playbooks that only support root hosts
-- include: consul.yml
-- include: gitlab-runners.yml
+- import_playbook: consul.yml
+- import_playbook: gitlab-runners.yml
 
 # Higher-level infrastructure built on top of hosts
-- include: consul-clusters.yml
+- import_playbook: consul-clusters.yml

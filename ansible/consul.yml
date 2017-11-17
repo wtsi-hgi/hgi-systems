@@ -41,4 +41,4 @@
     - consul-server
 
 # Higher-level infrastructure built on top of hosts
-- include: consul-clusters.yml
+- import_playbook: consul-clusters.yml

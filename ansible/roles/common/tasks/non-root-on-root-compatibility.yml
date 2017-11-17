@@ -42,6 +42,6 @@
     - "{{ hgi_pkglocal_dir }}"
 
 - name: Run common configuration for nonroot hosts
-  include: nonroot.yml
+  import_tasks: nonroot.yml
   become: yes
   become_user: mercury
