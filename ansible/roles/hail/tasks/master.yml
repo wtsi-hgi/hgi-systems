@@ -19,6 +19,24 @@
     owner: "{{ hail_user }}"
     group: "{{ hail_user }}"
 
+- name: setup s3 to backup hail data 
+  import_role:
+    name: s3-backup
+  vars:
+    ###############################################################################
+    # Variables that have no defaults and must be set
+    ###############################################################################
+    s3_backup_s3_bucket: "{{ hail_backup_s3_backup_bucket }}"
+    s3_backup_s3_host: "{{ hail_backup_s3_host }}"
+    s3_backup_s3_access_key: "{{ hail_backup_s3_access_key }}"
+    s3_backup_s3_secret_key: "{{ hail_backup_s3_secret_key }}"
+    s3_backup_source_dir: "{{ hail_master_data_dir }}"
+    s3_backup_dest_path: "{{ hail_data_backup_path }}"
+    ###############################################################################
+    # Restore from s3 if if this file is present (then delete it)
+    ###############################################################################
+    s3_backup_restore_indicator_file: "{{ hail_s3_backup_restore_indicator_file }}"
+
 - name: check if /data is a symlink
   become: yes
   stat:
@@ -27,25 +45,6 @@
   ignore_errors: yes
   register: data_stat
 
-- name: unmount /data if it is not a link (TODO remove after migration)
-  become: yes
-  command: umount /data
-  when: >-
-    ('stat' in data_stat) and 
-    (data_stat.stat.islnk is defined) and 
-    (not data_stat.stat.islnk)
-  ignore_errors: yes
-
-- name: remove /data if it is not a link (TODO remove after migration)
-  become: yes
-  file: 
-    path: /data
-    state: absent
-  when: >-
-    ('stat' in data_stat) and 
-    (data_stat.stat.islnk is defined) and 
-    (not data_stat.stat.islnk)
-  
 - name: link /data to data dir for convenience
   become: yes
   file:
@@ -137,21 +136,4 @@
     name: hail
     state: started
   
-- name: setup s3 to backup hail data 
-  import_role:
-    name: s3-backup
-  vars:
-    ###############################################################################
-    # Variables that have no defaults and must be set
-    ###############################################################################
-    s3_backup_s3_bucket: "{{ hail_backup_s3_backup_bucket }}"
-    s3_backup_s3_host: "{{ hail_backup_s3_host }}"
-    s3_backup_s3_access_key: "{{ hail_backup_s3_access_key }}"
-    s3_backup_s3_secret_key: "{{ hail_backup_s3_secret_key }}"
-    s3_backup_source_dir: "{{ hail_master_data_dir }}"
-    s3_backup_dest_path: "{{ hail_data_backup_path }}"
-    ###############################################################################
-    # Restore from s3 if if this file is present (then delete it)
-    ###############################################################################
-    s3_backup_restore_indicator_file: "{{ hail_s3_backup_restore_indicator_file }}"
     
