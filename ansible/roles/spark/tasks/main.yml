@@ -119,7 +119,7 @@
   get_url:
     url: "{{ spark_hadoop_tgz_url }}"
     checksum: "{{ spark_hadoop_tgz_checksum }}"
-    dest: "/home/{{ spark_user }}/spark-{{ spark_hadoop_version }}.tgz"
+    dest: "/home/{{ spark_user }}/hadoop-{{ spark_hadoop_version }}.tgz"
     mode: 0644
 
 - name: create hadoop directory
