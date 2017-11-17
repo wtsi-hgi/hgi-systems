@@ -75,8 +75,9 @@
     aws_secret_key: "{{ s3_backup_s3_secret_key }}"
 
 - name: check if restore indicator is present
+  become: yes
   stat:
-    path: "{{ s3_backup_restore_indicator_file }}"
+    path: "{{ s3_backup_source_dir }}/{{ s3_backup_restore_indicator_file }}"
   register: s3_backup_stat
 
 - name: restore from s3 when restore indicator is present
@@ -100,7 +101,7 @@
     - name: delete restore indicator
       become: yes
       file:
-        path: "{{ s3_backup_restore_indicator_file }}"
+        path: "{{ s3_backup_source_dir }}/{{ s3_backup_restore_indicator_file }}"
         state: absent
   when: s3_backup_stat.stat.exists
 
