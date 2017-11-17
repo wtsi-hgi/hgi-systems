@@ -76,7 +76,8 @@
 - name: initially copy hail tutorials into data dir
   become: yes
   command: rsync -az "{{ hail_prefix_dir }}/python/hail/docs/tutorials/" "{{ hail_master_data_dir }}/tutorials"
-  creates:  "{{ hail_master_data_dir }}/tutorials"
+  args:
+    creates:  "{{ hail_master_data_dir }}/tutorials"
 
 - name: copy ssl certificate
   become: yes
