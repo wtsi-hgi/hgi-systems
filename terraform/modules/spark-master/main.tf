@@ -53,7 +53,7 @@ resource "openstack_compute_instance_v2" "spark-master" {
   user_data = "#cloud-config\nhostname: spark-${var.spark_cluster_id}-master\nfqdn: spark-${var.spark_cluster_id}-master.${var.domain}"
 
   metadata = {
-    ansible_groups = "hail-masters spark-cluster-${var.spark_cluster_id}-members hgi-credentials"
+    ansible_groups = "hail-masters spark-cluster-${var.spark_cluster_id}-members hgi-credentials consul-agents"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"

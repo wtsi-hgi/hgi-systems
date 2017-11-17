@@ -48,7 +48,7 @@ resource "openstack_compute_instance_v2" "hail-compute" {
   user_data = "#cloud-config\nhostname: hail-${var.hail_cluster_id}-compute-${count.index}\nfqdn: hail-${var.hail_cluster_id}-compute-${count.index}.${var.domain}"
 
   metadata = {
-    ansible_groups = "hail-computers hail-cluster-${var.hail_cluster_id} hgi-credentials"
+    ansible_groups = "hail-computers hail-cluster-${var.hail_cluster_id} hgi-credentials consul-agents"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
