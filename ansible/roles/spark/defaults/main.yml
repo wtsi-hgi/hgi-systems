@@ -58,9 +58,9 @@ spark_hadoop_version: 2.8.2
 # Source URL and checksum (use builds on Apache mirrors by default)
 ###############################################################################
 spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
-spark_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+spark_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
 spark_hadoop_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz"
-spark_hadoop_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz.md5').split('\n')[1] | regex_replace('^([0-9a-f]+)\\s.*$', '\\1') }}"
+spark_hadoop_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz.md5').split(',')[1] | regex_replace('^([0-9a-f]+)\\s.*$', '\\1') }}"
 
 ###############################################################################
 # Directories and Paths
