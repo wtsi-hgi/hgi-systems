@@ -18,15 +18,13 @@
 # limitations under the License.
 #
 
-# This file is sourced when running various Spark programs.
-# Copy it as spark-env.sh and edit that to configure Spark for your site.
-
 # Options read when launching programs locally with
 # ./bin/run-example or ./bin/spark-submit
 # - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files
 # - SPARK_LOCAL_IP, to set the IP address Spark binds to on this node
 # - SPARK_PUBLIC_DNS, to set the public dns name of the driver program
 # - SPARK_CLASSPATH, default classpath entries to append
+HADOOP_CONF_DIR={{ spark_hadoop_prefix_dir }}/etc/hadoop
 SPARK_LOCAL_IP={{ spark_local_ip }}
 
 # Options read by executors and drivers running inside the cluster
@@ -67,3 +65,6 @@ SPARK_MASTER_PORT={{ spark_master_port }}
 # - SPARK_NICENESS      The scheduling priority for daemons. (Default: 0)
 # - SPARK_NO_DAEMONIZE  Run the proposed command in the foreground. It will not output a PID file.
 
+# Hadoop options
+HADOOP_HOME={{ spark_hadoop_prefix_dir }}
+LD_LIBRARY_PATH="${HADOOP_HOME}/lib/native:${LD_LIBRARY_PATH}"

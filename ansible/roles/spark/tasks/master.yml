@@ -39,12 +39,13 @@
     - reload systemd
     - restart spark
 
-- name: enable and start spark service
+- name: enable and start spark-master service
   become: yes
   service:
-    name: spark
+    name: spark-master
     enabled: yes
     state: started
+    daemon_reload: yes
 
 - name: configure nginx web ui
   block:

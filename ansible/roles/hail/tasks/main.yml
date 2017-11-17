@@ -55,8 +55,8 @@
       # Spark settings
       ###############################################################################
       spark_jars: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
-      #spark_executor_extra_classpath: ""
-      #spark_driver_extra_classpath: ""
+      spark_executor_extra_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+      spark_driver_extra_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
       spark_local_ip: "{{ hail_spark_local_ip }}"
       spark_master_host: "{{ hail_spark_master_host }}"
       #spark_master_port: "7077"
