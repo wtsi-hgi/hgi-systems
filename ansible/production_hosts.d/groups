@@ -135,6 +135,7 @@ openstack-instances
 tf_type_openstack_compute_instance_v2
 
 [terraform-ci:children]
+canaries
 terraform
 consul-servers
 arvados-clusters
