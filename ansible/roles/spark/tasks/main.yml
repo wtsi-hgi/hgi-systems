@@ -113,6 +113,34 @@
     - reload systemd
     - restart spark
 
+- name: download hadoop tgz
+  become: yes
+  become_user: "{{ spark_user }}"
+  get_url:
+    url: "{{ spark_hadoop_tgz_url }}"
+    checksum: "{{ spark_hadoop_tgz_checksum }}"
+    dest: "/home/{{ spark_user }}/spark-{{ spark_hadoop_version }}.tgz"
+    mode: 0644
+
+- name: create hadoop directory
+  become: yes
+  file:
+    path: "{{ spark_hadoop_prefix_dir }}"
+    state: directory
+    owner: "{{ spark_user }}"
+
+- name: expand hadoop
+  become: yes
+  become_user: "{{ spark_user }}"
+  unarchive:
+    src: "/home/{{ spark_user }}/hadoop-{{ spark_hadoop_version }}.tgz"
+    dest: "{{ spark_hadoop_prefix_dir }}"
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+    creates: "{{ spark_hadoop_prefix_dir }}/README.md"
+  notify:
+    - restart spark
+
 - import_tasks: master.yml
   when: spark_master_p
 

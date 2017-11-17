@@ -52,23 +52,28 @@
 ###############################################################################
 spark_version: 2.1.1
 spark_build_version: "{{ spark_version }}"
+spark_hadoop_version: 2.8.2
 
 ###############################################################################
 # Source URL and checksum (use builds on Apache mirrors by default)
 ###############################################################################
 spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
 spark_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+spark_hadoop_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz"
+spark_hadoop_tgz_checksum: "md5:{{ lookup('url', 'https://www-eu.apache.org/dist/hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz.md5').split('\n')[1] | regex_replace('^([0-9a-f]+)\s.*$', '\\1') }}"
 
 ###############################################################################
 # Directories and Paths
 ###############################################################################
 spark_prefix_dir: "/usr/local/spark-{{ spark_version }}"
+spark_hadoop_prefix_dir: "/usr/local/hadoop-{{ spark_hadoop_version }}"
 spark_ssl_key_file: /etc/ssl.key
 spark_ssl_cert_file: /etc/ssl.cert
 
 ###############################################################################
 # Spark settings
 ###############################################################################
+spark_jars: ""
 spark_executor_extra_classpath: ""
 spark_driver_extra_classpath: ""
 spark_local_ip: "127.0.0.1"

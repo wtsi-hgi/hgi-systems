@@ -31,6 +31,7 @@
 spark.master                             spark://{{ spark_master_host }}:{{ spark_master_port }}
 spark.sql.files.maxPartitionBytes        60000000000
 spark.sql.files.openCostInBytes          60000000000
+spark.jars				 {{ spark_jars }}
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath }}
