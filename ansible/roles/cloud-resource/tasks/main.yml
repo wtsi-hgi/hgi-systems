@@ -3,11 +3,11 @@
   set_fact:
     cloud_resource_name: "{{ terraform_name | default(openstack_name) }}"
     cloud_resource_tenant: "{{ terraform_tenant | default(openstack_tenant) }}"
-    cloud_resource_ip: "{{ tf_type_openstack_compute_instance_v2_floating_ip | default(os_public_v4, true) | default(tf_access_ip_v4, true) | default(os_accessIPv4, true) }}"
-    cloud_resource_public_ip: "{{ tf_type_openstack_compute_instance_v2_floating_ip | default(os_public_v4) | default('') }}"
+    cloud_resource_ip: "{{ tf_type_openstack_compute_instance_v2_GROUP_floating_ip | default(os_public_v4, true) | default(tf_access_ip_v4, true) | default(os_accessIPv4, true) }}"
+    cloud_resource_public_ip: "{{ tf_type_openstack_compute_instance_v2_GROUP_floating_ip | default(os_public_v4) | default('') }}"
     cloud_resource_private_ip: "{{ tf_access_ip_v4 | default(os_accessIPv4, true) }}"
 
 - name: set cloud_resource facts phase II
   set_fact:
-    cloud_resource_fqdn: "{{ cloud_resource_name }}{% if ((tf_type_openstack_compute_instance_v2_floating_ip | default(os_public_v4) | default('')) != '') %}.hgi.sanger.ac.uk{% else %}.node.{{ cloud_resource_tenant }}.consul{% endif %}"
+    cloud_resource_fqdn: "{{ cloud_resource_name }}{% if ((tf_type_openstack_compute_instance_v2_GROUP_floating_ip | default(os_public_v4) | default('')) != '') %}.hgi.sanger.ac.uk{% else %}.node.{{ cloud_resource_tenant }}.consul{% endif %}"
 

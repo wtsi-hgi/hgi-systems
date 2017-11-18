@@ -22,7 +22,8 @@
 ---
 # file: group_vars/all
 
-all_apt_cache_valid_time: 86400
+all_GROUP_apt_cache_valid_time: 86400
+all_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}" # FIXME remove this after refactor
 
 # FIXME: everything below should be namespaced into `all_` (or moved elsewhere)
 
@@ -64,7 +65,7 @@ control_path: "{% if bastion_host is defined and bastion_host != '' and bastion_
 
 pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
-sanger_network_dns_servers:
+all_GROUP_sanger_network_dns_servers:
   - 172.18.255.1
   - 172.18.255.2
   - 172.18.255.3

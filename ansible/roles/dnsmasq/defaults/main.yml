@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors: 
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-systems.
 #
@@ -18,32 +19,24 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/consul-cluster/defaults/main.yml
+# file: roles/dnsmasq/defaults/main.yml
 
 ###############################################################################
 # Variables that have no defaults and must be set
 ###############################################################################
 #
-# consul_cluster_infoblox_api_server:
-# consul_cluster_infoblox_api_version:
-# consul_cluster_infoblox_username:
-# consul_cluster_infoblox_password:
-# consul_cluster_dns_name:
-# consul_cluster_server_wan_ips:
-# consul_cluster_servers: 
-# consul_cluster_server_ips: 
-# consul_cluster_server_acl_token: 
-# consul_cluster_acl_master_token:
-# consul_cluster_acl_agent_master_token: 
-# consul_cluster_acl_management_name:
-# consul_cluster_acl_terraform_name:
-# consul_cluster_acl_terraform_token:
-# consul_cluster_acl_agent_name:
-# consul_cluster_acl_agent_token:
 #
 ###############################################################################
 
-consul_cluster_infoblox_delegate: 127.0.0.1
-consul_cluster_infoblox_dns_view: internal
-consul_cluster_dns_ttl_in_seconds: 60
+###############################################################################
+# Vars that can be overridden
+###############################################################################
+dnsmasq_search_domains: []
+dnsmasq_upstream_dns_servers: 
+  - "8.8.8.8"
+  - "8.8.4.4"
 
+###############################################################################
+# General settings
+###############################################################################
+dnsmasq_apt_cache_valid_time: 86400

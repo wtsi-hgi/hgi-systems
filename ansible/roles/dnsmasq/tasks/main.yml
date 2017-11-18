@@ -1,6 +1,7 @@
 # Copyright (c) 2017 Genome Research Ltd.
 #
-# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+# Authors: 
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-systems.
 #
@@ -17,20 +18,15 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
+# file: roles/dnsmasq/tasks/main.yml
 ---
-# file: roles/consul-agent/tasks/main.yml
-
-- name: install Consul agent
-  become: yes
-  include_role:
-    name: wtsi-hgi.ansible-consul
 
 - name: install dnsmasq
   become: yes
   apt:
     name: "{{ item }}"
     update_cache: yes
-    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+    cache_valid_time: "{{ hgi_consul_apt_cache_valid_time }}"
   with_items:
     - dnsmasq
 
@@ -64,8 +60,8 @@
   lineinfile:
     path: /etc/resolvconf/resolv.conf.d/base
     state: present
-    regexp: "^search node.{{ consul_datacenter }}.consul$"
-    line: "search node.{{ consul_datacenter }}.consul"
+    regexp: "^search {{ item }}$"
+    line: "search {{ item }}"
+  with_items: "{{ dnsmasq_search_domains }}"
   notify:
     - update resolvconf
-

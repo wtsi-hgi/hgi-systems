@@ -96,6 +96,12 @@ spark_group: "{{ spark_user }}"
 spark_authorized_keys: []
 
 ###############################################################################
+# Node types
+###############################################################################
+spark_master_p: "{{ inventory_hostname in spark_master_host_list }}"
+spark_worker_p: "{{ inventory_hostname in spark_worker_host_list }}"
+
+###############################################################################
 # General settings
 ###############################################################################
 spark_apt_cache_valid_time: 86400

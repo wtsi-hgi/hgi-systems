@@ -19,38 +19,27 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
-# file: roles/consul-server/tasks/main.yml
+# file: roles/hgi-consul/tasks/consul-server.yml
 ---
 
-- name: sanity check consul vars
-  assert:
-    that:
-      - '(consul_bootstrap_expect == "3") or (consul_bootstrap_expect == "5") or (consul_bootstrap_expect == "7")'
-    msg: "must have 3, 5, or 7 unique consul_servers, but have consul_bootstrap_expect: {{ consul_bootstrap_expect }} ({{ consul_servers }})."
-
-- name: Install Consul
-  become: yes
-  import_role:
-    name: wtsi-hgi.ansible-consul
-
-- name: Setup S3 to backup Consul
+- name: setup s3-backup
   import_role:
     name: s3-backup
   vars:
-    s3_backup_source_dir: "{{ consul_data_dir }}"
-    s3_backup_dest_path: "{{ volume }}"
-    s3_backup_s3_host: "{{ consul_server_s3_host }}"
-    s3_backup_s3_access_key: "{{ consul_server_s3_access_key }}"
-    s3_backup_s3_secret_key: "{{ consul_server_s3_secret_key }}"
-    s3_backup_s3_bucket: "{{ consul_server_s3_backup_bucket }}"
+    s3_backup_source_dir: "{{ hgi_consul_s3_backup_source_dir }}"
+    s3_backup_dest_path: "{{ hgi_consul_s3_backup_dest_path }}"
+    s3_backup_s3_host: "{{ hgi_consul_s3_host }}"
+    s3_backup_s3_access_key: "{{ hgi_consul_s3_access_key }}"
+    s3_backup_s3_secret_key: "{{ hgi_consul_s3_secret_key }}"
+    s3_backup_s3_bucket: "{{ hgi_consul_s3_backup_bucket }}"
+  when: hgi_consul_server_p
 
-# TODO: This should be done in common setup
 - name: setup to install packages from PyPi
   become: yes
   apt:
     name: "{{ item }}"
     update_cache: yes
-    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+    cache_valid_time: "{{ hgi_consul_apt_cache_valid_time }}"
   with_items:
     - python
     - python-pip

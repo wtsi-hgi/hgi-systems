@@ -30,7 +30,7 @@ no-resolv
 #server=1.2.3.4
 #server=208.67.222.222
 #server=8.8.8.8
-{% for server in sanger_network_dns_servers %}
+{% for server in dnsmasq_upstream_dns_servers %}
 server={{ server }}
 {% endfor %}
 

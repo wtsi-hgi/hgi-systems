@@ -1,5 +1,5 @@
 # Vault contains:
-# consul_credentials:
+# consul_credentials_GROUP_creds:
 #  terraform:
 #    token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
 #  agent:
