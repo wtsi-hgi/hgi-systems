@@ -39,26 +39,27 @@
   import_role:
     name: wtsi-hgi.ansible-consul
   vars:
-    consul_is_ui: "{% if hgi_consul_server_p %}true{% else %}false{% endif %}"
-    consul_is_server: "{% if hgi_consul_server_p %}true{% else %}false{% endif %}"
-    consul_dns_config: true
-    consul_install_nginx: "{% if hgi_consul_server_p %}true{% else %}false{% endif %}"
+    consul_is_ui: "{% if hgi_consul_server_p %}True{% else %}False{% endif %}"
+    consul_is_server: "{% if hgi_consul_server_p %}True{% else %}False{% endif %}"
+    consul_dns_config: True
+    consul_install_nginx: "{% if hgi_consul_server_p %}True{% else %}False{% endif %}"
     # Work around for https://github.com/savagegus/ansible-consul/issues/199
-    nginx_remove_default: "{% if hgi_consul_server_p %}true{% else %}false{% endif %}"
-    nginx_remove_default_vhost: "{% if hgi_consul_server_p %}true{% else %}false{% endif %}"
+    nginx_remove_default: "{% if hgi_consul_server_p %}True{% else %}False{% endif %}"
+    nginx_remove_default_vhost: "{% if hgi_consul_server_p %}True{% else %}False{% endif %}"
     consul_version: 0.8.4
     consul_home: /opt/consul
+    consul_datacenter: "{{ hgi_consul_datacenter }}"
     consul_advertise_address: "{{ hgi_consul_advertise_address }}"
     consul_advertise_address_wan: "{{ hgi_consul_advertise_address_wan }}"
-    consul_use_systemd: "{% if hgi_consul_service_manager == 'systemd' %}true{% else %}false{% endif %}"
-    consul_use_upstart: "{% if hgi_consul_service_manager == 'upstart' %}true{% else %}false{% endif %}"
+    consul_use_systemd: "{% if hgi_consul_service_manager == 'systemd' %}True{% else %}False{% endif %}"
+    consul_use_upstart: "{% if hgi_consul_service_manager == 'upstart' %}True{% else %}False{% endif %}"
     consul_client_address: 0.0.0.0
-    consul_client_address_bind: true
+    consul_client_address_bind: True
     consul_data_dir: "{{ hgi_consul_data_dir }}"
-    consul_dns_allow_stale: true
+    consul_dns_allow_stale: True
     consul_dns_max_stale: 30s
     consul_dns_node_ttl: 30s
-    consul_dns_only_passing: true
+    consul_dns_only_passing: True
     consul_recursors: "{{ hgi_consul_recursors }}"
     consul_node_name: "{{ hgi_consul_node_name }}"
     consul_encrypt: "{{ hgi_consul_encrypt }}"
@@ -70,9 +71,9 @@
     consul_acl_datacenter: "{{ hgi_consul_datacenter }}"
     consul_servers: "{{ hgi_consul_servers }}"
     consul_servers_wan: "{{ hgi_consul_servers_wan }}"
-    consul_join_wan: true
-    consul_retry_join: true
-    consul_retry_join_wan: true
+    consul_join_wan: True
+    consul_retry_join: True
+    consul_retry_join_wan: True
 
 - name: additional setup for consul-server
   import_tasks: consul-server.yml
