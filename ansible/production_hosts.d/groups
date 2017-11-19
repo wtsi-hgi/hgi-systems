@@ -121,6 +121,8 @@ gitlab-runners
 consul-servers
 sparkers
 hailers
+arvados-masters
+arvados-ssos
 
 # OpenStack instances to be created by Ansible
 [openstack-instances:children]
