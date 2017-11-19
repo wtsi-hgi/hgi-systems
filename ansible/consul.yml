@@ -28,7 +28,7 @@
     consul_PLAYBOOK_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
     consul_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
     consul_PLAYBOOK_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort }}"
-    consul_PLAYBOOK_server_advertise_addresses: "{{ consul_cluster_GROUP_server_advertise_addresses }}"
+    consul_PLAYBOOK_server_advertise_addresses: "{{ consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
     consul_PLAYBOOK_server_data_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
     consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
     consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
