@@ -35,7 +35,7 @@
         attached_openstack_volume_vg: arvados-sso-vg
         attached_openstack_volume_vols:
           - name: arvados-sso-data
-            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] | int) * 1024) - 4 }}M"
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
             fstype: xfs
             mountpoint: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
         attached_openstack_volumes:
@@ -76,7 +76,7 @@
         attached_openstack_volume_vg: arvados-api-vg
         attached_openstack_volume_vols:
           - name: arvados-api-data
-            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] | int) * 1024) - 4 }}M"
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
             fstype: xfs
             mountpoint: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
         attached_openstack_volumes:
