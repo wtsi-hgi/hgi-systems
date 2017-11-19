@@ -29,7 +29,7 @@
     consul_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
     consul_PLAYBOOK_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort }}"
     consul_PLAYBOOK_server_advertise_addresses: "{{ consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
-    consul_PLAYBOOK_server_data_mountpoint: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name if tf_id is defined else openstack_instances_GROUP_volume_name }}"
+    consul_PLAYBOOK_server_data_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
     consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
     consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
     consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') }}"
@@ -53,6 +53,11 @@
         that: openstack_instances_GROUP_volume_size != ''
         msg: "openstack volume not configured for openstack server."
       when: inventory_hostname in groups['consul-servers'] and tf_id is not defined
+    - name: ensure mountpoint is specified
+      assert:
+        that: consul_PLAYBOOK_server_data_mountpoint != "/mnt/"
+        msg: "mountpoint name is missing: {{ consul_PLAYBOOK_server_data_mountpoint }} (openstack_instance_volumes[0]: {{ openstack_instance_volumes[0] }})"
+      when: inventory_hostname in groups['consul-servers']
     - name: configure attached-openstack-volume for consul-servers
       import_role:
         name: attached-openstack-volume

@@ -60,8 +60,6 @@
     consul_dns_node_ttl: 30s
     consul_dns_only_passing: true
     consul_recursors: "{{ hgi_consul_recursors }}"
-    consul_servers: "{{ hgi_consul_servers }}"
-    consul_retry_join: true
     consul_node_name: "{{ hgi_consul_node_name }}"
     consul_encrypt: "{{ hgi_consul_encrypt }}"
     consul_acl_token: "{{ hgi_consul_acl_token }}"
@@ -70,10 +68,11 @@
     consul_acl_agent_master_token: "{{ hgi_consul_acl_agent_master_token }}"
     consul_acl_default_policy: "deny"
     consul_acl_datacenter: "{{ hgi_consul_datacenter }}"
+    consul_servers: "{{ hgi_consul_servers }}"
     consul_servers_wan: "{{ hgi_consul_servers_wan }}"
     consul_join_wan: true
+    consul_retry_join: true
     consul_retry_join_wan: true
-    consul_retry_join: "{{ hgi_consul_retry_join_list[0] | default(false) }}" # TODO: the ansible-consul role is broken and does not support multiple retry join servers, so this just passes the first
 
 - name: additional setup for consul-server
   import_tasks: consul-server.yml
