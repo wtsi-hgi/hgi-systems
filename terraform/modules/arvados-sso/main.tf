@@ -102,6 +102,16 @@ resource "infoblox_record" "arvados-sso" {
   ttl    = 600
 }
 
+resource "openstack_blockstorage_volume_v2" "arvados-sso-volume" {
+  name = "arvados-${var.arvados_cluster_id}-volume"
+  size = 10
+}
+
+resource "openstack_compute_volume_attach_v2" "arvados-sso-volume-attach" {
+  volume_id   = "${openstack_blockstorage_volume_v2.arvados-sso-volume.id}"
+  instance_id = "${openstack_compute_instance_v2.arvados-sso.id}"
+}
+
 output "ip" {
   value = "${openstack_networking_floatingip_v2.arvados-sso.address}"
 }
