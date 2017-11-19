@@ -77,6 +77,7 @@
 
 - name: additional setup for consul-server
   import_tasks: consul-server.yml
+  when: hgi_consul_server_p
 
 - name: set up dnsmasq
   import_role:
