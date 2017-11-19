@@ -24,12 +24,86 @@
 - import_playbook: hgi-preamble-playbook.yml
 
 - hosts: arvados-ssos
-  roles:
-    - arvados-sso
+  vars:
+    arvados_PLAYBOOK_sso_data_mountpoint: /mnt/arvados-sso-db
+    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+  tasks:
+    - name: configure attached-openstack-volume for arvados sso database
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: arvados-sso-vg
+        attached_openstack_volume_vols:
+          - name: arvados-sso-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup s3 to backup hail data 
+      import_role:
+        name: s3-backup
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_GROUP_master_data_dir }}"
+        s3_backup_dest_path: "{{ arvados_GROUP_data_backup_path }}"
+        ###############################################################################
+        # Restore from s3 if if this file is present (then delete it)
+        ###############################################################################
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: configure arvados-sso
+      import_role:
+        name: arvados-sso
+      vars:
+        arvados_master_sso_data_mountpoint: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
 
 - hosts: arvados-masters
-  roles:
-    - arvados-master
+  vars:
+    arvados_PLAYBOOK_api_data_mountpoint: /mnt/arvados-api-db
+    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+  tasks:
+    - name: configure attached-openstack-volume for arvados api database
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: arvados-api-vg
+        attached_openstack_volume_vols:
+          - name: arvados-api-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup s3 to backup hail data 
+      import_role:
+        name: s3-backup
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_GROUP_master_data_dir }}"
+        s3_backup_dest_path: "{{ arvados_GROUP_data_backup_path }}"
+        ###############################################################################
+        # Restore from s3 if if this file is present (then delete it)
+        ###############################################################################
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: configure arvados-master
+      import_role:
+        name: arvados-master
+      vars:
+        arvados_master_api_data_mountpoint: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
 
 - hosts: arvados-keeps
   roles:
