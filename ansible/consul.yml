@@ -41,16 +41,18 @@
         msg: "one or more consul servers ({{ consul_PLAYBOOK_server_inventory_hostnames }}) are not active in this play, please ensure the limit includes consul-servers"
     - name: check that a terraform volume is present for server
       assert:
-        that: tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''
-        that: tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''
-        that: tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''
+        that:
+          - tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''
+          - tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''
+          - tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''
         msg: "terraform volume not configured for terraform server."
       when: inventory_hostname in groups['consul-servers'] and tf_id is defined
     - name: check that an openstack volume is present for server
       assert:
-        that: openstack_instances_GROUP_volume_device != ''
-        that: openstack_instances_GROUP_volume_name != ''
-        that: openstack_instances_GROUP_volume_size != ''
+        that: 
+          - openstack_instances_GROUP_volume_device != ''
+          - openstack_instances_GROUP_volume_name != ''
+          - openstack_instances_GROUP_volume_size != ''
         msg: "openstack volume not configured for openstack server."
       when: inventory_hostname in groups['consul-servers'] and tf_id is not defined
     - name: ensure mountpoint is specified
