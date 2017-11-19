@@ -30,6 +30,3 @@
 # Playbooks that only support root hosts
 - import_playbook: consul.yml
 - import_playbook: gitlab-runners.yml
-
-# Higher-level infrastructure built on top of hosts
-- import_playbook: consul-clusters.yml
