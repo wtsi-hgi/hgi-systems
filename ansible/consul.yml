@@ -39,13 +39,20 @@
       assert:
         that: consul_PLAYBOOK_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
         msg: "one or more consul servers ({{ consul_PLAYBOOK_server_inventory_hostnames }}) are not active in this play, please ensure the limit includes consul-servers"
-    - name: check that a volume is present for server
+    - name: check that a terraform volume is present for server
       assert:
         that: tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''
         that: tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''
         that: tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''
-        msg: "volume not configured for server."
+        msg: "terraform volume not configured for terraform server."
       when: inventory_hostname in groups['consul-servers'] and tf_id is defined
+    - name: check that an openstack volume is present for server
+      assert:
+        that: openstack_instances_GROUP_volume_device != ''
+        that: openstack_instances_GROUP_volume_name != ''
+        that: openstack_instances_GROUP_volume_size != ''
+        msg: "openstack volume not configured for openstack server."
+      when: inventory_hostname in groups['consul-servers'] and tf_id is not defined
     - name: configure attached-openstack-volume for consul-servers
       import_role:
         name: attached-openstack-volume
@@ -75,7 +82,7 @@
         hgi_consul_node_name: "{{ cloud_resource_name }}"
         hgi_consul_servers: "{{ consul_PLAYBOOK_server_advertise_addresses }}"
         hgi_consul_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"
-        hgi_consul_data_mountpoint: /data/consul
+        hgi_consul_data_dir: "{% if inventory_hostname in groups['consul-servers'] %}{{ consul_PLAYBOOK_server_data_mountpoint }}/data{% else %}/var/consul/data{% endif %}"
         hgi_consul_advertise_address: "{{ cloud_resource_private_ip }}"
         hgi_consul_advertise_address_wan: "{{ cloud_resource_public_ip }}"
         hgi_consul_servers_wan: "{{ consul_PLAYBOOK_servers_wan }}"
