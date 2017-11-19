@@ -29,7 +29,7 @@
     hailers_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
     hailers_PLAYBOOK_s3_backup_bucket: "hail-backup"
     hailers_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
-    hailers_PLAYBOOK_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name_list[0] }}"
+    hailers_PLAYBOOK_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
     hailers_PLAYBOOK_created_restore_indicator_file: ".created-restore"
   tasks:
     - name: assert essential hail group membership
@@ -84,12 +84,9 @@
     - name: assert terraform volume variables are set for hail master
       assert:
         that:
-          - "tf_type_openstack_compute_instance_v2_GROUP_volume_name_list[0] is defined"
-          - "tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] is defined"
-          - "tf_type_openstack_compute_instance_v2_GROUP_volume_device_list[0] is defined"
-          - "tf_type_openstack_compute_instance_v2_GROUP_volume_name_list[0] != ''"
-          - "tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] != ''"
-          - "tf_type_openstack_compute_instance_v2_GROUP_volume_device_list[0] != ''"
+          - "tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''"
+          - "tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''"
+          - "tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''"
       when: inventory_hostname in groups['hail-masters']
     - name: configure attached openstack volume for hail master
       import_role: 
@@ -98,11 +95,11 @@
         attached_openstack_volume_vg: hail-vg
         attached_openstack_volume_vols:
           - name: hail-data
-            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size_list[0] | int) * 1024) - 4 }}M"
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
             fstype: xfs
             mountpoint: "{{ hailers_PLAYBOOK_master_data_dir }}"
         attached_openstack_volumes:
-          - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device_list[0] }}"
+          - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_created_restore_indicator_file }}"
       when: inventory_hostname in groups['hail-masters']
     - name: get spark url and checksum from s3

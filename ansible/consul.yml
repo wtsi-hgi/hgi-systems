@@ -41,8 +41,8 @@
         msg: "one or more consul servers ({{ consul_PLAYBOOK_server_inventory_hostnames }}) are not active in this play, please ensure the limit includes consul-servers"
     - name: check that a volume is present for server
       assert:
-        that: tf_type_openstack_compute_instance_v2_GROUP_volume_device_list != ''
-        that: tf_type_openstack_compute_instance_v2_GROUP_volume_name_list != ''
+        that: tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''
+        that: tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''
         that: tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''
         msg: "volume not configured for server."
       when: inventory_hostname in groups['consul-servers'] and tf_id is defined
