@@ -58,6 +58,13 @@
 [hail-masters]
 [hail-computers]
 [hgi]
+[arvados]
+[arvados-compute-nodes]
+[arvados-keepproxies]
+[arvados-keeps]
+[arvados-masters]
+[arvados-ssos]
+[arvados-workbenches]
 
 [hgs4:children]
 mesos-masters
@@ -140,6 +147,14 @@ terraform
 consul-servers
 arvados-clusters
 consul-cluster-delta-hgiarvados
+
+[arvados:children]
+arvados-compute-nodes
+arvados-keepproxies
+arvados-keeps
+arvados-masters
+arvados-ssos
+arvados-workbenches
 
 [sparkers:children]
 spark-masters
