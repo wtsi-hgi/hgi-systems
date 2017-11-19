@@ -103,7 +103,7 @@ resource "infoblox_record" "arvados-sso" {
 }
 
 resource "openstack_blockstorage_volume_v2" "arvados-sso-volume" {
-  name = "arvados-${var.arvados_cluster_id}-volume"
+  name = "arvados-sso-${var.arvados_cluster_id}-volume"
   size = 10
 }
 

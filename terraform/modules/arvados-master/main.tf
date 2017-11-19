@@ -130,7 +130,7 @@ resource "infoblox_record" "arvados-git" {
 }
 
 resource "openstack_blockstorage_volume_v2" "arvados-master-volume" {
-  name = "arvados-${var.arvados_cluster_id}-volume"
+  name = "arvados-master-${var.arvados_cluster_id}-volume"
   size = 100
 }
 
