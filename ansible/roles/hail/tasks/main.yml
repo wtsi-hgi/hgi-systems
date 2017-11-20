@@ -168,6 +168,16 @@
     owner: "{{ hail_user }}"
     recurse: yes
 
+- name: comment out SPARK_CLASSPATH in hail setup_env
+  become: yes
+  become_user: "{{ hail_user }}"
+  lineinfile:
+    path: "{{ hail_prefix_dir }}/scripts/setup_env"
+    regexp: '^#?(export\s+SPARK_CLASSPATH=.*)$'
+    line: '#\1'
+    backrefs: yes
+  notify: restart hail
+
 - name: create link to jars directory expected by Hail
   become: yes
   file:
