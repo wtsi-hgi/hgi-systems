@@ -117,7 +117,6 @@ resource "infoblox_record" "hail-dns" {
 }
 
 output "ip" {
-  count = "${var.count}"
   value = "${openstack_networking_floatingip_v2.spark-master.address}"
 }
 

@@ -95,6 +95,5 @@ resource "openstack_compute_instance_v2" "spark-compute" {
 #}
 
 output "ip" {
-  count = "${var.count}"
   value = "${openstack_compute_instance_v2.spark-compute.access_ip_v4}"
 }
