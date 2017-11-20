@@ -20,12 +20,13 @@
 ---
 # file: roles/spark/tasks/main.yml
 
-- name: promote hostvars used in handlers to facts
+- name: promote spark_master_p to fact
   set_fact:
-    "{{ item }}": "{{ hostvars[item] }}"
-  with_items: 
-    - spark_master_p
-    - spark_worker_p
+    spark_master_p: "{{ spark_master_p }}"
+
+- name: promote spark_worker_p to fact
+  set_fact:
+    spark_worker_p: "{{ spark_worker_p }}"
 
 - name: create spark group
   become: yes
