@@ -36,10 +36,8 @@ fi
 echo "Calling terraform get"
 terraform get
 
-#echo "Calling terraform refresh"
-#terraform refresh
-
 echo "Calling terraform plan"
+# FIXME: the -parallelism=1 is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
 terraform plan -input=false -out plan -parallelism=1
 plan_exit_status=$?
@@ -64,6 +62,7 @@ echo "Generating /tmp/ansible_vault.pw"
 (echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
 echo "Calling terraform apply"
+# FIXME: the -parallelism=1 is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
 terraform apply -input=false -refresh=false plan -parallelism=1
 apply_exit_code=$?
