@@ -40,7 +40,7 @@ locals {
 
 resource "openstack_networking_floatingip_v2" "hail-master" {
   provider = "openstack"
-  count       = "${var.count}"
+  count    = "${var.count}"
   pool     = "nova"
 }
 
@@ -99,7 +99,7 @@ resource "openstack_compute_floatingip_associate_v2" "hail-master" {
 }
 
 resource "infoblox_record" "hail-master-dns" {
-  count       = "${var.count}"
+  count  = "${var.count}"
   value  = "${openstack_networking_floatingip_v2.hail-master.address}"
   name   = "hail-${var.hail_cluster_id}"
   domain = "${var.domain}"
@@ -112,9 +112,9 @@ output "ip" {
 }
 
 resource "openstack_blockstorage_volume_v2" "hail-master-volume" {
-  count       = "${var.count}"
-  name = "hail-${var.hail_cluster_id}-volume"
-  size = 100
+  count = "${var.count}"
+  name  = "hail-${var.hail_cluster_id}-volume"
+  size  = 100
 }
 
 resource "openstack_compute_volume_attach_v2" "hail-master-volume-attach" {
