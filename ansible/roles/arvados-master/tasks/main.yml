@@ -36,15 +36,15 @@
 - name: link postgres data dir to arvados data dir
   become: yes
   file:
-    src: /var/lib/postgresql
-    path: "{{ arvados_master_api_data_dir }}/postgresql"
+    path: /var/lib/postgresql
+    src: "{{ arvados_master_api_data_dir }}/postgresql"
     state: link
 
 - name: link arvados-api dir to arvados data dir
   become: yes
   file:
-    src: /var/www/arvados-api
-    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    path: /var/www/arvados-api
+    src: "{{ arvados_master_api_data_dir }}/arvados-api"
     state: link
 
 ################################################################################
