@@ -73,6 +73,13 @@
     (tutorials_stat.stat.islnk is defined) and 
     tutorials_stat.stat.islnk
 
+- name: ensure hail user has permissions on master data dir
+  become: yes
+  file:
+    path: "{{ hail_master_data_dir }}"
+    owner: "{{ hail_user }}"
+    recurse: yes
+
 - name: initially copy hail tutorials into data dir
   become: yes
   become_user: "{{ hail_user }}"

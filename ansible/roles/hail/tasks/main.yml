@@ -161,7 +161,7 @@
         path: "{{ hail_temp_dir }}"
         state: absent
 
-- name: set installation permissions
+- name: set permissions on hail prefix dir
   become: yes
   file:
     path: "{{ hail_prefix_dir }}"

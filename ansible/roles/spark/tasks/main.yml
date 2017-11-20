@@ -70,6 +70,14 @@
     checksum: "{{ spark_tgz_checksum }}"
     dest: "/home/{{ spark_user }}/spark-{{ spark_version }}.tgz"
     mode: 0644
+  register: spark_download_spark
+
+- name: delete spark dir if download has changed
+  become: yes
+  file:
+    path: "{{ spark_prefix_dir }}"
+    state: absent
+  when: spark_download_spark.changed
 
 - name: create spark directory
   become: yes
@@ -77,6 +85,7 @@
     path: "{{ spark_prefix_dir }}"
     state: directory
     owner: "{{ spark_user }}"
+  register: spark_create_spark_dir
 
 - name: expand spark
   become: yes
@@ -89,6 +98,8 @@
     creates: "{{ spark_prefix_dir }}/README.md"
   notify:
     - restart spark
+  when: spark_create_spark_dir.changed
+  register: spark_expand_spark
 
 - name: configure spark
   become: yes
@@ -102,7 +113,15 @@
     - spark-defaults.conf
   notify:
     - restart spark
-  
+  when: spark_expand_spark.changed
+
+- name: ensure spark user has permissions on spark dir
+  become: yes
+  file:
+    path: "{{ spark_prefix_dir }}"
+    owner: "{{ spark_user }}"
+    recurse: yes
+
 - name: download hadoop tgz
   become: yes
   become_user: "{{ spark_user }}"
@@ -111,6 +130,14 @@
     checksum: "{{ spark_hadoop_tgz_checksum }}"
     dest: "/home/{{ spark_user }}/hadoop-{{ spark_hadoop_version }}.tgz"
     mode: 0644
+  register: spark_download_hadoop
+
+- name: delete hadoop directory if hadoop download has changed
+  become: yes
+  file:
+    path: "{{ spark_hadoop_prefix_dir }}"
+    state: absent
+  when: spark_download_hadoop.changed
 
 - name: create hadoop directory
   become: yes
@@ -118,6 +145,7 @@
     path: "{{ spark_hadoop_prefix_dir }}"
     state: directory
     owner: "{{ spark_user }}"
+  register: spark_create_hadoop_dir
 
 - name: expand hadoop
   become: yes
@@ -130,6 +158,14 @@
     creates: "{{ spark_hadoop_prefix_dir }}/README.md"
   notify:
     - restart spark
+  when: spark_create_hadoop_dir.changed
+
+- name: ensure spark user has permissions on hadoop dir
+  become: yes
+  file:
+    path: "{{ spark_hadoop_prefix_dir }}"
+    owner: "{{ spark_user }}"
+    recurse: yes
 
 - import_tasks: master.yml
   when: spark_master_p
