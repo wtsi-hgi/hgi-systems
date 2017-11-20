@@ -114,7 +114,7 @@ output "ip" {
 resource "openstack_blockstorage_volume_v2" "hail-master-volume" {
   count = "${var.count}"
   name  = "hail-${var.hail_cluster_id}-volume"
-  size  = 100
+  size  = 20
 }
 
 resource "openstack_compute_volume_attach_v2" "hail-master-volume-attach" {
