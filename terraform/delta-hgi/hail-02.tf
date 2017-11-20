@@ -1,6 +1,6 @@
 module "hail-master-02" {
   source = "../modules/hail-master"
-  count  = 1
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
@@ -24,7 +24,7 @@ module "hail-master-02" {
 
 module "hail-compute-02" {
   source = "../modules/hail-compute"
-  count  = 2
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
