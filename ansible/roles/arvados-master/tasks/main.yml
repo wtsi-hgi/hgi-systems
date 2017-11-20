@@ -20,6 +20,33 @@
 ---
 # file: roles/arvados-master/tasks/main.yml
 
+
+################################################################################
+# prepare directories
+################################################################################
+- name: create directories within arvados data dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/{{ item }}"
+    state: directory
+  with_items:
+    - postgresql
+    - arvados-api
+
+- name: link postgres data dir to arvados data dir
+  become: yes
+  file:
+    src: /var/lib/postgresql
+    path: "{{ arvados_master_api_data_dir }}/postgresql"
+    state: link
+
+- name: link arvados-api dir to arvados data dir
+  become: yes
+  file:
+    src: /var/www/arvados-api
+    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: link
+
 ################################################################################
 # arvados-api
 ################################################################################

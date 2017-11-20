@@ -16,3 +16,5 @@ arvados_master_create_mercury_admin_user_script: /etc/arvados/create-mercury-adm
 arvados_master_api_backend_port: 8000
 arvados_master_ws_backend_port: 9003
 arvados_master_git_httpd_backend_port: 9001
+
+arvados_master_api_data_dir: /var/arvados-api
