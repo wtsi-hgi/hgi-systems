@@ -1,7 +1,3 @@
-upstream spark {
-  server 127.0.0.1:{{ hail_spark_master_backend_port }}  fail_timeout=10s;
-}
-
 upstream jupyter {
   server 127.0.0.1:{{ hail_jupyter_backend_port }} fail_timeout=0;
 }
@@ -36,11 +32,17 @@ server {
 
   index  index.html index.htm index.php;
 
-  location /spark {
-    proxy_pass            http://spark;
-    proxy_redirect        off;
-    proxy_connect_timeout 90s;
-    proxy_read_timeout    300s;
+  location /spark/ {
+    proxy_pass       http://{{ hail_spark_local_ip }}:{{ hail_spark_master_backend_port }}/;
+    proxy_set_header Accept-Encoding "";
+    sub_filter 	     "href=\"/\"" "href=\"/spark/\"";
+    sub_filter 	     "src=\"/static/" "src=\"/spark/static/";
+    sub_filter 	     "href=\"/static/" "href=\"/spark/static/";
+    sub_filter 	     "src=\"/history/" "src=\"/spark/history/";
+    sub_filter 	     "href=\"/history/" "href=\"/spark/history/";
+    sub_filter 	     "src=\"/proxy/" "src=\"/spark/proxy/";
+    sub_filter 	     "href=\"/proxy/" "href=\"/spark/proxy/";
+    sub_filter_once  off;
   }
 
   location / {
