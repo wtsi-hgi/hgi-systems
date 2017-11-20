@@ -19,7 +19,7 @@ module "hail-master-ew7" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  hail_cluster_id     = "ew7"
+  hail_cluster_id      = "ew7"
 }
 
 module "hail-compute-ew7" {
@@ -43,5 +43,5 @@ module "hail-compute-ew7" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  hail_cluster_id     = "ew7"
+  hail_cluster_id      = "ew7"
 }
