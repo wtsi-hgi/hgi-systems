@@ -85,6 +85,7 @@ spark_hadoop_default_s3a_endpoint: ""
 # Master server settings
 ###############################################################################
 spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"
+spark_master_external_path: ""
 spark_master_backend_port: 8080
 spark_master_webui_p: true
 

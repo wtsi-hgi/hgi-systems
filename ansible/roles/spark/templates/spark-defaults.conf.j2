@@ -32,6 +32,8 @@ spark.master                             spark://{{ spark_master_host }}:{{ spar
 spark.sql.files.maxPartitionBytes        60000000000
 spark.sql.files.openCostInBytes          60000000000
 spark.jars				 {{ spark_jars }}
+spark.ui.reverseProxy			 true
+spark.ui.reverseProxyUrl		 https://{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}/{{ spark_master_external_path }}
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath }}

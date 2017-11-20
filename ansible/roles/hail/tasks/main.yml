@@ -35,6 +35,7 @@
       spark_worker_host_list: "{{ hail_computer_host_list }}"
       spark_master_external_hostname: "{{ hail_master_external_hostname }}"
       spark_master_external_domain: "{{ hail_master_external_domain }}"
+      spark_master_external_path: "spark"
       ###############################################################################
       # Versions
       ###############################################################################
