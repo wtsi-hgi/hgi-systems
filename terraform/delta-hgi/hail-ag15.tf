@@ -1,4 +1,4 @@
-module "hail-master-ew7" {
+module "hail-master-ag15" {
   source = "../modules/hail-master"
   count  = 1
 
@@ -19,12 +19,12 @@ module "hail-master-ew7" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  hail_cluster_id      = "ew7"
+  hail_cluster_id      = "ag15"
 }
 
-module "hail-compute-ew7" {
+module "hail-compute-ag15" {
   source = "../modules/hail-compute"
-  count  = 1
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
@@ -43,5 +43,5 @@ module "hail-compute-ew7" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  hail_cluster_id      = "ew7"
+  hail_cluster_id      = "ag15"
 }
