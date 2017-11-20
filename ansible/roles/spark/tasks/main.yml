@@ -113,7 +113,6 @@
     - spark-defaults.conf
   notify:
     - restart spark
-  when: spark_expand_spark.changed
 
 - name: ensure spark user has permissions on spark dir
   become: yes
