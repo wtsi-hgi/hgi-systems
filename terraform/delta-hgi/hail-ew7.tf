@@ -1,5 +1,5 @@
-module "spark-master" {
-  source = "../modules/spark-master"
+module "hail-master-ew7" {
+  source = "../modules/hail-master"
   count  = 1
 
   image = {
@@ -19,12 +19,12 @@ module "spark-master" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id     = "01"
+  hail_cluster_id     = "ew7"
 }
 
-module "spark-compute" {
-  count  = 1
-  source = "../modules/spark-compute"
+module "hail-compute-ew7" {
+  source = "../modules/hail-compute"
+  count  = 2
 
   image = {
     name = "${var.base_image_name}"
@@ -32,7 +32,7 @@ module "spark-compute" {
   }
 
   flavour            = "m1.large"
-  domain             = "node.hgi-delta.consul"
+  domain             = "hgi.sanger.ac.uk"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
@@ -43,5 +43,5 @@ module "spark-compute" {
   }
 
   extra_ansible_groups = ["consul-cluster-delta-hgi"]
-  spark_cluster_id     = "01"
+  hail_cluster_id     = "ew7"
 }
