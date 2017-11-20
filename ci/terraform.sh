@@ -64,7 +64,7 @@ echo "Generating /tmp/ansible_vault.pw"
 echo "Calling terraform apply"
 # FIXME: the -parallelism=1 is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
-terraform apply -input=false -refresh=false plan -parallelism=1
+terraform apply -input=false -refresh=false -parallelism=1 plan
 apply_exit_code=$?
 set -e
 
