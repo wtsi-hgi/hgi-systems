@@ -36,12 +36,12 @@ fi
 echo "Calling terraform get"
 terraform get
 
-echo "Calling terraform refresh"
-terraform refresh
+#echo "Calling terraform refresh"
+#terraform refresh
 
 echo "Calling terraform plan"
 set +e
-terraform plan -input=false -out plan
+terraform plan -input=false -out plan -parallelism=1
 plan_exit_status=$?
 set -e
 echo "Copying plan to artifacts"
@@ -65,7 +65,7 @@ echo "Generating /tmp/ansible_vault.pw"
 
 echo "Calling terraform apply"
 set +e
-terraform apply -input=false -refresh=false plan
+terraform apply -input=false -refresh=false plan -parallelism=1
 apply_exit_code=$?
 set -e
 
