@@ -75,9 +75,21 @@
 
 - name: initially copy hail tutorials into data dir
   become: yes
+  become_user: "{{ hail_user }}"
   command: rsync -az "{{ hail_prefix_dir }}/python/hail/docs/tutorials/" "{{ hail_master_data_dir }}/tutorials"
   args:
     creates:  "{{ hail_master_data_dir }}/tutorials"
+
+- name: template out hgi specific tutorials
+  become: yes
+  become_user: "{{ hail_user }}"
+  template:
+    src: "tutorial-{{ item }}.j2"
+    dest: "{{ hail_master_data_dir }}/tutorials/{{ item }}"
+  with_items: 
+    - connect-to-the-node-terminal.ipynb
+    - run-on-spark-cluster.ipynb
+    - using-data-in-ceph-s3-storage.ipynb
 
 - name: copy ssl certificate
   become: yes
