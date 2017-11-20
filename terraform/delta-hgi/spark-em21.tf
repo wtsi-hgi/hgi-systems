@@ -1,6 +1,6 @@
 module "spark-master-em21" {
   source = "../modules/spark-master"
-  count  = 1
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
@@ -24,7 +24,7 @@ module "spark-master-em21" {
 
 module "spark-compute-em21" {
   source = "../modules/spark-compute"
-  count  = 2
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"

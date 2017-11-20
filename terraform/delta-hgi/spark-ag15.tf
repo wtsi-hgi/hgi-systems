@@ -1,6 +1,6 @@
 module "spark-master-ag15" {
   source = "../modules/spark-master"
-  count  = 1
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
