@@ -2,6 +2,7 @@
 
 set -euf -o pipefail
 
+PARALLELISM=4
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
@@ -37,9 +38,9 @@ echo "Calling terraform get"
 terraform get
 
 echo "Calling terraform plan"
-# FIXME: the -parallelism=1 is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
+# FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
-terraform plan -input=false -out plan -parallelism=1
+terraform plan -input=false -out plan -parallelism=${PARALLELISM}
 plan_exit_status=$?
 set -e
 echo "Copying plan to artifacts"
@@ -62,9 +63,9 @@ echo "Generating /tmp/ansible_vault.pw"
 (echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
 echo "Calling terraform apply"
-# FIXME: the -parallelism=1 is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
+# FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
-terraform apply -input=false -refresh=false -parallelism=1 plan
+terraform apply -input=false -refresh=false -parallelism=${PARALLELISM} plan
 apply_exit_code=$?
 set -e
 
