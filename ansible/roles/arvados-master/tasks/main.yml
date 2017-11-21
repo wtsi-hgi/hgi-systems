@@ -40,6 +40,12 @@
     src: "{{ arvados_master_api_data_dir }}/postgresql"
     state: link
 
+- name: ensure /var/www exists
+  become: yes
+  file:
+    path: /var/www
+    state: directory
+
 - name: link arvados-api dir to arvados data dir
   become: yes
   file:
