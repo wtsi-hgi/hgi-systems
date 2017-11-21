@@ -128,6 +128,7 @@ hail_spark_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/spar
 hail_spark_master_backend_port: "8080"
 hail_spark_local_ip: "127.0.0.1"
 hail_master_host: "127.0.0.1"
+hail_spark_executor_memory_gb: 1
 
 ###############################################################################
 # Node types
