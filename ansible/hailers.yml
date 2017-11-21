@@ -193,7 +193,7 @@
         #hail_spark_master_backend_port: "8080"
         hail_spark_local_ip: "{{ cloud_resource_private_ip }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
-        spark_executor_memory_gb: 60 # FIXME make this depend on node flavour (in this case 64GB node -> 60g executor memory)
+        hail_spark_executor_memory_gb: 60 # FIXME make this depend on node flavour (in this case 64GB node -> 60g executor memory)
         ###############################################################################
         # General settings
         ###############################################################################
