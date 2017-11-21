@@ -32,7 +32,7 @@
       spark_ssl_cert: "{{ hail_ssl_cert }}"
       spark_ssl_key: "{{ hail_ssl_key }}"
       spark_master_host_list: "{{ hail_master_host_list }}"
-      spark_worker_host_list: "{{ hail_computer_host_list }}"
+      spark_worker_host_list: "{{ hail_computer_host_list | union(hail_computer_host_list) }}"
       spark_master_external_hostname: "{{ hail_master_external_hostname }}"
       spark_master_external_domain: "{{ hail_master_external_domain }}"
       spark_master_external_path: "spark"
