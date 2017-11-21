@@ -9,15 +9,8 @@
     cache_valid_time: "{{ hail_apt_cache_valid_time }}"
   with_items:
     - nginx
-
-- name: create data directory for Jupyter user
-  become: yes
-  file:
-    path: "{{ hail_master_data_dir }}"
-    state: directory
-    mode: 0700
-    owner: "{{ hail_user }}"
-    group: "{{ hail_user }}"
+    - nfs-common
+    - nfs-kernel-server
 
 - name: setup s3 to backup hail data 
   import_role:
@@ -37,23 +30,28 @@
     ###############################################################################
     s3_backup_restore_indicator_file: "{{ hail_s3_backup_restore_indicator_file }}"
 
-- name: check if /data is a symlink
+- name: NFS export data dir
   become: yes
-  stat:
-    path: "/data"
-    follow: no
-  ignore_errors: yes
-  register: data_stat
+  template:
+    src: exports.j2
+    dest: /etc/exports
+    owner: root
+    group: root
+  register: hail_master_nfs_exports
 
-- name: link /data to data dir for convenience
+- name: start NFS server
   become: yes
-  file:
-    src: "{{ hail_master_data_dir }}"
-    dest: "/data"
-    state: link
-  when: >-
-    ('stat' in data_stat) and 
-    (data_stat.stat.islnk is not defined)
+  service:
+    name: nfs-kernel-server
+    state: started
+  register: hail_master_start_nfs
+
+- name: restart nfs server
+  become: yes
+  service:
+    name: nfs-kernel-server
+    state: restarted
+  when: hail_master_nfs_exports.changed and not hail_master_start_nfs.changed
 
 - name: check if tutorials is a symlink
   become: yes
