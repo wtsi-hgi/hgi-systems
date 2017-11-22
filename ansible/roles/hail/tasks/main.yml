@@ -222,3 +222,14 @@
     src: "{{ hail_master_data_dir }}"
     dest: "/data"
     state: link
+
+- name: give hail user NOPASSWD sudo ability to control hail service
+  tags: common
+  become: yes
+  template:
+    src: hail_sudoers.j2
+    dest: /etc/sudoers.d/{{ hail_user }}-service-hail
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440

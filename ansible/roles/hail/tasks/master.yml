@@ -153,5 +153,3 @@
   service:
     name: hail
     state: started
-  
-    
