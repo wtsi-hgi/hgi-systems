@@ -209,8 +209,7 @@
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - arvados-api-server
-  notify:
-    - reconfigure arvados-api-server
+  register: arvados_master_REGISTER_install_api_server
 
 - name: create directories for arvados
   become: yes
@@ -221,10 +220,9 @@
     - "{{ arvados_master_git_repositories_dir }}"
     - /var/www/arvados-api/current/tmp/cache
     - /var/run/nginx/passenger
-  notify:
-    - reconfigure arvados-api-server
+  register: arvados_master_REGISTER_create_dirs
 
-- name: configure arvados
+- name: arvados conf files
   become: yes
   template:
     src: "{{ item }}.j2"
@@ -232,10 +230,18 @@
   with_items:
     - application.yml
     - database.yml
+  register: arvados_master_REGISTER_conf_files
   notify:
-    - reconfigure arvados-api-server
     - restart crunch-dispatch-pipelines
     - restart crunch-dispatch-jobs
+
+- name: dpkg-reconfigure arvados-api-server
+  become: yes
+  command: dpkg-reconfigure arvados-api-server
+  when: >-
+    arvados_master_REGISTER_install_api_server.changed or
+    arvados_master_REGISTER_create_dirs.changed or
+    arvados_master_REGISTER_conf_files.changed
 
 - name: copy api token files
   become: yes
