@@ -72,7 +72,7 @@
     - zlib1g-dev
 
 - name: create postgresql cluster
-  command: "pg_createcluster -u postgres -d {{ arvados_master_data_dir }}/postgresql/9.5/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
+  command: "pg_createcluster -u postgres -d {{ arvados_master_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
   register: arvados_master_REGISTER_configure_postgresql
 
 - name: create postgresql user for arvados api

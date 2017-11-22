@@ -1,3 +1,4 @@
+arvados_master_postgresql_version: 9.5
 
 arvados_master_ruby_version: 2.3.4
 

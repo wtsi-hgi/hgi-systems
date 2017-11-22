@@ -1,3 +1,4 @@
+arvados_sso_postgresql_version: 9.5
 
 arvados_sso_ruby_version: 2.3.4
 arvados_sso_generate_app_secret_script: /etc/arvados/generate-sso-app-secret.rb
