@@ -114,6 +114,7 @@
         s3_geturl_object: "spark-{{ hail_cluster_spark_build }}.tgz"
         s3_geturl_checksum_var: "hailers_PLAYBOOK_spark_tgz_checksum"
         s3_geturl_url_var: "hailers_PLAYBOOK_spark_tgz_url"
+    # TODO: Create and populate hail-tutorial-data S3 bucket.
     - name: import role hail
       import_role:
         name: hail
@@ -133,6 +134,7 @@
         hail_backup_s3_host: "{{ hailers_PLAYBOOK_s3_host }}"
         hail_backup_s3_access_key: "{{ hailers_PLAYBOOK_s3_access_key }}"
         hail_backup_s3_secret_key: "{{ hailers_PLAYBOOK_s3_secret_key }}"
+        hail_tutorial_data_s3_bucket: "hail-tutorial-data"
         ###############################################################################
         # Versions
         ###############################################################################
@@ -193,6 +195,8 @@
         #hail_spark_master_backend_port: "8080"
         hail_spark_local_ip: "{{ cloud_resource_private_ip }}"
         hail_spark_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
+        hail_spark_hadoop_anonymous_buckets:
+         - "{{ hail_tutorial_data_s3_bucket }}"
         ###############################################################################
         # General settings
         ###############################################################################

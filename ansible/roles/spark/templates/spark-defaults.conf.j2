@@ -42,3 +42,6 @@ spark.driver.extraClassPath		 {{ spark_driver_extra_classpath }}
 # Hadoop Configuration for S3
 spark.hadoop.fs.s3a.impl                 org.apache.hadoop.fs.s3a.S3AFileSystem
 spark.hadoop.fs.s3a.endpoint             {{ spark_hadoop_default_s3a_endpoint }}
+{% for bucket in spark_hadoop_anonymous_buckets %}
+spark.hadoop.fs.s3a.bucket.{{ bucket }}.aws.credentials.provider	org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider
+{% endfor %}

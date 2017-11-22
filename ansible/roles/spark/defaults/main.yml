@@ -80,6 +80,7 @@ spark_local_ip: "127.0.0.1"
 spark_master_host: "127.0.0.1"
 spark_master_port: "7077"
 spark_hadoop_default_s3a_endpoint: ""
+spark_hadoop_anonymous_buckets: []
 
 ###############################################################################
 # Master server settings

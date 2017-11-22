@@ -62,6 +62,7 @@
       spark_master_host: "{{ hail_spark_master_host }}"
       #spark_master_port: "7077"
       spark_hadoop_default_s3a_endpoint: "cog.sanger.ac.uk"
+      spark_hadoop_anonymous_buckets: "{{ hail_spark_hadoop_anonymous_buckets }}"
       ###############################################################################
       # Master server settings
       ###############################################################################
