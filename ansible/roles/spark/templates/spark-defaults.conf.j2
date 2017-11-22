@@ -37,8 +37,8 @@ spark.ui.reverseProxyUrl		 https://{{ spark_master_external_hostname }}.{{ spark
 spark.executor.memory			 {{ spark_executor_memory_gb }}g
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
-spark.executor.extraClassPath		 {{ spark_executor_extra_classpath }}
-spark.driver.extraClassPath		 {{ spark_driver_extra_classpath }}
+spark.executor.extraClassPath		 {{ spark_executor_extra_classpath_list | join(':') }}
+spark.driver.extraClassPath		 {{ spark_driver_extra_classpath_list | join(':') }}
 
 # Hadoop Configuration for S3
 spark.hadoop.fs.s3a.impl                 org.apache.hadoop.fs.s3a.S3AFileSystem

@@ -74,8 +74,8 @@ spark_ssl_cert_file: /etc/ssl.cert
 # Spark settings
 ###############################################################################
 spark_jars: ""
-spark_executor_extra_classpath: ""
-spark_driver_extra_classpath: ""
+spark_executor_extra_classpath_list: []
+spark_driver_extra_classpath_list: []
 spark_local_ip: "127.0.0.1"
 spark_master_host: "127.0.0.1"
 spark_master_port: "7077"

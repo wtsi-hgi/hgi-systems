@@ -41,6 +41,7 @@
       ###############################################################################
       spark_version: "{{ hail_spark_version }}"
       spark_build_version: "{{ hail_spark_build_version }}"
+      spark_hadoop_version: 2.8.2
       ###############################################################################
       # Source URL and checksum (use builds on Apache mirrors by default)
       ###############################################################################
@@ -50,14 +51,25 @@
       # Directories and Paths
       ###############################################################################
       spark_prefix_dir: "{{ hail_spark_prefix_dir }}"
+      spark_hadoop_prefix_dir: "/usr/local/hadoop-{{ spark_hadoop_version }}"
       #spark_ssl_key_file: /etc/ssl.key
       #spark_ssl_cert_file: /etc/ssl.cert
       ###############################################################################
       # Spark settings
       ###############################################################################
       spark_jars: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
-      spark_executor_extra_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
-      spark_driver_extra_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+      spark_executor_extra_classpath_list: 
+        - "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-core-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-kms-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-s3-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/hadoop-aws-2.8.2.jar"
+      spark_driver_extra_classpath_list: 
+        - "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-core-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-kms-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-s3-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/hadoop-aws-2.8.2.jar"
       spark_local_ip: "{{ hail_spark_local_ip }}"
       spark_master_host: "{{ hail_master_host }}"
       #spark_master_port: "7077"
