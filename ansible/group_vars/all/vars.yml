@@ -22,6 +22,15 @@
 ---
 # file: group_vars/all
 
+###############################################################################
+# Vault contains:
+###############################################################################
+#   all_GROUP_root_secret: |
+#     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#
+###############################################################################
+
 all_GROUP_apt_cache_valid_time: 86400
 all_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}" # FIXME remove this after refactor
 

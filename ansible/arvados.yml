@@ -62,7 +62,7 @@
       import_role:
         name: arvados-sso
       vars:
-        arvados_master_sso_data_mountpoint: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
+        arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
 
 - hosts: arvados-masters
   vars:
@@ -103,7 +103,7 @@
       import_role:
         name: arvados-master
       vars:
-        arvados_master_api_data_mountpoint: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
 
 - hosts: arvados-keeps
   roles:

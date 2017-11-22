@@ -188,3 +188,13 @@
     state: started
     daemon_reload: yes
 
+- name: give spark user NOPASSWD sudo ability to control spark service
+  tags: common
+  become: yes
+  template:
+    src: spark_sudoers.j2
+    dest: /etc/sudoers.d/{{ spark_user }}-service-spark
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440

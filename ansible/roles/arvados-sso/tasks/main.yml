@@ -20,6 +20,39 @@
 ---
 # file: roles/arvados-sso/tasks/main.yml
 
+
+################################################################################
+# prepare directories
+################################################################################
+- name: create directories within arvados data dir
+  become: yes
+  file:
+    path: "{{ arvados_sso_data_dir }}/{{ item }}"
+    state: directory
+  with_items:
+    - postgresql
+    - arvados-sso
+
+- name: link postgres data dir to arvados data dir
+  become: yes
+  file:
+    path: /var/lib/postgresql
+    src: "{{ arvados_sso_data_dir }}/postgresql"
+    state: link
+
+- name: ensure /var/www exists
+  become: yes
+  file:
+    path: /var/www
+    state: directory
+
+- name: link arvados-sso dir to arvados data dir
+  become: yes
+  file:
+    path: /var/www/arvados-sso
+    src: "{{ arvados_sso_data_dir }}/arvados-sso"
+    state: link
+
 - name: install arvados sso prerequisites including postgresql
   become: yes
   apt:

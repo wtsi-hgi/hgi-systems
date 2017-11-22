@@ -29,7 +29,7 @@
     hailers_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
     hailers_PLAYBOOK_s3_backup_bucket: "hail-backup"
     hailers_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
-    hailers_PLAYBOOK_master_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
+    hailers_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
     hailers_PLAYBOOK_created_restore_indicator_file: ".created-restore"
   tasks:
     - name: assert essential hail group membership
@@ -97,7 +97,7 @@
           - name: hail-data
             size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
             fstype: xfs
-            mountpoint: "{{ hailers_PLAYBOOK_master_data_dir }}"
+            mountpoint: "{{ hailers_PLAYBOOK_data_dir }}"
         attached_openstack_volumes:
           - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_created_restore_indicator_file }}"
@@ -128,7 +128,7 @@
         hail_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
         hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
-        hail_master_data_dir: "{{ hailers_PLAYBOOK_master_data_dir }}"
+        hail_master_data_dir: "{{ hailers_PLAYBOOK_data_dir }}"
         hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_name'] }}"
         hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_domain'] }}"
         hail_backup_s3_host: "{{ hailers_PLAYBOOK_s3_host }}"
@@ -194,9 +194,10 @@
         hail_spark_tgz_checksum: "{{ hailers_PLAYBOOK_spark_tgz_checksum }}"
         #hail_spark_master_backend_port: "8080"
         hail_spark_local_ip: "{{ cloud_resource_private_ip }}"
-        hail_spark_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
         hail_spark_hadoop_anonymous_buckets:
          - "{{ hail_tutorial_data_s3_bucket }}"
+        hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
+        hail_spark_executor_memory_gb: 60 # FIXME make this depend on node flavour (in this case 64GB node -> 60g executor memory)
         ###############################################################################
         # General settings
         ###############################################################################

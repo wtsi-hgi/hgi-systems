@@ -38,7 +38,7 @@
   become: yes
   template: 
     src: peers.json.j2
-    dest: /data/consul/data/raft/peers.json
+    dest: "{{ hostvars[item]['hgi_consul_data_dir'] }}/raft/peers.json"
   with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
 
 - name: start consul service on all servers when cluster has no peers

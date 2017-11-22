@@ -22,6 +22,10 @@
 # file: roles/hgi-consul/tasks/consul-server.yml
 ---
 
+- name: promote hgi_consul_data_dir to fact
+  set_fact:
+    hgi_consul_data_dir: "{{ hgi_consul_data_dir }}"
+
 - name: setup s3-backup
   import_role:
     name: s3-backup

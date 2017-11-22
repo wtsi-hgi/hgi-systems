@@ -32,7 +32,7 @@
       spark_ssl_cert: "{{ hail_ssl_cert }}"
       spark_ssl_key: "{{ hail_ssl_key }}"
       spark_master_host_list: "{{ hail_master_host_list }}"
-      spark_worker_host_list: "{{ hail_computer_host_list }}"
+      spark_worker_host_list: "{{ hail_computer_host_list | union(hail_master_host_list) }}"
       spark_master_external_hostname: "{{ hail_master_external_hostname }}"
       spark_master_external_domain: "{{ hail_master_external_domain }}"
       spark_master_external_path: "spark"
@@ -59,10 +59,11 @@
       spark_executor_extra_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
       spark_driver_extra_classpath: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
       spark_local_ip: "{{ hail_spark_local_ip }}"
-      spark_master_host: "{{ hail_spark_master_host }}"
+      spark_master_host: "{{ hail_master_host }}"
       #spark_master_port: "7077"
       spark_hadoop_default_s3a_endpoint: "cog.sanger.ac.uk"
       spark_hadoop_anonymous_buckets: "{{ hail_spark_hadoop_anonymous_buckets }}"
+      spark_executor_memory_gb: "{{ hail_spark_executor_memory_gb }}"
       ###############################################################################
       # Master server settings
       ###############################################################################
@@ -122,6 +123,7 @@
     - libatlas3-base
     - libnetlib-java
     - r-base
+    - nfs-common
 
 - include_tasks: conda-6096-patch.yml
 
@@ -187,6 +189,48 @@
     dest: "{{ hail_prefix_dir }}/jars"
     state: link
 
+- name: create hail data directory
+  become: yes
+  file:
+    path: "{{ hail_master_data_dir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ hail_user }}"
+    group: "{{ hail_user }}"
+
 - import_tasks: master.yml
   when: hail_master_p
 
+- name: promote hail_master_data_dir to fact
+  set_fact:
+    hail_master_data_dir: "{{ hail_master_data_dir }}"
+
+- name: mount hail data dir (on non-master nodes)
+  become: yes
+  mount:
+    name: "{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+    src: "{{ hail_master_host }}:{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+    fstype: nfs
+    opts: defaults,intr,nofail
+    dump: 0
+    passno: 2
+    state: mounted
+  when: not hail_master_p
+
+- name: link /data to data dir for convenience
+  become: yes
+  file:
+    src: "{{ hail_master_data_dir }}"
+    dest: "/data"
+    state: link
+
+- name: give hail user NOPASSWD sudo ability to control hail service
+  tags: common
+  become: yes
+  template:
+    src: hail_sudoers.j2
+    dest: /etc/sudoers.d/{{ hail_user }}-service-hail
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440
