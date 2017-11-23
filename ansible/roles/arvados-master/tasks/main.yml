@@ -73,7 +73,8 @@
 
 - name: delete default main postgresql cluster
   command: "pg_dropcluster --stop {{ arvados_master_postgresql_version }} main"
-  removes: /etc/postgresql/{{ arvados_master_postgresql_version }}/main
+  args:
+    removes: /etc/postgresql/{{ arvados_master_postgresql_version }}/main
 
 - name: create postgresql cluster
   command: "pg_createcluster -u postgres -d {{ arvados_master_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
