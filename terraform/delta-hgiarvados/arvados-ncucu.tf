@@ -75,7 +75,7 @@ module "arvados-keepproxy" {
     user = "${var.base_image_user}"
   }
 
-  count              = 4
+  count              = 2
   flavour            = "m1.medium"
   domain             = "hgi.sanger.ac.uk"
   security_group_ids = "${module.openstack.security_group_ids}"
@@ -99,7 +99,7 @@ module "arvados-keep" {
     user = "${var.base_image_user}"
   }
 
-  count              = 8
+  count              = 2
   flavour            = "m1.medium"
   domain             = "node.hgi-delta.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
