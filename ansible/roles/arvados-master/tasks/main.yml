@@ -80,6 +80,8 @@
 - name: create postgresql cluster
   become: yes
   command: "pg_createcluster -u postgres -d {{ arvados_master_api_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
+  args:
+    creates: /etc/postgresql/{{ arvados_master_postgresql_version }}/arvados_api
   register: arvados_master_REGISTER_configure_postgresql
 
 - name: create postgresql user for arvados api

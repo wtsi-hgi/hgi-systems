@@ -77,6 +77,8 @@
 - name: create postgresql cluster
   become: yes
   command: "pg_createcluster -u postgres -d {{ arvados_sso_data_dir }}/postgresql/{{ arvados_sso_postgresql_version }}/arvados_sso -p 5432 --start {{ arvados_sso_postgresql_version }} arvados_sso"
+  args:
+    creates: /etc/postgresql/{{ arvados_sso_postgresql_version }}/arvados_sso
   register: arvados_sso_REGISTER_configure_postgresql
 
 - name: create postgresql user for arvados sso
