@@ -57,7 +57,7 @@
     update_cache: yes
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
-    - postgresql
+    - "postgresql={{ arvados_master_postgresql_package_version }}"
     - bison
     - build-essential
     - gettext
