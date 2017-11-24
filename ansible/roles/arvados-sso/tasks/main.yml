@@ -39,6 +39,21 @@
     path: /var/www
     state: directory
 
+- name: create etc-postgresql dir
+  become: yes
+  file:
+    path: "{{ arvados_sso_data_dir }}/etc-postgresql"
+    state: present
+    owner: postgres
+    group: postgres
+
+- name: link etc-postgresql dir to /etc/postgresql
+  become: yes
+  file:
+    path: /etc/postgresql
+    src: "{{ arvados_sso_data_dir }}/etc-postgresql"
+    state: link
+
 - name: link arvados-sso dir to arvados data dir
   become: yes
   file:
