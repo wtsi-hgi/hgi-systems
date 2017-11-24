@@ -44,8 +44,6 @@
   file:
     path: "{{ arvados_master_api_data_dir }}/etc-postgresql"
     state: directory
-    owner: postgres
-    group: postgres
 
 - name: link etc-postgresql dir to /etc/postgresql
   become: yes
