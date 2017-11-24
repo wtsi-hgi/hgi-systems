@@ -1,0 +1,30 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/docker-machine/tasks/main.yml
+
+- name: install docker-machine binary from github
+  tags: docker-machine
+  become: yes
+  get_url: 
+    url: https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-Linux-x86_64
+    dest: /usr/local/bin/docker-machine
+    mode: 0755
+    checksum: sha256:3c0a1a03653dff205f27bb178773f3c294319435a2589cf3cb4456423f8cef08

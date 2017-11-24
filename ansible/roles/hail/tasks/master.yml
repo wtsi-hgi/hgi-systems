@@ -1,0 +1,155 @@
+---
+
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+  with_items:
+    - nginx
+    - nfs-common
+    - nfs-kernel-server
+
+- name: setup s3 to backup hail data 
+  import_role:
+    name: s3-backup
+  vars:
+    ###############################################################################
+    # Variables that have no defaults and must be set
+    ###############################################################################
+    s3_backup_s3_bucket: "{{ hail_backup_s3_backup_bucket }}"
+    s3_backup_s3_host: "{{ hail_backup_s3_host }}"
+    s3_backup_s3_access_key: "{{ hail_backup_s3_access_key }}"
+    s3_backup_s3_secret_key: "{{ hail_backup_s3_secret_key }}"
+    s3_backup_source_dir: "{{ hail_master_data_dir }}"
+    s3_backup_dest_path: "{{ hail_data_backup_path }}"
+    ###############################################################################
+    # Restore from s3 if if this file is present (then delete it)
+    ###############################################################################
+    s3_backup_restore_indicator_file: "{{ hail_s3_backup_restore_indicator_file }}"
+
+- name: NFS export data dir
+  become: yes
+  template:
+    src: exports.j2
+    dest: /etc/exports
+    owner: root
+    group: root
+  register: hail_master_nfs_exports
+
+- name: start NFS server
+  become: yes
+  service:
+    name: nfs-kernel-server
+    state: started
+  register: hail_master_start_nfs
+
+- name: restart nfs server
+  become: yes
+  service:
+    name: nfs-kernel-server
+    state: restarted
+  when: hail_master_nfs_exports.changed and not hail_master_start_nfs.changed
+
+- name: check if tutorials is a symlink
+  become: yes
+  stat:
+    path: "{{ hail_master_data_dir }}/tutorials"
+    follow: no
+  ignore_errors: yes
+  register: tutorials_stat
+
+- name: remove tutorials if it is a symlink
+  become: yes
+  file:
+    path: "{{ hail_master_data_dir }}/tutorials"
+    state: absent
+  when: >-
+    ('stat' in tutorials_stat) and 
+    (tutorials_stat.stat.islnk is defined) and 
+    tutorials_stat.stat.islnk
+
+- name: ensure hail user has permissions on master data dir
+  become: yes
+  file:
+    path: "{{ hail_master_data_dir }}"
+    owner: "{{ hail_user }}"
+    recurse: yes
+
+- name: initially copy hail tutorials into data dir
+  become: yes
+  become_user: "{{ hail_user }}"
+  command: rsync -az "{{ hail_prefix_dir }}/python/hail/docs/tutorials/" "{{ hail_master_data_dir }}/tutorials"
+  args:
+    creates:  "{{ hail_master_data_dir }}/tutorials"
+
+- name: template out hgi specific tutorials
+  become: yes
+  become_user: "{{ hail_user }}"
+  template:
+    src: "tutorial-{{ item }}.j2"
+    dest: "{{ hail_master_data_dir }}/tutorials/{{ item }}"
+  with_items: 
+    - connect-to-the-node-terminal.ipynb
+    - run-on-spark-cluster.ipynb
+    - reading-and-writing-to-your-s3-bucket.ipynb
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ hail_ssl_cert }}"
+    dest: "{{ hail_ssl_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ hail_ssl_key }}"
+    dest: "{{ hail_ssl_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for hail
+  become: yes
+  template:
+    src: "hail.conf.j2"
+    dest: /etc/nginx/conf.d/hail.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+
+- name: set configuration for Jupyter
+  become: yes
+  template:
+    src: jupyter_notebook_config.py.j2
+    dest: "{{ hail_jupyter_config_file }}"
+    owner: "{{ hail_user }}"
+    mode: 0600
+  notify: restart hail
+
+- name: setup systemd entry to control Hail
+  become: yes
+  template:
+    src: hail.service.j2
+    dest: "{{ hail_systemd_service_dir }}/hail.service"
+  notify: restart hail
+  register: hail_service
+
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+  when: hail_service.changed
+
+- name: start hail service
+  become: yes
+  service:
+    name: hail
+    state: started

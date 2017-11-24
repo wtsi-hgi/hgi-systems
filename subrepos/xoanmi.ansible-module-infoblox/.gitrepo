@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/xoanmi/ansible-module-infoblox.git
+	branch = master
+	commit = 73776ec97357406cbdc2880a0e6e8540ae99f647
+	parent = d1194b293c8776f420be7fd2b1fb13c4e376bd8a
+	cmdver = 0.3.1

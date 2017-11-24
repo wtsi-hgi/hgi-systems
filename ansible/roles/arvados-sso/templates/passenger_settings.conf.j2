@@ -1,0 +1,13 @@
+    passenger_log_level 4;
+    passenger_log_file /var/log/nginx/passenger.log;
+    passenger_instance_registry_dir /var/run/nginx/passenger;
+
+    passenger_max_pool_size 100;
+    passenger_max_request_queue_size 5000;
+    passenger_request_queue_overflow_status_code 513;
+    passenger_intercept_errors on;
+
+    # pre-start arvados sso
+    passenger_pre_start http://127.0.0.1:8200/auth/josh_id/authorize;
+
+    large_client_header_buffers 4 32k;

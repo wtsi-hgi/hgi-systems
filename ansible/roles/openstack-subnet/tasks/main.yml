@@ -1,0 +1,32 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/openstack-subnet/tasks/main.yml
+
+- name: create an openstack subnet
+  when: managed_by is defined and managed_by == "ansible" and os_id is not defined
+  delegate_to: "{{ openstack_delegate }}"
+  os_subnet:
+    state: present
+    auth: "{{ openstack_auth }}"
+    name: "{{ openstack_name }}"
+    network_name: "{{ (groups[netgroup] | map('extract', hostvars) | selectattr('openstack_type', 'equalto', 'network') | list())[0].openstack_name }}"
+    dns_nameservers: "{{ openstack_netgroup_dns_servers }}"
+    cidr: "{{ openstack_netgroup_cidr }}"

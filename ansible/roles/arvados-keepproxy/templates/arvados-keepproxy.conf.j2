@@ -1,0 +1,22 @@
+upstream keepproxy {
+  server     127.0.0.1:{{ arvados_keepproxy_backend_port }}  fail_timeout=10s;
+}
+
+server {
+  listen       0.0.0.0:443 ssl;
+  server_name  {{ arvados_cluster_keepproxy_host }};
+
+  proxy_connect_timeout 90s;
+  proxy_read_timeout    300s;
+  proxy_set_header      X-Real-IP $remote_addr;
+
+  ssl on;
+  ssl_certificate     {{ arvados_keepproxy_cert_file }};
+  ssl_certificate_key {{ arvados_keepproxy_key_file }};
+
+  client_max_body_size 64m;
+
+  location / {
+    proxy_pass            http://keepproxy;
+  }
+}

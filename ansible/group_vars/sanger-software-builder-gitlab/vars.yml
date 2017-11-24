@@ -1,0 +1,3 @@
+gitlab_project_settings:
+  - "{{ gitlab_project_settings_sanger_s3 }}"
+  - "{{ gitlab_project_settings_sanger_s3_software }}"

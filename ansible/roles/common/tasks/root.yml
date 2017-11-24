@@ -2,9 +2,9 @@
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -20,71 +20,71 @@
 ---
 # file: roles/common/tasks/root.yml
 
-- name: ensure we have essential Debian/Ubuntu packages
-  become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
-  tags:
-    - package
-    - common
-  with_items:
-    - aptitude
-    - apt-transport-https
-    - ca-certificates
-    - gnupg2
+- block:
+    - name: ensure we have essential Debian/Ubuntu packages
+      become: yes
+      apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+      tags:
+        - package
+        - common
+      with_items:
+        - aptitude
+        - apt-transport-https
+        - ca-certificates
+        - cloud-init
+        - gnupg2
+        - sudo
+
+    - name: disable unattended upgrades (systemd)
+      tags: common
+      become: yes
+      lineinfile: 
+        dest: '/etc/apt/apt.conf.d/10periodic'
+        line: 'APT::Periodic::Enable "0";'
+        regexp: 'APT::Periodic::Enable'
+      when: (ansible_distribution == 'Ubuntu') and (ansible_service_mgr == 'systemd')
+
+    - name: setup cloud-init to manage /etc/hosts
+      tags: common
+      become: yes
+      lineinfile:
+        dest: /etc/cloud/cloud.cfg
+        state: present
+        regexp: "^manage_etc_hosts:"
+        line: "manage_etc_hosts: true"
+
+    - name: add cron job to clean up leaking systemd login unit files (https://github.com/systemd/systemd/issues/1961)
+      become: yes
+      cron:
+        name: remove systemd scope files
+        weekday: "*"
+        minute: "0"
+        hour: "*/4"
+        user: root
+        job: "/bin/rm -f /run/systemd/system/*.scope"
+        cron_file: "systemd-fix-1961-leaking-login-units"
   when: ansible_os_family == 'Debian'
 
-- name: upgrade existing APT packages 
-  become: yes
-  apt: update_cache=yes cache_valid_time={{ apt_cache_valid_time }} upgrade=yes
-  tags:
-    - package
-    - common
-  when: ansible_os_family == 'Debian'
+- block:
+    - name: ensure we have essential FreeBSD packages
+      become: yes
+      pkgng: name={{ item }} state=present
+      tags:
+        - package
+        - common
+      with_items:
+        - pkg
+        - bash
+        - ca_root_nss
+        - python
+        - python2
+        - python3
+        - py27-cloud-init
+        - gnupg
+        - sudo
+  when: ansible_os_family == 'FreeBSD'
+ 
+- name: common root configuration not to be baked into images
+  import_tasks: root-post-image-building.yml
+  when: "not 'image-building' in group_names"
 
-- name: install GRL CA cert
-  become: yes
-  copy:
-    src: grl-cacert.pem
-    dest: /usr/local/share/ca-certificates/grl-cacert.crt
-  tags:
-    - common
-  notify: update ca certificates
-
-- name: create hgi group
-  tags: common
-  become: yes
-  group:
-    name: hgi
-    gid: 1313
-
-- name: create mercury user account
-  tags: common
-  become: yes
-  user: 
-    name: mercury
-    uid: 13912
-    group: hgi
-    shell: /bin/bash
-    
-
-- name: give mercury NOPASSWD sudo access
-  tags: common
-  become: yes
-  template:
-    src: mercury_sudoers.j2
-    dest: /etc/sudoers.d/mercury-nopasswd
-    validate: "visudo -cf %s"
-    owner: root
-    group: root
-    mode: 0440
-
-- name: set authorized keys for mercury
-  tags: common
-  become: yes
-  authorized_key:
-    user: mercury
-    manage_dir: yes
-    state: present
-    key: "{{ item }}"
-  with_file:
-    - public_keys/mercury-farm3

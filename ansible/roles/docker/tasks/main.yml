@@ -2,9 +2,9 @@
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -30,38 +30,41 @@
   tags: docker
   become: yes
   apt_repository:
-    repo: "{{ docker_repo }}"
+    repo: "deb https://apt.dockerproject.org/repo ubuntu-{{ ansible_distribution_release }} main"
     state: present
+    update_cache: yes
   when: ansible_os_family == 'Debian'
 
 - name: install docker prerequisites on Ubuntu
   tags: docker
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
   with_items:
     - linux-image-extra-{{ ansible_kernel }}
     - linux-image-extra-virtual
   when: ansible_distribution == 'Ubuntu'
 
-- name: install docker (apt)
+- name: ensure /etc/docker directory exists
   tags: docker
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
-  with_items:
-    - docker-engine
-  when: ansible_os_family == 'Debian'
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
 
-- name: ensure docker systemd service directory exists
-  tags: docker
-  become: yes
-  file: path=/etc/systemd/system/docker.service.d state=directory
-  when: ansible_service_mgr == 'systemd'
-
-- name: configure docker service (systemd)
+- name: configure docker daemon
   tags: docker
   become: yes
   template:
-    src: dockerd-exec.conf.j2
-    dest: /etc/systemd/system/docker.service.d/dockerd-exec.conf
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
   notify: systemd restart docker
-  when: ansible_service_mgr == 'systemd'
+
+- name: install docker (apt)
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+  with_items:
+    - docker-engine={{ docker_apt_version }}
+  when: ansible_os_family == 'Debian'
+

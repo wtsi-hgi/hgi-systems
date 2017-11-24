@@ -1,0 +1,248 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/hail/tasks/main.yml
+
+- name: import spark role
+  tags: s3
+  import_role:
+    name: spark
+  vars:
+      ###############################################################################
+      # Variables that have no defaults and must be set
+      ###############################################################################
+      spark_ssh_key: "{{ hail_ssh_key }}"
+      spark_ssl_cert: "{{ hail_ssl_cert }}"
+      spark_ssl_key: "{{ hail_ssl_key }}"
+      spark_master_host_list: "{{ hail_master_host_list }}"
+      spark_worker_host_list: "{{ hail_computer_host_list | union(hail_master_host_list) }}"
+      spark_master_external_hostname: "{{ hail_master_external_hostname }}"
+      spark_master_external_domain: "{{ hail_master_external_domain }}"
+      spark_master_external_path: "spark"
+      ###############################################################################
+      # Versions
+      ###############################################################################
+      spark_version: "{{ hail_spark_version }}"
+      spark_build_version: "{{ hail_spark_build_version }}"
+      spark_hadoop_version: 2.8.2
+      ###############################################################################
+      # Source URL and checksum (use builds on Apache mirrors by default)
+      ###############################################################################
+      spark_tgz_url: "{{ hail_spark_tgz_url }}"
+      spark_tgz_checksum: "{{ hail_spark_tgz_checksum }}"
+      ###############################################################################
+      # Directories and Paths
+      ###############################################################################
+      spark_prefix_dir: "{{ hail_spark_prefix_dir }}"
+      spark_hadoop_prefix_dir: "/usr/local/hadoop-{{ spark_hadoop_version }}"
+      #spark_ssl_key_file: /etc/ssl.key
+      #spark_ssl_cert_file: /etc/ssl.cert
+      ###############################################################################
+      # Spark settings
+      ###############################################################################
+      spark_jars: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+      spark_executor_extra_classpath_list: 
+        - "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-core-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-kms-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-s3-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/hadoop-aws-2.8.2.jar"
+      spark_driver_extra_classpath_list: 
+        - "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-core-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-kms-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-s3-1.10.6.jar"
+        - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/hadoop-aws-2.8.2.jar"
+      spark_local_ip: "{{ hail_spark_local_ip }}"
+      spark_master_host: "{{ hail_master_host }}"
+      #spark_master_port: "7077"
+      spark_hadoop_default_s3a_endpoint: "cog.sanger.ac.uk"
+      spark_hadoop_anonymous_buckets: "{{ hail_spark_hadoop_anonymous_buckets }}"
+      spark_executor_memory_gb: "{{ hail_spark_executor_memory_gb }}"
+      ###############################################################################
+      # Master server settings
+      ###############################################################################
+      #spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"
+      spark_master_backend_port: "{{ hail_spark_master_backend_port }}"
+      spark_master_webui_p: false
+      ###############################################################################
+      # Users/Groups
+      ###############################################################################
+      spark_user: "{{ hail_user }}"
+      spark_group: "{{ hail_group }}"
+      spark_authorized_keys: "{{ hail_authorized_keys }}"
+      ###############################################################################
+      # General settings
+      ###############################################################################
+      spark_apt_cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+
+- name: create hail group
+  become: yes
+  group:
+    name: "{{ hail_group }}"
+
+- name: create hail user account
+  become: yes
+  user:
+    name: "{{ hail_user }}"
+    group: "{{ hail_group }}"
+    shell: /bin/bash
+
+- name: set authorized keys for hail
+  become: yes
+  authorized_key:
+    user: "{{ hail_user }}"
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_items:
+    - "{{ lookup('sshpubkey', hail_ssh_key) }} {{ hail_user }}@{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}"
+    - "{{ hail_authorized_keys }}"
+
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ hail_apt_cache_valid_time }}"
+  with_items:
+    - g++
+    - cmake
+    - make
+    - build-essential
+    - openjdk-8-jre-headless
+    - openjdk-8-jdk
+    - git-all
+    - libopenblas-base
+    - libatlas3-base
+    - libnetlib-java
+    - r-base
+    - nfs-common
+
+- include_tasks: conda-6096-patch.yml
+
+- name: install conda prerequisites
+  become: yes
+  conda:
+    name: seaborn
+    version: "{{ hail_seaborn_version }}"
+    executable: "{{ hail_anaconda_prefix_dir }}/bin/conda"
+
+- name: check if Hail download is required
+  stat:
+    path: "{{ hail_check_installed }}"
+  changed_when: false
+  register: hail_installed
+
+- block:
+    - name: checkout Hail from GitHub
+      git:
+        repo: "{{ hail_repository }}"
+        dest: "{{ hail_temp_dir }}"
+        version: "{{ hail_version_commit }}"
+
+    - name: compile Hail
+      command: "./gradlew -Dspark.version={{ hail_spark_version }} shadowJar archiveZip"
+      args:
+        chdir: "{{ hail_temp_dir }}"
+
+    # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
+    - name: install Hail
+      become: yes
+      command: "mv {{ hail_temp_dir }} {{ hail_prefix_dir }}"
+      notify: restart hail
+
+  when: not hail_installed.stat.exists
+  always:
+    - name: remove temp directory
+      file:
+        path: "{{ hail_temp_dir }}"
+        state: absent
+
+- name: set permissions on hail prefix dir
+  become: yes
+  file:
+    path: "{{ hail_prefix_dir }}"
+    owner: "{{ hail_user }}"
+    recurse: yes
+
+- name: comment out SPARK_CLASSPATH in hail setup_env
+  become: yes
+  become_user: "{{ hail_user }}"
+  lineinfile:
+    path: "{{ hail_prefix_dir }}/scripts/setup_env"
+    regexp: '^#?(export\s+SPARK_CLASSPATH=.*)$'
+    line: '#\1'
+    backrefs: yes
+  notify: restart hail
+
+- name: create link to jars directory expected by Hail
+  become: yes
+  file:
+    src: "{{ hail_prefix_dir }}/build/libs"
+    dest: "{{ hail_prefix_dir }}/jars"
+    state: link
+
+- name: create hail data directory
+  become: yes
+  file:
+    path: "{{ hail_master_data_dir }}"
+    state: directory
+    mode: 0700
+    owner: "{{ hail_user }}"
+    group: "{{ hail_user }}"
+
+- import_tasks: master.yml
+  when: hail_master_p
+
+- name: promote hail_master_data_dir to fact
+  set_fact:
+    hail_master_data_dir: "{{ hail_master_data_dir }}"
+
+- name: mount hail data dir (on non-master nodes)
+  become: yes
+  mount:
+    name: "{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+    src: "{{ hail_master_host }}:{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+    fstype: nfs
+    opts: defaults,intr,nofail
+    dump: 0
+    passno: 2
+    state: mounted
+  when: not hail_master_p
+
+- name: link /data to data dir for convenience
+  become: yes
+  file:
+    src: "{{ hail_master_data_dir }}"
+    dest: "/data"
+    state: link
+
+- name: give hail user NOPASSWD sudo ability to control hail service
+  tags: common
+  become: yes
+  template:
+    src: hail_sudoers.j2
+    dest: /etc/sudoers.d/{{ hail_user }}-service-hail
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440

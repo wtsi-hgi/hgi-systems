@@ -2,9 +2,9 @@
 #
 # Author: Christopher Harrison <ch12@sanger.ac.uk>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it
+# hgi-systems is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 3 of the License, or (at your
 # option) any later version.
@@ -18,10 +18,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: roles/irods-client/tasks/main.yml
-- include: irods.yml
+- import_tasks: irods.yml
   register: irods
 
-- include: baton.yml
+- import_tasks: baton.yml
   when: irods
 
 # This is needed for Ansible to invoke iinit as an arbitrary user

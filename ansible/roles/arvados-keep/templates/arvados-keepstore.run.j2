@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export GOGC=10
+exec 2>&1
+exec keepstore -config {{ arvados_keep_config_file }}

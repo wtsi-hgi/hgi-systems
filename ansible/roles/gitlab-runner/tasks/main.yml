@@ -2,9 +2,9 @@
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -23,7 +23,7 @@
 - name: add gitlab signing key
   tags: gitlab-runner
   become: yes
-  apt_key: 
+  apt_key:
     url: "https://packages.gitlab.com/gpg.key"
     state: present
   when: ansible_os_family == 'Debian'
@@ -34,45 +34,183 @@
   apt_repository:
     repo: "{{ item }}"
     state: present
-  with_items: "{{ gitlab_repos }}"
+  with_items:
+    - deb https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ {{ ansible_distribution_release }} main
+    - deb-src https://packages.gitlab.com/runner/gitlab-ci-multi-runner/ubuntu/ {{ ansible_distribution_release }} main
   when: ansible_os_family == 'Debian'
 
-- name: install gitlab-runner (apt)
+- name: install gitlab-runner and docker_container module prereqs (apt)
   tags: gitlab-runner
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ apt_cache_valid_time }}
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - gitlab-ci-multi-runner
+    - python-docker
+    - python-pip
   when: ansible_os_family == 'Debian'
 
-- name: create gitlab runner configuration fragment directory
+- name: install gitlab-runner module prereqs (pip)
   tags: gitlab-runner
   become: yes
-  file: path=/etc/gitlab-runner.d state=directory
+  pip:
+    name: python-gitlab
+
+- name: create docker-machine CA cert directory
+  tags:
+    - gitlab-runner
+  become: yes
+  file:
+    path: /root/.docker/machine/certs
+    state: directory
+
+- name: put previously generated docker-machine self-signed CA certs in place
+  tags: gitlab-runner
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/root/.docker/machine/certs/{{ item }}"
+    owner: root
+    mode: 0600
+  with_items:
+    - ca.pem
+    - ca-key.pem
+    - cert.pem
+    - key.pem
+
+- name: install gitlab runner ssh key (for docker machine)
+  tags: gitlab-runner
+  become: yes
+  template:
+    src: gitlab_runner_ssh_private_key.j2
+    dest: "{{ gitlab_runner_ssh_private_key_file }}"
+    owner: root
+    mode: 0600
+
+- name: ensure gitlab-runner S3 bucket exists
+  tags:
+    - gitlab-runner
+    - s3
+  delegate_to: localhost
+  aws_s3:
+    rgw: true
+    s3_url: "{{ gitlab_runner_s3_endpoint }}"
+    aws_access_key: "{{ gitlab_runner_s3_access_key }}"
+    aws_secret_key: "{{ gitlab_runner_s3_secret_key }}"
+    bucket: "{{ gitlab_runner_s3_bucket }}"
+    permission: private
+    mode: create
+
+- name: create gitlab runner configuration fragment directory
+  tags:
+    - gitlab-runner
+    - gitlab-runner-register
+  become: yes
+  file:
+    path: /etc/gitlab-runner.d
+    state: directory
 
 - name: create gitlab runner configuration header fragment
-  tags: gitlab-runner
+  tags:
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
-  template: src=00config.toml.j2 dest=/etc/gitlab-runner.d/00config.toml
+  template:
+    src: 00config.toml.j2
+    dest: /etc/gitlab-runner.d/00config.toml
 
 - name: register gitlab runner
-  tags: gitlab-runner
+  tags:
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
   gitlab_ci_multi_runner_register:
+    gitlab_url: "{{ gitlab_url }}"
+    gitlab_token: "{{ gitlab_token }}"
     registration_url: "{{ item[1].url }}"
     registration_token: "{{ item[1].token }}"
     executor: "{{ item[0].executor }}"
-    name: "{{ item[0].name }}-{{ item[1].project }}-{{ ansible_hostname }}"
-    tags: "{{ group_names | union(item[0].extra_tags) | join(',') }}"
-    extra_args: "{{ item[0].extra_args | default('') }}"
-  with_nested: 
+    limit: "{{ item[0].limit }}"
+    # FIXME: The below is a repeat of `gitlab_runner_descriptions`, which is dangerous if it is different
+    description: "{{ item[0].name }}-{{ cloud_resource_name }}"
+    tags: "{{ group_names | union(item[0].extratags | default([])) | join(',') }}"
+    extra_args: "{{ item[0].extraargs | default('') }}"
+  with_nested:
     - "{{ gitlab_runner_registrations }}"
-    - "{{ hgi_gitlab_tokens }}"
+    - "{{ gitlab_runner_tokens }}"
   when: "not 'image-building' in group_names"
-  
+
+- name: ensure gitlab-runner conf dir exists
+  become: yes
+  file:
+    path: /etc/gitlab-runner
+    state: directory
+
 - name: assemble gitlab runner configuration
-  tags: gitlab-runner
+  tags:
+    - gitlab-runner
+    - gitlab-runner-register
   become: yes
   assemble: src=/etc/gitlab-runner.d dest=/etc/gitlab-runner/config.toml regexp=".*\.toml"
   when: "not 'image-building' in group_names"
+
+- name: register gitlab project runner with projects
+  tags:
+    - gitlab-runner
+    - gitlab-runner-register
+  delegate_to: localhost
+  gitlab_ci_project_runners:
+    gitlab_url: "{{ gitlab_url }}"
+    gitlab_project: "{{ item }}"
+    gitlab_token: "{{ gitlab_token }}"
+    gitlab_runners: "{{ gitlab_runner_descriptions }}"
+  with_items: "{{ gitlab_runner_projects }}"
+
+- name: create docker registry configuration
+  tags:
+   - gitlab-runner
+  become: yes
+  template:
+    src: "docker-registry-config.yml.j2"
+    dest: "{{ gitlab_runner_docker_registry_config_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart docker registry container
+
+- name: copy docker registry cert
+  become: yes
+  copy:
+    content: "{{ gitlab_runner_docker_registry_cert }}"
+    dest: "{{ gitlab_runner_docker_registry_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart docker registry container
+
+- name: copy docker registry key
+  become: yes
+  copy:
+    content: "{{ gitlab_runner_docker_registry_key }}"
+    dest: "{{ gitlab_runner_docker_registry_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart docker registry container
+
+- name: setup docker registry container
+  tags: gitlab-runner
+  become: yes
+  docker_container:
+    volumes:
+      - "{{ gitlab_runner_docker_registry_config_file }}:/etc/docker/registry/config.yml"
+      - "{{ gitlab_runner_docker_registry_cert_file }}:{{ gitlab_runner_docker_registry_cert_file }}"
+      - "{{ gitlab_runner_docker_registry_key_file }}:{{ gitlab_runner_docker_registry_key_file }}"
+    published_ports: 6000:5000
+    restart_policy: always
+    name: "{{ gitlab_runner_docker_registry_container_name }}"
+    image: registry:2
 

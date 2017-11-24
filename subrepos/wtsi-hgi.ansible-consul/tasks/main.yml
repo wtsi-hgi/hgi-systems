@@ -1,0 +1,36 @@
+---
+- name: gather OS specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_os_family }}-{{ ansible_distribution_major_version}}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- import_tasks: install.yml
+  become: yes
+
+- import_tasks: install-ui.yml
+  become: yes
+  when: consul_is_ui == true
+
+- import_tasks: install-cli.yml
+  become: yes
+  when: consul_install_consul_cli == true
+
+- import_tasks: dnsmasq.yml
+  become: yes
+  when: consul_install_dnsmasq == true
+
+- import_tasks: consulate.yml
+  become: yes
+  when: consul_install_consulate == true 
+
+- service: >
+    name=consul
+    state="{{ consul_service_state }}"
+    enabled=yes
+  when: consul_manage_service
+  become: yes
+
+- import_tasks: services.yml
+  become: yes
+  when: consul_services is defined and consul_services|length > 0

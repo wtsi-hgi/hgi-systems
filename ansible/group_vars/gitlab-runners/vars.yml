@@ -1,0 +1,75 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: group_vars/gitlab-runners
+
+gitlab_runner_concurrent: 30
+gitlab_runner_idle_machines: 3
+gitlab_runner_idle_time: 3600
+gitlab_runner_max_builds: 0
+
+gitlab_runner_os_flavor_name: "m1.small"
+gitlab_runner_os_auth_url: "{{ openstack_auth.auth_url }}"
+gitlab_runner_os_project_name: "{{ openstack_auth.project_name }}"
+gitlab_runner_os_username: "{{ openstack_auth.username }}"
+gitlab_runner_os_password: "{{ openstack_auth.password }}"
+
+gitlab_runner_os_image_name: "{{ hostvars[gitlab_runner_image]['openstack_name'] }}"
+gitlab_runner_os_ssh_user: "{{ hostvars[gitlab_runner_image]['openstack_image_user'] }}"
+gitlab_runner_ssh_private_key_file: "/etc/gitlab-runner-ssh-private-key"
+gitlab_runner_ssh_keypair_name: "{{ openstack_instance_key_name }}"
+
+gitlab_runner_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+gitlab_runner_s3_port: 443
+gitlab_runner_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+gitlab_runner_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+gitlab_runner_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+gitlab_runner_s3_bucket: gitlab-runner-shared-cache
+
+gitlab_runner_ssh_security_group_name: "{{ (groups['openstack-security-groups-ssh'] | map('extract', hostvars) | selectattr('openstack_tenant', 'equalto', openstack_tenant) | list())[0].openstack_name }}"
+gitlab_runner_docker_machine_security_group_name: "{{ (groups['openstack-security-groups-docker-machine'] | map('extract', hostvars) | selectattr('openstack_tenant', 'equalto', openstack_tenant) | list())[0].openstack_name }}"
+
+gitlab_runner_registrations:
+  - name: "docker-privileged"
+    executor: "docker"
+    limit: 0
+    extratags:
+      - docker-privileged
+    extraargs: "--docker-privileged --docker-image docker:latest"
+  - name: "docker-machine"
+    executor: "docker+machine"
+    limit: 0
+    extratags:
+      - docker
+    extraargs: "--docker-image docker:latest --machine-idle-nodes {{ gitlab_runner_idle_machines }} --machine-idle-time {{ gitlab_runner_idle_time }} --machine-max-builds {{ gitlab_runner_max_builds }} --machine-machine-driver 'openstack' --machine-machine-name 'gitlab-runner-%s' --machine-machine-options 'openstack-auth-url={{ gitlab_runner_os_auth_url }}' --machine-machine-options 'openstack-tenant-name={{ gitlab_runner_os_project_name }}' --machine-machine-options 'openstack-username={{ gitlab_runner_os_username }}' --machine-machine-options 'openstack-password={{ gitlab_runner_os_password }}' --machine-machine-options 'openstack-flavor-name={{ gitlab_runner_os_flavor_name }}' --machine-machine-options 'openstack-image-name={{ gitlab_runner_os_image_name }}' --machine-machine-options 'openstack-ssh-user={{ gitlab_runner_os_ssh_user }}' --machine-machine-options 'openstack-net-name={{ openstack_instance_network_name }}' --machine-machine-options 'openstack-sec-groups={{ gitlab_runner_ssh_security_group_name }},{{ gitlab_runner_docker_machine_security_group_name }}' --machine-machine-options 'engine-registry-mirror=https://{{ ansible_host }}:6000' --cache-type s3 --cache-s3-server-address '{{ gitlab_runner_s3_host }}:{{ gitlab_runner_s3_port }}' --cache-s3-access-key '{{ gitlab_runner_s3_access_key }}' --cache-s3-secret-key '{{ gitlab_runner_s3_secret_key }}' --cache-s3-bucket-location '{{ gitlab_runner_s3_bucket }}' --cache-cache-shared"
+
+gitlab_runner_descriptions_string: "{% for name in gitlab_runner_registrations | map(attribute='name') | list %}{{ name }}-{{ cloud_resource_name }} {% endfor %}"
+
+gitlab_runner_descriptions: "{{ gitlab_runner_descriptions_string.split() }}"
+
+gitlab_runner_projects:
+  - hgi/hgi-systems
+  - hgi/hgi-base-image-builder
+  - hgi/hgi-docker-image-builder
+  - hgi/hgi-arvados-compute-image-builder
+
+gitlab_runner_docker_registry_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
+gitlab_runner_docker_registry_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"

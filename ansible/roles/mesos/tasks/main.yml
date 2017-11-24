@@ -1,0 +1,15 @@
+---
+
+- name: Ensure Mesos is pre-installed if not root
+  command: "{{ mesos_prefix }}/bin/mesos help"
+  when: "'nonroot' in group_names"
+  changed_when: false
+
+- name: Check if Mesos is installed if root
+  command: bash -c "which mesos || true"
+  register: mesos_install_location
+  when: "not 'nonroot' in group_names"
+  changed_when: false
+
+- import_tasks: install.yml
+  when: "not 'nonroot' in group_names and mesos_install_location.stdout == ''"

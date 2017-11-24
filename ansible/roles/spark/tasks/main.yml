@@ -1,0 +1,200 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/spark/tasks/main.yml
+
+- name: promote spark_master_p to fact
+  set_fact:
+    spark_master_p: "{{ spark_master_p }}"
+
+- name: promote spark_worker_p to fact
+  set_fact:
+    spark_worker_p: "{{ spark_worker_p }}"
+
+- name: create spark group
+  become: yes
+  group:
+    name: "{{ spark_group }}"
+
+- name: create spark user account
+  become: yes
+  user:
+    name: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    shell: /bin/bash
+
+- name: set authorized keys for spark
+  become: yes
+  authorized_key:
+    user: "{{ spark_user }}"
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_items:
+    - "{{ lookup('sshpubkey', spark_ssh_key) }} {{ spark_user }}@{{ spark_master_server_name }}"
+    - "{{ spark_authorized_keys }}"
+
+- name: install apt prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ spark_apt_cache_valid_time }}"
+  with_items:
+    - openjdk-8-jre-headless
+    - nginx
+    - git-all
+
+- name: download spark tgz
+  become: yes
+  become_user: "{{ spark_user }}"
+  get_url:
+    url: "{{ spark_tgz_url }}"
+    checksum: "{{ spark_tgz_checksum }}"
+    dest: "/home/{{ spark_user }}/spark-{{ spark_version }}.tgz"
+    mode: 0644
+  register: spark_download_spark
+
+- name: delete spark dir if download has changed
+  become: yes
+  file:
+    path: "{{ spark_prefix_dir }}"
+    state: absent
+  when: spark_download_spark.changed
+
+- name: create spark directory
+  become: yes
+  file:
+    path: "{{ spark_prefix_dir }}"
+    state: directory
+    owner: "{{ spark_user }}"
+  register: spark_create_spark_dir
+
+- name: expand spark
+  become: yes
+  become_user: "{{ spark_user }}"
+  unarchive:
+    src: "/home/{{ spark_user }}/spark-{{ spark_version }}.tgz"
+    dest: "{{ spark_prefix_dir }}"
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+    creates: "{{ spark_prefix_dir }}/README.md"
+  notify:
+    - restart spark
+  when: spark_create_spark_dir.changed
+  register: spark_expand_spark
+
+- name: configure spark
+  become: yes
+  become_user: "{{ spark_user }}"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ spark_prefix_dir }}/conf/{{ item }}"
+    owner: "{{ spark_user }}"
+  with_items:
+    - spark-env.sh
+    - spark-defaults.conf
+  notify:
+    - restart spark
+
+- name: ensure spark user has permissions on spark dir
+  become: yes
+  file:
+    path: "{{ spark_prefix_dir }}"
+    owner: "{{ spark_user }}"
+    recurse: yes
+
+- name: download hadoop tgz
+  become: yes
+  become_user: "{{ spark_user }}"
+  get_url:
+    url: "{{ spark_hadoop_tgz_url }}"
+    checksum: "{{ spark_hadoop_tgz_checksum }}"
+    dest: "/home/{{ spark_user }}/hadoop-{{ spark_hadoop_version }}.tgz"
+    mode: 0644
+  register: spark_download_hadoop
+
+- name: delete hadoop directory if hadoop download has changed
+  become: yes
+  file:
+    path: "{{ spark_hadoop_prefix_dir }}"
+    state: absent
+  when: spark_download_hadoop.changed
+
+- name: create hadoop directory
+  become: yes
+  file:
+    path: "{{ spark_hadoop_prefix_dir }}"
+    state: directory
+    owner: "{{ spark_user }}"
+  register: spark_create_hadoop_dir
+
+- name: expand hadoop
+  become: yes
+  become_user: "{{ spark_user }}"
+  unarchive:
+    src: "/home/{{ spark_user }}/hadoop-{{ spark_hadoop_version }}.tgz"
+    dest: "{{ spark_hadoop_prefix_dir }}"
+    remote_src: yes
+    extra_opts: ['--strip-components=1']
+    creates: "{{ spark_hadoop_prefix_dir }}/README.md"
+  notify:
+    - restart spark
+  when: spark_create_hadoop_dir.changed
+
+- name: ensure spark user has permissions on hadoop dir
+  become: yes
+  file:
+    path: "{{ spark_hadoop_prefix_dir }}"
+    owner: "{{ spark_user }}"
+    recurse: yes
+
+- import_tasks: master.yml
+  when: spark_master_p
+
+- name: install systemd spark-slave service
+  become: yes
+  template:
+    src: spark-slave.service.j2
+    dest: /etc/systemd/system/spark-slave.service
+    owner: root
+  notify:
+    - reload systemd
+    - restart spark
+
+- name: enable and start spark-slave service
+  become: yes
+  systemd:
+    name: spark-slave
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: give spark user NOPASSWD sudo ability to control spark service
+  tags: common
+  become: yes
+  template:
+    src: spark_sudoers.j2
+    dest: /etc/sudoers.d/{{ spark_user }}-service-spark
+    validate: "visudo -cf %s"
+    owner: root
+    group: root
+    mode: 0440

@@ -4,9 +4,9 @@
 #
 # Author: Christopher Harrison <ch12@sanger.ac.uk>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it
+# hgi-systems is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 3 of the License, or (at your
 # option) any later version.
@@ -38,11 +38,13 @@ from urlparse import urlparse
 
 from ansible.module_utils.basic import AnsibleModule
 
+
 class AnsibleModuleWithWTF(AnsibleModule):
     def wtf_json(self, status, headers, body):
         """ Return for unknown failure modes """
         self.fail_json(msg="Unknown failure mode - HTTP %s" % status,
                        meta={"headers": headers, "body": body})
+
 
 def json_request(method, url, payload=None, basic_auth=None):
     """
@@ -124,7 +126,7 @@ if __name__ == "__main__":
         if status == 200:
             module.exit_json(changed=False, message="User already exists")
         elif status == 401:
-            module.fail.json(msg="Cannot authenticate to create user")
+            module.fail_json(msg="Cannot authenticate to create user")
         else:
             module.wtf_json(status, headers, body)
 

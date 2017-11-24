@@ -1,0 +1,821 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/arvados-master/tasks/main.yml
+
+
+################################################################################
+# prepare directories
+################################################################################
+- name: create directories within arvados data dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/{{ item }}"
+    state: directory
+  with_items:
+    - postgresql
+    - arvados-api
+
+- name: ensure /var/www exists
+  become: yes
+  file:
+    path: /var/www
+    state: directory
+
+- name: create etc-postgresql dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    state: directory
+
+- name: link etc-postgresql dir to /etc/postgresql
+  become: yes
+  file:
+    path: /etc/postgresql
+    src: "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    state: link
+
+- name: link arvados-api dir to arvados data dir
+  become: yes
+  file:
+    path: /var/www/arvados-api
+    src: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: link
+
+################################################################################
+# arvados-api
+################################################################################
+- name: install arvados api server prerequisites including postgresql
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - "postgresql={{ arvados_master_postgresql_package_version }}"
+    - bison
+    - build-essential
+    - gettext
+    - libcurl3
+    - libcurl3-gnutls
+    - libcurl4-openssl-dev
+    - libpcre3-dev
+    - libreadline-dev
+    - libssl-dev
+    - libxslt1.1
+    - python-psycopg2
+    - zlib1g-dev
+
+- name: set ownership of postgres dirs
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    recurse: yes
+  with_items: 
+    - "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    - "{{ arvados_master_api_data_dir }}/postgresql"
+
+- name: set ownership of arvados-api dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: delete default main postgresql cluster
+  become: yes
+  command: "pg_dropcluster --stop {{ arvados_master_postgresql_version }} main"
+  args:
+    removes: /etc/postgresql/{{ arvados_master_postgresql_version }}/main
+
+- name: create postgresql cluster
+  become: yes
+  command: "pg_createcluster -u postgres -d {{ arvados_master_api_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
+  args:
+    creates: /etc/postgresql/{{ arvados_master_postgresql_version }}/arvados_api
+  register: arvados_master_REGISTER_configure_postgresql
+
+- name: create postgresql user for arvados api
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ arvados_cluster_db_user_api }}"
+    password: "{{ arvados_cluster_db_password_api }}"
+    encrypted: yes
+    role_attr_flags: "NOSUPERUSER,NOCREATEROLE"
+
+- name: create arvados api database
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name: "{{ arvados_cluster_db_name_api }}"
+    template: template0
+    encoding: UTF8
+    owner: "{{ arvados_cluster_db_user_api }}"
+
+- name: ensure /usr/local/src directory exists
+  become: yes
+  file:
+    path: /usr/local/src
+    state: directory
+    owner: "{{ ansible_user }}"
+    
+- name: download ruby source archive
+  get_url:
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    dest: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
+
+- name: expand ruby source archive
+  unarchive:
+    src: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    dest: /usr/local/src
+    remote_src: true
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: configure ruby source
+  command: ./configure --disable-install-rdoc
+  args:
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/Makefile
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: build ruby
+  command: make
+  args:
+    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: install ruby
+  become: yes
+  command: make install
+  args:
+    creates: /usr/local/bin/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+
+- name: install bundler
+  become: yes
+  command: gem install bundler
+  args:
+    creates: /usr/local/bin/bundler
+
+- name: add passenger apt signing key
+  become: yes
+  apt_key: 
+    keyserver: "{{ pgp_keyserver_url }}"
+    id: 561F9B9CAC40B2F7
+
+- name: add arvados apt repository
+  become: yes
+  apt_repository: 
+    repo: "deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main"
+    state: present
+
+- name: install nginx and passenger
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - nginx-extras
+    - passenger
+  notify:
+    - restart nginx
+
+- name: make /var/www owned by www-data
+  become: yes
+  file: 
+    path: /var/www
+    owner: www-data
+
+- name: set shell for www-data user (required for git repo access using jobs api)
+  become: yes
+  user:
+    name: www-data
+    shell: /bin/bash
+
+- name: activate passenger in nginx configuration
+  become: yes
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: "http {"
+    content: |
+      include /etc/nginx/passenger.conf;
+      include /etc/nginx/passenger_settings.conf;
+  notify:
+    - restart nginx
+
+- name: configure passenger nginx
+  become: yes
+  template: 
+    src: passenger_settings.conf.j2
+    dest: /etc/nginx/passenger_settings.conf
+  notify:
+    - restart nginx
+
+- name: ensure nginx has restarted before installing arvados api
+  meta: flush_handlers
+
+- name: install arvados api server
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - arvados-api-server
+  register: arvados_master_REGISTER_install_api_server
+
+- name: create directories for arvados
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ arvados_master_git_repositories_dir }}"
+    - /var/www/arvados-api/current/tmp/cache
+    - /var/run/nginx/passenger
+  register: arvados_master_REGISTER_create_dirs
+
+- name: arvados conf files
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/arvados/api/{{ item }}"
+  with_items:
+    - application.yml
+    - database.yml
+  register: arvados_master_REGISTER_conf_files
+  notify:
+    - restart crunch-dispatch-pipelines
+    - restart crunch-dispatch-jobs
+
+- name: dpkg-reconfigure arvados-api-server
+  become: yes
+  command: dpkg-reconfigure arvados-api-server
+  when: >-
+    arvados_master_REGISTER_install_api_server.changed or
+    arvados_master_REGISTER_create_dirs.changed or
+    arvados_master_REGISTER_conf_files.changed
+
+- name: copy api token files
+  become: yes
+  copy:
+    content: "{{ item.token }}"
+    dest: "{{ item.file }}"
+    owner: www-data
+    mode: 0600
+  with_items:
+    - { token: "{{ arvados_cluster_superuser_api_token }}", file: "{{ arvados_master_superuser_token_file }}" }
+    - { token: "{{ arvados_cluster_crunch_dispatcher_api_token }}", file: "{{ arvados_master_crunch_dispatcher_token_file }}" }
+    - { token: "{{ arvados_cluster_data_manager_api_token }}", file: "{{ arvados_master_data_manager_token_file }}" }
+  register: arvados_master_api_token_files
+
+- name: create api tokens from files
+  become: yes
+  become_user: www-data
+  shell: "bundle exec ./script/create_superuser_token.rb $(cat {{ item }})"
+  args:
+    executable: /bin/sh
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  with_items:
+    - "{{ arvados_master_superuser_token_file }}"
+    - "{{ arvados_master_crunch_dispatcher_token_file }}"
+    - "{{ arvados_master_data_manager_token_file }}"
+  when: arvados_master_api_token_files.changed
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ arvados_master_cert }}"
+    dest: "{{ arvados_master_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ arvados_master_key }}"
+    dest: "{{ arvados_master_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: configure nginx for arvados-api
+  become: yes
+  template:
+    src: "arvados-api.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-api.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+
+- name: create trusted workbench api client script
+  become: yes
+  template: 
+    src: "create-workbench-api-client.rb.j2"
+    dest: "{{ arvados_master_create_workbench_api_client_script }}"
+    mode: 0700
+    owner: www-data
+  register: arvados_master_workbench_api_client_script
+
+- name: run script to create trusted workbench api client
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_workbench_api_client_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  when: arvados_master_workbench_api_client_script.changed
+
+- name: create mercury admin user script
+  become: yes
+  template:
+    src: "create-mercury-admin-user.rb.j2"
+    dest: "{{ arvados_master_create_mercury_admin_user_script }}"
+    mode: 0700
+    owner: www-data
+  register: arvados_master_mercury_admin_user_script
+  
+- name: create mercury admin user
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_mercury_admin_user_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  when: arvados_master_mercury_admin_user_script.changed
+
+##############################################################################
+# crunch-dispatch-slurm (crunch v2 slurm dispatcher)
+##############################################################################
+- name: install crunch-dispatch-slurm
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - crunch-dispatch-slurm
+
+- name: create crunch-dispatch-slurm conf dir
+  become: yes
+  file:
+    path: "/etc/arvados/crunch-dispatch-slurm"
+    state: directory
+
+- name: configure crunch-dispatch-slurm
+  become: yes
+  template:
+    src: "crunch-dispatch-slurm.yml.j2"
+    dest: "/etc/arvados/crunch-dispatch-slurm/crunch-dispatch-slurm.yml"
+    mode: 0700
+    owner: www-data
+  notify:
+    - restart crunch-dispatch-slurm
+
+##############################################################################
+# crunch-dispatch (deprecated jobs API dispatcher)
+##############################################################################
+- name: create crunch group
+  become: yes
+  group:
+    name: crunch
+    gid: 1001
+    state: present
+
+- name: create crunch user
+  become: yes
+  user:
+    name: crunch
+    group: crunch
+    uid: 1001
+    state: present
+    
+- name: install SDKs required for crunch-dispatch
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - libjson-perl
+    - libio-socket-ssl-perl
+    - libwww-perl
+    - libipc-system-simple-perl
+    - libcrypt-ssleay-perl 
+    - libarvados-perl
+    - python-arvados-python-client
+    - runit
+
+- name: create runit directory for crunch-dispatch-jobs
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-jobs
+    state: directory
+
+- name: install runit service for crunch-dispatch-jobs
+  become: yes
+  template:
+    src: "crunch-dispatch-jobs.run.j2"
+    dest: "/etc/sv/crunch-dispatch-jobs/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-jobs
+
+- name: create runit log directory for crunch-dispatch-jobs
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-jobs/log
+    state: directory
+
+- name: install runit log service for crunch-dispatch-jobs
+  become: yes
+  template:
+    src: "crunch-dispatch-jobs.log.run.j2"
+    dest: "/etc/sv/crunch-dispatch-jobs/log/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-jobs
+
+- name: create runit directory for crunch-dispatch-pipelines
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-pipelines
+    state: directory
+
+- name: install runit service for crunch-dispatch-pipelines
+  become: yes
+  template:
+    src: "crunch-dispatch-pipelines.run.j2"
+    dest: "/etc/sv/crunch-dispatch-pipelines/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-pipelines
+
+- name: create runit log directory for crunch-dispatch-pipelines
+  become: yes
+  file:
+    path: /etc/sv/crunch-dispatch-pipelines/log
+    state: directory
+
+- name: install runit log service for crunch-dispatch-pipelines
+  become: yes
+  template:
+    src: "crunch-dispatch-pipelines.log.run.j2"
+    dest: "/etc/sv/crunch-dispatch-pipelines/log/run"
+    mode: 0755
+  notify:
+   - restart crunch-dispatch-pipelines
+
+##############################################################################
+# arvados-ws
+##############################################################################
+- name: install arvados websockets server
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - arvados-ws
+  notify:
+   - restart arvados-ws
+
+- name: query systemd version
+  shell: "systemd --version | awk 'NR==1 {print $2}'"
+  changed_when: false
+  register: arvados_master_systemd_version
+
+- name: comment/uncomment arvados-ws.service lines based on systemd version
+  become: yes
+  replace:
+    path: /lib/systemd/system/arvados-ws.service
+    regexp: "^(#{{ item.marker }}[\\n])#?(.*?)$"
+    replace: "\\1{% if arvados_master_systemd_version.stdout | version_compare('230', item.comment_when_version) %}#{% endif %}\\2"
+  when: 
+  with_items:
+    - { marker: " systemd<230", comment_when_version: ">=" }
+    - { marker: " systemd>=230", comment_when_version: "<" }
+  register: arvados_master_ws_service
+
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+  when: arvados_master_ws_service.changed
+
+- name: ensure ws configuration directory exists
+  become: yes
+  file:
+    path: /etc/arvados/ws
+    state: directory
+    owner: root
+    mode: 0700
+
+- name: configure arvados-ws
+  become: yes
+  template:
+    src: ws.yml.j2
+    dest: /etc/arvados/ws/ws.yml
+    mode: 0700
+    owner: root
+  notify:
+   - restart arvados-ws
+
+- name: enable and start arvados-ws
+  become: yes
+  systemd:
+    name: arvados-ws
+    enabled: yes
+    state: started
+
+- name: ensure arvados-ws has restarted before checking it is functional
+  meta: flush_handlers
+
+- name: wait up to 60s for arvados-ws port
+  wait_for:
+    port: "{{ arvados_master_ws_backend_port }}"
+    host: 127.0.0.1
+    timeout: 60
+
+- name: verify arvados-ws is functional
+  uri:
+    url: "http://127.0.0.1:{{ arvados_master_ws_backend_port }}/status.json"
+    return_content: yes
+  register: ws
+
+- name: verify that arvados-ws returned data
+  fail:
+  when: "ws.json.Clients < 1"
+
+- name: configure nginx for arvados-ws
+  become: yes
+  template:
+    src: "arvados-ws.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-ws.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+   
+- name: ensure nginx has restarted before checking it is functional remotely via https
+  meta: flush_handlers
+
+- name: verify arvados-ws is functional remotely via https
+  delegate_to: "{{ arvados_master_remote_check_delegate }}"
+  uri:
+    url: "https://{{ arvados_cluster_ws_host }}/status.json"
+    return_content: yes
+  register: wss
+
+- name: verify that arvados-ws returned data via https
+  fail:
+  when: "wss.json.Clients < 1"
+
+
+##############################################################################
+# arvados-git
+##############################################################################
+- name: install arvados git server prerequisites
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - git
+    - openssh-server
+
+- name: create git group
+  become: yes
+  group:
+    name: git
+
+- name: create git user
+  become: yes
+  user:
+    name: git
+    group: git
+    home: "{{ arvados_master_git_home }}"
+    comment: git
+    state: present
+
+- name: ensure git home directory owned by git user
+  become: yes
+  file:
+    path: "{{ arvados_master_git_home }}"
+    owner: git
+    group: git
+    recurse: yes
+    state: directory
+
+- name: ensure git ~/.ssh directory exists
+  become: yes
+  file:
+    path: "{{ arvados_master_git_home }}/.ssh"
+    owner: git
+    group: git
+    mode: 0755
+    state: directory
+
+- name: install ssh private key for git user
+  become: yes
+  become_user: git
+  copy:
+    content: "{{ arvados_cluster_git_ssh_private_key }}"
+    dest: "{{ arvados_master_git_home }}/.ssh/id_rsa"
+    owner: git
+    mode: 0600
+
+- name: install ssh public key for git user
+  become: yes
+  become_user: git
+  copy:
+    content: "{{ arvados_cluster_git_ssh_public_key }}"
+    dest: "{{ arvados_master_git_home }}/.ssh/id_rsa.pub"
+    owner: git
+    mode: 0644
+
+- name: detect localhost keys
+  command: ssh-keyscan localhost
+  changed_when: false
+  register: localhost_host_keys
+
+- name: add localhost host keys to git user known_hosts
+  become: yes
+  become_user: git
+  known_hosts: 
+    name: localhost
+    key: "{{ item }}"
+    state: present
+  with_items: "{{ localhost_host_keys.stdout_lines }}"
+
+- name: create git ~/bin
+  become: yes
+  become_user: git
+  file:
+    path: "{{ arvados_master_git_home }}/bin"
+    mode: 0755
+    state: directory
+
+- name: configure git user .profile
+  become: yes
+  become_user: git
+  template:
+    src: git.profile.j2
+    dest: "{{ arvados_master_git_home }}/.profile"
+    mode: 0644
+
+- name: clone gitolite source
+  become: yes
+  become_user: git
+  command: git clone --branch v3.6.4 https://github.com/sitaramc/gitolite
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/gitolite"
+
+- name: install gitolite
+  become: yes
+  become_user: git
+  command: ./gitolite/install -ln "{{ arvados_master_git_home }}/bin"
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/bin/gitolite"
+
+- name: setup initial gitolite repositories
+  become: yes
+  become_user: git
+  command: ./bin/gitolite setup -pk .ssh/id_rsa.pub
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/repositories/gitolite-admin.git"
+
+- name: clone gitolite-admin repo 
+  become: yes
+  become_user: git
+  command: git clone git@localhost:gitolite-admin
+  args:
+    chdir: "{{ arvados_master_git_home }}"
+    creates: "{{ arvados_master_git_home }}/gitolite-admin"
+
+- name: configure gitolite-admin git repo
+  become: yes
+  become_user: git
+  git_config:
+    repo: "{{ arvados_master_git_home }}/gitolite-admin"
+    scope: local
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - { name: "user.email", value: "arvados" }
+    - { name: "user.name", value: "arvados" }
+    - { name: "push.default", value: "simple" }
+
+- name: configure gitolite.rc 
+  become: yes
+  become_user: git
+  template:
+    src: gitolite.rc.j2
+    dest: "{{ arvados_master_git_home }}/.gitolite.rc"
+    mode: 0600
+
+- name: configure arvados git synchronisation
+  become: yes
+  template: 
+    src: arvados-clients.yml.j2
+    dest: /var/www/arvados-api/current/config/arvados-clients.yml
+    mode: 0644
+
+- name: enable arvados git synchronisation cron job 
+  become: yes
+  cron: 
+    state: present
+    name: arvados-git-sync
+    cron_file: /etc/cron.d/arvados-git-sync
+    minute: "*/5"
+    hour: "*"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    user: git
+    job: cd /var/www/arvados-api/current && bundle exec script/arvados-git-sync.rb production
+
+- name: install arvados-git-httpd
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - git
+    - arvados-git-httpd
+
+- name: ensure git-httpd configuration directory exists
+  become: yes
+  file:
+    path: /etc/arvados/git-httpd
+    state: directory
+    owner: root
+    mode: 0700
+
+- name: configure arvados-git-httpd
+  become: yes
+  template:
+    src: git-httpd.yml.j2
+    dest: /etc/arvados/git-httpd/git-httpd.yml
+    mode: 0700
+    owner: root
+  notify:
+   - restart arvados-git-httpd
+
+- name: configure nginx for arvados-git-httpd
+  become: yes
+  template:
+    src: "arvados-git-httpd.conf.j2"
+    dest: /etc/nginx/conf.d/arvados-git-httpd.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart nginx
+

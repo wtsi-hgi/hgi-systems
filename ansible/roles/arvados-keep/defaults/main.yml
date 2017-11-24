@@ -1,0 +1,9 @@
+arvados_keep_blob_signing_key_file: "/etc/arvados-keep-blob-signing.key"
+arvados_keep_data_manager_token_file: "/etc/arvados-data-manager.token"
+arvados_keep_s3_access_key_file: "/etc/arvados-keep-s3.access_key"
+arvados_keep_s3_secret_key_file: "/etc/arvados-keep-s3.secret_key"
+arvados_keep_blob_signature_ttl: "336h0m0s"
+arvados_keep_max_buffers: 128
+arvados_keep_trash_check_interval: "24h0m0s"
+arvados_keep_trash_lifetime: "168h0m0s"
+arvados_keep_config_file: "/etc/arvados-keep-config.yaml"

@@ -2,9 +2,9 @@
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it under
+# hgi-systems is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
 # Foundation; either version 3 of the License, or (at your option) any later
 # version.
@@ -26,3 +26,6 @@ mesos_prefix: "{{ hgi_pkglocal_dir }}/mesos-{{ mesos_version }}"
 mesos_docker_timeout_m: 5
 mesos_docker_timeout_s: "{{ mesos_docker_timeout_m | int() * 60 }}"
 mesos_docker_timeout_ms: "{{ mesos_docker_timeout_s | int() * 1000 }}"
+
+mesos_mesosphere_apt_url: "http://repos.mesosphere.com/{{ ansible_distribution|lower }}"
+mesos_build_directory: /tmp/mesos

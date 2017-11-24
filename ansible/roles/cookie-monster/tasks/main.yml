@@ -2,9 +2,9 @@
 #
 # Author: Christopher Harrison <ch12@sanger.ac.uk>
 #
-# This file is part of hgi-ansible.
+# This file is part of hgi-systems.
 #
-# hgi-ansible is free software: you can redistribute it and/or modify it
+# hgi-systems is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
 # Free Software Foundation; either version 3 of the License, or (at your
 # option) any later version.
@@ -18,11 +18,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: roles/cookie-monster/tasks/main.yml
-- include: iinit.yml
+- import_tasks: iinit.yml
   register: iinit
 
-- include: python.yml
+- import_tasks: python.yml
   register: python
 
-- include: cookie-monster.yml
+- import_tasks: cookie-monster.yml
   register: cookie-monster

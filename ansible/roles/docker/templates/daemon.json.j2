@@ -1,0 +1,13 @@
+{
+    "bip": "{{ docker_bip }}",
+    "mtu": 1400,
+    "dns": ["{{ docker_bip | ipaddr('address') }}"]{#,
+    "default-ulimits": {
+        "nofile": {
+            "Name": "nofile",
+            "Hard": 10000,
+            "Soft": 10000
+        }
+    }
+#}
+}

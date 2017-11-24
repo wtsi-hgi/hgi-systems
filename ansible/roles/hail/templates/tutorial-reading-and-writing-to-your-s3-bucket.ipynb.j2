@@ -1,0 +1,199 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Reading and Writing to your S3 Bucket"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The following sets up Notebook access to your S3 storage and runs through an example to check it's working.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Check you can read from the Sanger S3 tutorial data bucket"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Run the hail-overview-s3 tutorial notebook to make sure you can connect to the Sanger public bucket containing the tutorial data."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Writing to your S3 bucket"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Import your access key and secret key string to access your bucket (supplied from IT Helpdesk when you request S3 access).\n",
+    "By convention, the values used here are stored in a folder in your spark home directory: `~/.aws/credentials`.  \n",
+    "<b>NOTE:</b> You'll have to update the path below if you've stored your credentials elsewhere."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import yaml\n",
+    "import os\n",
+    "\n",
+    "with open(os.path.expanduser(\"~/.aws/credentials\"), 'r') as f:\n",
+    "    credentials = yaml.load(f)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Create a SparkContext object so you can use Hadoop Configuration to set your bucket keys.  \n",
+    "<b>NOTE:</b> unlike other tutorials suggest, HailContext is initialised *after* the SparkContext and Hadoop configurations have been set."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "from pyspark import *\n",
+    "\n",
+    "sparkContext = SparkContext()\n",
+    "hadoopConfig = sparkContext._jsc.hadoopConfiguration()\n",
+    "\n",
+    "hadoopConfig.set(\"fs.s3a.access.key\", credentials['aws_access_key_id'])\n",
+    "hadoopConfig.set(\"fs.s3a.secret.key\", credentials['aws_secret_access_key'])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Test bucket connection with tutorial data\n",
+    "The tutorial data can be read from a public Sanger bucket which is read-only.  You will have to specify your bucket to demonstrate writing to a bucket.      \n",
+    "<b>NOTE:</b> bucket names must be prefixed with `s3a://` so the Spark Context knows which schema to use when connecting."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "sanger_bucket_name = \"s3a://{{ hail_tutorial_data_s3_bucket }}/\"\n",
+    "your_bucket_name = \"s3a://your-bucket-name/\"   # Don't forget the trailing slash!"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You can now create a Hail Context, passing in the configured Spark Context.  You can then use Hail as you would normally, specifying the bucket paths as oppose to local file paths."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from hail import *\n",
+    "\n",
+    "hailContext = HailContext(sc=sparkContext)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###### Read data from the Sanger S3 bucket and write the VDS to your S3 bucket:\n",
+    "<b>NOTE:</b> An error will occur if the output file already exists in your bucket."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "example_input_file_name = \"example.vcf\"\n",
+    "example_output_file_name = \"example.vds\"\n",
+    "\n",
+    "hailContext.import_vcf(sanger_bucket_name + example_input_file_name).write(your_bucket_name + example_output_file_name)\n",
+    "data = hailContext.read(your_bucket_name + example_output_file_name)\n",
+    "\n",
+    "data.summarize()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Remember to close your contexts when you're finished:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "hailContext.stop()\n",
+    "sparkContext.stop()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 2",
+   "language": "python",
+   "name": "python2"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 2
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython2",
+   "version": "2.7.13"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

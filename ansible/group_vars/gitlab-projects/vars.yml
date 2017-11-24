@@ -1,0 +1,76 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors:
+#   Colin Nolan <colin.nolan@sanger.ac.uk>
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: group_vars/gitlab-projects
+
+gitlab_project_settings_hgi_ci_openstack:
+    OS_AUTH_URL: "{{ openstack_logins['delta-mercury']['auth_url'] }}"
+    OS_USERNAME: "{{ openstack_logins['delta-mercury']['username'] }}"
+    OS_PASSWORD: "{{ openstack_logins['delta-mercury']['password'] }}"
+    OS_NETWORKS: hgi-ci
+    OS_SECURITY_GROUPS: ssh
+    OS_TENANT_NAME: hgi-ci
+
+gitlab_project_settings_sanger_s3:
+    S3_HOST: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+    S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+    S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+
+gitlab_project_settings_sanger_s3_images:
+    S3_IMAGE_BUCKET: hgi-openstack-images
+
+gitlab_project_settings_sanger_s3_software:
+    S3_IMAGE_BUCKET: hgi-software
+
+gitlab_project_settings_terragrunt_locks:
+    TERRAGRUNT_LOCKS_AWS_ACCESS_KEY: "{{ terragrunt_locks_aws_access_key }}"
+    TERRAGRUNT_LOCKS_AWS_SECRET_KEY: "{{ terragrunt_locks_aws_secret_key }}"
+
+gitlab_project_settings_terraform_openstack:
+    DELTA_OS_AUTH_URL: "{{ openstack_logins['delta-mercury']['auth_url'] }}"
+    DELTA_OS_USERNAME: "{{ openstack_logins['delta-mercury']['username'] }}"
+    DELTA_OS_PASSWORD: "{{ openstack_logins['delta-mercury']['password'] }}"
+    EMEDLAB_OS_AUTH_URL: "{{ openstack_logins['emedlab-jrandall']['auth_url'] }}"
+    EMEDLAB_OS_USERNAME: "{{ openstack_logins['emedlab-jrandall']['username'] }}"
+    EMEDLAB_OS_PASSWORD: "{{ openstack_logins['emedlab-jrandall']['password'] }}"
+    EMEDLAB_HTTP_PROXY: "{{ hgi_username }}:{{ hgi_password }}@hgs4a.internal.sanger.ac.uk:3306/"
+
+gitlab_project_settings_ansible_credentials:
+    ANSIBLE_VAULT_PASSWORD: "{{ ansible_vault_password }}"
+
+gitlab_project_settings_mercury_ssh_credentials:
+    SSH_PRIVATE_KEY: "{{ mercury_ssh_key }}"
+
+gitlab_project_settings_terraform_s3:
+    TERRAFORM_S3_ENDPOINT: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+    TERRAFORM_S3_ACCESS_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+    TERRAFORM_S3_SECRET_KEY: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+    TERRAFORM_S3_BUCKET: "terraform-remote-state"
+
+gitlab_project_settings_terraform_consul:
+    TERRAFORM_CONSUL_TOKEN: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
+
+gitlab_project_settings_infoblox:
+    INFOBLOX_PASSWORD: "{{ infoblox_credentials_password }}"
+    INFOBLOX_USERNAME: "{{ infoblox_credentials_username }}"
+    INFOBLOX_HOST: "https://{{ infoblox_credentials_api_server }}"
+

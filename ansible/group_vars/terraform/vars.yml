@@ -1,0 +1,3 @@
+terraform_tenant: "{{ inventory_hostname.split('.')[1] }}"
+terraform_type: "{{ inventory_hostname.split('.')[2] }}"
+terraform_name: "{{ inventory_hostname.split('.')[3:] | join('.') }}"

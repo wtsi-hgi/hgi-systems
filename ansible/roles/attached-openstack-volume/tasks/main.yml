@@ -1,0 +1,85 @@
+---
+
+- name: install required packages
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+  tags:
+    - package
+  with_items:
+    - lvm2
+    - xfsprogs
+
+- assert:
+    that: 
+      - (attached_openstack_volume_pvs | length) > 0
+      - attached_openstack_volume_pvs[0] != ""
+    msg: "attached_openstack_volume_pvs must be set to configure attached-openstack-volume:  _attached_openstack_tf_volume_attachment={{ _attached_openstack_tf_volume_attachment | default('') }} _attached_openstack_tf_volume_id={{ _attached_openstack_tf_volume_id | default('') }} os_volumes={{ os_volumes | default('') }}"
+
+- assert:
+    that: 
+      - attached_openstack_volume_vg != ""
+    msg: "attached_openstack_volume_vg must be set to configure attached-openstack-volume"
+
+- name: configure disk array physical volume and volume group
+  become: yes
+  lvg: pvs={{ attached_openstack_volume_pvs }} state=present vg={{ attached_openstack_volume_vg }}
+  tags:
+    - lvm
+
+- name: configure logical volumes
+  become: yes
+  lvol: lv={{ item.name }} size={{ item.size }} vg={{ attached_openstack_volume_vg }} state=present
+  tags:
+    - attached_openstack_volume
+    - lvm
+  with_items: "{{ attached_openstack_volume_vols }}"
+
+- name: identify xfs volumes
+  become: yes
+  command: "blkid -c /dev/null -o value -s TYPE /dev/{{ attached_openstack_volume_vg }}/{{ item.name }}"
+  register: volume_type
+  tags:
+    - attached_openstack_volume
+  changed_when: false
+  with_items: "{{ attached_openstack_volume_vols }}"
+  ignore_errors: yes
+
+- name: mount existing xfs volumes
+  become: yes
+  mount: fstype={{ item.1.fstype }} name={{ item.1.mountpoint }} src="/dev/{{ attached_openstack_volume_vg }}/{{ item.1.name }}" state=mounted
+  tags:
+    - attached_openstack_volume
+    - mount
+  when: "volume_type.results[item.0].stdout == 'xfs'"
+  changed_when: false
+  with_indexed_items: "{{ attached_openstack_volume_vols }}"
+
+- name: create filesystems on logical volumes
+  become: yes
+  filesystem: dev="/dev/{{ attached_openstack_volume_vg }}/{{ item.name }}" fstype={{ item.fstype }} resizefs=yes
+  tags:
+    - attached_openstack_volume
+    - mkfs
+  with_items: "{{ attached_openstack_volume_vols }}"
+  register: attached_openstack_volume_filesystem
+
+- name: mount logical volumes
+  become: yes
+  mount: 
+    fstype: "{{ item.fstype }}"
+    name: "{{ item.mountpoint }}"
+    src: "/dev/{{ attached_openstack_volume_vg }}/{{ item.name }}"
+    state: mounted
+  tags:
+    - attached_openstack_volume
+    - mount
+  with_items: "{{ attached_openstack_volume_vols }}"
+
+- name: mark newly created filesystem with create indicator file
+  become: yes
+  file:
+    path: "{{ item.item.mountpoint }}/{{ attached_openstack_volume_fs_create_indicator_file }}"
+    state: touch
+  when: item.changed and attached_openstack_volume_fs_create_indicator_file != ""
+  with_items: "{{ attached_openstack_volume_filesystem.results }}"
+

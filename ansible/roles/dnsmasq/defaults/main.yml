@@ -1,0 +1,42 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors: 
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/dnsmasq/defaults/main.yml
+
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+#
+###############################################################################
+
+###############################################################################
+# Vars that can be overridden
+###############################################################################
+dnsmasq_search_domains: []
+dnsmasq_upstream_dns_servers: 
+  - "8.8.8.8"
+  - "8.8.4.4"
+
+###############################################################################
+# General settings
+###############################################################################
+dnsmasq_apt_cache_valid_time: 86400

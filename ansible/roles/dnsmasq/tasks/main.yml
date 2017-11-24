@@ -1,0 +1,67 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors: 
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+# file: roles/dnsmasq/tasks/main.yml
+---
+
+- name: install dnsmasq
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: "{{ hgi_consul_apt_cache_valid_time }}"
+  with_items:
+    - dnsmasq
+
+- name: activate dnsmasq conf dir
+  become: yes
+  lineinfile:
+    path: /etc/dnsmasq.conf
+    regexp: 'conf-dir=/etc/dnsmasq.d$'
+    line: 'conf-dir=/etc/dnsmasq.d'
+  notify:
+   - restart dnsmasq
+
+- name: configure dnsmasq listen interfaces
+  become: yes
+  template:
+    src: 5-interfaces.j2
+    dest: /etc/dnsmasq.d/5-interfaces
+  notify:
+   - restart dnsmasq
+
+- name: configure dnsmasq for .consul
+  become: yes
+  template:
+    src: 10-consul.j2
+    dest: /etc/dnsmasq.d/10-consul
+  notify:
+   - restart dnsmasq
+
+- name: add consul dns search to resolvconf base
+  become: yes
+  lineinfile:
+    path: /etc/resolvconf/resolv.conf.d/base
+    state: present
+    regexp: "^search {{ item }}$"
+    line: "search {{ item }}"
+  with_items: "{{ dnsmasq_search_domains }}"
+  notify:
+    - update resolvconf
