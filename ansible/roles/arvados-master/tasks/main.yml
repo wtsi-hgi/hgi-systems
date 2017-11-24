@@ -86,6 +86,27 @@
     - python-psycopg2
     - zlib1g-dev
 
+- name: set ownership of postgres dirs
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    recurse: yes
+  with_items: 
+    - "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    - "{{ arvados_master_api_data_dir }}/postgresql"
+
+- name: set ownership of arvados-api dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+
 - name: delete default main postgresql cluster
   become: yes
   command: "pg_dropcluster --stop {{ arvados_master_postgresql_version }} main"
