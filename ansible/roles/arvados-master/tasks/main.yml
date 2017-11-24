@@ -43,7 +43,7 @@
   become: yes
   file:
     path: "{{ arvados_master_api_data_dir }}/etc-postgresql"
-    state: present
+    state: directory
     owner: postgres
     group: postgres
 
