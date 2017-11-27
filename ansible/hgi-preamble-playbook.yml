@@ -8,6 +8,6 @@
 - import_playbook: ssh-gateways.yml
 
 # Run common role
-- hosts: all
+- hosts: all:!non-hosts
   roles: 
     - common
