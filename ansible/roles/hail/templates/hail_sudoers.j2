@@ -4,5 +4,5 @@
 {% endfor %}{% endfor %}
 # Allow hail user to run /usr/bin/pip install/uninstall commands as root
 {% for cmd in ['install','uninstall'] %}
-{{ hail_user }} ALL=(root) NOPASSWD: /usr/bin/pip {{ cmd }}
+{{ hail_user }} ALL=(root) NOPASSWD: /usr/bin/pip {{ cmd }} *
 {% endfor %}
