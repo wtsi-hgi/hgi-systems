@@ -7,3 +7,7 @@
 # Configure critical ssh bastion host infrastructure before gathering facts
 - import_playbook: ssh-gateways.yml
 
+# Run common role
+- hosts: all
+  roles: 
+    - common
