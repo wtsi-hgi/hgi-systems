@@ -29,6 +29,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "volume_size_gb" {
+  default = 20
+}
+
 locals {
   ansible_groups = [
     "hail-masters",
@@ -114,7 +118,7 @@ output "ip" {
 resource "openstack_blockstorage_volume_v2" "hail-master-volume" {
   count = "${var.count}"
   name  = "hail-${var.hail_cluster_id}-volume"
-  size  = 20
+  size  = "${var.volume_size_gb}"
 }
 
 resource "openstack_compute_volume_attach_v2" "hail-master-volume-attach" {

@@ -1,6 +1,7 @@
 module "hail-master-as45" {
-  source = "../modules/hail-master"
-  count  = 1
+  source         = "../modules/hail-master"
+  count          = 1
+  volume_size_gb = 100
 
   image = {
     name = "${var.base_image_name}"
