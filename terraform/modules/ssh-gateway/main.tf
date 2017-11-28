@@ -73,7 +73,7 @@ resource "infoblox_record" "ssh-gateway" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "null_resource" "ssh-gateway" {

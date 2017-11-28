@@ -107,7 +107,7 @@ resource "infoblox_record" "arvados-keepproxy" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 # FIXME: add infoblox provider support for multiple A records
@@ -117,7 +117,7 @@ resource "infoblox_record" "arvados-keep" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "infoblox_record" "arvados-download" {
@@ -126,7 +126,7 @@ resource "infoblox_record" "arvados-download" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "infoblox_record" "arvados-collections" {
@@ -135,5 +135,5 @@ resource "infoblox_record" "arvados-collections" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }

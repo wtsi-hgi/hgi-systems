@@ -105,7 +105,7 @@ resource "infoblox_record" "spark-master-dns" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "infoblox_record" "hail-dns" {
@@ -115,7 +115,7 @@ resource "infoblox_record" "hail-dns" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 output "ip" {

@@ -85,7 +85,7 @@ resource "infoblox_record" "studentportal-dns" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 output "ip" {

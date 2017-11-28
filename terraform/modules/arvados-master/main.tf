@@ -103,7 +103,7 @@ resource "infoblox_record" "arvados-master" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "infoblox_record" "arvados-api" {
@@ -112,7 +112,7 @@ resource "infoblox_record" "arvados-api" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "infoblox_record" "arvados-ws" {
@@ -121,7 +121,7 @@ resource "infoblox_record" "arvados-ws" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "infoblox_record" "arvados-git" {
@@ -130,7 +130,7 @@ resource "infoblox_record" "arvados-git" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 resource "openstack_blockstorage_volume_v2" "arvados-master-volume" {

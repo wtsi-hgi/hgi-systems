@@ -100,7 +100,7 @@ resource "infoblox_record" "arvados-workbench" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 output "ip" {

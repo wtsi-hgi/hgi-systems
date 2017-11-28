@@ -109,7 +109,7 @@ resource "infoblox_record" "hail-master-dns" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
-  view	 = "internal"
+  view   = "internal"
 }
 
 output "ip" {
