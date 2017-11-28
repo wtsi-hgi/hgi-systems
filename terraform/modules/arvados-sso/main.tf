@@ -100,6 +100,7 @@ resource "infoblox_record" "arvados-sso" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view	 = "internal"
 }
 
 resource "openstack_blockstorage_volume_v2" "arvados-sso-volume" {

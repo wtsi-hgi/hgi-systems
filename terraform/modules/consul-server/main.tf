@@ -93,6 +93,7 @@ resource "infoblox_record" "consul-server" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view	 = "internal"
 }
 
 resource "openstack_blockstorage_volume_v2" "consul-server" {
