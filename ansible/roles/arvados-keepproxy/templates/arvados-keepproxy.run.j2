@@ -1,6 +1,7 @@
 #!/bin/sh
+# {{ ansible_managed }}
 
 set -e
 
 exec 2>&1 
-ARVADOS_API_TOKEN="{{ arvados_keepproxy_api_token }}" ARVADOS_API_HOST="{{ arvados_keepproxy_api_host }}" exec keepproxy
+exec keepproxy
