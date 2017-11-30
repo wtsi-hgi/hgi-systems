@@ -35,6 +35,8 @@
     api_host: "{{ arvados_cluster_api_host }}"
     api_token: "{{ arvados_cluster_superuser_api_token }}"
     service_host: "{{ item }}"
+    service_port: 443
+    service_ssl_flag: true
     service_type: proxy
   with_items: "{{ arvados_cluster_keepproxy_hosts }}"
 
