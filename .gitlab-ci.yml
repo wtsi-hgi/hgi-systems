@@ -207,6 +207,8 @@ os-images-validate-staging-delta-hgiarvados:
     - *global-before-script-def
     - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
+    - echo ${CONSUL_HTTP_TOKEN} | sha512sum
+    - echo ${TERRAFORM_CONSUL_TOKEN} | sha512sum
     - ci/terraform-validate.sh
 
 terraform-validate-production-delta-hgi:
