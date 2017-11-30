@@ -10,6 +10,9 @@ server {
   proxy_read_timeout    300s;
   proxy_set_header      X-Real-IP $remote_addr;
 
+  access_log /var/log/nginx/arvados-keepproxy-access.log;
+  error_log /var/log/nginx/arvados-keepproxy-error.log;
+
   ssl on;
   ssl_certificate     {{ arvados_keepproxy_cert_file }};
   ssl_certificate_key {{ arvados_keepproxy_key_file }};
