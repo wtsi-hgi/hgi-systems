@@ -34,7 +34,8 @@ variables:
 # two directories will be combined and the scripts sourced in "version" order (sort -V).
 
 .global-before-script: &global-before-script-def 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
-before_script: *global-before-script-def
+before_script:
+  - *global-before-script-def
 
 stages:
   - bootstrap-validate
