@@ -1,10 +1,18 @@
 # Vault contains:
-# consul_credentials_GROUP_creds:
-#  terraform:
-#    token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
-#  agent:
-#    token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
-#  agent-master:
-#    token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#  consul_credentials_GROUP_creds:
+#    agent-master:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#    acl-management:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#    master:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#    default:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#    terraform:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#    agent:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
+#    locks:
+#      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
 
 ---
