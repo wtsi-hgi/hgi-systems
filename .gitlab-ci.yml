@@ -296,6 +296,9 @@ terraform-staging-delta-hgiarvados:
   tags:
     - docker
   image: mercury/taos
+  before_script:
+    - *global-before-script-def
+    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
     - ci/ansible.sh
   artifacts:
