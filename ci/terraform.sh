@@ -2,7 +2,7 @@
 
 set -euf -o pipefail
 
-PARALLELISM=4
+PARALLELISM=20
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
