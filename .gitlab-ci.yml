@@ -205,7 +205,6 @@ os-images-validate-staging-delta-hgiarvados:
   image: mercury/taos
   script:
     - echo ${CONSUL_HTTP_TOKEN} | sha512sum
-    - echo ${TERRAFORM_CONSUL_TOKEN} | sha512sum
     - ci/terraform-validate.sh
   variables:
     CONSUL_HTTP_TOKEN: ${TERRAFORM_CONSUL_TOKEN}
