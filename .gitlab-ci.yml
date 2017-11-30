@@ -205,7 +205,8 @@ os-images-validate-staging-delta-hgiarvados:
   image: mercury/taos
   script:
     - ci/terraform-validate.sh
-  dependencies: []
+  variables:
+    CONSUL_HTTP_TOKEN: ${TERRAFORM_CONSUL_TOKEN}
 
 terraform-validate-production-delta-hgi:
   <<: *terraform-validate-def
