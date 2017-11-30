@@ -255,6 +255,8 @@ terraform-validate-modules:
     paths:
       - artifacts
     when: always
+  variables:
+    CONSUL_HTTP_TOKEN: ${TERRAFORM_CONSUL_TOKEN}
 
 terraform-production-delta-hgi:
   <<: *terraform-def
