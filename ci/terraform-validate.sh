@@ -5,7 +5,9 @@ set -euf -o pipefail
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet AWS_ACCESS_KEY_ID AWS_SECRET_KEY_ID
+ensureSet AWS_ACCESS_KEY_ID AWS_SECRET_KEY_ID TERRAFORM_CONSUL_TOKEN
+
+export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
 
 terraform_bin=$(which terraform)
 if [[ -z "${terraform_bin}" ]]; then

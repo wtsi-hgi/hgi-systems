@@ -203,12 +203,7 @@ os-images-validate-staging-delta-hgiarvados:
   tags:
     - docker
   image: mercury/taos
-  before_script:
-    - *global-before-script-def
-    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
-    - echo ${CONSUL_HTTP_TOKEN} | sha512sum
-    - echo ${TERRAFORM_CONSUL_TOKEN} | sha512sum
     - ci/terraform-validate.sh
 
 terraform-validate-production-delta-hgi:
@@ -253,9 +248,6 @@ terraform-validate-modules:
   tags:
     - docker
   image: mercury/taos
-  before_script:
-    - *global-before-script-def
-    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
     - ci/terraform.sh
   artifacts:
@@ -298,9 +290,12 @@ terraform-staging-delta-hgiarvados:
   image: mercury/taos
   before_script:
     - *global-before-script-def
-    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
+#    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
+#    - CONSUL_HTTP_TOKEN=xxx consul-lock lock watever
   script:
     - ci/ansible.sh
+#  after_script:
+#    - consul-lock unlock watever
   artifacts:
     paths:
       - artifacts
