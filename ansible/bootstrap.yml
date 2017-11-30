@@ -30,3 +30,4 @@
 # Playbooks that only support root hosts
 - import_playbook: consul.yml
 - import_playbook: gitlab-runners.yml
+- import_playbook: gitlab-projects.yml
