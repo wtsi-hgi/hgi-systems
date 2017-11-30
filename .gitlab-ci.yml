@@ -32,8 +32,10 @@ variables:
 # To set or override a variable, create or edit a script in the before_scripts.d directory at 
 # either the repo level or in the hgi image creation subrepo. The contents of those 
 # two directories will be combined and the scripts sourced in "version" order (sort -V).
-before_script: 
-  - 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
+
+.global-before-script: &global-before-script-def 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
+before_script:
+  - *global-before-script-def
 
 stages:
   - bootstrap-validate
@@ -201,9 +203,13 @@ os-images-validate-staging-delta-hgiarvados:
   tags:
     - docker
   image: mercury/taos
+  before_script:
+    - *global-before-script-def
+    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
+    - echo ${CONSUL_HTTP_TOKEN} | sha512sum
+    - echo ${TERRAFORM_CONSUL_TOKEN} | sha512sum
     - ci/terraform-validate.sh
-  dependencies: []
 
 terraform-validate-production-delta-hgi:
   <<: *terraform-validate-def
@@ -247,6 +253,9 @@ terraform-validate-modules:
   tags:
     - docker
   image: mercury/taos
+  before_script:
+    - *global-before-script-def
+    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
     - ci/terraform.sh
   artifacts:
@@ -287,6 +296,9 @@ terraform-staging-delta-hgiarvados:
   tags:
     - docker
   image: mercury/taos
+  before_script:
+    - *global-before-script-def
+    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
   script:
     - ci/ansible.sh
   artifacts:

@@ -13,6 +13,7 @@ boto_version=2.46.1-hotfix.1
 yatadis_version=1.0.0
 openstack_info_version=5.5.0
 yaosadis_version=2.0.1
+consul_lock_version=master
 
 echo "Installing ansible using pip3 from github..."
 if [[ -n $(echo "${version}" | grep "^git-") ]]; then
@@ -43,6 +44,9 @@ pip3 install git+https://github.com/wtsi-hgi/openstack-info.git@${openstack_info
 
 echo "Installing yaosadis using pip3 from github..."
 pip3 install git+https://github.com/wtsi-hgi/yaosadis.git@${yaosadis_version}
+
+echo "Installing consul-lock using pip3 from github..."
+pip3 install git+https://github.com/wtsi-hgi/consul-lock.git@${consul_lock_version}
 
 echo "removing $TMPDIR"
 cd

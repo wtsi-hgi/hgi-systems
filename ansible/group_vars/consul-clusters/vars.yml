@@ -22,3 +22,6 @@ consul_cluster_GROUP_server_wan_ips: "{{ consul_cluster_GROUP_servers | map(attr
 consul_cluster_GROUP_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
 consul_cluster_GROUP_server_acl_token: "{{ consul_credentials_GROUP_creds['default'].token }}"
 consul_cluster_GROUP_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+
+consul_cluster_GROUP_acl_locks_name: lock-manager
+consul_cluster_GROUP_acl_locks_token: "{{ consul_credentials_GROUP_creds['locks'].token }}"
