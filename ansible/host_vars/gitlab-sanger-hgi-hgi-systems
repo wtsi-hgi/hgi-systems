@@ -9,4 +9,5 @@ gitlab_project_settings:
   - "{{ gitlab_project_settings_terraform_consul }}"
   - "{{ gitlab_project_settings_infoblox }}"
   - "{{ gitlab_project_settings_locks_consul }}"
+  - "{{ gitlab_project_settings_gitlab }}"
   
