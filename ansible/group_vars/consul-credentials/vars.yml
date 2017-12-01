@@ -13,6 +13,7 @@
 #    agent:
 #      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
 #    locks:
+#      address: xxx:xxx
 #      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
 
 ---
