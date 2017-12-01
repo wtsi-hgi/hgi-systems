@@ -290,6 +290,7 @@ terraform-staging-delta-hgiarvados:
   tags:
     - docker
   image: mercury/taos
+  script:
     - CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock lock ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}
     - ci/ansible.sh
   after_script:
