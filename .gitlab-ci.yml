@@ -24,6 +24,8 @@ variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
+  CI_LOCK_PREFIX: "ci"
+  ANSIBLE_LOCK_PREFIX: "${CI_LOCK_PREFIX}/ansible"
 
 # In general, additional variables should *not* be defined above unless they are 
 # required to process .gitlab-ci.yml itself (i.e. they are used in this file outside 
@@ -291,12 +293,11 @@ terraform-staging-delta-hgiarvados:
   before_script:
     - echo $CI_JOB_NAME
     - *global-before-script-def
-#    - export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
-#    - CONSUL_HTTP_TOKEN=xxx consul-lock lock watever
+    - CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} consul-lock lock ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}
   script:
     - ci/ansible.sh
-#  after_script:
-#    - consul-lock unlock watever
+  after_script:
+    - CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} consul-lock unlock ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}
   artifacts:
     paths:
       - artifacts
