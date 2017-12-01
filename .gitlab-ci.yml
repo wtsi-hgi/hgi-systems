@@ -116,7 +116,7 @@ validate_s3:
   stage: bootstrap-validate
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: mercury/taos
   script:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
