@@ -5,7 +5,7 @@ from gitlab import Gitlab
 
 pipeline_id = int(os.environ["CI_PIPELINE_ID"])
 project_id = os.environ["CI_PROJECT_ID"]
-ci_url = os.environ["CI_SERVER"]
+ci_url = os.environ["CI_PROJECT_URL"]
 gitlab_token = os.environ["GITLAB_TOKEN"]
 
 gitlab_client = Gitlab(ci_url, gitlab_token, api_version=4)
