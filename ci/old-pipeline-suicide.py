@@ -17,7 +17,7 @@ gitlab_client.auth()
 project = gitlab_client.projects.get(project_id)
 latest_pipelines = project.pipelines.list(status=["running", "pending"], order_by="id", sort="desc", per_page=1)
 
-if len(latest_pipelines) < 0:
+if len(latest_pipelines) == 0:
     print("No running pipelines (has a single job been retried?) - continuing")
     exit(0)
 else:
