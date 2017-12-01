@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
 import os
+from urllib.parse import urlparse
+
 from gitlab import Gitlab
 
 pipeline_id = int(os.environ["CI_PIPELINE_ID"])
 project_id = os.environ["CI_PROJECT_ID"]
-ci_url = os.environ["CI_PROJECT_URL"]
+_parsed_project_url = urlparse(os.environ["CI_PROJECT_URL"])
+ci_url = "%s://%s" % (_parsed_project_url.scheme, _parsed_project_url.netloc)
 gitlab_token = os.environ["GITLAB_TOKEN"]
 
 gitlab_client = Gitlab(ci_url, gitlab_token, api_version=4)
