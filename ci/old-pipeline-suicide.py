@@ -15,7 +15,11 @@ gitlab_client = Gitlab(ci_url, gitlab_token, api_version=4)
 gitlab_client.auth()
 
 project = gitlab_client.projects.get(project_id)
-latest_pipeline = project.pipelines.list(status=["running", "pending"], order_by="id", sort="desc", per_page=1)[0]
+latest_pipeline = project.pipelines.list(status=["running", "pending"], order_by="id", sort="desc", per_page=1)
+
+if latest_pipeline < 0:
+    print("No running pipelines (has a single job been retried?) - continuing")
+    exit(0)
 
 assert pipeline_id <= latest_pipeline.id
 
@@ -25,3 +29,5 @@ if pipeline_id < latest_pipeline.id:
     pipeline.cancel()
 else:
     print("Running pipeline (%s) is the latest - continuing" % (pipeline_id, ))
+
+exit(0)
