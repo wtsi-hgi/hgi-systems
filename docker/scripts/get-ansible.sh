@@ -13,7 +13,7 @@ boto_version=2.46.1-hotfix.1
 yatadis_version=1.0.0
 openstack_info_version=5.5.0
 yaosadis_version=2.0.1
-consul_lock_version=1.0.0
+consul_lock_version=1.0.1
 
 echo "Installing ansible using pip3 from github..."
 if [[ -n $(echo "${version}" | grep "^git-") ]]; then
