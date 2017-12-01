@@ -12,6 +12,7 @@ RUN apt-get update \
         python-pip \
         python-setuptools \
         python3-pip \
+        python3-setuptools \
         curl \
         r-base-dev \
         maven \

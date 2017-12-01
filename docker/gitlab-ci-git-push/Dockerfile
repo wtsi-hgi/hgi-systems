@@ -13,6 +13,7 @@ RUN apt-get update \
          git \
          openssh-client \
          python3-pip \
+         python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install python-gitlab
