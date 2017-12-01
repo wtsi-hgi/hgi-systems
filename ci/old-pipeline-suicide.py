@@ -18,7 +18,7 @@ assert pipeline_id <= latest_pipeline.id
 
 if pipeline_id < latest_pipeline.id:
     print(f"Running pipeline ({pipeline_id}) is not the latest ({latest_pipeline.id}) - cancelling self")
-    pipeline = project.pipelines.get(pipeline_id)
+    pipeline = project.pipelines.get(pipeline_id, lazy=True)
     pipeline.cancel()
 else:
     print(f"Running pipeline ({pipeline_id}) is the latest - continuing")
