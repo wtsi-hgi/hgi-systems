@@ -12,7 +12,10 @@ RUN apt-get update \
          coreutils \
          git \
          openssh-client \
+         python3-pip \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install python-gitlab
 
 ADD gitlab-ci-git-push/git-push /usr/local/bin/
 
