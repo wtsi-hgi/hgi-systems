@@ -8,7 +8,6 @@ project_id = os.environ["CI_PROJECT_ID"]
 ci_url = os.environ["CI_SERVER"]
 gitlab_token = os.environ["GITLAB_TOKEN"]
 
-
 gitlab_client = Gitlab(ci_url, gitlab_token, api_version=4)
 gitlab_client.auth()
 
