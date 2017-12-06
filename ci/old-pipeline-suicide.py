@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 
 from gitlab import Gitlab
@@ -15,7 +16,16 @@ gitlab_client = Gitlab(ci_url, gitlab_token, api_version=4)
 gitlab_client.auth()
 
 project = gitlab_client.projects.get(project_id)
-latest_pipelines = project.pipelines.list(status=["running", "pending"], order_by="id", sort="desc", per_page=1)
+
+interesting_status = ["running", "pending"]
+futures = []
+with ThreadPoolExecutor(max_workers=2) as executor:
+    for status in interesting_status:
+        futures.append(executor.submit(project.pipelines.list, order_by="id", sort="desc", per_page=1, status=status))
+latest_pipelines = []
+for future in futures:
+    latest_pipelines += future.result()
+latest_pipelines = sorted(latest_pipelines, key=lambda key: key.attributes["id"], reverse=True)
 
 if len(latest_pipelines) == 0:
     print("No running pipelines (has a single job been retried?) - continuing")
