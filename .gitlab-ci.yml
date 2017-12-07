@@ -291,7 +291,10 @@ terraform-staging-delta-hgiarvados:
     - docker
   image: mercury/taos
   script:
-    - "CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock lock --metadata \"{jobId: ${CI_JOB_ID}}\" ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}"
+    - |
+        CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock lock \
+          --metadata "{jobId: ${CI_JOB_ID}}" \
+          ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}
     - ci/old-pipeline-suicide.py
     - ci/ansible.sh
   after_script:
