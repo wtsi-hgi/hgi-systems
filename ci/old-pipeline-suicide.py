@@ -2,6 +2,7 @@
 
 import os
 from concurrent.futures import ThreadPoolExecutor
+from time import sleep
 from urllib.parse import urlparse
 
 from gitlab import Gitlab
@@ -39,6 +40,7 @@ if pipeline_id < latest_pipeline.id:
     print("Running pipeline (%s) is not the latest (%s) - cancelling self" % (pipeline_id, latest_pipeline.id))
     pipeline = project.pipelines.get(pipeline_id, lazy=True)
     pipeline.cancel()
+    sleep(9999)
 else:
     print("Running pipeline (%s) is the latest - continuing" % (pipeline_id, ))
 
