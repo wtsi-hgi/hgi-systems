@@ -293,7 +293,7 @@ terraform-staging-delta-hgiarvados:
   script:
     - "CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock lock \
          -v \
-         -i=5 \
+         -i=10 \
          --metadata=\"{jobId: ${CI_JOB_ID}}\" \
          --on-before-lock=ci/release-dead-job-lock.py \
          --on-before-lock=ci/old-pipeline-suicide.py \
