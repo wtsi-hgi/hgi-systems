@@ -37,7 +37,8 @@ else:
 assert pipeline_id <= latest_pipeline.id
 
 if pipeline_id < latest_pipeline.id:
-    print("Running pipeline (%s) is not the latest (%s) - cancelling self" % (pipeline_id, latest_pipeline.id))
+    print("Running pipeline (%s) is not the latest (%s) - cancelling self" % (pipeline_id, latest_pipeline.id),
+          flush=True)
     pipeline = project.pipelines.get(pipeline_id, lazy=True)
     pipeline.cancel()
     sleep(9999)
