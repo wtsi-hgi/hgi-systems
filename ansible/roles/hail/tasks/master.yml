@@ -95,6 +95,7 @@
     - connect-to-the-node-terminal.ipynb
     - run-on-spark-cluster.ipynb
     - reading-and-writing-to-your-s3-bucket.ipynb
+    - hail-overview-s3.ipynb  
 
 - name: copy ssl certificate
   become: yes
