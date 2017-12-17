@@ -33,7 +33,7 @@ locals {
     "monitors",
   ]
 
-  hostname_format = "$monitor-%02d"
+  hostname_format = "monitor-%02d"
 }
 
 resource "openstack_networking_floatingip_v2" "monitor" {
