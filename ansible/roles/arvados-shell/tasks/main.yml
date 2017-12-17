@@ -103,6 +103,8 @@
     - python-arvados-python-client
     - python-arvados-fuse
     - crunchrunner
+    - python-arvados-cwl-runner
+    - emacs24-nox
 
 - name: install bash profile for mercury user (including arvados admin credentials)
   become: yes
