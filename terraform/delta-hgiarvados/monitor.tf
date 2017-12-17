@@ -18,6 +18,6 @@ module "monitor" {
     user = "${module.ssh-gateway.user}"
   }
 
-  monitoring_group = "delta-hgiarvados"
+  monitoring_group     = "delta-hgiarvados"
   extra_ansible_groups = []
 }
