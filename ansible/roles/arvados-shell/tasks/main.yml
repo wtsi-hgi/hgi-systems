@@ -172,3 +172,11 @@
     owner: mercury
     mode: 0600
 
+- name: add mercury to docker group
+  become: yes
+  user:
+    append: yes
+    groups: 
+      - docker
+    name: mercury
+
