@@ -1,6 +1,3 @@
-- name: create api tokens
-  import_tasks: create-api-tokens.yml
-
 - name: restart nginx
   become: yes
   systemd:
