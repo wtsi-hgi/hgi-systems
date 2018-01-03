@@ -17,5 +17,4 @@ module "studentportal" {
     host = "${module.ssh-gateway.host}"
     user = "${module.ssh-gateway.user}"
   }
-
 }
