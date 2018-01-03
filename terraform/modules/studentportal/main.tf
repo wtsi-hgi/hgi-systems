@@ -26,12 +26,13 @@ variable "bastion" {
 resource "openstack_networking_floatingip_v2" "studentportal" {
   provider = "openstack"
   pool     = "nova"
+  count    = "${var.count}"
 }
 
 resource "openstack_compute_instance_v2" "studentportal" {
   provider    = "openstack"
   count       = "${var.count}"
-  name        = "studentportal"
+  name        = "studentportal-${count.index + 1}"
   image_name  = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${var.key_pair_ids["mercury"]}"
@@ -47,7 +48,7 @@ resource "openstack_compute_instance_v2" "studentportal" {
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: studentportal\nfqdn: studentportal.${var.domain}"
+  user_data = "#cloud-config\nhostname: studentportal-${count.index + 1}\nfqdn: studentportal-${count.index + 1}.${var.domain}"
 
   metadata = {
     ansible_groups = "dockerers"
@@ -75,13 +76,15 @@ resource "openstack_compute_instance_v2" "studentportal" {
 
 resource "openstack_compute_floatingip_associate_v2" "studentportal" {
   provider    = "openstack"
-  floating_ip = "${openstack_networking_floatingip_v2.studentportal.address}"
-  instance_id = "${openstack_compute_instance_v2.studentportal.id}"
+  count       = "${var.count}"
+  floating_ip = "${openstack_networking_floatingip_v2.studentportal.*.address[count.index]}"
+  instance_id = "${openstack_compute_instance_v2.studentportal.*.id[count.index]}"
 }
 
-resource "infoblox_record" "studentportal-dns" {
-  value  = "${openstack_networking_floatingip_v2.studentportal.address}"
-  name   = "studentportal"
+resource "infoblox_record" "studentportal" {
+  count  = "${var.count}"
+  value  = "${openstack_networking_floatingip_v2.studentportal.*.address[count.index]}"
+  name   = "studentportal-${count.index + 1}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
