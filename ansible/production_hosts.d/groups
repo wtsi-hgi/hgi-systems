@@ -45,6 +45,7 @@
 [s3-credentials]
 [openstack]
 [openstack-instances]
+[root-secret]
 [terraform]
 [terraform-ci]
 [tf_type_openstack_compute_instance_v2]
@@ -75,7 +76,8 @@ mesos-slaves
 hgs4
 
 [root-secret:children]
-all
+openstack-instances
+tf_type_openstack_compute_instance_v2
 
 [hgi-credentials:children]
 mesos-masters
