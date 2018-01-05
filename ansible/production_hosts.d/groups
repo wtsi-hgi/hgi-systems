@@ -74,6 +74,9 @@ mesos-slaves
 [nonroot:children]
 hgs4
 
+[root-secret:children]
+all
+
 [hgi-credentials:children]
 mesos-masters
 mesos-slaves
