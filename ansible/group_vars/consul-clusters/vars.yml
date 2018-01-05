@@ -1,24 +1,27 @@
 ---
 
 
-consul_cluster_acl_management_name: mercury
-consul_cluster_acl_management_token: "{{ consul_credentials['acl-management'].token }}"
+consul_cluster_GROUP_acl_management_name: mercury
+consul_cluster_GROUP_acl_management_token: "{{ consul_credentials_GROUP_creds['acl-management'].token }}"
 
-consul_cluster_acl_terraform_name: mercury_terraform
-consul_cluster_acl_terraform_token: "{{ consul_credentials['terraform'].token }}"
+consul_cluster_GROUP_acl_terraform_name: mercury_terraform
+consul_cluster_GROUP_acl_terraform_token: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
 
-consul_cluster_acl_agent_name: agent_token
-consul_cluster_acl_agent_token: "{{ consul_credentials['agent'].token }}"
+consul_cluster_GROUP_acl_agent_name: agent_token
+consul_cluster_GROUP_acl_agent_token: "{{ consul_credentials_GROUP_creds['agent'].token }}"
 
-consul_cluster_infoblox_username: "{{ infoblox_credentials_username }}"
-consul_cluster_infoblox_password: "{{ infoblox_credentials_password }}"
-consul_cluster_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
-consul_cluster_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
+consul_cluster_GROUP_infoblox_username: "{{ infoblox_credentials_username }}"
+consul_cluster_GROUP_infoblox_password: "{{ infoblox_credentials_password }}"
+consul_cluster_GROUP_infoblox_api_server: "{{ infoblox_credentials_api_server }}"
+consul_cluster_GROUP_infoblox_api_version: "{{ infoblox_credentials_api_version }}"
 
-consul_cluster_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
-consul_cluster_server_ips: "{{ consul_cluster_servers | map(attribute='cloud_resource_private_ip') | list }}"
-consul_cluster_server_wan_ips: "{{ consul_cluster_servers | map(attribute='cloud_resource_public_ip') | list }}"
+consul_cluster_GROUP_servers: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
+consul_cluster_GROUP_server_ips: "{{ consul_cluster_GROUP_servers | map(attribute='cloud_resource_private_ip') | list }}"
+consul_cluster_GROUP_server_wan_ips: "{{ consul_cluster_GROUP_servers | map(attribute='cloud_resource_public_ip') | list }}"
 
-consul_cluster_acl_agent_master_token: "{{ consul_credentials['agent-master'].token }}"
-consul_cluster_server_acl_token: "{{ consul_credentials['default'].token }}"
-consul_cluster_acl_master_token: "{{ consul_credentials['master'].token }}"
+consul_cluster_GROUP_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
+consul_cluster_GROUP_server_acl_token: "{{ consul_credentials_GROUP_creds['default'].token }}"
+consul_cluster_GROUP_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+
+consul_cluster_GROUP_acl_locks_name: lock-manager
+consul_cluster_GROUP_acl_locks_token: "{{ consul_credentials_GROUP_creds['locks'].token }}"

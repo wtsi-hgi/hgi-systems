@@ -13,7 +13,7 @@ function terraform_inventory {
    tenant="$(basename ${terraform_dir})"
    export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="tf.${tenant}.{{ type }}.{{ primary.expanded_attributes.name | default(primary.id) }}"
    
-   export TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ type in ["openstack_compute_instance_v2", "openstack_blockstorage_volume_v2", "openstack_compute_volume_attach_v2", "openstack_networking_floatingip_v2", "openstack_compute_floatingip_associate_v2"] }}'
+   export TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ type in ["openstack_compute_instance_v2", "openstack_blockstorage_volume_v2", "openstack_compute_volume_attach_v2", "openstack_networking_floatingip_v2", "openstack_compute_floatingip_associate_v2", "infoblox_record"] }}'
 
    export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",
@@ -73,7 +73,7 @@ EOF
    terraform init 1>&2
 
    >&2 echo "Selecting environment ${environment}"
-   terraform env select ${environment} 1>&2 
+   terraform workspace select ${environment} 1>&2 
    if [[ $? -ne 0 ]]; then
      >&2 echo "terraform environment ${environment} not available - is the remote state backend offline?"
      echo "{}"

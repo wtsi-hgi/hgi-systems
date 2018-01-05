@@ -1,28 +1,32 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
 ---
+# file: roles/hail/meta/main.yml
 
 dependencies:
+  - role: common
   - role: wtsi-hgi.ansible-anaconda
     vars:
       anaconda_python_ver: 2
       anaconda_ver: "{{ hail_anaconda_version }}"
       anaconda_pkg_update: no
-      anaconda_parent_dir: "{{ hail_anaconda_installation_location | dirname }}"
-      anaconda_link_subdir: "{{ hail_anaconda_installation_location | basename }}"
-
-  - role: spark-master
-    vars:
-      spark_common_version: "{{ hail_spark_version }}"
-      spark_common_prefix: "{{ hail_spark_home }}"
-
-  - role: attached-openstack-volume
-    attached_openstack_volume_vg: hail-vg
-    attached_openstack_volume_vols:
-      - name: hail-data
-        # FIXME: The volume size in GB should come from Terraform
-        size: "{{ (100 * 1024) - 4 }}M"
-        fstype: xfs
-        mountpoint: "{{ hail_data_directory }}"
-    # FIXME: The device should come from Terraform
-    attached_openstack_volumes:
-      - device: "/dev/vdb"
+      anaconda_parent_dir: "{{ hail_anaconda_prefix_dir | dirname }}"
+      anaconda_link_subdir: "{{ hail_anaconda_prefix_dir | basename }}"
 

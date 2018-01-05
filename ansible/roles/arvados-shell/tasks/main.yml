@@ -29,7 +29,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - bison
     - build-essential
@@ -98,11 +98,13 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - python-arvados-python-client
     - python-arvados-fuse
     - crunchrunner
+    - python-arvados-cwl-runner
+    - emacs24-nox
 
 - name: install bash profile for mercury user (including arvados admin credentials)
   become: yes
@@ -169,4 +171,12 @@
     dest: "/home/mercury/.ssh/id_rsa"
     owner: mercury
     mode: 0600
+
+- name: add mercury to docker group
+  become: yes
+  user:
+    append: yes
+    groups: 
+      - docker
+    name: mercury
 

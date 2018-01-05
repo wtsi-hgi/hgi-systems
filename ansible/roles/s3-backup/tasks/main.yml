@@ -1,16 +1,17 @@
 ---
 
-- name: install Duplicity
+- name: install duplicity and boto
   become: yes
   apt:
     name: "{{ item }}"
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ s3_backup_apt_cache_valid_time }}"
   with_items:
     - duplicity
     - s3cmd
     - python
     - python-boto
+    - python-boto3
     - cron
 
 - name: install duplicity-backup.sh
@@ -38,28 +39,76 @@
   template:
     src: s3cmd.ini.j2
     dest: "{{ s3_backup_s3cmd_configuration_file }}"
-    mode: 0660
+    mode: 0600
+
+- name: create boto.cfg configuration file
+  become: yes
+  template:
+    src: boto.cfg.j2
+    dest: /etc/boto.cfg
+    mode: 0600
 
 - name: create duplicity-backup.sh configuration file
   become: yes
   template:
     src: duplicity-backup-sh.conf.j2
     dest: "{{ s3_backup_duplicity_backup_sh_configuration_file }}"
-    mode: 0660
+    mode: 0600
+    
+- name: create duplicity restore script
+  become: yes
+  template:
+    src: duplicity-restore-mountpoint.sh.j2
+    dest: "{{ s3_backup_restore_mountpoint_script }}"
+    mode: 0700
 
 - name: ensure s3 backup bucket exists
-  run_once: true
-  s3_bucket:
-    name: "{{ s3_backup_s3_bucket }}"
-    ceph: true
+  aws_s3:
+    mode: create
+    rgw: true
+    bucket: "{{ s3_backup_s3_bucket }}"
+    region: ""
     s3_url: "https://{{ s3_backup_s3_host }}"
-    access_key: "{{ s3_backup_s3_access_key }}"
-    secret_key: "{{ s3_backup_s3_secret_key }}"
+    aws_access_key: "{{ s3_backup_s3_access_key }}"
+    aws_secret_key: "{{ s3_backup_s3_secret_key }}"
+
+- name: check if restore indicator is present
+  become: yes
+  stat:
+    path: "{{ s3_backup_source_dir }}/{{ s3_backup_restore_indicator_file }}"
+  register: s3_backup_stat
+
+- name: restore from s3 when restore indicator is present
+  block: 
+    - name: check if backup path exists in s3
+      aws_s3:
+        mode: list
+        rgw: true
+        bucket: "{{ s3_backup_s3_bucket }}"
+        region: ""
+        s3_url: "https://{{ s3_backup_s3_host }}"
+        aws_access_key: "{{ s3_backup_s3_access_key }}"
+        aws_secret_key: "{{ s3_backup_s3_secret_key }}"
+        prefix: "{{ s3_backup_dest_url | urlsplit('path') | regex_replace('^[/].*?[/](.*)$', '\\1') }}"
+        max_keys: 1
+      register: s3_backup_REGISTER_s3_backup_path
+    - name: delete restore indicator
+      become: yes
+      file:
+        path: "{{ s3_backup_source_dir }}/{{ s3_backup_restore_indicator_file }}"
+        state: absent
+    - name: restore data from s3
+      become: yes
+      command: "{{ s3_backup_restore_mountpoint_script }}"
+      when: s3_backup_REGISTER_s3_backup_path.s3_keys | count > 0
+  when: s3_backup_stat.stat.exists
 
 - name: schedule backup using cron
   become: yes
   cron:
-    name: "backup {{ s3_backup_source }} to {{ s3_backup_destination }}"
+    cron_file: duplicity-backup
+    user: root
+    name: "backup {{ s3_backup_source_dir }} to {{ s3_backup_dest_url }}"
     minute: "{{ s3_backup_minute }}"
     hour: "{{ s3_backup_hour }}"
     day: "{{ s3_backup_day }}"

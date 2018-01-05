@@ -20,6 +20,45 @@
 ---
 # file: roles/arvados-master/tasks/main.yml
 
+
+################################################################################
+# prepare directories
+################################################################################
+- name: create directories within arvados data dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/{{ item }}"
+    state: directory
+  with_items:
+    - postgresql
+    - arvados-api
+
+- name: ensure /var/www exists
+  become: yes
+  file:
+    path: /var/www
+    state: directory
+
+- name: create etc-postgresql dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    state: directory
+
+- name: link etc-postgresql dir to /etc/postgresql
+  become: yes
+  file:
+    path: /etc/postgresql
+    src: "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    state: link
+
+- name: link arvados-api dir to arvados data dir
+  become: yes
+  file:
+    path: /var/www/arvados-api
+    src: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: link
+
 ################################################################################
 # arvados-api
 ################################################################################
@@ -29,9 +68,9 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
-    - postgresql
+    - "postgresql={{ arvados_master_postgresql_package_version }}"
     - bison
     - build-essential
     - gettext
@@ -44,6 +83,40 @@
     - libxslt1.1
     - python-psycopg2
     - zlib1g-dev
+
+- name: set ownership of postgres dirs
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    recurse: yes
+  with_items: 
+    - "{{ arvados_master_api_data_dir }}/etc-postgresql"
+    - "{{ arvados_master_api_data_dir }}/postgresql"
+
+- name: set ownership of arvados-api dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: delete default main postgresql cluster
+  become: yes
+  command: "pg_dropcluster --stop {{ arvados_master_postgresql_version }} main"
+  args:
+    removes: /etc/postgresql/{{ arvados_master_postgresql_version }}/main
+
+- name: create postgresql cluster
+  become: yes
+  command: "pg_createcluster -u postgres -d {{ arvados_master_api_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
+  args:
+    creates: /etc/postgresql/{{ arvados_master_postgresql_version }}/arvados_api
+  register: arvados_master_REGISTER_configure_postgresql
 
 - name: create postgresql user for arvados api
   become: yes
@@ -126,7 +199,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - nginx-extras
     - passenger
@@ -173,12 +246,10 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - arvados-api-server
-  notify:
-    - reconfigure arvados-api-server
-    - create api tokens
+  register: arvados_master_REGISTER_install_api_server
 
 - name: create directories for arvados
   become: yes
@@ -189,10 +260,9 @@
     - "{{ arvados_master_git_repositories_dir }}"
     - /var/www/arvados-api/current/tmp/cache
     - /var/run/nginx/passenger
-  notify:
-    - reconfigure arvados-api-server
+  register: arvados_master_REGISTER_create_dirs
 
-- name: configure arvados
+- name: arvados conf files
   become: yes
   template:
     src: "{{ item }}.j2"
@@ -200,41 +270,57 @@
   with_items:
     - application.yml
     - database.yml
+  register: arvados_master_REGISTER_conf_files
   notify:
-    - reconfigure arvados-api-server
-    - create api tokens
     - restart crunch-dispatch-pipelines
     - restart crunch-dispatch-jobs
 
-- name: copy superuser token 
+- name: dpkg-reconfigure arvados-api-server
   become: yes
-  copy:
-    content: "{{ arvados_cluster_superuser_api_token }}"
-    dest: "{{ arvados_master_superuser_token_file }}"
-    owner: www-data
-    mode: 0600
-  notify:
-    - create api tokens
+  command: dpkg-reconfigure arvados-api-server
+  when: >-
+    arvados_master_REGISTER_install_api_server.changed or
+    arvados_master_REGISTER_create_dirs.changed or
+    arvados_master_REGISTER_conf_files.changed
 
-- name: copy crunch dispatcher token 
+- name: copy api token files
   become: yes
   copy:
-    content: "{{ arvados_cluster_crunch_dispatcher_api_token }}"
-    dest: "{{ arvados_master_crunch_dispatcher_token_file }}"
+    content: "{{ item.token }}"
+    dest: "{{ item.file }}"
     owner: www-data
     mode: 0600
-  notify:
-    - create api tokens
+  with_items:
+    - { token: "{{ arvados_cluster_superuser_api_token }}", file: "{{ arvados_master_superuser_token_file }}" }
+    - { token: "{{ arvados_cluster_crunch_dispatcher_api_token }}", file: "{{ arvados_master_crunch_dispatcher_token_file }}" }
+    - { token: "{{ arvados_cluster_data_manager_api_token }}", file: "{{ arvados_master_data_manager_token_file }}" }
+  register: arvados_master_api_token_files
 
-- name: copy data manager token 
+# FIXME remove after bugfix resolved: https://dev.arvados.org/issues/12671
+- name: copy custom create_superuser_token_hgi.rb script as upstream script is broken (12671)
   become: yes
   copy:
-    content: "{{ arvados_cluster_data_manager_api_token }}"
-    dest: "{{ arvados_master_data_manager_token_file }}"
+    src: create_superuser_token_hgi.rb
+    dest: /var/www/arvados-api/current/script/create_superuser_token_hgi.rb
     owner: www-data
-    mode: 0600
-  notify:
-    - create api tokens
+    mode: 0755
+
+- name: create api tokens from files
+  become: yes
+  become_user: www-data
+  # FIXME: change back to ./script/create_superuser_token.rb once bux 12671 is resolved
+  shell: "bundle exec ./script/create_superuser_token_hgi.rb $(cat {{ item }})"
+  args:
+    executable: /bin/sh
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  with_items:
+    - "{{ arvados_master_superuser_token_file }}"
+    - "{{ arvados_master_crunch_dispatcher_token_file }}"
+    - "{{ arvados_master_data_manager_token_file }}"
+  when: arvados_master_api_token_files.changed
 
 - name: copy ssl certificate
   become: yes
@@ -273,7 +359,18 @@
     dest: "{{ arvados_master_create_workbench_api_client_script }}"
     mode: 0700
     owner: www-data
-  notify: create trusted workbench api client
+  register: arvados_master_workbench_api_client_script
+
+- name: run script to create trusted workbench api client
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_workbench_api_client_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  when: arvados_master_workbench_api_client_script.changed
 
 - name: create mercury admin user script
   become: yes
@@ -282,9 +379,19 @@
     dest: "{{ arvados_master_create_mercury_admin_user_script }}"
     mode: 0700
     owner: www-data
-  notify:
-    - create mercury admin user
+  register: arvados_master_mercury_admin_user_script
   
+- name: create mercury admin user
+  become: yes
+  become_user: www-data
+  command: bundle exec rails runner "{{ arvados_master_create_mercury_admin_user_script }}"
+  args:
+    chdir: /var/www/arvados-api/current
+  environment:
+    HOME: /var/www
+    RAILS_ENV: production
+  when: arvados_master_mercury_admin_user_script.changed
+
 ##############################################################################
 # crunch-dispatch-slurm (crunch v2 slurm dispatcher)
 ##############################################################################
@@ -294,7 +401,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - crunch-dispatch-slurm
 
@@ -338,7 +445,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - libjson-perl
     - libio-socket-ssl-perl
@@ -418,11 +525,33 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - arvados-ws
   notify:
    - restart arvados-ws
+
+- name: query systemd version
+  shell: "systemd --version | awk 'NR==1 {print $2}'"
+  changed_when: false
+  register: arvados_master_systemd_version
+
+- name: comment/uncomment arvados-ws.service lines based on systemd version
+  become: yes
+  replace:
+    path: /lib/systemd/system/arvados-ws.service
+    regexp: "^(#{{ item.marker }}[\\n])#?(.*?)$"
+    replace: "\\1{% if arvados_master_systemd_version.stdout | version_compare('230', item.comment_when_version) %}#{% endif %}\\2"
+  when: 
+  with_items:
+    - { marker: " systemd<230", comment_when_version: ">=" }
+    - { marker: " systemd>=230", comment_when_version: "<" }
+  register: arvados_master_ws_service
+
+- name: reload systemd
+  become: yes
+  command: systemctl daemon-reload
+  when: arvados_master_ws_service.changed
 
 - name: ensure ws configuration directory exists
   become: yes
@@ -442,14 +571,21 @@
   notify:
    - restart arvados-ws
 
+- name: enable and start arvados-ws
+  become: yes
+  systemd:
+    name: arvados-ws
+    enabled: yes
+    state: started
+
 - name: ensure arvados-ws has restarted before checking it is functional
   meta: flush_handlers
 
-- name: wait up to 10s for arvados-ws port
+- name: wait up to 60s for arvados-ws port
   wait_for:
     port: "{{ arvados_master_ws_backend_port }}"
     host: 127.0.0.1
-    timeout: 10
+    timeout: 60
 
 - name: verify arvados-ws is functional
   uri:
@@ -495,7 +631,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - git
     - openssh-server
@@ -555,7 +691,7 @@
   changed_when: false
   register: localhost_host_keys
 
-- name: add localhost host keys to git user's known_hosts
+- name: add localhost host keys to git user known_hosts
   become: yes
   become_user: git
   known_hosts: 
@@ -660,7 +796,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - git
     - arvados-git-httpd

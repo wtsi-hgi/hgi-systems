@@ -14,10 +14,10 @@
 
 - name: wait for reboot to complete
   become: no
-  local_action:
-    module: wait_for
-      host={{ ansible_ssh_host }}
-      port={{ ansible_ssh_port }}
-      delay=90
-      timeout=360
+  delegate_to: "{{ bastion_host }}"
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ ansible_port }}"
+    delay: 90
+    timeout: 360
   listen: reboot compute node

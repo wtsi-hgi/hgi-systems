@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+Client:
+  APIHost: {{ arvados_keepproxy_api_host }}
+  AuthToken: {{ arvados_keepproxy_api_token }}
+  Listen: :{{ arvados_keepproxy_backend_port }}
+  Timeout: 300s

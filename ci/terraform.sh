@@ -2,10 +2,13 @@
 
 set -euf -o pipefail
 
+PARALLELISM=20
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD CONSUL_HTTP_TOKEN
+ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD TERRAFORM_CONSUL_TOKEN
+
+export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
 
 artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 mkdir -p "${artifacts_dir}"
@@ -36,12 +39,10 @@ fi
 echo "Calling terraform get"
 terraform get
 
-echo "Calling terraform refresh"
-terraform refresh
-
 echo "Calling terraform plan"
+# FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
-terraform plan -input=false -out plan
+terraform plan -input=false -out plan -parallelism=${PARALLELISM}
 plan_exit_status=$?
 set -e
 echo "Copying plan to artifacts"
@@ -64,8 +65,9 @@ echo "Generating /tmp/ansible_vault.pw"
 (echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
 echo "Calling terraform apply"
+# FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
-terraform apply -input=false -refresh=false plan
+terraform apply -input=false -refresh=false -parallelism=${PARALLELISM} plan
 apply_exit_code=$?
 set -e
 
@@ -81,4 +83,3 @@ else
     >&2 echo "terraform apply failed: ${apply_exit_code}"
     exit ${apply_exit_code}
 fi
-

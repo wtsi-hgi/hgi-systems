@@ -25,7 +25,11 @@ Waittime=0
 # SCHEDULING
 SchedulerType=sched/backfill
 SchedulerPort=7321
-SelectType=select/linear
+SelectType=select/cons_res
+SelectTypeParameters=CR_CPU_Memory
+#SuspendTime=600
+#ResumeProgram=/usr/bin/create-node
+#SuspendProgram=/usr/bin/destroy-node
 FastSchedule=0
 #
 # LOGGING

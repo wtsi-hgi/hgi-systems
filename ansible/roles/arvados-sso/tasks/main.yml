@@ -20,15 +20,54 @@
 ---
 # file: roles/arvados-sso/tasks/main.yml
 
+
+################################################################################
+# prepare directories
+################################################################################
+- name: create directories within arvados data dir
+  become: yes
+  file:
+    path: "{{ arvados_sso_data_dir }}/{{ item }}"
+    state: directory
+  with_items:
+    - postgresql
+    - arvados-sso
+
+- name: ensure /var/www exists
+  become: yes
+  file:
+    path: /var/www
+    state: directory
+
+- name: create etc-postgresql dir
+  become: yes
+  file:
+    path: "{{ arvados_sso_data_dir }}/etc-postgresql"
+    state: directory
+
+- name: link etc-postgresql dir to /etc/postgresql
+  become: yes
+  file:
+    path: /etc/postgresql
+    src: "{{ arvados_sso_data_dir }}/etc-postgresql"
+    state: link
+
+- name: link arvados-sso dir to arvados data dir
+  become: yes
+  file:
+    path: /var/www/arvados-sso
+    src: "{{ arvados_sso_data_dir }}/arvados-sso"
+    state: link
+
 - name: install arvados sso prerequisites including postgresql
   become: yes
   apt:
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
-    - postgresql
+    - "postgresql={{ arvados_sso_postgresql_package_version }}"
     - bison
     - build-essential
     - gettext
@@ -41,6 +80,40 @@
     - libxslt1.1
     - python-psycopg2
     - zlib1g-dev
+
+- name: set ownership of postgres dirs
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    recurse: yes
+  with_items: 
+    - "{{ arvados_sso_data_dir }}/etc-postgresql"
+    - "{{ arvados_sso_data_dir }}/postgresql"
+
+- name: set ownership of arvados-sso dir
+  become: yes
+  file:
+    path: "{{ arvados_sso_data_dir }}/arvados-sso"
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+    
+- name: delete default main postgresql cluster
+  become: yes
+  command: "pg_dropcluster --stop {{ arvados_sso_postgresql_version }} main"
+  args:
+    removes: /etc/postgresql/{{ arvados_sso_postgresql_version }}/main
+
+- name: create postgresql cluster
+  become: yes
+  command: "pg_createcluster -u postgres -d {{ arvados_sso_data_dir }}/postgresql/{{ arvados_sso_postgresql_version }}/arvados_sso -p 5432 --start {{ arvados_sso_postgresql_version }} arvados_sso"
+  args:
+    creates: /etc/postgresql/{{ arvados_sso_postgresql_version }}/arvados_sso
+  register: arvados_sso_REGISTER_configure_postgresql
 
 - name: create postgresql user for arvados sso
   become: yes
@@ -124,7 +197,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - nginx-extras
     - passenger
@@ -154,7 +227,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - arvados-sso-server
 

@@ -9,9 +9,28 @@ marathon_template="/nfs/humgen01/teams/hgi/conf/marathon/lustretree.json.templat
 marathon_config="/home/mercury/marathonctl.config"
 marathonctl="marathonctl -c ${marathon_config} -f json"
 
-volumes=(108 109 110 111 112 113 114 115 116)
+volumes=(112 113 114 115 116 117 118)
+declare -A mem_gb=([112]=30 [113]=31 [114]=20 [115]=74 [116]=250 [117]=50 [118]=240)
+#declare -A mem_gb=([112]=30 [113]=31 [114]=20 [115]=74 [116]=240 [117]=50 [118]=200)
+#declare -A mem_gb=([108]=48 [109]=48 [110]=56 [111]=132 [112]=30 [113]=31 [114]=20 [115]=74 [116]=216 [117]=14 [118]=170)
+# actual dir count and usage 2/2/2017: 
+#fs combinations directory_count gb_footprint
+#108 7334 3496033 54
+#109 11212 3443401 48
+#110 11098 4189196 57
+#111 2212 10494146 127
+#112 1490 2057701 32
+#113 8985 2136095 29
+#114 4367 1281230 15
+#115 3617 5642497 65
+#116 NA NA NA
+#117 2023 693483 9
+#118 3230 11468637 136
+# new sizes based on 6GB + 10GB/1M directories:
+#declare -A mem_gb=([108]=48 [109]=48 [110]=56 [111]=132 [112]=30 [113]=31 [114]=20 [115]=74 [116]=216 [117]=14 [118]=144)
+#declare -A mem_gb=([108]=48 [109]=48 [110]=56 [111]=132 [112]=30 [113]=31 [114]=20 [115]=74 [116]=193 [117]=14 [118]=144)
+#declare -A mem_gb=([108]=72 [109]=72 [110]=96 [111]=96 [112]=72 [113]=72 [114]=48 [115]=72 [116]=196 [117]=24 [118]=96)
 #declare -A mem_gb=([108]=125 [109]=63 [110]=65 [111]=45 [113]=46 [114]=16 [115]=46 [116]=54)
-declare -A mem_gb=([108]=72 [109]=72 [110]=96 [111]=96 [112]=72 [113]=72 [114]=72 [115]=72 [116]=160)
 # dat file sizes associated with these memory requirements
 # $ ls -lhS /lustre/scratch114/teams/hgi/lustre_reports/mpistat/data/20160301_1*
 # -rw-r--r-- 1 root hgi 888M Mar  1 03:28 /lustre/scratch114/teams/hgi/lustre_reports/mpistat/data/20160301_109.dat.gz

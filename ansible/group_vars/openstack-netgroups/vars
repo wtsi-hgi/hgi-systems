@@ -1,1 +1,0 @@
-openstack_netgroup_dns_servers: "{{ sanger_network_dns_servers }}"

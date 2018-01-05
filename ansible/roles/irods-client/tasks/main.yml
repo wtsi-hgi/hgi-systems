@@ -18,10 +18,10 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: roles/irods-client/tasks/main.yml
-- include: irods.yml
+- import_tasks: irods.yml
   register: irods
 
-- include: baton.yml
+- import_tasks: baton.yml
   when: irods
 
 # This is needed for Ansible to invoke iinit as an arbitrary user

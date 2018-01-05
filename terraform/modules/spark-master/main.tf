@@ -24,7 +24,22 @@ variable "bastion" {
   default = {}
 }
 
+variable "extra_ansible_groups" {
+  type    = "list"
+  default = []
+}
+
+locals {
+  ansible_groups = [
+    "hail-masters",
+    "spark-cluster-${var.spark_cluster_id}-members",
+    "consul-agents",
+    "hgi-credentials",
+  ]
+}
+
 resource "openstack_networking_floatingip_v2" "spark-master" {
+  count    = "${var.count}"
   provider = "openstack"
   pool     = "nova"
 }
@@ -53,7 +68,7 @@ resource "openstack_compute_instance_v2" "spark-master" {
   user_data = "#cloud-config\nhostname: spark-${var.spark_cluster_id}-master\nfqdn: spark-${var.spark_cluster_id}-master.${var.domain}"
 
   metadata = {
-    ansible_groups = "hailers spark-masters spark-cluster-${var.spark_cluster_id}-members hgi-credentials"
+    ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
@@ -77,17 +92,30 @@ resource "openstack_compute_instance_v2" "spark-master" {
 }
 
 resource "openstack_compute_floatingip_associate_v2" "spark-master" {
+  count       = "${var.count}"
   provider    = "openstack"
   floating_ip = "${openstack_networking_floatingip_v2.spark-master.address}"
   instance_id = "${openstack_compute_instance_v2.spark-master.id}"
 }
 
 resource "infoblox_record" "spark-master-dns" {
+  count  = "${var.count}"
   value  = "${openstack_networking_floatingip_v2.spark-master.address}"
   name   = "spark-${var.spark_cluster_id}-master"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view   = "internal"
+}
+
+resource "infoblox_record" "hail-dns" {
+  count  = "${var.count}"
+  value  = "${openstack_networking_floatingip_v2.spark-master.address}"
+  name   = "hail-${var.spark_cluster_id}"
+  domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
+  view   = "internal"
 }
 
 output "ip" {
@@ -96,11 +124,13 @@ output "ip" {
 
 # FIXME: This is here for Hail, not Spark
 resource "openstack_blockstorage_volume_v2" "spark-master-volume" {
-  name = "spark-${var.spark_cluster_id}-volume"
-  size = 100
+  count = "${var.count}"
+  name  = "spark-${var.spark_cluster_id}-volume"
+  size  = 100
 }
 
 resource "openstack_compute_volume_attach_v2" "spark-master-volume-attach" {
+  count       = "${var.count}"
   volume_id   = "${openstack_blockstorage_volume_v2.spark-master-volume.id}"
   instance_id = "${openstack_compute_instance_v2.spark-master.id}"
 }

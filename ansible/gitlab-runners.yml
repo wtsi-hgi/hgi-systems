@@ -20,12 +20,7 @@
 ---
 # file: gitlab-runners.yml
 
-# Check dynamic inventory and set dynamic groups and facts (must all be gather_facts: no)
-- include: dynamic-inventory-sanity-check.yml
-- include: set-facts.yml
-
-# Set dynamic groups (and gather facts)
-- include: dynamic-groups.yml
+- import_playbook: hgi-preamble-playbook.yml
 
 - hosts: gitlab-runners
   roles:

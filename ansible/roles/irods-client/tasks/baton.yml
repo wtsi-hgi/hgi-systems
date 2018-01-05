@@ -28,7 +28,7 @@
     - JSON
     - List::AllUtils
 
-- include: jansson.yml
+- import_tasks: jansson.yml
 
-- include: baton_from_source.yml
+- import_tasks: baton_from_source.yml
   when: baton_perl_deps|succeeded

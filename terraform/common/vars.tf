@@ -7,8 +7,7 @@ variable "region" {
 }
 
 variable "base_image_name" {
-  type    = "string"
-  default = "hgi-base-xenial-latest"
+  type = "string"
 }
 
 variable "base_image_user" {
@@ -17,8 +16,7 @@ variable "base_image_user" {
 }
 
 variable docker_image_name {
-  type    = "string"
-  default = "hgi-docker-xenial-latest"
+  type = "string"
 }
 
 variable docker_image_user {
@@ -27,8 +25,7 @@ variable docker_image_user {
 }
 
 variable arvados_base_image_name {
-  type    = "string"
-  default = "hgi-base-jessie-latest"
+  type = "string"
 }
 
 variable arvados_base_image_user {
@@ -37,8 +34,7 @@ variable arvados_base_image_user {
 }
 
 variable freebsd_base_image_name {
-  type    = "string"
-  default = "hgi-base-freebsd11-latest"
+  type = "string"
 }
 
 variable freebsd_base_image_user {

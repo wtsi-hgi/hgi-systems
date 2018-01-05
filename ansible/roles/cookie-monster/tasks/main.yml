@@ -18,11 +18,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 ---
 # file: roles/cookie-monster/tasks/main.yml
-- include: iinit.yml
+- import_tasks: iinit.yml
   register: iinit
 
-- include: python.yml
+- import_tasks: python.yml
   register: python
 
-- include: cookie-monster.yml
+- import_tasks: cookie-monster.yml
   register: cookie-monster

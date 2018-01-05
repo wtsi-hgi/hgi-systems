@@ -1,0 +1,9 @@
+# Vault contains:
+#   hail_cluster_jupyter_token: xxx
+#   hail_cluster_ssh_key: xxx
+
+---
+# file: group_vars/spark-cluster-sjl-members/vars.yml
+
+hail_cluster_id: sjl
+hail_cluster_spark_build: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c

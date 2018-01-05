@@ -100,6 +100,17 @@ resource "infoblox_record" "arvados-sso" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view   = "internal"
+}
+
+resource "openstack_blockstorage_volume_v2" "arvados-sso-volume" {
+  name = "arvados-sso-${var.arvados_cluster_id}-volume"
+  size = 10
+}
+
+resource "openstack_compute_volume_attach_v2" "arvados-sso-volume-attach" {
+  volume_id   = "${openstack_blockstorage_volume_v2.arvados-sso-volume.id}"
+  instance_id = "${openstack_compute_instance_v2.arvados-sso.id}"
 }
 
 output "ip" {

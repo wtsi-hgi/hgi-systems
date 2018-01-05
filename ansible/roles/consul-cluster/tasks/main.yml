@@ -35,7 +35,7 @@
       with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
       register: consul_cluster_info
 
-    - include: fix-peerless-cluster.yml
+    - import_tasks: fix-peerless-cluster.yml
       when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
     - name: create ACL token required for the server to communicate fully with the rest of the cluster
@@ -134,4 +134,17 @@
           - node: ""
             policy: write
           - key: ""
+            policy: write
+
+    - name: create a client ACL token for managing locks
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_locks_name }}"
+        token: "{{ consul_cluster_acl_locks_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - key: ""
+            policy: write
+          - session: ""
             policy: write

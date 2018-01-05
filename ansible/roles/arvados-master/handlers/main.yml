@@ -1,47 +1,11 @@
 - name: create api tokens
-  become: yes
-  become_user: www-data
-  shell: "bundle exec ./script/create_superuser_token.rb $(cat {{ item }})"
-  args:
-    executable: /bin/sh
-    chdir: /var/www/arvados-api/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
-  with_items:
-    - "{{ arvados_master_superuser_token_file }}"
-    - "{{ arvados_master_crunch_dispatcher_token_file }}"
-    - "{{ arvados_master_data_manager_token_file }}"
-
-- name: create trusted workbench api client
-  become: yes
-  become_user: www-data
-  command: bundle exec rails runner "{{ arvados_master_create_workbench_api_client_script }}"
-  args:
-    chdir: /var/www/arvados-api/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
-
-- name: create mercury admin user
-  become: yes
-  become_user: www-data
-  command: bundle exec rails runner "{{ arvados_master_create_mercury_admin_user_script }}"
-  args:
-    chdir: /var/www/arvados-api/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
+  import_tasks: create-api-tokens.yml
 
 - name: restart nginx
   become: yes
   systemd:
     name: nginx
     state: restarted
-
-- name: reconfigure arvados-api-server
-  become: yes
-  command: dpkg-reconfigure arvados-api-server
 
 - name: restart arvados-ws
   become: yes

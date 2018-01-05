@@ -1,33 +1,147 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
 ---
+# file: roles/hail/defaults/main.yml
 
-# Requires:
-# hail_jupyter_token:
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+# hail_jupyter_token: 
+#   an authentication token used to login to Jupyter notebook
+#
+# hail_ssh_key:
+#   a private ssh key used to authenticate between nodes in the hail cluster
+#
+# hail_ssl_cert:
+#   an SSL certificate for the master host
+#
+# hail_ssl_key:
+#   the SSL private key corresponding to hail_ssl_cert
+#
+# hail_master_host_list:
+#   list of (usually only one) master host for this cluster
+#
+# hail_computer_host_list:
+#   list of computer (worker) hosts in this cluster
+#
+# hail_master_data_dir:
+#   directory in which to store hail data locally on master
+#
+# hail_master_external_hostname:
+#   hostname by which the master host is externally accessible
+#
+# hail_master_external_domain:
+#   domain under which the master host is externally accessible
+#
+# hail_backup_s3_host:
+#   FQDN of S3 endpoint to use for backing up hail master data
+#
+# hail_backup_s3_access_key:
+#   Access key to use for S3 backup
+#
+# hail_backup_s3_secret_key:
+#   Secret key to use for S3 backup
+#
+# hail_tutorial_data_s3_bucket:
+#   Publicly accessible tutorial data
+#
+###############################################################################
 
-hail_apt_cache_valid_time: 3600
+###############################################################################
+# Versions
+###############################################################################
+hail_version: "0.1-0bd1988e"
+hail_version_branch: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\1') }}"
+hail_version_commit: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\2') }}"
+hail_spark_build_version: "2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c"
+hail_spark_version: "{{ hail_spark_build_version | regex_replace('([0-9.]+)-.*', '\\1') }}"
+hail_seaborn_version: "0.8.0"
+hail_anaconda_version: "4.4.0"
 
-hail_version: 0.1
+###############################################################################
+# Directories
+###############################################################################
+hail_temp_dir: /tmp/hail
+hail_prefix_dir: "/usr/local/hail-{{ hail_version }}"
+hail_spark_prefix_dir: "/usr/local/spark-{{ hail_spark_build_version }}"
+hail_systemd_service_dir: /etc/systemd/system
+hail_anaconda_prefix_dir: "/usr/local/anaconda-{{ hail_anaconda_version }}"
+hail_ssl_key_file: /etc/ssl.key
+hail_ssl_cert_file: /etc/ssl.cert
+
+###############################################################################
+# Users/Groups
+###############################################################################
+hail_user: hail
+hail_group: "{{ hail_user }}"
+hail_authorized_keys: []
+
+###############################################################################
+# Source repo
+###############################################################################
 hail_repository: https://github.com/hail-is/hail.git
-hail_seaborn_version: 0.8.0
+hail_check_installed: "{{ hail_prefix_dir }}/jars/hail-all-spark.jar"
 
-hail_installation_location: "/usr/local/hail-{{ hail_version }}"
-hail_jupyter_binary: "{{ hail_installation_location }}/scripts/jhail"
-hail_jupyter_configuration_location: "/etc/opt/jupyter_notebook_config.py"
-
-hail_user: spark
-
-hail_spark_version: 2.1.1
-hail_spark_home: "/usr/local/spark-{{ hail_spark_version }}"
-
-hail_anaconda_version: 4.4.0
-hail_anaconda_installation_location: "/usr/local/anaconda-{{ hail_anaconda_version }}"
-
-hail_service_start: "{{ hail_jupyter_binary }} --config={{ hail_jupyter_configuration_location }}"
+###############################################################################
+# Hail Jupyter service
+###############################################################################
+hail_jupyter_bin_file: "{{ hail_prefix_dir }}/scripts/jhail"
+hail_jupyter_config_file: "/etc/opt/jupyter_config_file.py"
+hail_jupyter_server_name: "{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}"
+hail_jupyter_backend_port: 8888
+hail_service_start: "{{ hail_jupyter_bin_file }} --config={{ hail_jupyter_config_file }}"
 hail_service_user: "{{ hail_user }}"
+hail_service_initial_path: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 hail_service_environment_variables:
-  PATH: "{{ hail_default_path }}:{{ hail_anaconda_installation_location }}/bin:{{ hail_installation_location }}/bin"
-  HAIL_HOME: "{{ hail_installation_location }}"
-  SPARK_HOME: "{{ hail_spark_home }}"
-  PYTHONPATH: "{{ hail_installation_location }}/python:{{ hail_spark_home }}/python:{{ hail_spark_home }}/python/lib/py4j-0.10.4-src.zip"
-  SPARK_CLASSPATH: "{{ hail_installation_location }}/build/libs/hail-all-spark.jar"
+  PATH: "{{ hail_service_initial_path }}:{{ hail_anaconda_prefix_dir }}/bin:{{ hail_prefix_dir }}/bin"
+  SPARK_HOME: "{{ hail_spark_prefix_dir }}"
+  HAIL_HOME: "{{ hail_prefix_dir }}"
+  PYTHONPATH: "{{ hail_prefix_dir }}/python:{{ hail_prefix_dir }}/python:{{ hail_spark_prefix_dir }}/python/lib/py4j-0.10.4-src.zip"
 
-hail_data_directory: /data
+###############################################################################
+# Backup settings
+###############################################################################
+hail_backup_s3_backup_bucket: "hail-backup"
+hail_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
+hail_s3_backup_restore_indicator_file: ""
+
+###############################################################################
+# Spark settings
+###############################################################################
+hail_spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
+hail_spark_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+hail_spark_master_backend_port: "8080"
+hail_spark_local_ip: "127.0.0.1"
+hail_spark_hadoop_anonymous_buckets: []
+hail_master_host: "127.0.0.1"
+hail_spark_executor_memory_gb: 1
+
+###############################################################################
+# Node types
+###############################################################################
+hail_master_p: "{{ inventory_hostname in hail_master_host_list }}"
+hail_compute_p: "{{ inventory_hostname in hail_computer_host_list }}"
+
+###############################################################################
+# General settings
+###############################################################################
+hail_apt_cache_valid_time: 86400
+

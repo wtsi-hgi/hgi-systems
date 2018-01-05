@@ -38,7 +38,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - gawk
     - g++
@@ -78,3 +78,17 @@
     owner: root
     group: root
     mode: 0644
+
+- name: increse number of open file limits for root
+  become: yes
+  pam_limits:
+    domain: root
+    use_max: yes
+    limit_type: "{{ item.type }}"
+    limit_item: nofile
+    value: "{{ item.value }}"
+  with_items:
+    - type: hard
+      value: 1048576
+    - type: soft
+      value: 262144

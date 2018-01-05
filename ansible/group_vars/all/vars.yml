@@ -22,7 +22,19 @@
 ---
 # file: group_vars/all
 
-apt_cache_valid_time: 86400
+###############################################################################
+# Vault contains:
+###############################################################################
+#   all_GROUP_root_secret: |
+#     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#     xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#
+###############################################################################
+
+all_GROUP_apt_cache_valid_time: 86400
+all_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}" # FIXME remove this after refactor
+
+# FIXME: everything below should be namespaced into `all_` (or moved elsewhere)
 
 hgi_conf_dir: "{{ hgi_dir }}/etc"
 hgi_log_dir: "{{ hgi_dir }}/log"
@@ -56,13 +68,13 @@ sanger_http_proxy: http://wwwcache.sanger.ac.uk:3128
 sanger_https_proxy: http://wwwcache.sanger.ac.uk:3128
 sanger_ftp_proxy: http://wwwcache.sanger.ac.uk:3128
 
-ansible_ssh_common_args: "{% if bastion_host is defined and bastion_host != ansible_host %}-o ProxyCommand=\"ssh -W %h:%p -o StrictHostKeyChecking=no -q {% if bastion_user %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
+ansible_ssh_common_args: "{% if bastion_host is defined and bastion_host != '' and bastion_host != ansible_host %}-o ProxyCommand=\"ssh -W %h:%p -o StrictHostKeyChecking=no -q {% if bastion_user is defined and bastion_user != '' %}{{ bastion_user }}@{% endif %}{{ bastion_host }}\"{% endif %}"
 
-control_path: "{% if bastion_host is defined and bastion_host != ansible_host %}%(directory)s/ansible-ssh-{{ bastion_host }}-%%h-%%p-%%r{% else %}%(directory)s/ansible-ssh-direct-%%h-%%p-%%r{% endif %}"
+control_path: "{% if bastion_host is defined and bastion_host != '' and bastion_host != ansible_host %}%(directory)s/ansible-ssh-{{ bastion_host }}-%%h-%%p-%%r{% else %}%(directory)s/ansible-ssh-direct-%%h-%%p-%%r{% endif %}"
 
 pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
-sanger_network_dns_servers:
+all_GROUP_sanger_network_dns_servers:
   - 172.18.255.1
   - 172.18.255.2
   - 172.18.255.3

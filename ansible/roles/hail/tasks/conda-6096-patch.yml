@@ -5,16 +5,16 @@
 # patch
 
 - name: get Conda version
-  shell: "{{ hail_anaconda_installation_location }}/bin/conda --version 2>&1 | cut -d ' ' -f 2"
+  shell: "{{ hail_anaconda_prefix_dir }}/bin/conda --version 2>&1 | cut -d ' ' -f 2"
   changed_when: False
-  register: conda_version
+  register: hail_REGISTER_conda_version
 
 - block:
     - name: find Conda package's metadata files
       find:
-        paths: "{{ hail_anaconda_installation_location }}/conda-meta/"
+        paths: "{{ hail_anaconda_prefix_dir }}/conda-meta/"
         patterns: '*.json'
-      register: package_metadata_files
+      register: hail_REGISTER_package_metadata_files
 
     - name: patch timestamps in package metadata files to remove any decimal places that Conda < 4.3.29 cannot parse
       become: yes
@@ -22,5 +22,5 @@
         path: "{{ item }}"
         regexp: '"timestamp": ([0-9]+)\.[0-9]+'
         replace: '"timestamp": \1'
-      with_items: "{{ package_metadata_files.files | json_query('[].path') }}"
-  when: conda_version.stdout | version_compare('4.3.29', '<')
+      with_items: "{{ hail_REGISTER_package_metadata_files.files | json_query('[].path') }}"
+  when: hail_REGISTER_conda_version.stdout | version_compare('4.3.29', '<')

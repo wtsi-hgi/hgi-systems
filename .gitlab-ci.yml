@@ -24,6 +24,8 @@ variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
+  CI_LOCK_PREFIX: "ci"
+  ANSIBLE_LOCK_PREFIX: "${CI_LOCK_PREFIX}/ansible"
 
 # In general, additional variables should *not* be defined above unless they are 
 # required to process .gitlab-ci.yml itself (i.e. they are used in this file outside 
@@ -32,8 +34,10 @@ variables:
 # To set or override a variable, create or edit a script in the before_scripts.d directory at 
 # either the repo level or in the hgi image creation subrepo. The contents of those 
 # two directories will be combined and the scripts sourced in "version" order (sort -V).
-before_script: 
-  - 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
+
+.global-before-script: &global-before-script-def 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
+before_script:
+  - *global-before-script-def
 
 stages:
   - bootstrap-validate
@@ -112,7 +116,7 @@ validate_s3:
   stage: bootstrap-validate
   tags:
     - docker
-  image: mercury/gitlab-ci-git-push
+  image: mercury/taos
   script:
     - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
     - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
@@ -203,7 +207,6 @@ os-images-validate-staging-delta-hgiarvados:
   image: mercury/taos
   script:
     - ci/terraform-validate.sh
-  dependencies: []
 
 terraform-validate-production-delta-hgi:
   <<: *terraform-validate-def
@@ -288,7 +291,16 @@ terraform-staging-delta-hgiarvados:
     - docker
   image: mercury/taos
   script:
+    - "CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock -v lock \
+         -i=10 \
+         --metadata=\"{jobId: ${CI_JOB_ID}}\" \
+         --on-before-lock=ci/release-dead-job-lock.py \
+         --on-before-lock=ci/old-pipeline-suicide.py \
+         ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}"
     - ci/ansible.sh
+  after_script:
+    - "CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock unlock \
+         ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}"
   artifacts:
     paths:
       - artifacts

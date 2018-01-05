@@ -40,4 +40,3 @@ else
     >&2 echo "ansible-playbook failed: ${playbook_exit_status}"
     exit ${playbook_exit_status}
 fi
-

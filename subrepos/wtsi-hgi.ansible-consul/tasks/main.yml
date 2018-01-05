@@ -5,22 +5,22 @@
     - "{{ ansible_os_family }}-{{ ansible_distribution_major_version}}.yml"
     - "{{ ansible_os_family }}.yml"
 
-- include: install.yml
+- import_tasks: install.yml
   become: yes
 
-- include: install-ui.yml
+- import_tasks: install-ui.yml
   become: yes
   when: consul_is_ui == true
 
-- include: install-cli.yml
+- import_tasks: install-cli.yml
   become: yes
   when: consul_install_consul_cli == true
 
-- include: dnsmasq.yml
+- import_tasks: dnsmasq.yml
   become: yes
   when: consul_install_dnsmasq == true
 
-- include: consulate.yml
+- import_tasks: consulate.yml
   become: yes
   when: consul_install_consulate == true 
 
@@ -31,6 +31,6 @@
   when: consul_manage_service
   become: yes
 
-- include: services.yml
+- import_tasks: services.yml
   become: yes
   when: consul_services is defined and consul_services|length > 0

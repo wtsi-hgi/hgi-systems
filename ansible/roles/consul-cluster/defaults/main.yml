@@ -20,9 +20,30 @@
 ---
 # file: roles/consul-cluster/defaults/main.yml
 
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+# consul_cluster_infoblox_api_server:
+# consul_cluster_infoblox_api_version:
+# consul_cluster_infoblox_username:
+# consul_cluster_infoblox_password:
+# consul_cluster_dns_name:
+# consul_cluster_server_wan_ips:
+# consul_cluster_servers: 
+# consul_cluster_server_ips: 
+# consul_cluster_server_acl_token: 
+# consul_cluster_acl_master_token:
+# consul_cluster_acl_agent_master_token: 
+# consul_cluster_acl_management_name:
+# consul_cluster_acl_terraform_name:
+# consul_cluster_acl_terraform_token:
+# consul_cluster_acl_agent_name:
+# consul_cluster_acl_agent_token:
+#
+###############################################################################
+
 consul_cluster_infoblox_delegate: 127.0.0.1
 consul_cluster_infoblox_dns_view: internal
 consul_cluster_dns_ttl_in_seconds: 60
-
-consul_cluster_leader: "{% for server in consul_cluster_info.results %}{% if server.consul_info.consul.leader == 'true' %}{{ server.item }}{% endif %}{% endfor %}"
 

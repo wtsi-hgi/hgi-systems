@@ -60,6 +60,7 @@ resource "openstack_compute_instance_v2" "arvados-keepproxy" {
     "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",
     "${var.security_group_ids["keep-proxy"]}",
+    "${var.security_group_ids["netdata"]}",
   ]
 
   network {
@@ -107,29 +108,25 @@ resource "infoblox_record" "arvados-keepproxy" {
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view   = "internal"
 }
 
-# FIXME: add infoblox provider support for multiple A records
-resource "infoblox_record" "arvados-keep" {
-  value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.0.address}"
-  name   = "arvados-keep-${var.arvados_cluster_id}"
-  domain = "${var.domain}"
-  type   = "A"
-  ttl    = 600
-}
-
+# FIXME add multi-address capability to terraform-provider-infoblox and add a round-robin record here instead of just hard-coding it to the first server
 resource "infoblox_record" "arvados-download" {
   value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.0.address}"
   name   = "arvados-download-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view   = "internal"
 }
 
+# FIXME add multi-address capability to terraform-provider-infoblox and add a round-robin record here instead of just hard-coding it to the first server
 resource "infoblox_record" "arvados-collections" {
   value  = "${openstack_networking_floatingip_v2.arvados-keepproxy.0.address}"
   name   = "arvados-collections-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
+  view   = "internal"
 }

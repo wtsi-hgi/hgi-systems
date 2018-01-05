@@ -21,7 +21,7 @@
 # file: bootstrap+site.yml
 
 # Bootstrap ansible-managed openstack infrastructure
-- include: bootstrap.yml
+- import_playbook: bootstrap.yml
 
 # Configure site
-- include: site.yml
+- import_playbook: site.yml

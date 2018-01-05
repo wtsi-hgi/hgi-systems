@@ -52,6 +52,20 @@
 [arvados-clusters]
 [consul-cluster-delta-hgi]
 [consul-cluster-delta-hgiarvados]
+[spark-masters]
+[spark-computers]
+[sparkers]
+[hail-masters]
+[hail-computers]
+[hgi]
+[arvados]
+[arvados-compute-nodes]
+[arvados-keepproxies]
+[arvados-keeps]
+[arvados-masters]
+[arvados-ssos]
+[arvados-workbenches]
+[netdata]
 
 [hgs4:children]
 mesos-masters
@@ -106,6 +120,10 @@ consul-commoners
 [s3-credentials:children]
 gitlab-runners
 consul-servers
+sparkers
+hailers
+arvados-masters
+arvados-ssos
 
 # OpenStack instances to be created by Ansible
 [openstack-instances:children]
@@ -127,7 +145,30 @@ openstack-instances
 tf_type_openstack_compute_instance_v2
 
 [terraform-ci:children]
+canaries
 terraform
 consul-servers
 arvados-clusters
 consul-cluster-delta-hgiarvados
+
+[arvados:children]
+arvados-compute-nodes
+arvados-keepproxies
+arvados-keeps
+arvados-masters
+arvados-ssos
+arvados-workbenches
+
+[sparkers:children]
+spark-masters
+spark-computers
+
+[hailers:children]
+hail-masters
+hail-computers
+
+[hgi:children]
+hailers
+
+[netdata:children]
+arvados-keepproxies

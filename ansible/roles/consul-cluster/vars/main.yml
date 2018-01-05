@@ -1,0 +1,2 @@
+
+consul_cluster_leader: "{% for server in consul_cluster_info.results %}{% if server.consul_info.consul.leader == 'true' %}{{ server.item }}{% endif %}{% endfor %}"

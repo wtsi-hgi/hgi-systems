@@ -253,6 +253,19 @@ resource "openstack_compute_secgroup_v2" "keep-proxy" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "netdata" {
+  provider    = "openstack"
+  name        = "netdata_${var.region}_${var.env}"
+  description = "Netdata web UI accessible from within tenant network"
+
+  rule {
+    from_port   = 19999
+    to_port     = 19999
+    ip_protocol = "tcp"
+    cidr        = "10.0.0.0/8"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
@@ -267,6 +280,7 @@ output "security_group_ids" {
     slurm-compute = "${openstack_compute_secgroup_v2.slurm-compute.id}"
     keep-service  = "${openstack_compute_secgroup_v2.keep-service.id}"
     keep-proxy    = "${openstack_compute_secgroup_v2.keep-proxy.id}"
+    netdata       = "${openstack_compute_secgroup_v2.netdata.id}"
   }
 }
 

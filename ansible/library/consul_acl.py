@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.0',
+ANSIBLE_METADATA = {'metadata_version': '1.1',
                     'status': ['preview'],
                     'supported_by': 'community'}
 
@@ -23,7 +23,6 @@ version_added: "2.0"
 author:
   - Steve Gargan (@sgargan)
   - Colin Nolan (@colin-nolan)
-  - Joshua C. Randall (@jrandall)
 options:
   mgmt_token:
     description:
@@ -241,75 +240,90 @@ def set_acl(consul_client, configuration):
     assert None not in existing_acls_mapped_by_token, "expecting ACL list to be associated to a token: %s" \
                                                       % existing_acls_mapped_by_token[None]
 
-    if configuration.token is None and configuration.name and configuration.name in existing_acls_mapped_by_name:
-        # No token but name given so can get token from name
+    if configuration.token is None and configuration.name is not None \
+            and configuration.name in existing_acls_mapped_by_name:
+        # Name used as identifier instead of token - get token of ACL with identifying name
         configuration.token = existing_acls_mapped_by_name[configuration.name].token
 
+    if configuration.token not in existing_acls_mapped_by_token \
+            and configuration.name in existing_acls_mapped_by_name:
+        # Token given but no ACL with token exists, however an ACL with the same name exists. Remove ACL with outdated
+        # token
+        remove_old_result = remove_acl(consul_client, existing_acls_mapped_by_name[configuration.name].token)
+        assert remove_old_result.changed
+        del existing_acls_mapped_by_name[configuration.name]
+
     if configuration.token and configuration.token in existing_acls_mapped_by_token:
-        return update_acl(consul_client, configuration)
+        # Token given and ACL with token exists - update the existing ACL
+        return update_acl(
+            consul_client, configuration.token, configuration.name, configuration.token_type, configuration.rules)
     else:
         assert configuration.token not in existing_acls_mapped_by_token
         assert configuration.name not in existing_acls_mapped_by_name
-        return create_acl(consul_client, configuration)
+        return create_acl(
+            consul_client, configuration.token, configuration.name, configuration.token_type, configuration.rules)
 
 
-def update_acl(consul_client, configuration):
+def update_acl(consul_client, token, name, token_type, rules):
     """
     Updates an ACL.
     :param consul_client: the consul client
-    :param configuration: the run configuration
+    :param token: token of the ACL
+    :param name: name of the ACL
+    :param token_type: type of ACL
+    :param rules: the rules associated to the ACL
     :return: the output of the update
     """
-    existing_acl = load_acl_with_token(consul_client, configuration.token)
-    changed = existing_acl.rules != configuration.rules
+    existing_acl = load_acl_with_token(consul_client, token)
+    changed = existing_acl.rules != rules
 
     if changed:
-        name = configuration.name if configuration.name is not None else existing_acl.name
-        rules_as_hcl = encode_rules_as_hcl_string(configuration.rules)
-        updated_token = consul_client.acl.update(
-            configuration.token, name=name, type=configuration.token_type, rules=rules_as_hcl)
-        assert updated_token == configuration.token
+        name = name if name is not None else existing_acl.name
+        rules_as_hcl = encode_rules_as_hcl_string(rules)
+        updated_token = consul_client.acl.update(token, name=name, type=token_type, rules=rules_as_hcl)
+        assert updated_token == token
 
-    return Output(changed=changed, token=configuration.token, rules=configuration.rules, operation=UPDATE_OPERATION)
+    return Output(changed=changed, token=token, rules=rules, operation=UPDATE_OPERATION)
 
 
-def create_acl(consul_client, configuration):
+def create_acl(consul_client, token, name, token_type, rules):
     """
     Creates an ACL.
     :param consul_client: the consul client
-    :param configuration: the run configuration
+    :param token: token of the ACL
+    :param name: name of the ACL
+    :param token_type: type of ACL
+    :param rules: the rules associated to the ACL
     :return: the output of the creation
     """
-    rules_as_hcl = encode_rules_as_hcl_string(configuration.rules) if len(configuration.rules) > 0 else None
+    rules_as_hcl = encode_rules_as_hcl_string(rules) if len(rules) > 0 else None
     token = consul_client.acl.create(
-        name=configuration.name, type=configuration.token_type, rules=rules_as_hcl, acl_id=configuration.token)
-    rules = configuration.rules
+        name=name, type=token_type, rules=rules_as_hcl, acl_id=token)
     return Output(changed=True, token=token, rules=rules, operation=CREATE_OPERATION)
 
 
-def remove_acl(consul, configuration):
+def remove_acl(consul_client, token):
     """
     Removes an ACL.
-    :param consul: the consul client
-    :param configuration: the run configuration
+    :param consul_client: the consul client
+    :param token: token of the ACL
     :return: the output of the removal
     """
-    token = configuration.token
-    changed = consul.acl.info(token) is not None
+    changed = consul_client.acl.info(token) is not None
     if changed:
-        consul.acl.destroy(token)
+        consul_client.acl.destroy(token)
     return Output(changed=changed, token=token, operation=REMOVE_OPERATION)
 
 
-def load_acl_with_token(consul, token):
+def load_acl_with_token(consul_client, token):
     """
     Loads the ACL with the given token (token == rule ID).
-    :param consul: the consul client
+    :param consul_client: the consul client
     :param token: the ACL "token"/ID (not name)
     :return: the ACL associated to the given token
     :exception ConsulACLTokenNotFoundException: raised if the given token does not exist
     """
-    acl_as_json = consul.acl.info(token)
+    acl_as_json = consul_client.acl.info(token)
     if acl_as_json is None:
         raise ConsulACLNotFoundException(token)
     return decode_acl_as_json(acl_as_json)
@@ -627,7 +641,7 @@ def main():
         if configuration.state == PRESENT_STATE_VALUE:
             output = set_acl(consul_client, configuration)
         else:
-            output = remove_acl(consul_client, configuration)
+            output = remove_acl(consul_client, configuration.token)
     except ConnectionError as e:
         module.fail_json(msg='Could not connect to consul agent at %s:%s, error was %s' % (
             configuration.host, configuration.port, str(e)))

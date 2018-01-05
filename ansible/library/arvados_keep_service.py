@@ -63,7 +63,7 @@ def main():
     additional_argument_spec = {
         "service_host": dict(required=True, type="str"),
         "service_port": dict(required=False, type="int", default=25107),
-        "service_ssl_flag": dict(required=False, type="str", default=False),
+        "service_ssl_flag": dict(required=False, type="bool", default=False),
         "service_type": dict(required=False, type="str", choices=["disk", "blob", "proxy"], default="disk")
     }
 

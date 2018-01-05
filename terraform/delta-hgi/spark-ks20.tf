@@ -1,6 +1,6 @@
 module "spark-master-ks20" {
   source = "../modules/spark-master"
-  count  = 1
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
@@ -18,7 +18,8 @@ module "spark-master-ks20" {
     user = "${module.ssh-gateway.user}"
   }
 
-  spark_cluster_id = "ks20"
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
+  spark_cluster_id     = "ks20"
 }
 
 module "spark-compute-ks20" {
@@ -41,5 +42,6 @@ module "spark-compute-ks20" {
     user = "${module.ssh-gateway.user}"
   }
 
-  spark_cluster_id = "ks20"
+  extra_ansible_groups = ["consul-cluster-delta-hgi"]
+  spark_cluster_id     = "ks20"
 }

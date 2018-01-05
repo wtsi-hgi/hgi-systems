@@ -29,11 +29,26 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - keepproxy
     - runit
     - nginx
+
+- name: create keeproxy conf dir
+  become: yes
+  file:
+    path: /etc/arvados/keepproxy
+    state: directory
+
+- name: configure keepproxy
+  become: yes
+  template:
+    src: "arvados-keepproxy.yml.j2"
+    dest: "/etc/arvados/keepproxy/keepproxy.yml"
+    mode: 0755
+  notify:
+   - restart arvados-keepproxy
 
 - name: create runit directory for arvados-keepproxy
   become: yes
@@ -114,7 +129,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ apt_cache_valid_time }}"
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - keep-web
     - runit

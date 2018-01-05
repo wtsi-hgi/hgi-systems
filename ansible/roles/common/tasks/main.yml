@@ -21,13 +21,13 @@
 # file: roles/common/tasks/main.yml
 
 - name: common configuration for nonroot hosts
-  include: nonroot.yml
+  import_tasks: nonroot.yml
   when: "'nonroot' in group_names"
 
 - name: common configuration for root hosts
-  include: root.yml
+  import_tasks: root.yml
   when: "not 'nonroot' in group_names"
 
 - name: make root host compatible with roles designed for non-root hosts
-  include: non-root-on-root-compatibility.yml
+  import_tasks: non-root-on-root-compatibility.yml
   when: "non_root_compatibility and not 'nonroot' in group_names"

@@ -3,4 +3,3 @@ if [[ -z "${TERRAFORM_CONSUL_TOKEN+x}" ]]; then
     exit 1
 fi
 
-export CONSUL_HTTP_TOKEN=${TERRAFORM_CONSUL_TOKEN}

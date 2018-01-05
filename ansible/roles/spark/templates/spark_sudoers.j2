@@ -1,0 +1,4 @@
+# Allow spark user to run /usr/sbin/service spark commands
+{% for svc in ['spark-master','spark-slave'] %}{% for cmd in ['stop','start','restart','status'] %}
+{{ spark_user }} ALL=(root) NOPASSWD: /usr/sbin/service {{ svc }} {{ cmd }}
+{% endfor %}{% endfor %}

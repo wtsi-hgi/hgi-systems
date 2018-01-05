@@ -1,0 +1,20 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Apache Spark Slave
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+User={{ spark_user }}
+Type=forking
+ExecStart={{ spark_prefix_dir }}/sbin/start-slave.sh spark://{{ spark_master_host }}:{{ spark_master_port }}
+ExecStop={{ spark_prefix_dir }}/sbin/stop-slave.sh
+TimeoutSec=30
+Restart=on-failure
+RestartSec=30
+StartLimitInterval=350
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target

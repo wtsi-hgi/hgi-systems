@@ -20,18 +20,10 @@
 ---
 # file: site.yml
 
-# Check dynamic inventory and set dynamic groups and facts (must all be gather_facts: no)
-- include: dynamic-inventory-sanity-check.yml
-- include: set-facts.yml
-
-# Configure critical ssh bastion host infrastructure before gathering facts
-- include: ssh-gateways.yml
-
-# Set dynamic groups (and gather facts)
-- include: dynamic-groups.yml
+- import_playbook: hgi-preamble-playbook.yml
 
 # Set up non-host infrastructure
-- include: gitlab-projects.yml
+- import_playbook: gitlab-projects.yml
 
 # When image-building, make sure we apply common role even if no other groups apply
 - hosts: image-building
@@ -39,25 +31,25 @@
     - common
 
 # Playbooks that need nonroot host hgi infrastructure
-- include: mesos-masters.yml
-- include: zookeepers.yml
-- include: marathoners.yml
-- include: chronosians.yml
-- include: mesos-slaves.yml
-- include: bamboosians.yml
+- import_playbook: mesos-masters.yml
+- import_playbook: zookeepers.yml
+- import_playbook: marathoners.yml
+- import_playbook: chronosians.yml
+- import_playbook: mesos-slaves.yml
+- import_playbook: bamboosians.yml
 
 # We need consul-agents for DNS functionality
 # some subsequent roles may not work if they 
 # come before (I'm looking at you SLURM)
-- include: consul.yml
+- import_playbook: consul.yml
 
 # Playbooks that only support root hosts
-- include: arvados.yml
-- include: cookie-jars.yml
-- include: cookie-monsters.yml
-- include: dockerers.yml
-- include: gitlab-runners.yml
-- include: hailers.yml
-- include: openstack-tenant-cleaners.yml
-- include: spark.yml
+- import_playbook: arvados.yml
+- import_playbook: cookie-jars.yml
+- import_playbook: cookie-monsters.yml
+- import_playbook: dockerers.yml
+- import_playbook: gitlab-runners.yml
+- import_playbook: hailers.yml
+- import_playbook: openstack-tenant-cleaners.yml
+#- import_playbook: spark.yml
 

@@ -7,6 +7,17 @@
 #
 # To enable this hook, rename this file to "pre-commit".
 
+# Ensure terraform is on path
+tf_bin=$(which terraform)
+if [[ -z "${tf_bin}" ]]; then
+    >&2 echo "terraform binary must be on path, cannot continue with commit"
+    exit 1
+fi
+if [[ ! -x "${tf_bin}" ]]; then
+    >&2 echo "terraform binary ${tf_bin} not executable, cannot continnue with commit"
+    exit 1
+fi
+
 # Run terraform fmt on terraform dir
 ./ci/terraform-fmt.sh terraform
 

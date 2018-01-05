@@ -11,5 +11,5 @@
   when: "not 'nonroot' in group_names"
   changed_when: false
 
-- include: install.yml
+- import_tasks: install.yml
   when: "not 'nonroot' in group_names and mesos_install_location.stdout == ''"
