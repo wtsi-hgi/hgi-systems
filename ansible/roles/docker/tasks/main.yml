@@ -33,12 +33,9 @@
   tags: docker
   become: yes
   apt_repository:
-    repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} edge"
+    repo: "deb https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} edge"
     state: present
     update_cache: yes
-  with_items:
-    - stable
-    - edge
   when: ansible_os_family == 'Debian'
 
 - name: install extra aufs kernel docker prerequisites on Ubuntu <= 14.04
