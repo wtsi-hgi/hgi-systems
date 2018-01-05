@@ -63,11 +63,20 @@
     dest: /etc/docker/daemon.json
   notify: systemd restart docker
 
-- name: install docker (apt)
+- name: ensure old docker.io or docker-engine packages are not installed 
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=absent
+  with_items:
+    - docker-engine
+    - docker.io
+  when: ansible_os_family == 'Debian'
+
+- name: install docker-ce (apt)
   tags: docker
   become: yes
   apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
   with_items:
-    - docker-engine={{ docker_apt_version }}
+    - docker-ce={{ docker_apt_version }}
   when: ansible_os_family == 'Debian'
 
