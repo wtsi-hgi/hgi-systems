@@ -99,7 +99,7 @@ module "arvados-keep" {
     user = "${var.base_image_user}"
   }
 
-  count              = 2
+  count              = 4
   flavour            = "m1.medium"
   domain             = "node.hgi-delta.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
@@ -146,7 +146,7 @@ module "arvados-compute-node" {
     user = "${var.base_image_user}"
   }
 
-  count              = 1
+  count              = 125
   flavour            = "m1.xlarge"
   domain             = "node.hgi-delta.consul"
   security_group_ids = "${module.openstack.security_group_ids}"

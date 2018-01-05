@@ -5,19 +5,23 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-         bash \
-         git \
-         openjdk-8-jdk \
-         python \
-         python-pip \
-	 python-setuptools \
-         curl \
-         r-base-dev \
-         maven \
-         libopenblas-base \
-         libatlas3-base \
-         libnetlib-java \
+        bash \
+        git \
+        openjdk-8-jdk \
+        python \
+        python-pip \
+        python-setuptools \
+        python3-pip \
+        python3-setuptools \
+        curl \
+        r-base-dev \
+        maven \
+        libopenblas-base \
+        libatlas3-base \
+        libnetlib-java \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install python-gitlab
 
 RUN pip install j2cli
 

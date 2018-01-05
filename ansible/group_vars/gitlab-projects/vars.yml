@@ -74,3 +74,9 @@ gitlab_project_settings_infoblox:
     INFOBLOX_USERNAME: "{{ infoblox_credentials_username }}"
     INFOBLOX_HOST: "https://{{ infoblox_credentials_api_server }}"
 
+gitlab_project_settings_locks_consul:
+    LOCKS_CONSUL_HTTP_ADDR: "{{ consul_credentials_GROUP_creds['locks'].address }}"
+    LOCKS_CONSUL_HTTP_TOKEN: "{{ consul_credentials_GROUP_creds['locks'].token }}"
+
+gitlab_project_settings_gitlab:
+    GITLAB_TOKEN: "{{ gitlab_token }}"

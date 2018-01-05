@@ -65,7 +65,7 @@
     consul_encrypt: "{{ hgi_consul_encrypt }}"
     consul_acl_token: "{{ hgi_consul_acl_token }}"
     consul_bootstrap_expect: "{{ hgi_consul_servers | count }}"
-    consul_acl_datacenter: "{% if hgi_consul_server_p %}{{ hgi_consul_datacenter }}{% else %}False{% endif %}"
+    consul_acl_datacenter: "{{ hgi_consul_datacenter }}"
     consul_servers: "{{ hgi_consul_servers }}"
     consul_servers_wan: "{{ hgi_consul_servers_wan }}"
     consul_join_wan: "{% if hgi_consul_server_p %}True{% else %}False{% endif %}"

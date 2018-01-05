@@ -201,10 +201,18 @@
     dest: "{{ hail_prefix_dir }}/jars"
     state: link
 
+- name: promote hail_master_data_dir to fact
+  set_fact:
+    hail_master_data_dir: "{{ hail_master_data_dir }}"
+
+- name: set hail_data_dir as a fact on all nodes
+  set_fact:
+    hail_data_dir: "{% if hail_master_p %}{{ hail_master_data_dir }}{% else %}{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}{% endif %}"
+
 - name: create hail data directory
   become: yes
   file:
-    path: "{{ hail_master_data_dir }}"
+    path: "{{ hail_data_dir }}"
     state: directory
     mode: 0700
     owner: "{{ hail_user }}"
@@ -213,14 +221,10 @@
 - import_tasks: master.yml
   when: hail_master_p
 
-- name: promote hail_master_data_dir to fact
-  set_fact:
-    hail_master_data_dir: "{{ hail_master_data_dir }}"
-
 - name: mount hail data dir (on non-master nodes)
   become: yes
   mount:
-    name: "{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+    name: "{{ hail_data_dir }}"
     src: "{{ hail_master_host }}:{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
     fstype: nfs
     opts: defaults,intr,nofail
@@ -232,7 +236,7 @@
 - name: link /data to data dir for convenience
   become: yes
   file:
-    src: "{{ hail_master_data_dir }}"
+    src: "{{ hail_data_dir }}"
     dest: "/data"
     state: link
 

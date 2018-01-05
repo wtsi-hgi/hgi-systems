@@ -65,6 +65,7 @@
 [arvados-masters]
 [arvados-ssos]
 [arvados-workbenches]
+[netdata]
 
 [hgs4:children]
 mesos-masters
@@ -168,3 +169,6 @@ hail-computers
 
 [hgi:children]
 hailers
+
+[netdata:children]
+arvados-keepproxies

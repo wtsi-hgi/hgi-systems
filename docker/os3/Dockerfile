@@ -7,15 +7,19 @@ RUN apt-get -q=2 update \
         git \
         ruby \
         python3 \
+        python3-pip \
+        python3-setuptools \
         ssh \
-	curl \
-	bzip2 \
-	gzip \
+        curl \
+        bzip2 \
+        gzip \
         xorriso \
-	xz-utils \
+	    xz-utils \
     && apt-get autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install python-gitlab
 
 # Set workdir and entrypoint
 WORKDIR /tmp

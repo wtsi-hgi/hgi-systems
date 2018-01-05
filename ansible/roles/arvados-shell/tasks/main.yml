@@ -103,6 +103,8 @@
     - python-arvados-python-client
     - python-arvados-fuse
     - crunchrunner
+    - python-arvados-cwl-runner
+    - emacs24-nox
 
 - name: install bash profile for mercury user (including arvados admin credentials)
   become: yes
@@ -169,4 +171,12 @@
     dest: "/home/mercury/.ssh/id_rsa"
     owner: mercury
     mode: 0600
+
+- name: add mercury to docker group
+  become: yes
+  user:
+    append: yes
+    groups: 
+      - docker
+    name: mercury
 

@@ -296,10 +296,20 @@
     - { token: "{{ arvados_cluster_data_manager_api_token }}", file: "{{ arvados_master_data_manager_token_file }}" }
   register: arvados_master_api_token_files
 
+# FIXME remove after bugfix resolved: https://dev.arvados.org/issues/12671
+- name: copy custom create_superuser_token_hgi.rb script as upstream script is broken (12671)
+  become: yes
+  copy:
+    src: create_superuser_token_hgi.rb
+    dest: /var/www/arvados-api/current/script/create_superuser_token_hgi.rb
+    owner: www-data
+    mode: 0755
+
 - name: create api tokens from files
   become: yes
   become_user: www-data
-  shell: "bundle exec ./script/create_superuser_token.rb $(cat {{ item }})"
+  # FIXME: change back to ./script/create_superuser_token.rb once bux 12671 is resolved
+  shell: "bundle exec ./script/create_superuser_token_hgi.rb $(cat {{ item }})"
   args:
     executable: /bin/sh
     chdir: /var/www/arvados-api/current

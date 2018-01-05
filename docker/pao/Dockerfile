@@ -21,11 +21,8 @@ RUN apt-get update \
          make \
          openssh-client \
          pkg-config \
+         python3-pip \
     && rm -rf /var/lib/apt/lists/*
-
-# Install ansible
-COPY scripts/get-ansible.sh /tmp/get-ansible.sh
-RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh
 
 # Install go
 COPY scripts/get-go.sh /tmp/get-go.sh
@@ -37,6 +34,13 @@ ENV PATH /usr/local/go/bin:$PATH
 # Install packer
 COPY scripts/get-packer.sh /tmp/get-packer.sh
 RUN /tmp/get-packer.sh && rm /tmp/get-packer.sh
+
+# Install ansible
+COPY scripts/get-ansible.sh /tmp/get-ansible.sh
+RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh
+
+# Install openstack client (PyPi version is much more up-to-date than that install via apt!)
+RUN pip3 install python-openstackclient==3.9.0
 
 # Set workdir and entrypoint
 WORKDIR /tmp
