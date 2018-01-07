@@ -108,6 +108,7 @@
       import_role:
         name: consul-cluster
       vars:
+        consul_cluster_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
         consul_cluster_infoblox_username: "{{ consul_cluster_GROUP_infoblox_username }}"
         consul_cluster_infoblox_password: "{{ consul_cluster_GROUP_infoblox_password }}"
         consul_cluster_infoblox_api_server: "{{ consul_cluster_GROUP_infoblox_api_server }}"
