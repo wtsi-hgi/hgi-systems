@@ -80,3 +80,10 @@
     - docker-ce={{ docker_apt_version }}
   when: ansible_os_family == 'Debian'
 
+- name: add ansible user to docker group
+  become: yes
+  user:
+    append: yes
+    groups:
+      - docker
+    name: "{{ ansible_user }}"
