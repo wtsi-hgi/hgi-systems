@@ -142,7 +142,7 @@
         key: "terraform/consul_cluster_acl_agent_token/{{ consul_cluster_datacenter }}"
         value: "{{ consul_cluster_acl_agent_token }}"
         state: present
-        token: "{{ consul_cluster_acl_terraform_name }}"
+        token: "{{ consul_cluster_acl_terraform_token }}"
 
     - name: create a client ACL token for managing locks
       delegate_to: "{{ consul_cluster_leader }}"
