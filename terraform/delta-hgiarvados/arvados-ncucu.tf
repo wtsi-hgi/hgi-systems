@@ -138,8 +138,8 @@ module "arvados-shell" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-compute-node" {
-  source = "../modules/arvados-compute-node"
+module "arvados-compute-node-noconf" {
+  source = "../modules/arvados-compute-node-noconf"
 
   image = {
     name = "${var.arvados_compute_node_image_name}"
