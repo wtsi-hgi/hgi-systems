@@ -142,8 +142,8 @@ module "arvados-compute-node" {
   source = "../modules/arvados-compute-node"
 
   image = {
-    name = "${var.base_image_name}"
-    user = "${var.base_image_user}"
+    name = "${var.arvados_compute_node_image_name}"
+    user = "${var.arvados_compute_node_image_user}"
   }
 
   count              = 1

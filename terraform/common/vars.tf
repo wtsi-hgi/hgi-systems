@@ -24,11 +24,11 @@ variable docker_image_user {
   default = "ubuntu"
 }
 
-variable arvados_base_image_name {
+variable arvados_compute_node_image_name {
   type = "string"
 }
 
-variable arvados_base_image_user {
+variable arvados_compute_node_image_user {
   type    = "string"
   default = "debian"
 }
