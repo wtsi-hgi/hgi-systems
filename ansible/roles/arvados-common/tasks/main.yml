@@ -78,6 +78,7 @@
     owner: root
     group: root
     mode: 0644
+  when: "not 'image-building' in group_names"
 
 - name: increse number of open file limits for root
   become: yes
