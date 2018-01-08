@@ -82,7 +82,7 @@ data "consul_keys" "consul-agent" {
 
 data "template_file" "init-script" {
   count    = "${var.count}"
-  template = "${file("scripts/init.cfg.tpl")}"
+  template = "${file("${path.module}/scripts/init.cfg.tpl")}"
 
   vars {
     CLOUDINIT_HOSTNAME = "${format(local.hostname_format, count.index + 1)}"
@@ -92,7 +92,7 @@ data "template_file" "init-script" {
 
 data "template_file" "docker-consul-script" {
   count    = "${var.count}"
-  template = "${file("scripts/docker-consul.sh")}"
+  template = "${file("${path.module}/scripts/docker-consul.sh")}"
 
   vars {
     CONSUL_RETRY_JOIN     = "${join(",", var.consul_retry_join)}"
