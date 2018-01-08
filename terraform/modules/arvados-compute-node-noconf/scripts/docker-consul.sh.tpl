@@ -44,7 +44,7 @@ EOF
 # Generate consul-agent systemd unit
 cat <<EOF > "$${consul_tmp}/consul-agent.service"
 [Unit]
-Description=ConsulAgent
+Description=Dockerized Consul Agent
 After=docker.service
 Requires=docker.service
 
@@ -52,8 +52,8 @@ Requires=docker.service
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill consul-agent
 ExecStartPre=-/usr/bin/docker rm consul-agent
-ExecStartPre=/usr/bin/docker pull consul-agent
-ExecStart=/usr/bin/docker run --name consul-agent --net=host -e 'CONSUL_LOCAL_CONFIG='"\$$(cat /etc/consul_local_config.json)" consul agent -bind=$${consul_bind_addr} -client=0.0.0.0"
+ExecStartPre=/usr/bin/docker pull consul
+ExecStart=/usr/bin/docker run --name consul-agent --net=host -e 'CONSUL_LOCAL_CONFIG='"\$$(cat /etc/consul_local_config.json)" consul agent -bind=$${consul_bind_addr} -client=0.0.0.0
 
 [Install]
 WantedBy=multi-user.target
