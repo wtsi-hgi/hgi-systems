@@ -1,10 +1,10 @@
 #!/bin/bash
 
-set -ex
+set -eufx -o pipefail
 
 # Create configuration file and systemd unit for dockerized consul
 consul_tmp=$(mktemp -d)
-function log { >&2 echo "$$@" }
+function log { >&2 echo "$$@"; }
 log "Working in temp dir $${consul_tmp}"
 
 # Process template expansions into local variables
@@ -53,7 +53,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill consul-agent
 ExecStartPre=-/usr/bin/docker rm consul-agent
 ExecStartPre=/usr/bin/docker pull consul-agent
-ExecStart=/usr/bin/docker run --name consul-agent --net=host -e 'CONSUL_LOCAL_CONFIG='"$$(cat /etc/consul_local_config.json)" consul agent -bind=$${consul_bind_addr} -client=0.0.0.0"
+ExecStart=/usr/bin/docker run --name consul-agent --net=host -e 'CONSUL_LOCAL_CONFIG='"$$$$(cat /etc/consul_local_config.json)" consul agent -bind=$${consul_bind_addr} -client=0.0.0.0"
 
 [Install]
 WantedBy=multi-user.target
@@ -75,8 +75,8 @@ function install_file_if_changed {
   echo -n ""
 }
 
-changed_local_config=$$(install_file_if_changed "$${tmp_dir}" /etc consul_local_config.json)
-changed_service=$$(install_file_if_changed "$${tmp_dir}" /etc/systemd/system consul-agent.service)
+changed_local_config=$$(install_file_if_changed "$${consul_tmp}" /etc consul_local_config.json)
+changed_service=$$(install_file_if_changed "$${consul_tmp}" /etc/systemd/system consul-agent.service)
 
 log "Removing temp dir $${consul_tmp}"
 rm -rf "$${consul_tmp}"
