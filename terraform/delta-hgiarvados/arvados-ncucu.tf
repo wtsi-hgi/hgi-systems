@@ -148,7 +148,7 @@ module "arvados-compute-node-noconf" {
 
   count              = 1
   flavour            = "m1.xlarge"
-  domain             = "node.hgi-delta.consul"
+  domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
