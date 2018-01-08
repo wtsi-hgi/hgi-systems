@@ -92,7 +92,7 @@ data "template_file" "init-script" {
 
 data "template_file" "docker-consul-script" {
   count    = "${var.count}"
-  template = "${file("${path.module}/scripts/docker-consul.sh")}"
+  template = "${file("${path.module}/scripts/docker-consul.sh.tpl")}"
 
   vars {
     CONSUL_RETRY_JOIN     = "${join(",", var.consul_retry_join)}"
