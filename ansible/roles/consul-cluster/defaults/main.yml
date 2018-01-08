@@ -41,6 +41,7 @@
 # consul_cluster_acl_terraform_token:
 # consul_cluster_acl_agent_name:
 # consul_cluster_acl_agent_token:
+# consul_cluster_encrypt:
 #
 ###############################################################################
 

@@ -128,3 +128,4 @@
         consul_cluster_acl_agent_token: "{{ consul_cluster_GROUP_acl_agent_token }}"
         consul_cluster_acl_locks_name: "{{ consul_cluster_GROUP_acl_locks_name }}"
         consul_cluster_acl_locks_token: "{{ consul_cluster_GROUP_acl_locks_token }}"
+        consul_cluster_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
