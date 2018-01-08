@@ -4,6 +4,16 @@ variable "domain" {}
 variable "network_id" {}
 variable "arvados_cluster_id" {}
 
+variable "consul_datacenter" {}
+variable "consul_recursors" {
+  type    = "list"
+  default = []
+}
+variable "consul_retry_join" {
+  type    = "list"
+  default = []
+}
+
 variable "security_group_ids" {
   type    = "map"
   default = {}
@@ -38,6 +48,74 @@ locals {
   hostname_format = "arvados-compute-node-${var.arvados_cluster_id}-%03d"
 }
 
+resource "openstack_networking_port_v2" "arvados-compute-port" {
+  count       = "${var.count}"
+  name        = "${format(local.hostname_format, count.index + 1)}"
+  admin_state_up = "true"
+  network_id = "${var.network_id}"
+  security_group_ids = [
+    "${var.security_group_ids["ping"]}",
+    "${var.security_group_ids["ssh"]}",
+    "${var.security_group_ids["consul-client"]}",
+    "${var.security_group_ids["slurm-compute"]}",
+    "${var.security_group_ids["tcp-local"]}",
+    "${var.security_group_ids["udp-local"]}",
+  ]
+}
+
+data "consul_keys" "consul-agent" {
+  datacenter = "${var.consul_datacenter}"
+  key {
+    name = "consul_encrypt"
+    path = "terraform/consul_encrypt"
+  }
+  key {
+    name = "consul_acl_token"
+    path = "terraform/consul_cluster_acl_agent_token"
+  }
+}
+
+data "template_file" "init-script" {
+  count       = "${var.count}"
+  template = "${file("scripts/init.cfg.tpl")}"
+  vars {
+    CLOUDINIT_HOSTNAME = "${format(local.hostname_format, count.index + 1)}"
+    CLOUDINIT_DOMAIN = "${var.domain}"
+  }
+}
+
+data "template_file" "docker-consul-script" {
+  count       = "${var.count}"
+  template = "${file("scripts/docker-consul.sh")}"
+  vars {
+    CONSUL_RETRY_JOIN = "${join(",", var.consul_retry_join)}"
+    CONSUL_RECURSORS = "${join(",", var.consul_recursors)}"
+    CONSUL_ADVERTISE_ADDR = "${openstack_networking_port_v2.arvados-compute-port.*.fixed_ip.0.ip_address[count.index]}"
+    CONSUL_DATACENTER = "${var.consul_datacenter}"
+    CONSUL_ACL_TOKEN = "${data.consul_keys.consul-agent.var.consul_acl_token}"
+    CONSUL_ENCRYPT = "${data.consul_keys.consul-agent.var.consul_encrypt}"
+    CONSUL_BIND_ADDR = "${openstack_networking_port_v2.arvados-compute-port.*.fixed_ip.0.ip_address[count.index]}"
+  }
+}
+
+data "template_cloudinit_config" "arvados-compute-cloudinit" {
+  count       = "${var.count}"
+  gzip = false
+  base64_encode = false
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.init-script.rendered}"
+  }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = "${data.template_file.docker-consul-script.rendered}"
+  }
+
+}
+
 resource "openstack_compute_instance_v2" "arvados-compute" {
   provider    = "openstack"
   count       = "${var.count}"
@@ -46,21 +124,11 @@ resource "openstack_compute_instance_v2" "arvados-compute" {
   flavor_name = "${var.flavour}"
   key_pair    = "${var.key_pair_ids["mercury"]}"
 
-  security_groups = [
-    "${var.security_group_ids["ping"]}",
-    "${var.security_group_ids["ssh"]}",
-    "${var.security_group_ids["consul-client"]}",
-    "${var.security_group_ids["slurm-compute"]}",
-    "${var.security_group_ids["tcp-local"]}",
-    "${var.security_group_ids["udp-local"]}",
-  ]
-
   network {
-    uuid           = "${var.network_id}"
-    access_network = true
+    port = "${openstack_networking_port_v2.arvados-compute-port.*.id[count.index]}"
   }
 
-  user_data = "#cloud-config\nhostname: ${format(local.hostname_format, count.index + 1)}\nfqdn: ${format(local.hostname_format, count.index + 1)}.${var.domain}"
+  user_data = "${data.template_cloudinit_config.arvados-compute-cloudinit.rendered}"
 
   metadata = {
     ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
@@ -82,6 +150,7 @@ resource "openstack_compute_instance_v2" "arvados-compute" {
       timeout      = "2m"
       bastion_host = "${var.bastion["host"]}"
       bastion_user = "${var.bastion["user"]}"
+      host         = "${openstack_networking_port_v2.arvados-compute-port.*.fixed_ip.0.ip_address[count.index]}"
     }
   }
 }
