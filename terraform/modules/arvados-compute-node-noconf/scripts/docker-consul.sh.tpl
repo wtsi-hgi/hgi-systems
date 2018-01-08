@@ -61,6 +61,9 @@ EOF
 
 #ExecStart=/usr/bin/docker run --name consul-agent --net=host -e 'CONSUL_ALLOW_PRIVILEGED_PORTS=' -e 'CONSUL_LOCAL_CONFIG='"$$(cat /etc/consul_local_config.json)" consul agent -dns-port=53 -bind=$${consul_bind_addr} -client=0.0.0.0"
 
+# Generate consul alias
+echo "alias consul='docker run --net=host consul'" > "$${consul_tmp}/consul-alias.sh"
+
 function install_file_if_changed {
   source_dir=$$1
   dest_dir=$$2
@@ -77,6 +80,7 @@ function install_file_if_changed {
 
 changed_local_config=$$(install_file_if_changed "$${consul_tmp}" /etc consul_local_config.json)
 changed_service=$$(install_file_if_changed "$${consul_tmp}" /etc/systemd/system consul-agent.service)
+changed_profile=$$(install_file_if_changed "$${consul_tmp}" /etc/profile.d consul-alias.sh)
 
 log "Removing temp dir $${consul_tmp}"
 rm -rf "$${consul_tmp}"
