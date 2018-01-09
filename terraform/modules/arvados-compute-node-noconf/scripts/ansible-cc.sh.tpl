@@ -38,7 +38,7 @@ log "Generated ansible inventory:
 $$(cat $${ansible_cc_tmp_ansible}/cc.inv)"
 
 log "Running ansible-playbook $${ansible_cc_playbook} using container image $${ansible_cc_docker_image}"
-docker run --net=host -v $${ansible_cc_tmp_ansible}:/cc $${ansible_cc_docker_image} ansible-playbook -i "/cc/cc.inv" "/cc/$${ansible_cc_playbook}"
+docker run --net=host -v $${ansible_cc_tmp_ansible}:/cc $${ansible_cc_docker_image} ansible-playbook -i "/cc/cc.inv" -c local "/cc/$${ansible_cc_playbook}"
 
 log "Removing temp dir $${ansible_cc_tmp}"
 rm -rf "$${ansible_cc_tmp}"
