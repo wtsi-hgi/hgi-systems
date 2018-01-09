@@ -152,6 +152,14 @@
         state: present
         token: "{{ consul_cluster_acl_terraform_token }}"
 
+    - name: store consul server wan ips in consul kv
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_kv:
+        key: "terraform/consul_wan_ips"
+        value: "{{ consul_cluster_server_wan_ips }}"
+        state: present
+        token: "{{ consul_cluster_acl_terraform_token }}"
+
     - name: create a client ACL token for managing locks
       delegate_to: "{{ consul_cluster_leader }}"
       consul_acl:
