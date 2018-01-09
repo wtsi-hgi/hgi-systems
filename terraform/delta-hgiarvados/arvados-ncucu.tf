@@ -159,7 +159,7 @@ module "arvados-compute-node-noconf" {
   }
 
   arvados_cluster_id   = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+  extra_ansible_groups = []
 
   consul_datacenter    = "delta-hgiarvados"
   consul_retry_join    = "${module.consul-server.retry_join}"

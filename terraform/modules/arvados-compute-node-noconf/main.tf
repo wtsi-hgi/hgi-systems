@@ -44,7 +44,6 @@ variable "extra_ansible_groups" {
 locals {
   ansible_groups = [
     "arvados-compute-nodes-noconf",
-    "arvados-cluster-${var.arvados_cluster_id}",
   ]
 
   hostname_format = "arvados-compute-node-${var.arvados_cluster_id}-%03d"
