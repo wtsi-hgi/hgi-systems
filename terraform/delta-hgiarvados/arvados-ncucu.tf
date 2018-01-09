@@ -162,6 +162,6 @@ module "arvados-compute-node-noconf" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 
   consul_datacenter = "delta-hgiarvados"
-  consul_recursors  = ["172.18.255.1", "172.18.255.2", "172.18.255.3"] # FIXME this should be defined elsewhere
   consul_retry_join = "${module.consul-server.retry_join}"
+  upstream_dns_servers  = ["172.18.255.1", "172.18.255.2", "172.18.255.3"] # FIXME this should be defined elsewhere
 }

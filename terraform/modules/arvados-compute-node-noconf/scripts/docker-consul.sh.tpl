@@ -1,8 +1,9 @@
 #!/bin/bash
-
+###############################################################################
+# Create configuration file and systemd unit for dockerized consul
+###############################################################################
 set -eufx -o pipefail
 
-# Create configuration file and systemd unit for dockerized consul
 consul_tmp=$(mktemp -d)
 function log { >&2 echo "$$@"; }
 log "Working in temp dir $${consul_tmp}"

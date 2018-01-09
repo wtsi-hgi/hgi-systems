@@ -6,7 +6,7 @@ variable "arvados_cluster_id" {}
 
 variable "consul_datacenter" {}
 
-variable "consul_recursors" {
+variable "upstream_dns_servers" {
   type    = "list"
   default = []
 }
@@ -96,12 +96,25 @@ data "template_file" "docker-consul-script" {
 
   vars {
     CONSUL_RETRY_JOIN     = "${join(",", var.consul_retry_join)}"
-    CONSUL_RECURSORS      = "${join(",", var.consul_recursors)}"
+    CONSUL_RECURSORS      = "${join(",", var.upstream_dns_servers)}"
     CONSUL_ADVERTISE_ADDR = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
     CONSUL_DATACENTER     = "${var.consul_datacenter}"
     CONSUL_ACL_TOKEN      = "${data.consul_keys.consul-agent.var.consul_acl_token}"
     CONSUL_ENCRYPT        = "${data.consul_keys.consul-agent.var.consul_encrypt}"
     CONSUL_BIND_ADDR      = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
+  }
+}
+
+data "template_file" "ansible-cc-script" {
+  count    = "${var.count}"
+  template = "${file("${path.module}/scripts/ansible-cc.sh.tpl")}"
+
+  vars {
+    ANSIBLE_CC_DOCKER_IMAGE         = "mercury/taos" # TODO this could be pinned to the same version we are running in?
+    ANSIBLE_CC_PLAYBOOK		    = "arvados-compute-cloudconfig.yml"
+    ANSIBLE_CC_GROUPS               = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
+    ANSIBLE_CC_UPSTREAM_DNS_SERVERS = "${join(",", var.upstream_dns_servers)}"
+    ANSIBLE_CC_CONSUL_DATACENTER    = "${var.consul_datacenter}"
   }
 }
 
@@ -119,6 +132,11 @@ data "template_cloudinit_config" "arvados-compute-cloudinit" {
   part {
     content_type = "text/x-shellscript"
     content      = "${data.template_file.docker-consul-script.*.rendered[count.index]}"
+  }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = "${data.template_file.ansible-cc-script.*.rendered[count.index]}"
   }
 }
 
