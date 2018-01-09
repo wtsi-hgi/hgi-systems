@@ -26,7 +26,7 @@
   apt:
     name: "{{ item }}"
     update_cache: yes
-    cache_valid_time: "{{ hgi_consul_apt_cache_valid_time }}"
+    cache_valid_time: "{{ dnsmasq_apt_cache_valid_time }}"
   with_items:
     - dnsmasq
 
