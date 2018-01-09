@@ -4,7 +4,7 @@
 ###############################################################################
 set -eufx -o pipefail
 
-ansible_cc_tmp=$(mktemp -d)
+ansible_cc_tmp=$$(mktemp -d)
 function log { >&2 echo "$$@"; }
 log "Working in temp dir $${ansible_cc_tmp}"
 
@@ -16,7 +16,7 @@ ansible_cc_playbook="${ANSIBLE_CC_PLAYBOOK}"
 ansible_cc_docker_image="${ANSIBLE_CC_DOCKER_IMAGE}"
 
 # Clone hgi-systems repo
-git clone --depth=1 https://gitlab.internal.sanger.ac.uk/hgi/hgi-systems.git "${ansible_cc_tmp}/hgi-systems"
+git clone --depth=1 https://gitlab.internal.sanger.ac.uk/hgi/hgi-systems.git "$${ansible_cc_tmp}/hgi-systems"
 
 # Generate ansible inventory
 cat <<EOF > "$${ansible_cc_tmp}/cc.inv"
