@@ -42,13 +42,10 @@ $$(cat $${ansible_cc_tmp_ansible}/cc.inv)"
 
 log "Generating ssh key to access ubuntu@localhost from dockerized ansible"
 ssh-keygen -t rsa -N '' -f "$${ansible_cc_tmp_ansible}/localhost.id_rsa"
-
-log "Preparing ubuntu user to accept localhost login from ansible"
 sudo -u ubuntu -H bash -c 'cat "'$${ansible_cc_tmp_ansible}'/localhost.id_rsa.pub" >> ~/.ssh/authorized_keys'
-sudo -u ubuntu -H bash -c 'ssh-keyscan localhost > ~/.ssh/known_hosts'
 
 log "Running ansible-playbook $${ansible_cc_playbook} using container image $${ansible_cc_docker_image}"
-docker run --net=host -v $${ansible_cc_tmp_ansible}:/cc $${ansible_cc_docker_image} ansible-playbook --private-key="/cc/localhost.id_rsa" -i "/cc/cc.inv" "/cc/$${ansible_cc_playbook}"
+docker run --net=host -v $${ansible_cc_tmp_ansible}:/cc $${ansible_cc_docker_image} bash -c '(ssh-keyscan localhost > ~/.ssh/known_hosts); ansible-playbook --private-key="/cc/localhost.id_rsa" -i "/cc/cc.inv" "/cc/'$${ansible_cc_playbook}'"'
 
 log "Removing temp dir $${ansible_cc_tmp}"
 rm -rf "$${ansible_cc_tmp}"
