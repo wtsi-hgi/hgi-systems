@@ -1,8 +1,6 @@
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/../common.sh"
 
-ensureSet CI_PIPELINE_ID CI_PROJECT_ID CI_PROJECT_URL GITLAB_TOKEN
-
 read -a unsetVariables <<< $(getUnset CI_PIPELINE_ID CI_PROJECT_ID CI_PROJECT_URL GITLAB_TOKEN)
 
 if [[ -z ${unsetVariables+x} ]]; then
