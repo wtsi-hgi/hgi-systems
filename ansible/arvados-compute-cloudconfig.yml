@@ -29,5 +29,5 @@
         dnsmasq_search_domains:
           - "node.{{ cc_consul_datacenter }}.consul"
         dnsmasq_apt_cache_valid_time: 3600
-        dnsmasq_upstream_dns_servers: "{{ cc_upstream_dns_servers }}"
+        dnsmasq_upstream_dns_servers: "{{ cc_upstream_dns_servers.split(',') }}"
 
