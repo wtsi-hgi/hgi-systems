@@ -5,6 +5,9 @@
 set -eufx -o pipefail
 
 ansible_cc_tmp=$$(mktemp -d)
+chgrp ubuntu "$${ansible_cc_tmp}"
+chmod g+rx "$${ansible_cc_tmp}"
+				
 function log { >&2 echo "$$@"; }
 log "Working in temp dir $${ansible_cc_tmp}"
 
@@ -45,7 +48,7 @@ sudo -u ubuntu -H bash -c 'cat "'$${ansible_cc_tmp_ansible}'/localhost.id_rsa.pu
 sudo -u ubuntu -H bash -c 'ssh-keyscan localhost > ~/.ssh/known_hosts'
 
 log "Running ansible-playbook $${ansible_cc_playbook} using container image $${ansible_cc_docker_image}"
-docker run --net=host -v $${ansible_cc_tmp_ansible}:/cc $${ansible_cc_docker_image} ansible-playbook --private-key= "/cc/localhost.id_rsa" -i "/cc/cc.inv" -c local "/cc/$${ansible_cc_playbook}"
+docker run --net=host -v $${ansible_cc_tmp_ansible}:/cc $${ansible_cc_docker_image} ansible-playbook --private-key="/cc/localhost.id_rsa" -i "/cc/cc.inv" -c local "/cc/$${ansible_cc_playbook}"
 
 log "Removing temp dir $${ansible_cc_tmp}"
 rm -rf "$${ansible_cc_tmp}"
