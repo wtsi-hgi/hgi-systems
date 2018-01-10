@@ -25,4 +25,27 @@
   gather_facts: no
   roles:
     - cloud-resource
-    
+
+# Set consul credentials facts for consul_kv lookups
+- hosts: consul-credentials
+  gather_facts: no
+  vars:
+    set_facts_PLAYBOOK_consul_credentials_creds_ansible_consul_token: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
+    set_facts_PLAYBOOK_consul_credentials_creds_ansible_consul_url: "http://{{ consul_credentials_GROUP_creds['ansible'].address }}"
+  tasks:
+   - name: set ansible consul token from credentials
+     set_fact:
+       set_facts_PLAYBOOK_ansible_consul_token: "{{ set_facts_PLAYBOOK_consul_credentials_creds_ansible_consul_token }}"
+       set_facts_PLAYBOOK_ansible_consul_url: "{{ set_facts_PLAYBOOK_consul_credentials_creds_ansible_consul_url }}"
+       set_facts_PLAYBOOK_ansible_consul_host: "{{ set_facts_PLAYBOOK_consul_credentials_creds_ansible_consul_url | urlsplit('hostname') }}"
+       set_facts_PLAYBOOK_ansible_consul_port: "{{ set_facts_PLAYBOOK_consul_credentials_creds_ansible_consul_url | urlsplit('port') }}"
+- hosts: all:!consul-credentials
+  gather_facts: no
+  tasks:
+   - name: set ansible consul token from shell environment
+     set_fact:
+       set_facts_PLAYBOOK_ansible_consul_token: "{{ lookup('env', 'ANSIBLE_CONSUL_TOKEN') }}"
+       set_facts_PLAYBOOK_ansible_consul_url: "{{ lookup('env', 'ANSIBLE_CONSUL_URL') }}"
+       set_facts_PLAYBOOK_ansible_consul_host: "{{ lookup('env', 'ANSIBLE_CONSUL_URL') | urlsplit('hostname') }}"
+       set_facts_PLAYBOOK_ansible_consul_port: "{{ lookup('env', 'ANSIBLE_CONSUL_URL') | urlsplit('port') }}"
+

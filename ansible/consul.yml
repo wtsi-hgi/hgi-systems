@@ -22,6 +22,12 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+- hosts: consul-servers
+  tasks:
+    - name: debug consul_server_wan_ips from consul kv
+      debug: 
+        msg: "consul_server_wan_ips: {{ lookup('consul_kv', 'ansible/consul_server_wan_ips', host=set_facts_PLAYBOOK_ansible_consul_host, port=set_facts_PLAYBOOK_ansible_consul_port, token=set_facts_PLAYBOOK_ansible_consul_token) }}"
+
 # Ensure that all consul servers are included in the host limit or refuse to run this playbook
 - hosts: consul-agents,consul-servers
   vars:
