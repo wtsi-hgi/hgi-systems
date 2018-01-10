@@ -6,6 +6,7 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
 cleanupLock() {
+    >&2 echo "Releasing Consul lock"
     CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock unlock \
         ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}
     exit
@@ -15,6 +16,7 @@ read -a unsetVariables <<< $(getUnset LOCKS_CONSUL_HTTP_TOKEN LOCKS_CONSUL_HTTP_
 if [[ -z ${unsetVariables+x} ]]; then
     trap cleanupLock INT TERM
 
+    >&2 echo "Getting Consul lock..."
     CONSUL_HTTP_TOKEN=${LOCKS_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${LOCKS_CONSUL_HTTP_ADDR} consul-lock -v lock \
          -i=10 \
          --metadata="{jobId: ${CI_JOB_ID}}" \
