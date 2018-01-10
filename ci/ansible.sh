@@ -26,7 +26,7 @@ else
     >&2 echo "Continuing without locking as necessary variables are not set"
 fi
 
-ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD_FILE
+ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD_FILE ANSIBLE_CONSUL_TOKEN ANSIBLE_CONSUL_URL
 echo "Changing to ansible directory"
 cd ansible
 
