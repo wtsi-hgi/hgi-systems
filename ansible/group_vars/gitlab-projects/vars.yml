@@ -69,6 +69,10 @@ gitlab_project_settings_terraform_s3:
 gitlab_project_settings_terraform_consul:
     TERRAFORM_CONSUL_TOKEN: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
 
+gitlab_project_settings_ansible_consul:
+    ANSIBLE_CONSUL_URL: "consul-delta-hgi.hgi.sanger.ac.uk:8500"
+    ANSIBLE_CONSUL_TOKEN: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
+
 gitlab_project_settings_infoblox:
     INFOBLOX_PASSWORD: "{{ infoblox_credentials_password }}"
     INFOBLOX_USERNAME: "{{ infoblox_credentials_username }}"
