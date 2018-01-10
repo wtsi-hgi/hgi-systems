@@ -23,7 +23,7 @@ else
     revision="v${version}"
 fi
 echo "Using revision ${revision}"
-pip3 install git+https://github.com/wtsi-hgi/ansible.git@${revision}
+pip3 install git+https://github.com/ansible/ansible.git@${revision}
 
 echo "Installing shade using pip3..."
 pip3 install shade==${shade_version}
