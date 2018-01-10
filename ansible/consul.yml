@@ -32,12 +32,13 @@
     consul_PLAYBOOK_server_data_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
     consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
     consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
-    consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', host=set_facts_PLAYBOOK_ansible_consul_host, port=set_facts_PLAYBOOK_ansible_consul_port, token=set_facts_PLAYBOOK_ansible_consul_token)) | list() | sort }}"
+    consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{% then %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', host=set_facts_PLAYBOOK_ansible_consul_host, port=set_facts_PLAYBOOK_ansible_consul_port, token=set_facts_PLAYBOOK_ansible_consul_token)) | list() | sort }}{% endif %}"
     consul_PLAYBOOK_s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ consul_PLAYBOOK_server_data_mountpoint }}"
   tasks:
-    - name: dump consul_PLAYBOOK_servers_wan
+    - name: dump consul_PLAYBOOK_servers_wan_all
       debug:
-        msg: "consul_PLAYBOOK_servers_wan: {{ consul_PLAYBOOK_servers_wan }}"
+        msg: "consul_PLAYBOOK_servers_wan_all: {{ consul_PLAYBOOK_servers_wan_all }}"
     - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
       assert:
         that: consul_PLAYBOOK_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
@@ -95,7 +96,7 @@
         hgi_consul_data_dir: "{% if inventory_hostname in groups['consul-servers'] %}{{ consul_PLAYBOOK_server_data_mountpoint }}/data{% else %}/var/consul/data{% endif %}"
         hgi_consul_advertise_address: "{{ cloud_resource_private_ip }}"
         hgi_consul_advertise_address_wan: "{{ cloud_resource_public_ip }}"
-        hgi_consul_servers_wan: "{{ consul_PLAYBOOK_servers_wan }}"
+        hgi_consul_servers_wan: "{{ consul_PLAYBOOK_servers_wan_all }}"
         hgi_consul_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
         hgi_consul_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
         hgi_consul_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"

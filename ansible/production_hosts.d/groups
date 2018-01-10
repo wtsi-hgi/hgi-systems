@@ -37,6 +37,7 @@
 [consul-commoners]
 [consul-agents]
 [consul-servers]
+[core-consul-servers]
 [sanger-gitlab]
 [openstack-tenant-cleaners]
 [openstack-instance-consul-servers]
@@ -111,6 +112,9 @@ consul-agents
 consul-servers
 
 [consul-servers:children]
+openstack-instance-consul-servers
+
+[core-consul-servers:children]
 openstack-instance-consul-servers
 
 [sanger-gitlab:children]
