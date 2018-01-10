@@ -103,6 +103,12 @@
       when: s3_backup_REGISTER_s3_backup_path.s3_keys | count > 0
   when: s3_backup_stat.stat.exists
 
+- name: create backup run script
+  template:
+    src: run-backup.sh.j2
+    dest: "{{ s3_backup_run_script_location }}"
+    mode: 0700
+
 - name: schedule backup using cron
   become: yes
   cron:
@@ -112,4 +118,4 @@
     minute: "{{ s3_backup_minute }}"
     hour: "{{ s3_backup_hour }}"
     day: "{{ s3_backup_day }}"
-    job: "/usr/local/bin/{{ s3_backup_duplicity_backup_sh_script_name }} -c {{ s3_backup_duplicity_backup_sh_configuration_file }} -b"
+    job: "{{ s3_backup_run_script_location }}"
