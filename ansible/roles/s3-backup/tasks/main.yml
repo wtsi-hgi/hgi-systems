@@ -104,6 +104,7 @@
   when: s3_backup_stat.stat.exists
 
 - name: create backup run script
+  become: yes
   template:
     src: run-backup.sh.j2
     dest: "{{ s3_backup_run_script_location }}"
