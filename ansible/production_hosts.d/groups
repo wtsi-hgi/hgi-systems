@@ -153,9 +153,6 @@ canaries
 openstack-instances
 tf_type_openstack_compute_instance_v2
 
-[terraform-ci]
-consul-cluster-delta-hgi-consul-cluster
-
 [terraform-ci:children]
 canaries
 terraform
