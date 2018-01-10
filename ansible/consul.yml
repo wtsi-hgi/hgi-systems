@@ -35,6 +35,8 @@
     consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', host=set_facts_PLAYBOOK_ansible_consul_host, port=set_facts_PLAYBOOK_ansible_consul_port, token=set_facts_PLAYBOOK_ansible_consul_token)) | list() | sort }}"
     consul_PLAYBOOK_s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ consul_PLAYBOOK_server_data_mountpoint }}"
   tasks:
+    - debug:
+        msg: "consul_PLAYBOOK_servers_wan: {{ consul_PLAYBOOK_servers_wan }}"
     - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
       assert:
         that: consul_PLAYBOOK_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
