@@ -152,10 +152,10 @@
         state: present
         token: "{{ consul_cluster_acl_terraform_token }}"
 
-    - name: store consul server wan ips in consul kv
+    - name: store consul cluster server wan ips in consul kv
       delegate_to: "{{ consul_cluster_leader }}"
       consul_kv:
-        key: "ansible/consul_server_wan_ips"
+        key: "ansible/{{ consul_cluster_datacenter }}/consul_cluster_server_wan_ips"
         value: "{{ consul_cluster_server_wan_ips | to_json }}"
         state: present
         token: "{{ consul_cluster_acl_ansible_token }}"
@@ -163,7 +163,7 @@
     - name: store consul server ips in consul kv
       delegate_to: "{{ consul_cluster_leader }}"
       consul_kv:
-        key: "ansible/consul_server_ips"
+        key: "ansible/{{ consul_cluster_datacenter }}/consul_cluster_server_ips"
         value: "{{ consul_cluster_server_ips | to_json }}"
         state: present
         token: "{{ consul_cluster_acl_ansible_token }}"
