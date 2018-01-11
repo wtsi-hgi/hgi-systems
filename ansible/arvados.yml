@@ -58,6 +58,10 @@
         # Restore from s3 if if this file is present (then delete it)
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        # Pre/post tasks
+        ###############################################################################
+        s3_backup_before_task: "sudo -u postgres pg_dumpall > {{ arvados_PLAYBOOK_api_data_mountpoint }}/sso-db.out"
     - name: configure arvados-sso
       import_role:
         name: arvados-sso
@@ -99,6 +103,11 @@
         # Restore from s3 if if this file is present (then delete it)
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        ###############################################################################
+        # Pre/post tasks
+        ###############################################################################
+        s3_backup_before_task: "sudo -u postgres pg_dumpall > {{ arvados_PLAYBOOK_api_data_mountpoint }}/api-db.out"
     - name: configure arvados-master
       import_role:
         name: arvados-master
