@@ -1,3 +1,13 @@
+# Library of methods that are universally useful to all CI scripts.
+
+# Ensures the global variables with the given names are set, else prints the unset ones in a human readable form to
+# stderr and exits with an error status.
+# Globals:
+#   None
+# Arguments:
+#   list of names of global variables to check
+# Returns:
+#   None
 function ensureSet {
     local -a variableNames=("$@")
     read -a unsetVariables <<< $(getUnset "${variableNames[@]}")
@@ -9,6 +19,13 @@ function ensureSet {
 }
 
 
+# Gets the unset global variables from the list of variable names given.
+# Globals:
+#   None
+# Arguments:
+#   list of names of global variables to check
+# Returns:
+#   subset of given list as space separated string
 function getUnset {
     local -a variableNames=("$@")
     local -a unsetVariables=()
@@ -25,6 +42,13 @@ function getUnset {
 }
 
 
+# Prints a warning that the variables with the givend names have not been set.
+# Globals:
+#   None
+# Arguments:
+#   list of names of global variables to print as unset
+# Returns:
+#   None
 function printUnset {
     local -a unsetVariables=("$@")
 
