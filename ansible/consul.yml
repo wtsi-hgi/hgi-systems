@@ -110,6 +110,9 @@
 - hosts: consul-clusters
   gather_facts: no
   tasks:
+    - name: dump consul_cluster_GROUP_server_ips
+      debug:
+        msg: "consul_cluster_GROUP_server_ips: {{ consul_cluster_GROUP_server_ips }}"
     - name: import hgi-consul
       import_role:
         name: consul-cluster
