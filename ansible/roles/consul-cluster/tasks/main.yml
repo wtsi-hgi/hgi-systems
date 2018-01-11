@@ -22,6 +22,10 @@
 ---
 # file: roles/consul-cluster/tasks/main.yml
 
+- name: dump consul_cluster_server_ips
+  debug: 
+    msg: "consul_cluster_server_ips: {{ consul_cluster_server_ips }}"
+
 - name: configure consul-cluster only when there are servers configured
   when: "(consul_cluster_server_ips | length) > 0"
   block:
