@@ -37,6 +37,7 @@
 [consul-commoners]
 [consul-agents]
 [consul-servers]
+[core-consul-servers]
 [sanger-gitlab]
 [openstack-tenant-cleaners]
 [openstack-instance-consul-servers]
@@ -113,6 +114,9 @@ consul-servers
 [consul-servers:children]
 openstack-instance-consul-servers
 
+[core-consul-servers:children]
+openstack-instance-consul-servers
+
 [sanger-gitlab:children]
 gitlab-runners
 
@@ -148,9 +152,6 @@ canaries
 [cloud-resources:children]
 openstack-instances
 tf_type_openstack_compute_instance_v2
-
-[terraform-ci]
-consul-cluster-delta-hgi-consul-cluster
 
 [terraform-ci:children]
 canaries
