@@ -107,7 +107,7 @@
         hgi_consul_s3_backup_dest_path: "{{ consul_PLAYBOOK_s3_backup_dest_path }}"
 
 # Higher-level infrastructure built on top of hosts
-- hosts: consul-clusters
+- hosts: consul-clusters,consul-servers
   gather_facts: no
   tasks:
     - name: dump consul_cluster_GROUP_server_ips
@@ -138,6 +138,7 @@
         consul_cluster_acl_locks_name: "{{ consul_cluster_GROUP_acl_locks_name }}"
         consul_cluster_acl_locks_token: "{{ consul_cluster_GROUP_acl_locks_token }}"
         consul_cluster_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+      when: inventory_hostname not in groups['consul-servers']
 
 - hosts: consul-agents,consul-servers
   vars:
