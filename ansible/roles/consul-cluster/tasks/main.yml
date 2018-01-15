@@ -44,6 +44,8 @@
 
     - name: ensure consul cluster has a leader from the perspective of all servers
       delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
       consul_info_facts:
         consul_bin: /opt/consul/bin/consul
         mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
