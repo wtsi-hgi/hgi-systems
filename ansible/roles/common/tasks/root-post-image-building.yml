@@ -23,7 +23,7 @@
 - name: read root password hash
   become: yes
   command: "getent {{ 'shadow' if ansible_os_family == 'Debian' else 'passwd' }} root"
-  changed: false
+  changed_when: false
   register: raw_root_password
 
 - name: debugging
