@@ -32,23 +32,14 @@
     consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
     consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
     consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
-    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', host=set_facts_PLAYBOOK_ansible_consul_host, port=set_facts_PLAYBOOK_ansible_consul_port, token=set_facts_PLAYBOOK_ansible_consul_token)) | list() | sort }}{% endif %}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
     consul_PLAYBOOK_s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ consul_PLAYBOOK_server_data_mountpoint }}"
   tasks:
-    - name: dump set_facts_PLAYBOOK_ansible_consul_host
-      debug:
-        msg: "set_facts_PLAYBOOK_ansible_consul_host: {{ set_facts_PLAYBOOK_ansible_consul_host }}"
-    - name: dump set_facts_PLAYBOOK_ansible_consul_port
-      debug:
-        msg: "set_facts_PLAYBOOK_ansible_consul_port: {{ set_facts_PLAYBOOK_ansible_consul_port }}"
-    - name: dump set_facts_PLAYBOOK_ansible_consul_token
-      debug:
-        msg: "set_facts_PLAYBOOK_ansible_consul_token: {{ set_facts_PLAYBOOK_ansible_consul_token }}"
     - name: dump consul_kv lookup of ansible/delta-hgi/consul_cluster_server_wan_ips
       debug:
         msg: "consul_kv ansible/delta-hgi/consul_cluster_server_wan_ips: {{ item }}"
       with_consul_kv:
-        - "ansible/delta-hgi/consul_cluster_server_wan_ips host={{ set_facts_PLAYBOOK_ansible_consul_host }} port={{ set_facts_PLAYBOOK_ansible_consul_port }} token={{ set_facts_PLAYBOOK_ansible_consul_token }}"
+        - "ansible/delta-hgi/consul_cluster_server_wan_ips token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN"
     - name: dump are we in core-consul-servers group?
       debug:
         msg: "are we in core-consul-servers group?: {{ 'core-consul-servers' in group_names }}"
@@ -163,7 +154,7 @@
   vars:
     consul_PLAYBOOK_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort }}"
     consul_PLAYBOOK_server_advertise_addresses: "{{ consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
-    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', host=set_facts_PLAYBOOK_ansible_consul_host, port=set_facts_PLAYBOOK_ansible_consul_port, token=set_facts_PLAYBOOK_ansible_consul_token)) | list() | sort }}{% endif %}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
   tasks:
     - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
       assert:
