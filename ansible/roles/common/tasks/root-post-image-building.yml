@@ -20,6 +20,10 @@
 ---
 # file: roles/common/tasks/root-post-image-building.yml
 
+- name: debug root password to check for stability
+  debug:
+    msg: "common_root_password_hash | password_hash('sha512'): {{ common_root_password_hash | password_hash('sha512') }}"
+
 - name: set root password
   become: yes
   user:
