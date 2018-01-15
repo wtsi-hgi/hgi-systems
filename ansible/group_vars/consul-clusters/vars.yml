@@ -7,6 +7,9 @@ consul_cluster_GROUP_acl_management_token: "{{ consul_credentials_GROUP_creds['a
 consul_cluster_GROUP_acl_terraform_name: mercury_terraform
 consul_cluster_GROUP_acl_terraform_token: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
 
+consul_cluster_GROUP_acl_terraform_name: mercury_ansible
+consul_cluster_GROUP_acl_terraform_token: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
+
 consul_cluster_GROUP_acl_agent_name: agent_token
 consul_cluster_GROUP_acl_agent_token: "{{ consul_credentials_GROUP_creds['agent'].token }}"
 
