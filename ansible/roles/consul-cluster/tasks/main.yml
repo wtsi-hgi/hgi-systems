@@ -42,6 +42,17 @@
     - import_tasks: fix-peerless-cluster.yml
       when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
 
+    - name: ensure consul cluster has a leader from the perspective of all servers
+      delegate_to: "{{ item }}"
+      consul_info_facts:
+        consul_bin: /opt/consul/bin/consul
+        mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+      register: consul_cluster_info
+      until: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_addr') != ''"
+      retries: 12
+      delay: 5
+
     - name: create ACL token required for the server to communicate fully with the rest of the cluster
       delegate_to: "{{ item }}"
       consul_acl:
