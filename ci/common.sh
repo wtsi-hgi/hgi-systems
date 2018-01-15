@@ -29,6 +29,7 @@ function ensureSet {
 function getUnset {
     local -a variableNames=("$@")
     local -a unsetVariables=()
+    local variableName
 
     for variableName in "${variableNames[@]}"; do
         if [ -z "${!variableName+x}" ]; then
@@ -54,6 +55,7 @@ function printUnset {
 
     if [ ${#unsetVariables[*]} -ne 0 ]; then
         local variablesString=""
+        local i
 
         for (( i=0; i<${#unsetVariables[*]}; i++ )); do
             local unsetVariable="\"${unsetVariables[$i]}\""
