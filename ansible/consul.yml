@@ -107,7 +107,7 @@
         hgi_consul_s3_backup_dest_path: "{{ consul_PLAYBOOK_s3_backup_dest_path }}"
 
 # Higher-level infrastructure built on top of hosts
-- hosts: consul-clusters,consul-servers
+- hosts: consul-clusters
   gather_facts: no
   tasks:
     - name: what is going on?????? dump groups
