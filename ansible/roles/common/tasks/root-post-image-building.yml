@@ -25,11 +25,6 @@
   command: getent shadow root
   register: raw_root_password
 
-- name: parse root password hash
-  set_fact:
-    current_salt: "{{ raw_root_password.stdout.split('$')[3] }}"
-    current_password_hash: "{{ raw_root_password.stdout.split('$')[4] }}"
-
 - name: set root password
   become: yes
   user:
@@ -37,7 +32,7 @@
     createhome: no
     password: "{{ common_root_password_hash }}"
     state: present
-  when: common_root_password | password_hash('sha512', current_salt) != current_password_hash
+  when: common_root_password | password_hash('sha512', common_current_salt) != common_current_password_hash
 
 - name: install GRL CA cert
   become: yes
