@@ -20,8 +20,8 @@
 ---
 # file: roles/common/vars/main.yml
 
-common_current_salt: "{{ raw_root_password.stdout.split('$')[3] }}"
-common_current_password_hash: "{{ raw_root_password.stdout.split('$')[4] }}"
+common_current_salt: "{{ raw_root_password.stdout.split('$')[2] }}"
+common_current_password_hash: "{{ raw_root_password.stdout.split('$')[3].split(':')[0] }}"
 
 supervisor_version: "3.1.3"
 supervisorctl_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin-wrap/supervisorctl"
