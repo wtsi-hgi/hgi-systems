@@ -37,9 +37,7 @@
   tasks:
     - name: dump consul_kv lookup of ansible/delta-hgi/consul_cluster_server_wan_ips
       debug:
-        msg: "consul_kv ansible/delta-hgi/consul_cluster_server_wan_ips: {{ item }}"
-      with_consul_kv:
-        - "ansible/delta-hgi/consul_cluster_server_wan_ips token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN"
+        msg: "consul_kv ansible/delta-hgi/consul_cluster_server_wan_ips: {{ lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN) }}"
     - name: dump are we in core-consul-servers group?
       debug:
         msg: "are we in core-consul-servers group?: {{ 'core-consul-servers' in group_names }}"
