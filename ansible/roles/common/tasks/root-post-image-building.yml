@@ -20,9 +20,11 @@
 ---
 # file: roles/common/tasks/root-post-image-building.yml
 
-- name: debug root password to check for stability
-  debug:
-    msg: "common_root_password_hash | password_hash('sha512'): {{ common_root_password_hash | password_hash('sha512') }}"
+- name: read root password hash
+  become: yes
+  command: "getent {{ 'shadow' if ansible_os_family == 'Debian' else 'passwd' }} root"
+  changed_when: false
+  register: raw_root_password
 
 - name: set root password
   become: yes
@@ -31,6 +33,7 @@
     createhome: no
     password: "{{ common_root_password_hash }}"
     state: present
+  when: (common_root_password | password_hash('sha512', common_current_salt) != common_current_password_hash)
 
 - name: install GRL CA cert
   become: yes
