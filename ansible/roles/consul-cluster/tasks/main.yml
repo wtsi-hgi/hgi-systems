@@ -48,8 +48,8 @@
         consul_bin: /opt/consul/bin/consul
         mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
       with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
-      register: consul_cluster_info
-      until: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_addr') != ''"
+      register: consul_cluster_info_leader
+      until: "consul_cluster_info_leader.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_addr') != ''"
       retries: 12
       delay: 5
 
