@@ -44,6 +44,11 @@
     - name: dump set_facts_PLAYBOOK_ansible_consul_token
       debug:
         msg: "set_facts_PLAYBOOK_ansible_consul_token: {{ set_facts_PLAYBOOK_ansible_consul_token }}"
+    - name: dump consul_kv lookup of ansible/delta-hgi/consul_cluster_server_wan_ips
+      debug:
+        msg: "consul_kv ansible/delta-hgi/consul_cluster_server_wan_ips: {{ item }}"
+      with_consul_kv:
+        - "ansible/delta-hgi/consul_cluster_server_wan_ips host={{ set_facts_PLAYBOOK_ansible_consul_host }} port={{ set_facts_PLAYBOOK_ansible_consul_port }} token={{ set_facts_PLAYBOOK_ansible_consul_token }}"
     - name: dump are we in core-consul-servers group?
       debug:
         msg: "are we in core-consul-servers group?: {{ 'core-consul-servers' in group_names }}"
