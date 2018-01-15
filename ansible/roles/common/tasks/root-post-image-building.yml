@@ -24,6 +24,7 @@
   become: yes
   command: getent shadow root
   register: raw_root_password
+  when: ansible_os_family == 'Debian'
 
 - name: set root password
   become: yes
@@ -32,7 +33,7 @@
     createhome: no
     password: "{{ common_root_password_hash }}"
     state: present
-  when: common_root_password | password_hash('sha512', common_current_salt) != common_current_password_hash
+  when: (common_root_password | password_hash('sha512', common_current_salt) != common_current_password_hash) and ansible_os_family == 'Debian'
 
 - name: install GRL CA cert
   become: yes
