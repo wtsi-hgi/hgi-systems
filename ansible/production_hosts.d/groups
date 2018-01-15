@@ -159,6 +159,7 @@ terraform
 consul-servers
 arvados-clusters
 consul-cluster-delta-hgiarvados
+consul-cluster-delta-hgi
 
 [arvados:children]
 arvados-compute-nodes
