@@ -26,10 +26,6 @@
   changed_when: false
   register: raw_root_password
 
-- name: debugging
-  debug:
-    msg: "raw_root_password.stdout: {{ raw_root_password.stdout }}"
-
 - name: set root password
   become: yes
   user:
