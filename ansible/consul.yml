@@ -110,6 +110,9 @@
 - hosts: consul-clusters,consul-servers
   gather_facts: no
   tasks:
+    - name: what is going on?????? dump groups
+      debug:
+        msg: "groups['consul-servers']: {{ groups['consul-servers'] }} groups['consul-clusters']: {{ groups['consul-clusters'] }}"
     - name: dump consul_cluster_GROUP_server_ips
       debug:
         msg: "consul_cluster_GROUP_server_ips: {{ consul_cluster_GROUP_server_ips }}"
