@@ -23,8 +23,9 @@
 _common_current_salt: "{{ raw_root_password_data.stdout.split('$')[2] }}"
 _common_current_password_hash: "{{ raw_root_password_data.stdout.split('$')[3].split(':')[0] }}"
 _common_root_password_with_current_salt_hash: "{{ (common_root_password | password_hash('sha512', _common_current_salt)).split('$')[3] }}"
+_common_root_password_changed: "{{ _common_root_password_with_current_salt_hash != _common_current_password_hash }}"
 # Hashes password with random salt if password is not same as that implied by the current hash else uses current hash
-common_root_password_hash: "{{ common_root_password | password_hash('sha512') if _common_root_password_with_current_salt_hash != _common_current_password_hash else _common_current_password_hash }}"
+common_root_password_hash: "{{ common_root_password | (password_hash('sha512') if _common_root_password_changed else password_hash('sha512', _common_current_salt)) }}"
 
 supervisor_version: "3.1.3"
 supervisorctl_bin: "{{ hgi_pkglocal_dir }}/supervisor-{{ supervisor_version }}/bin-wrap/supervisorctl"
