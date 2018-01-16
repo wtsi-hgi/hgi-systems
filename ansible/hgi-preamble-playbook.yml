@@ -9,6 +9,5 @@
 
 # Run common role
 - hosts: all:!non-hosts
-  strategy: free
   roles: 
     - common

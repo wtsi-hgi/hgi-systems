@@ -20,6 +20,5 @@
 ---
 # file: ssh-gateways.yml
 - hosts: ssh-gateways
-  strategy: free
   roles:
     - ssh-gateway

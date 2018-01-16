@@ -22,7 +22,6 @@
 
 # Sanity check that dynamic inventories have run
 - hosts: canaries
-  strategy: free
   gather_facts: no
   tasks:
     - assert:
