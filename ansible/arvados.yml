@@ -61,7 +61,7 @@
         ###############################################################################
         # Pre/post tasks
         ###############################################################################
-        s3_backup_before_task: "sudo -u postgres pg_dumpall > {{ arvados_PLAYBOOK_api_data_mountpoint }}/sso-db.out"
+        s3_backup_before_task: "sudo -u postgres pg_dumpall > {{ arvados_PLAYBOOK_sso_data_mountpoint }}/sso-db.out"
     - name: configure arvados-sso
       import_role:
         name: arvados-sso
