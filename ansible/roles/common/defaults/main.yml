@@ -4,4 +4,3 @@ hgi_dir: /hgi
 hgi_pkglocal_dir: /software
 
 common_root_password: "{{ all_GROUP_root_secret | pbkdf2_hmac(inventory_hostname, 32) | b36encode }}"
-common_root_password_hash: "{{ common_root_password | password_hash('sha512') }}"
