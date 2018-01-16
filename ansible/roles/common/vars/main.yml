@@ -20,8 +20,8 @@
 ---
 # file: roles/common/vars/main.yml
 
-_common_current_salt: "{{ raw_root_password_data.stdout.split('$')[2] }}"
-_common_current_password_hash: "{{ raw_root_password_data.stdout.split('$')[3].split(':')[0] }}"
+_common_current_salt: "{{ raw_root_password_data.stdout.split('$')[2] | default('') }}"
+_common_current_password_hash: "{{ (raw_root_password_data.stdout.split('$')[3] | default(':')).split(':')[0] }}"
 _common_root_password_with_current_salt_hash_data: "{{ common_root_password | password_hash('sha512', _common_current_salt) }}"
 _common_root_password_with_current_salt_hash: "{{ _common_root_password_with_current_salt_hash_data.split('$')[3] }}"
 _common_root_password_changed: "{{ _common_root_password_with_current_salt_hash != _common_current_password_hash }}"
