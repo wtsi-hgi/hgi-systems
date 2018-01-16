@@ -33,7 +33,7 @@
     createhome: no
     password: "{{ common_root_password_hash }}"
     state: present
-  when: (common_root_password | password_hash('sha512', common_current_salt).split('$')[3] != common_current_password_hash)
+  when: (common_root_password | password_hash('sha512', common_current_salt)).split('$')[3] != common_current_password_hash
 
 - name: install GRL CA cert
   become: yes
