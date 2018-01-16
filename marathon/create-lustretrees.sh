@@ -58,7 +58,7 @@ fi
 
 # check if marathon application group has already been created for this date
 app_count=$(${marathonctl} group list /production/lustretree/${date} | jq '.apps | length' || echo "0")
-if [ "${app_count}" -gt 0 ]; then
+if [[ "${app_count}" ]] && [ "${app_count}" -gt 0 ]; then
     >&2 echo "Application group /production/lustretree/${date} already exists with ${app_count} apps"
     exit 0
 fi
