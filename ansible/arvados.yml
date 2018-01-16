@@ -24,6 +24,7 @@
 - import_playbook: hgi-preamble-playbook.yml
 
 - hosts: arvados-ssos
+  strategy: free
   vars:
     arvados_PLAYBOOK_sso_data_mountpoint: /mnt/arvados-sso-db
     arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
@@ -65,6 +66,7 @@
         arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
 
 - hosts: arvados-masters
+  strategy: free
   vars:
     arvados_PLAYBOOK_api_data_mountpoint: /mnt/arvados-api-db
     arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
@@ -106,22 +108,27 @@
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
 
 - hosts: arvados-keeps
+  strategy: free
   roles:
     - arvados-keep
 
 - hosts: arvados-keepproxies
+  strategy: free
   roles:
     - arvados-keepproxy
 
 - hosts: arvados-workbenches
+  strategy: free
   roles:
     - arvados-workbench
 
 - hosts: arvados-shells
+  strategy: free
   roles:
     - arvados-shell
 
 - hosts: arvados-compute-nodes
+  strategy: free
   roles:
     - arvados-compute-node
 

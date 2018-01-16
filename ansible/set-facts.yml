@@ -22,6 +22,7 @@
 
 # Set facts on all cloud resources so they will be expanded and referencable via hostvars
 - hosts: cloud-resources
+  strategy: free
   gather_facts: no
   roles:
     - cloud-resource
