@@ -109,3 +109,7 @@ resource "openstack_compute_volume_attach_v2" "consul-server" {
   instance_id = "${openstack_compute_instance_v2.consul-server.*.id[count.index]}"
   count       = "${var.count}"
 }
+
+output "retry_join" {
+  value = "${openstack_networking_floatingip_v2.consul-server.*.address}"
+}

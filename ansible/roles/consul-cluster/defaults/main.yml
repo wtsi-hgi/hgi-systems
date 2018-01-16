@@ -24,6 +24,7 @@
 # Variables that have no defaults and must be set
 ###############################################################################
 #
+# consul_cluster_datacenter:
 # consul_cluster_infoblox_api_server:
 # consul_cluster_infoblox_api_version:
 # consul_cluster_infoblox_username:
@@ -40,6 +41,7 @@
 # consul_cluster_acl_terraform_token:
 # consul_cluster_acl_agent_name:
 # consul_cluster_acl_agent_token:
+# consul_cluster_encrypt:
 #
 ###############################################################################
 

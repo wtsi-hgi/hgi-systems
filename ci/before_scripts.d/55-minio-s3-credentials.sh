@@ -1,17 +1,9 @@
 set -euf -o pipefail
 
-if [[ -z "${S3_ACCESS_KEY+x}" ]]; then
-    >&2 echo "S3_ACCESS_KEY must be set!"
-    exit 1
-fi
-if [[ -z "${S3_SECRET_KEY+x}" ]]; then
-    >&2 echo "S3_SECRET_KEY must be set!"
-    exit 1
-fi
-if [[ -z "${S3_HOST+x}" ]]; then
-    >&2 echo "S3_HOST must be set!"
-    exit 1
-fi
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_DIRECTORY}/../common.sh"
+
+ensureSet S3_ACCESS_KEY S3_SECRET_KEY S3_HOST
 
 export MINIO_ENDPOINT="${S3_HOST}"
 export MINIO_ACCESS_KEY_ID="${S3_ACCESS_KEY}"

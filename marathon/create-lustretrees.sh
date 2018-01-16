@@ -10,7 +10,8 @@ marathon_config="/home/mercury/marathonctl.config"
 marathonctl="marathonctl -c ${marathon_config} -f json"
 
 volumes=(112 113 114 115 116 117 118)
-declare -A mem_gb=([112]=30 [113]=31 [114]=20 [115]=74 [116]=240 [117]=14 [118]=200)
+declare -A mem_gb=([112]=30 [113]=31 [114]=20 [115]=74 [116]=250 [117]=50 [118]=240)
+#declare -A mem_gb=([112]=30 [113]=31 [114]=20 [115]=74 [116]=240 [117]=50 [118]=200)
 #declare -A mem_gb=([108]=48 [109]=48 [110]=56 [111]=132 [112]=30 [113]=31 [114]=20 [115]=74 [116]=216 [117]=14 [118]=170)
 # actual dir count and usage 2/2/2017: 
 #fs combinations directory_count gb_footprint
@@ -57,7 +58,7 @@ fi
 
 # check if marathon application group has already been created for this date
 app_count=$(${marathonctl} group list /production/lustretree/${date} | jq '.apps | length' || echo "0")
-if [ "${app_count}" -gt 0 ]; then
+if [[ "${app_count}" ]] && [ "${app_count}" -gt 0 ]; then
     >&2 echo "Application group /production/lustretree/${date} already exists with ${app_count} apps"
     exit 0
 fi

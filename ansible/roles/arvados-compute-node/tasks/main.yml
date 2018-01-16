@@ -177,8 +177,10 @@
     hour: "*"
     day: "*"
     job: "/usr/bin/curl -k -d ping_secret={{ arvados_cluster_root_key | pbkdf2_hmac(cloud_resource_name, 32) | b36encode }} https://{{ arvados_cluster_api_host }}/arvados/v1/nodes/{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}/ping"
+  when: "not 'image-building' in group_names"
   register: node_ping_cron
 
 - name: attempt to ping now
   command: "/usr/bin/curl -k -d ping_secret={{ arvados_cluster_root_key | pbkdf2_hmac(cloud_resource_name, 32) | b36encode }} https://{{ arvados_cluster_api_host }}/arvados/v1/nodes/{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}/ping"
-  when: node_ping_cron|changed
+  when: "node_ping_cron|changed and not 'image-building' in group_names"
+

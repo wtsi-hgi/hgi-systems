@@ -138,17 +138,17 @@ module "arvados-shell" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-compute-node" {
-  source = "../modules/arvados-compute-node"
+module "arvados-compute-node-noconf" {
+  source = "../modules/arvados-compute-node-noconf"
 
   image = {
-    name = "${var.base_image_name}"
-    user = "${var.base_image_user}"
+    name = "${var.arvados_compute_node_image_name}"
+    user = "${var.arvados_compute_node_image_user}"
   }
 
-  count              = 125
+  count              = 1
   flavour            = "m1.xlarge"
-  domain             = "node.hgi-delta.consul"
+  domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
@@ -159,5 +159,9 @@ module "arvados-compute-node" {
   }
 
   arvados_cluster_id   = "ncucu"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+  extra_ansible_groups = []
+
+  consul_datacenter    = "delta-hgiarvados"
+  consul_retry_join    = "${module.consul-server.retry_join}"
+  upstream_dns_servers = ["172.18.255.1", "172.18.255.2", "172.18.255.3"] # FIXME this should be defined elsewhere
 }

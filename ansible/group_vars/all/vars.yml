@@ -78,3 +78,5 @@ all_GROUP_sanger_network_dns_servers:
   - 172.18.255.1
   - 172.18.255.2
   - 172.18.255.3
+
+all_GROUP_env_ANSIBLE_CONSUL_TOKEN: "{{ lookup('env', 'ANSIBLE_CONSUL_TOKEN') }}"

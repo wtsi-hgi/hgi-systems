@@ -10,6 +10,7 @@
   async: 0
   poll: 0
   ignore_errors: true
+  when: "not 'image-building' in group_names"
   listen: reboot compute node
 
 - name: wait for reboot to complete
@@ -20,4 +21,5 @@
     port: "{{ ansible_port }}"
     delay: 90
     timeout: 360
+  when: "not 'image-building' in group_names"
   listen: reboot compute node

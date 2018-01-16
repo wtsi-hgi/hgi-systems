@@ -37,6 +37,7 @@
 [consul-commoners]
 [consul-agents]
 [consul-servers]
+[core-consul-servers]
 [sanger-gitlab]
 [openstack-tenant-cleaners]
 [openstack-instance-consul-servers]
@@ -45,8 +46,10 @@
 [s3-credentials]
 [openstack]
 [openstack-instances]
+[root-secret]
 [terraform]
-[terraform-ci]
+[terraform-ci-delta-hgi]
+[terraform-ci-delta-hgiarvados]
 [tf_type_openstack_compute_instance_v2]
 [consul-clusters]
 [arvados-clusters]
@@ -73,6 +76,10 @@ mesos-slaves
 
 [nonroot:children]
 hgs4
+
+[root-secret:children]
+openstack-instances
+tf_type_openstack_compute_instance_v2
 
 [hgi-credentials:children]
 mesos-masters
@@ -106,6 +113,9 @@ consul-agents
 consul-servers
 
 [consul-servers:children]
+openstack-instance-consul-servers
+
+[core-consul-servers:children]
 openstack-instance-consul-servers
 
 [sanger-gitlab:children]
@@ -144,10 +154,15 @@ canaries
 openstack-instances
 tf_type_openstack_compute_instance_v2
 
-[terraform-ci:children]
+[terraform-ci-delta-hgi:children]
 canaries
 terraform
-consul-servers
+arvados-clusters
+consul-cluster-delta-hgi
+
+[terraform-ci-delta-hgiarvados:children]
+canaries
+terraform
 arvados-clusters
 consul-cluster-delta-hgiarvados
 
