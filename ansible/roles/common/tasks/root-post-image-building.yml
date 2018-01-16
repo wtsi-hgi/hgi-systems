@@ -26,11 +26,6 @@
   changed_when: false
   register: raw_root_password_data
 
-- name: debug root password data
-  debug:
-    msg: "raw_root_password_data: {{ raw_root_password_data }}; _common_current_salt: {{ _common_current_salt }}; _common_current_password_hash: {{ _common_current_password_hash }}; _common_root_password_with_current_salt_hash_data: {{ _common_root_password_with_current_salt_hash_data }}; _common_root_password_with_current_salt_hash: {{ _common_root_password_with_current_salt_hash }}; _common_root_password_changed: {{ _common_root_password_changed }}; "
-
-
 - name: set root password
   become: yes
   user:
