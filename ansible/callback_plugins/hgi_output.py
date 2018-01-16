@@ -118,7 +118,7 @@ class CallbackModule(CallbackModule_default):
 
             self._display.display(msg, color=C.COLOR_ERROR, stderr=errors_to_stderr)
 
- def _dump_results(self, result):
+    def _dump_results(self, result):
         '''Return the text to output for a result.'''
 
         result['_ansible_verbose_always'] = True
