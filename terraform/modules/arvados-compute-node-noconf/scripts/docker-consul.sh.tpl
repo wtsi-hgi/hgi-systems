@@ -19,10 +19,10 @@ consul_encrypt="${CONSUL_ENCRYPT}"
 # consul_advertise_addr="$#{CONSUL_ADVERTISE_ADDR}"
 
 # Workaround for 14536: lookup IP from local interface
-dev=$(ip --oneline --details link show up | egrep -v '\s(link/loopback|bridge)\s' | awk 'NR==1 {split($2, devcolon, ":"); print devcolon[1];}')
-ip=$(ip --oneline --family inet address show dev ${dev} primary | awk 'NR==1 {split($4, ipnm, "/"); print ipnm[1];}')
-consul_bind_addr="${ip}"
-consul_advertise_addr="${ip}"
+dev=$$(ip --oneline --details link show up | egrep -v '\s(link/loopback|bridge)\s' | awk 'NR==1 {split($$2, devcolon, ":"); print devcolon[1];}')
+ip=$$(ip --oneline --family inet address show dev $${dev} primary | awk 'NR==1 {split($$4, ipnm, "/"); print ipnm[1];}')
+consul_bind_addr="$${ip}"
+consul_advertise_addr="$${ip}"
 
 # Generate json from input variables
 function join_by { local IFS="$$1"; shift; echo "$$*"; }
