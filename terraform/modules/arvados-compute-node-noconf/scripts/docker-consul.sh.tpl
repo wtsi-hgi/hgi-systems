@@ -15,8 +15,8 @@ consul_datacenter="${CONSUL_DATACENTER}"
 consul_acl_token="${CONSUL_ACL_TOKEN}"
 consul_encrypt="${CONSUL_ENCRYPT}"
 # Cannot pass IP address of port resource to this data source because of https://github.com/hashicorp/terraform/issues/14536
-# consul_bind_addr="${CONSUL_BIND_ADDR}"
-# consul_advertise_addr="${CONSUL_ADVERTISE_ADDR}"
+# consul_bind_addr="$#{CONSUL_BIND_ADDR}"
+# consul_advertise_addr="$#{CONSUL_ADVERTISE_ADDR}"
 
 # Workaround for 14536: lookup IP from local interface
 dev=$(ip --oneline --details link show up | egrep -v '\s(link/loopback|bridge)\s' | awk 'NR==1 {split($2, devcolon, ":"); print devcolon[1];}')
