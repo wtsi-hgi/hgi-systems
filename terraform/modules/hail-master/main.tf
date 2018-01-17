@@ -113,7 +113,7 @@ resource "infoblox_record" "hail-master-dns" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.hail-master.*.address[count.index]}"
+  value = "${openstack_networking_floatingip_v2.hail-master.*.address}"
 }
 
 resource "openstack_blockstorage_volume_v2" "hail-master-volume" {
