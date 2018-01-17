@@ -96,11 +96,11 @@ data "template_file" "docker-consul-script" {
   vars {
     CONSUL_RETRY_JOIN     = "${join(",", var.consul_retry_join)}"
     CONSUL_RECURSORS      = "${join(",", var.upstream_dns_servers)}"
-    CONSUL_ADVERTISE_ADDR = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index]}"
+    CONSUL_ADVERTISE_ADDR = "${formatlist("%s", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
     CONSUL_DATACENTER     = "${var.consul_datacenter}"
     CONSUL_ACL_TOKEN      = "${data.consul_keys.consul-agent.var.consul_acl_token}"
     CONSUL_ENCRYPT        = "${data.consul_keys.consul-agent.var.consul_encrypt}"
-    CONSUL_BIND_ADDR      = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index]}"
+    CONSUL_BIND_ADDR      = "${formatlist("%s", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
   }
 }
 
@@ -173,7 +173,7 @@ resource "openstack_compute_instance_v2" "arvados-compute" {
       timeout      = "2m"
       bastion_host = "${var.bastion["host"]}"
       bastion_user = "${var.bastion["user"]}"
-      host         = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index]}"
+      host         = "${formatlist("%s", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
     }
   }
 }
