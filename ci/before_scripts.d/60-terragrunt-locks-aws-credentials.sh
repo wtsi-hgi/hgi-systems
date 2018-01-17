@@ -1,4 +1,3 @@
-
 set -euf -o pipefail
 
 # TODO could limit this to terraform jobs

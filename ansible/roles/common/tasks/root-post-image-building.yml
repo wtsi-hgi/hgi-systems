@@ -20,6 +20,12 @@
 ---
 # file: roles/common/tasks/root-post-image-building.yml
 
+- name: read root password data
+  become: yes
+  command: "getent {{ 'shadow' if ansible_os_family == 'Debian' else 'passwd' }} root"
+  changed_when: false
+  register: raw_root_password_data
+
 - name: set root password
   become: yes
   user:

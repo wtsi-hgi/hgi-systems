@@ -20,9 +20,9 @@ export TF_VAR_base_image_user=ubuntu
 export TF_VAR_docker_image_name=hgi-docker-xenial-6912cc07
 export TF_VAR_docker_image_user=ubuntu
 
-export TF_VAR_arvados_base_image_name=hgi-base-jessie-d806d486 
-export TF_VAR_arvados_base_image_user=debian
-
 export TF_VAR_freebsd_base_image_name=hgi-base-freebsd11-575611a5
 export TF_VAR_freebsd_base_image_user=beastie
+
+export TF_VAR_arvados_compute_node_image_name=hgi-arvados_compute-xenial-b46a5987
+export TF_VAR_arvados_compute_node_image_user=ubuntu
 

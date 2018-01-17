@@ -17,4 +17,3 @@ mkdir -p ~/.ssh
 if [[ -f /.dockerenv ]]; then
     echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n" > ~/.ssh/config
 fi
-

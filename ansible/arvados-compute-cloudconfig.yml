@@ -1,8 +1,6 @@
-# Copyright (c) 2014, 2016, 2017 Genome Research Ltd.
+# Copyright (c) 2018 Genome Research Ltd.
 #
-# Authors:
-# * Joshua C. Randall <jcrandall@alum.mit.edu>
-# * Christopher Harrison <ch12@sanger.ac.uk>
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
 # This file is part of hgi-systems.
 #
@@ -18,43 +16,18 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: arvados-compute-cloudconfig.yml
 
-[mesos-masters]
-hgs4a
-hgs4e
-hgs4i
-
-[zookeepers]
-hgs4b
-hgs4f
-hgs4j
-
-[mesos-slaves]
-hgs4[a:f]
-hgs4[h:k]
-
-[marathoners]
-hgs4c
-hgs4d
-#hgs4g
-hgs4k
-
-[chronosians]
-hgs4c
-hgs4d
-#hgs4g
-hgs4k
-
-# iRODS client machines with baton
-[batonistas]
-# None yet...
-
-# Cookie Monster application servers
-# n.b., Includes iRODS client configuration
-[cookie-monsters]
-hgi-cordon-cookie-monster
-
-# Cookie Monster database servers
-[cookie-jars]
-hgi-cordon-cookie-jar
+- hosts: localhost
+  tasks:
+    - name: set up dnsmasq
+      import_role:
+        name: dnsmasq
+      vars:
+        dnsmasq_search_domains:
+          - "node.{{ cc_consul_datacenter }}.consul"
+        dnsmasq_apt_cache_valid_time: 3600
+        dnsmasq_upstream_dns_servers: "{{ cc_upstream_dns_servers.split(',') }}"
 

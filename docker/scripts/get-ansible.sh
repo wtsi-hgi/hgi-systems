@@ -5,7 +5,7 @@ set -euf -o pipefail
 # Create temporary directory for building
 export TMPDIR=$(mktemp -d)
 
-version=git-3fadd3cb
+version=2.4.2.0-1
 shade_version=1.16.0
 gitlabbuildvariables_version=0.2.0
 boto3_version=1.4.7
@@ -13,6 +13,7 @@ boto_version=2.46.1-hotfix.1
 yatadis_version=1.0.0
 openstack_info_version=5.5.0
 yaosadis_version=2.0.1
+python_consul_version=0.7.2
 consul_lock_version=4.0.0
 
 echo "Installing ansible using pip3 from github..."
@@ -22,7 +23,7 @@ else
     revision="v${version}"
 fi
 echo "Using revision ${revision}"
-pip3 install git+https://github.com/wtsi-hgi/ansible.git@${revision}
+pip3 install git+https://github.com/ansible/ansible.git@${revision}
 
 echo "Installing shade using pip3..."
 pip3 install shade==${shade_version}
@@ -44,6 +45,9 @@ pip3 install git+https://github.com/wtsi-hgi/openstack-info.git@${openstack_info
 
 echo "Installing yaosadis using pip3 from github..."
 pip3 install git+https://github.com/wtsi-hgi/yaosadis.git@${yaosadis_version}
+
+echo "Installing python-consul using pip3..."
+pip3 install python-consul==${python_consul_version}
 
 echo "Installing consul-lock using pip3 from github..."
 pip3 install git+https://github.com/wtsi-hgi/consul-lock.git@${consul_lock_version}
