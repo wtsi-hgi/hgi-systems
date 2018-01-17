@@ -102,6 +102,7 @@ data "template_file" "docker-consul-script" {
     CONSUL_ENCRYPT        = "${data.consul_keys.consul-agent.var.consul_encrypt}"
     CONSUL_BIND_ADDR      = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
   }
+
 }
 
 data "template_file" "ansible-cc-script" {
