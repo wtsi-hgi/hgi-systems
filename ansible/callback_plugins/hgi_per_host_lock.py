@@ -50,32 +50,35 @@ class CallbackModule(CallbackBase):
         self.task = None
         self.play = None
 
-    def v2_on_any(self, *args, **kwargs):
-        play = getattr(self.play, 'name', None)
-        task = self.task
-        self._display.display("hgi_per_host_lock: v2_on_any play [%s] task [%s] args: [%s] kwargs: [%s]" % (play, task, json.dumps(args), json.dumps(kwargs)))
+    def v2_playbook_on_start(self, playbook):
+        self._display.display("%s: v2_playbook_on_start: play-name=%s hosts=%s" % (CallbackModule.CALLBACK_NAME, playbook.get_name(), playbook.hosts))
 
-    def v2_playbook_on_task_start(self, task, is_conditional):
-        self._display.display("hgi_per_host_lock: v2_playbook_on_task_start task start %s" % (task))
-        self.task = task
-
-    def v2_playbook_on_handler_task_start(self, task):
-        self._display.display("hgi_per_host_lock: v2_playbook_on_handler_task_start task start %s" % (task))
-        self.task = task
-
-    def v2_runner_on_failed(self, result, ignore_errors=False):
-        host = result._host.get_name()
-        self._display.display("hgi_per_host_lock: v2_runner_on_failed runner failed on host %s" % (host))
-
-    def v2_runner_on_ok(self, result):
-        host = result._host.get_name()
-        self._display.display("hgi_per_host_lock: v2_runner_on_ok runner ok on host %s" % (host))
-
-    def v2_runner_on_skipped(self, result):
-        host = result._host.get_name()
-        self._display.display("hgi_per_host_lock: v2_runner_on_skipped runner skipped on host %s" % (host))
-
-    def v2_runner_on_unreachable(self, result):
-        host = result._host.get_name()
-        self._display.display("hgi_per_host_lock: v2_runner_on_unreachable runner unreachable on host %s" % (host))
+    # def v2_on_any(self, *args, **kwargs):
+    #     play = getattr(self.play, 'name', None)
+    #     task = self.task
+    #     self._display.display("hgi_per_host_lock: v2_on_any play [%s] task [%s] args: [%s] kwargs: [%s]" % (play, task, json.dumps(args), json.dumps(kwargs)))
+    #
+    # def v2_playbook_on_task_start(self, task, is_conditional):
+    #     self._display.display("hgi_per_host_lock: v2_playbook_on_task_start task start %s" % (task))
+    #     self.task = task
+    #
+    # def v2_playbook_on_handler_task_start(self, task):
+    #     self._display.display("hgi_per_host_lock: v2_playbook_on_handler_task_start task start %s" % (task))
+    #     self.task = task
+    #
+    # def v2_runner_on_failed(self, result, ignore_errors=False):
+    #     host = result._host.get_name()
+    #     self._display.display("hgi_per_host_lock: v2_runner_on_failed runner failed on host %s" % (host))
+    #
+    # def v2_runner_on_ok(self, result):
+    #     host = result._host.get_name()
+    #     self._display.display("hgi_per_host_lock: v2_runner_on_ok runner ok on host %s" % (host))
+    #
+    # def v2_runner_on_skipped(self, result):
+    #     host = result._host.get_name()
+    #     self._display.display("hgi_per_host_lock: v2_runner_on_skipped runner skipped on host %s" % (host))
+    #
+    # def v2_runner_on_unreachable(self, result):
+    #     host = result._host.get_name()
+    #     self._display.display("hgi_per_host_lock: v2_runner_on_unreachable runner unreachable on host %s" % (host))
 
