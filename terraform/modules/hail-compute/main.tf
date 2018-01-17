@@ -86,5 +86,5 @@ resource "openstack_compute_instance_v2" "hail-compute" {
 }
 
 output "ip" {
-  value = "${openstack_compute_instance_v2.hail-compute.access_ip_v4}"
+  value = "${openstack_compute_instance_v2.hail-compute.*.access_ip_v4}"
 }

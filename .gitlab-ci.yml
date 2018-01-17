@@ -24,7 +24,7 @@ variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
-  CI_LOCK_PREFIX: "ci"
+  CI_LOCK_PREFIX: "ci/locks"
   ANSIBLE_LOCK_PREFIX: "${CI_LOCK_PREFIX}/ansible"
 
 # In general, additional variables should *not* be defined above unless they are 

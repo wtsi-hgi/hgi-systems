@@ -92,5 +92,5 @@ resource "infoblox_record" "studentportal" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.studentportal.address}"
+  value = "${openstack_networking_floatingip_v2.studentportal.*.address}"
 }
