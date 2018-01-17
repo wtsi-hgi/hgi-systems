@@ -96,11 +96,11 @@ data "template_file" "docker-consul-script" {
   vars {
     CONSUL_RETRY_JOIN     = "${join(",", var.consul_retry_join)}"
     CONSUL_RECURSORS      = "${join(",", var.upstream_dns_servers)}"
-    CONSUL_ADVERTISE_ADDR = "${join(",", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
+    CONSUL_ADVERTISE_ADDR = "1.2.3.4" # ${join(",", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
     CONSUL_DATACENTER     = "${var.consul_datacenter}"
     CONSUL_ACL_TOKEN      = "${data.consul_keys.consul-agent.var.consul_acl_token}"
     CONSUL_ENCRYPT        = "${data.consul_keys.consul-agent.var.consul_encrypt}"
-    CONSUL_BIND_ADDR      = "${join(",", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
+    CONSUL_BIND_ADDR      = "1.2.3.4" # ${join(",", openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index])}"
   }
 }
 
