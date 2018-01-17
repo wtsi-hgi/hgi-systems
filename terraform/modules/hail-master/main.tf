@@ -98,13 +98,13 @@ resource "openstack_compute_instance_v2" "hail-master" {
 resource "openstack_compute_floatingip_associate_v2" "hail-master" {
   provider    = "openstack"
   count       = "${var.count}"
-  floating_ip = "${openstack_networking_floatingip_v2.hail-master.address}"
-  instance_id = "${openstack_compute_instance_v2.hail-master.id}"
+  floating_ip = "${openstack_networking_floatingip_v2.hail-master.*.address[count.index]}"
+  instance_id = "${openstack_compute_instance_v2.hail-master.*.id[count.index]}"
 }
 
 resource "infoblox_record" "hail-master-dns" {
   count  = "${var.count}"
-  value  = "${openstack_networking_floatingip_v2.hail-master.address}"
+  value  = "${openstack_networking_floatingip_v2.hail-master.*.address[count.index]}"
   name   = "hail-${var.hail_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
@@ -113,7 +113,7 @@ resource "infoblox_record" "hail-master-dns" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.hail-master.address}"
+  value = "${openstack_networking_floatingip_v2.hail-master.*.address[count-index]}"
 }
 
 resource "openstack_blockstorage_volume_v2" "hail-master-volume" {
@@ -125,5 +125,5 @@ resource "openstack_blockstorage_volume_v2" "hail-master-volume" {
 resource "openstack_compute_volume_attach_v2" "hail-master-volume-attach" {
   count       = "${var.count}"
   volume_id   = "${openstack_blockstorage_volume_v2.hail-master-volume.id}"
-  instance_id = "${openstack_compute_instance_v2.hail-master.id}"
+  instance_id = "${openstack_compute_instance_v2.hail-master.*.id[count.index]}"
 }
