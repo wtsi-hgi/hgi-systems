@@ -173,7 +173,7 @@ resource "openstack_compute_instance_v2" "arvados-compute" {
       timeout      = "2m"
       bastion_host = "${var.bastion["host"]}"
       bastion_user = "${var.bastion["user"]}"
-      host         = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
+      host         = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips[count.index][0]}"
     }
   }
 }
