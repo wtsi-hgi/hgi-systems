@@ -11,7 +11,7 @@ consul_cluster_GROUP_acl_ansible_name: mercury_ansible
 consul_cluster_GROUP_acl_ansible_token: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
 
 consul_cluster_GROUP_acl_consul_template_name: mercury_consul_template
-consul_cluster_GROUP_acl_consul_template_token: "{{ consul_credentials_GROUP_creds['consul_template'].token }}"
+consul_cluster_GROUP_acl_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
 
 consul_cluster_GROUP_acl_agent_name: agent_token
 consul_cluster_GROUP_acl_agent_token: "{{ consul_credentials_GROUP_creds['agent'].token }}"

@@ -183,3 +183,10 @@
         hgi_consul_retry_join_list: "{{ (groups['consul-servers'] | map('extract', hostvars, 'cloud_resource_private_ip') | list()) }}" 
         hgi_consul_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
       when: inventory_hostname not in groups['consul-servers']
+    - name: apply consul-template role
+      import_role:
+        name: consul-template
+      vars:
+        consul_template_user: mercury
+        consul_template_consul_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+
