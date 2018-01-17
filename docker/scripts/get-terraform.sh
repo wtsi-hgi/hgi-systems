@@ -18,7 +18,7 @@ mkdir -p $GOPATH/src/github.com/hashicorp
 cd $GOPATH/src/github.com/hashicorp
 git clone https://github.com/hashicorp/terraform
 cd terraform
-git checkout v0.10.4
+git checkout v0.11.2
 
 echo "building terraform"
 export XC_ARCH="amd64"
