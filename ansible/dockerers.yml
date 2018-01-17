@@ -22,3 +22,11 @@
 - hosts: dockerers
   roles:
     - docker
+  post_tasks:
+    - name: add mercury to docker group
+      become: yes
+      user:
+        append: yes
+        groups:
+          - docker
+        name: mercury
