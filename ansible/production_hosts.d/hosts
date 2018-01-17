@@ -30,19 +30,19 @@ hgs4f
 hgs4j
 
 [mesos-slaves]
-hgs4[a:b]
-hgs4[d:k]
+hgs4[a:f]
+hgs4[h:k]
 
 [marathoners]
-#hgs4c
+hgs4c
 hgs4d
-hgs4g
+#hgs4g
 hgs4k
 
 [chronosians]
-#hgs4c
+hgs4c
 hgs4d
-hgs4g
+#hgs4g
 hgs4k
 
 # iRODS client machines with baton
