@@ -50,8 +50,8 @@ class CallbackModule(CallbackBase):
         self.task = None
         self.play = None
 
-    def v2_playbook_on_start(self, playbook):
-        self._display.display("%s: v2_playbook_on_start: play-name=%s hosts=%s" % (CallbackModule.CALLBACK_NAME, playbook.get_name(), playbook.hosts))
+    def v2_playbook_on_play_start(self, play):
+        self._display.display("%s: v2_playbook_on_play_start: play-name=%s hosts=%s" % (CallbackModule.CALLBACK_NAME, play.get_name(), play.hosts))
 
     # def v2_on_any(self, *args, **kwargs):
     #     play = getattr(self.play, 'name', None)
