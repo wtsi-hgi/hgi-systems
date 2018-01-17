@@ -141,6 +141,8 @@
         consul_cluster_acl_terraform_token: "{{ consul_cluster_GROUP_acl_terraform_token }}"
         consul_cluster_acl_ansible_name: "{{ consul_cluster_GROUP_acl_ansible_name }}"
         consul_cluster_acl_ansible_token: "{{ consul_cluster_GROUP_acl_ansible_token }}"
+        consul_cluster_acl_consul_template_name: "{{ consul_cluster_GROUP_acl_consul_template_name }}"
+        consul_cluster_acl_consul_template_token: "{{ consul_cluster_GROUP_acl_consul_template_token }}"
         consul_cluster_acl_agent_name: "{{ consul_cluster_GROUP_acl_agent_name }}"
         consul_cluster_acl_agent_token: "{{ consul_cluster_GROUP_acl_agent_token }}"
         consul_cluster_acl_locks_name: "{{ consul_cluster_GROUP_acl_locks_name }}"
