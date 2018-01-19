@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2017, 2018 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -49,28 +49,30 @@
   notify:
     - reload slurm
 
-- name: set munge key
-  when: "not 'image-building' in group_names"
-  tags: 
-    - slurm
-    - munge    
-  become: yes
-  copy: 
-    dest: /etc/munge/munge.key
-    content: "{{ slurm_munge_key_base64 | b64decode }}"
-    mode: 0400
-  notify:
-    - reload slurm
+# FIXME configure consul-template to build munge.key and slurm.conf 
 
-- name: configure slurm 
-  when: "not 'image-building' in group_names"
-  tags: 
-    - slurm
-  become: yes
-  template:
-    src: slurm.conf.j2
-    dest: /etc/slurm-llnl/slurm.conf
-    mode: 0644
-  notify:
-    - reload slurm
+# - name: set munge key
+#   when: "not 'image-building' in group_names"
+#   tags: 
+#     - slurm
+#     - munge    
+#   become: yes
+#   copy: 
+#     dest: /etc/munge/munge.key
+#     content: "{{ slurm_munge_key_base64 | b64decode }}"
+#     mode: 0400
+#   notify:
+#     - reload slurm
+
+# - name: configure slurm 
+#   when: "not 'image-building' in group_names"
+#   tags: 
+#     - slurm
+#   become: yes
+#   template:
+#     src: slurm.conf.j2
+#     dest: /etc/slurm-llnl/slurm.conf
+#     mode: 0644
+#   notify:
+#     - reload slurm
 

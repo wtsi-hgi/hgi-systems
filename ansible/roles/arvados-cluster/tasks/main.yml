@@ -178,3 +178,20 @@
     authorized_user_uuid: mercury
     public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
 
+- name: set consul-template keys for slurm in in consul kv
+  delegate_to: localhost
+  tags:
+    - slurm
+    - munge
+    - consul_kv
+  consul_kv:
+    key: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    token: "{{ arvados_cluster_consul_template_token }}"
+    host: "{{ arvados_cluster_consul_template_host }}"
+  with_items:
+    - key: "{{ arvados_cluster_consul_template_path }}/munge_key_base64"
+      value: "{{ arvados_cluster_munge_key_base64 }}"
+    - key: "{{ arvados_cluster_consul_template_path }}/slurm_conf"
+      value: "{{ lookup('template', 'slurm.conf.j2') }}"

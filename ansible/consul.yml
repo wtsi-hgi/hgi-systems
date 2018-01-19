@@ -35,15 +35,6 @@
     consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
     consul_PLAYBOOK_s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ consul_PLAYBOOK_server_data_mountpoint }}"
   tasks:
-    - name: dump consul_kv lookup of ansible/delta-hgi/consul_cluster_server_wan_ips
-      debug:
-        msg: "consul_kv ansible/delta-hgi/consul_cluster_server_wan_ips: {{ lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN) }}"
-    - name: dump are we in core-consul-servers group?
-      debug:
-        msg: "are we in core-consul-servers group?: {{ 'core-consul-servers' in group_names }}"
-    - name: dump consul_PLAYBOOK_servers_wan_all
-      debug:
-        msg: "consul_PLAYBOOK_servers_wan_all: {{ consul_PLAYBOOK_servers_wan_all }}"
     - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
       assert:
         that: consul_PLAYBOOK_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
@@ -113,12 +104,6 @@
 - hosts: consul-clusters
   gather_facts: no
   tasks:
-    - name: what is going on?????? dump groups
-      debug:
-        msg: "groups['consul-servers']: {{ groups['consul-servers'] }} groups['consul-clusters']: {{ groups['consul-clusters'] }}"
-    - name: dump consul_cluster_GROUP_server_ips
-      debug:
-        msg: "consul_cluster_GROUP_server_ips: {{ consul_cluster_GROUP_server_ips }}"
     - name: import hgi-consul
       import_role:
         name: consul-cluster

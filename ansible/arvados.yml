@@ -137,6 +137,10 @@
 # non-host playbooks
 - hosts: arvados-clusters
   gather_facts: no
-  roles:
-    - arvados-cluster
-
+  tasks:
+    - name: configure arvados cluster as a whole
+      import_role:
+        name: arvados-cluster
+      vars:
+        arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+        arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
