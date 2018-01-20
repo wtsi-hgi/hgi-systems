@@ -49,30 +49,39 @@
   notify:
     - reload slurm
 
-# FIXME configure consul-template to build munge.key and slurm.conf 
+- name: create slurm.conf consul-template
+  become: yes
+  template:
+    src: slurm.conf.ctmpl.j2
+    dest: /etc/slurm-llnl/slurm.conf.ctmpl
+    mode: 0444
+  notify:
+    - restart consul-template
 
-# - name: set munge key
-#   when: "not 'image-building' in group_names"
-#   tags: 
-#     - slurm
-#     - munge    
-#   become: yes
-#   copy: 
-#     dest: /etc/munge/munge.key
-#     content: "{{ slurm_munge_key_base64 | b64decode }}"
-#     mode: 0400
-#   notify:
-#     - reload slurm
+- name: configure consul-template to template out slurm.conf
+  become: yes
+  template:
+    src: 10-slurm-conf.hcl.j2
+    dest: /etc/consul-template.d/10-slurm-conf.hcl
+    mode: 0444
+  notify:
+    - restart consul-template
 
-# - name: configure slurm 
-#   when: "not 'image-building' in group_names"
-#   tags: 
-#     - slurm
-#   become: yes
-#   template:
-#     src: slurm.conf.j2
-#     dest: /etc/slurm-llnl/slurm.conf
-#     mode: 0644
-#   notify:
-#     - reload slurm
+- name: create munge.key consul-template
+  become: yes
+  template:
+    src: munge.key.ctmpl.j2
+    dest: /etc/munge/munge.key.ctmpl
+    mode: 0444
+  notify:
+    - restart consul-template
+
+- name: configure consul-template to template out munge.key
+  become: yes
+  template:
+    src: 10-munge-key.hcl.j2
+    dest: /etc/consul-template.d/10-munge-key.hcl
+    mode: 0444
+  notify:
+    - restart consul-template
 
