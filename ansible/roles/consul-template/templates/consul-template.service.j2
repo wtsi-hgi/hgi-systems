@@ -10,6 +10,7 @@ User={{ consul_template_user }}
 Type=simple
 AmbientCapabilities=CAP_DAC_OVERRIDE
 ExecStart=/usr/local/bin/consul-template -config="/etc/consul-template.d/"
+ExecReload=/bin/kill -HUP $MAINPID
 TimeoutSec=30
 Restart=always
 RestartSec=30
