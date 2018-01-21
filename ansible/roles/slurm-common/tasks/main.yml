@@ -56,7 +56,7 @@
     dest: /etc/slurm-llnl/slurm.conf.ctmpl
     mode: 0444
   notify:
-    - restart consul-template
+    - reload consul-template
 
 - name: configure consul-template to template out slurm.conf
   become: yes
@@ -65,7 +65,7 @@
     dest: /etc/consul-template.d/10-slurm-conf.hcl
     mode: 0444
   notify:
-    - restart consul-template
+    - reload consul-template
 
 - name: create munge.key consul-template
   become: yes
@@ -74,7 +74,7 @@
     dest: /etc/munge/munge.key.ctmpl
     mode: 0444
   notify:
-    - restart consul-template
+    - reload consul-template
 
 - name: configure consul-template to template out munge.key
   become: yes
@@ -83,5 +83,5 @@
     dest: /etc/consul-template.d/10-munge-key.hcl
     mode: 0444
   notify:
-    - restart consul-template
+    - reload consul-template
 
