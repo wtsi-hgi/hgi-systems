@@ -46,7 +46,7 @@ arvados_cluster_login_sync_api_token: "{{  arvados_cluster_root_key | pbkdf2_hma
 
 arvados_cluster_munge_key_base64: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_munge_key_base64', 1024) | b64encode }}"
 
-arvados_cluster_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+arvados_cluster_GROUP_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
 arvados_cluster_id: ncucu
 arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
