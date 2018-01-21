@@ -149,3 +149,4 @@
       vars:
         arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
         arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
+        arvados_cluster_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
