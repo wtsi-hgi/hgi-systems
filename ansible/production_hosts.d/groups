@@ -160,12 +160,14 @@ canaries
 terraform
 arvados-clusters
 consul-cluster-delta-hgi
+consul-servers
 
 [terraform-ci-delta-hgiarvados:children]
 canaries
 terraform
 arvados-clusters
 consul-cluster-delta-hgiarvados
+consul-servers
 
 [arvados:children]
 arvados-compute-nodes
