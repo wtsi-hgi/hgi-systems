@@ -86,7 +86,6 @@
         attached_openstack_volumes:
           - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
-        arvados_master_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
     - name: setup s3 to backup api server data 
       import_role:
         name: s3-backup
@@ -114,6 +113,7 @@
         name: arvados-master
       vars:
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_master_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
 
 - hosts: arvados-keeps
   roles:
