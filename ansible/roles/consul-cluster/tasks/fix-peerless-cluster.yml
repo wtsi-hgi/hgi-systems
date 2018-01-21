@@ -29,10 +29,6 @@
     state: stopped
   with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
 
-- name: debug
-  debug:
-    msg: "creating peers.json: {{ consul_cluster_server_ips }}"
-
 - name: add peers.json to re-bootstrap when cluster has no peers
   delegate_to: "{{ item }}"
   become: yes

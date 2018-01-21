@@ -22,10 +22,6 @@
 ---
 # file: roles/consul-cluster/tasks/main.yml
 
-- name: dump consul_cluster_server_ips
-  debug: 
-    msg: "consul_cluster_server_ips: {{ consul_cluster_server_ips }}"
-
 - name: configure consul-cluster only when there are servers configured
   when: "(consul_cluster_server_ips | length) > 0"
   block:
@@ -49,9 +45,9 @@
       consul_info_facts:
         consul_bin: /opt/consul/bin/consul
         mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
+      ignore_errors: yes
       with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
       register: consul_cluster_info_leader
-      ignore_errors: yes
       until: "consul_cluster_info_leader.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_addr') != ''"
       retries: 12
       delay: 5
