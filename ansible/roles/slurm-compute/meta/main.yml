@@ -21,4 +21,5 @@
 # file: roles/slurm-compute/meta/main.yml
 
 dependencies:
-  - { role: slurm-common }
+  - role: slurm-common
+    slurm_common_consul_template_path: "{{ slurm_compute_consul_template_path }}"

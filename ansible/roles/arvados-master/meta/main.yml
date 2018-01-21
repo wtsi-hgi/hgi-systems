@@ -23,4 +23,5 @@
 dependencies:
   - { role: common }
   - { role: arvados-common }
-  - { role: arvados-slurm-master }
+  - role: arvados-slurm-master
+    arvados_slurm_master_consul_template_path: "{{ arvados_master_consul_template_path }}"
