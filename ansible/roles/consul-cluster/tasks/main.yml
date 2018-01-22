@@ -172,6 +172,8 @@
             policy: read
           - service: ""
             policy: read
+          - agent: ""
+            policy: read
           - key: "consul-template" 
             policy: write
           - session: "consul-template"
