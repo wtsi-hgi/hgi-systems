@@ -164,6 +164,14 @@
         mgmt_token: "{{ consul_cluster_acl_management_token }}"
         token_type: client
         rules:
+          - key: "" 
+            policy: read
+          - session: ""
+            policy: read
+          - node: ""
+            policy: read
+          - service: ""
+            policy: read
           - key: "consul-template" 
             policy: write
           - session: "consul-template"
