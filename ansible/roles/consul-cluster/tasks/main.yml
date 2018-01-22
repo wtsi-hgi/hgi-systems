@@ -172,7 +172,7 @@
             policy: read
           - agent: ""
             policy: read
-          - key: "consul-template/dedup"
+          - key: "consul-template"
             policy: write
           - session: ""
             policy: write
