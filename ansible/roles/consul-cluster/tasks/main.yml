@@ -166,17 +166,15 @@
         rules:
           - key: "" 
             policy: read
-          - session: ""
-            policy: read
           - node: ""
             policy: read
           - service: ""
             policy: read
           - agent: ""
             policy: read
-          - key: "consul-template" 
+          - key: "consul-template/dedup"
             policy: write
-          - session: "consul-template"
+          - session: ""
             policy: write
 
     - name: create a client ACL token for agents
