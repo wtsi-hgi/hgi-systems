@@ -104,8 +104,8 @@ stages:
 # Stage: ci-setup
 ###############################################################################
 build_docker_iamges:
-  before_script:
-    # Do not execute the before script
+  # Do not execute the before script
+  before_script: []
   stage: ci-setup
   tags:
     - docker-privileged
