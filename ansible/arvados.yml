@@ -113,7 +113,8 @@
         name: arvados-master
       vars:
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
-        arvados_master_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
+        arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
 - hosts: arvados-keeps
   roles:
@@ -137,7 +138,8 @@
       import_role:
         name: arvados-compute-node
       vars:
-        arvados_compute_node_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
+        arvados_compute_node_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_compute_node_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
 # non-host playbooks
 - hosts: arvados-clusters

@@ -33,4 +33,4 @@
     - name: create arvados consul template path file
       file:
         path: /etc/arvados_consul_template_path
-        contents: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        contents: "consul-template/arvados-cluster/{{ cc_arvados_cluster_id }}"

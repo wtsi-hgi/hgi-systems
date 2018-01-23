@@ -25,4 +25,4 @@ dependencies:
   - { role: arvados-common }
   - { role: docker }
   - role: arvados-slurm-compute
-    arvados_slurm_compute_consul_template_path: "{{ arvados_compute_node_consul_template_path }}"
+    arvados_slurm_compute_consul_template_path_file: "{{ arvados_compute_node_consul_template_path_file }}"

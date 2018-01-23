@@ -116,6 +116,7 @@ data "template_file" "ansible-cc-script" {
     ANSIBLE_CC_GROUPS               = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
     ANSIBLE_CC_UPSTREAM_DNS_SERVERS = "${join(",", var.upstream_dns_servers)}"
     ANSIBLE_CC_CONSUL_DATACENTER    = "${var.consul_datacenter}"
+    ANSIBLE_CC_ARVADOS_CLUSTER_ID   = "${var.arvados_cluster_id}"
   }
 }
 

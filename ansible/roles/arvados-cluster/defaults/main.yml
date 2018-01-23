@@ -27,6 +27,9 @@
 # arvados_cluster_consul_template_token:
 #   Consul token to use to write consul-template values to consul kv store
 #
+# arvados_cluster_consul_template_path: 
+#   Consul KV path to write keys
+#
 ###############################################################################
 
 ###############################################################################

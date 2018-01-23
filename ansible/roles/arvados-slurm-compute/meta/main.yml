@@ -27,4 +27,4 @@ dependencies:
     slurm_munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
     slurm_control_machine: "{{ arvados_cluster_slurm_control_machine }}"
     slurm_nodename_pattern: "{{ arvados_cluster_compute_node_pattern }}"
-    slurm_compute_consul_template_path: "{{ arvados_slurm_compute_consul_template_path }}"
+    slurm_compute_consul_template_path_file: "{{ arvados_slurm_compute_consul_template_path_file }}"

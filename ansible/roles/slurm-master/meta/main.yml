@@ -22,4 +22,4 @@
 
 dependencies:
   - role: slurm-common
-    slurm_common_consul_template_path: "{{ slurm_master_consul_template_path }}"
+    slurm_common_consul_template_path_file: "{{ slurm_master_consul_template_path_file }}"
