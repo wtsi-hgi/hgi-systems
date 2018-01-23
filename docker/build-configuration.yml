@@ -1,0 +1,13 @@
+---
+
+docker:
+  images:
+    - name: test-taos
+      dockerfile: taos/Dockerfile
+      context: .
+    - name: test-pao
+      dockerfile: pao/Dockerfile
+      context: .
+    - name: test-os3
+      dockerfile: os3/Dockerfile
+      context: .

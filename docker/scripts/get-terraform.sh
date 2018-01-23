@@ -43,4 +43,3 @@ echo "setting up terraform plugins"
 echo "providers {
   infoblox = \"/usr/local/bin/terraform-provider-infoblox\"
 }" > ~/.terraformrc
-
