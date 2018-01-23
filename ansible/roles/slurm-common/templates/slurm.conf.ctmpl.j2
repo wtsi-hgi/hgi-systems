@@ -1,2 +1,2 @@
 # slurm.conf from consul kv according to path from file {{ slurm_common_consul_template_path_file }}
-{{- '{{ with $path := file "' slurm_common_consul_template_path_file '" | trimSpace }}{{ key (printf "%s/slurm_conf" $cluster) }}{{ end }}' -}}
+{{- '{{ with $path := file "' }}{{ slurm_common_consul_template_path_file }}{{ '" | trimSpace }}{{ key (printf "%s/slurm_conf" $cluster) }}{{ end }}' -}}
