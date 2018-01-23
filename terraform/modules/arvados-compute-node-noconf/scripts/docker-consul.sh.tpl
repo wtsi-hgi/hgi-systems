@@ -11,11 +11,18 @@ log "Working in temp dir $${consul_tmp}"
 # Process template expansions into local variables
 IFS=',' read -r -a consul_retry_join <<< "${CONSUL_RETRY_JOIN}"
 IFS=',' read -r -a consul_recursors <<< "${CONSUL_RECURSORS}"
-consul_advertise_addr="${CONSUL_ADVERTISE_ADDR}"
 consul_datacenter="${CONSUL_DATACENTER}"
 consul_acl_token="${CONSUL_ACL_TOKEN}"
 consul_encrypt="${CONSUL_ENCRYPT}"
-consul_bind_addr="${CONSUL_BIND_ADDR}"
+# Cannot pass IP address of port resource to this data source because of https://github.com/hashicorp/terraform/issues/14536
+# consul_bind_addr="$#{CONSUL_BIND_ADDR}"
+# consul_advertise_addr="$#{CONSUL_ADVERTISE_ADDR}"
+
+# Workaround for 14536: lookup IP from local interface
+dev=$$(ip --oneline --details link show up | egrep -v '\s(link/loopback|bridge)\s' | awk 'NR==1 {split($$2, devcolon, ":"); print devcolon[1];}')
+ip=$$(ip --oneline --family inet address show dev $${dev} primary | awk 'NR==1 {split($$4, ipnm, "/"); print ipnm[1];}')
+consul_bind_addr="$${ip}"
+consul_advertise_addr="$${ip}"
 
 # Generate json from input variables
 function join_by { local IFS="$$1"; shift; echo "$$*"; }

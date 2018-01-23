@@ -20,5 +20,16 @@
 ---
 # file: roles/slurm-common/defaults/main.yml
 
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+#
+###############################################################################
+
+###############################################################################
+# Vars that have defaults that can be overridden
+###############################################################################
 slurm_state_save_location: /var/spool/slurm/slurm.state
 slurm_spool_dir: /var/spool/slurm/slurmd.spool
+

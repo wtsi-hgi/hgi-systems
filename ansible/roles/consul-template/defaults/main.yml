@@ -25,6 +25,12 @@
 # Variables that have no defaults and must be set
 ###############################################################################
 #
+# consul_template_user:
+#   the user who should run consul-template
+#
+# consul_template_consul_token:
+#   the token consul-template should use to authenticate to consul
+#
 ###############################################################################
 
 ###############################################################################
@@ -32,3 +38,4 @@
 ###############################################################################
 consul_template_version: 0.19.4
 consul_template_linux_amd64_checksum: "md5:3bfd83801bf4b69ca0ec1a2779274655"
+consul_template_pid_file: "/var/run/consul-template.pid"

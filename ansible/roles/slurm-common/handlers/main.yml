@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2018 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -18,11 +18,10 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/arvados-keepproxy/meta/main.yml
+# file: roles/slurm-common/handlers/main.yml
 
-dependencies:
-  - { role: common }
-  - { role: arvados-common }
-  - { role: docker }
-  - role: arvados-slurm-compute
-    arvados_slurm_compute_consul_template_path: "{{ arvados_compute_node_consul_template_path }}"
+- name: reload consul-template
+  become: yes
+  systemd:
+    name: consul-template
+    state: reloaded

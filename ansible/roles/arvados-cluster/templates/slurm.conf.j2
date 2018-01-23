@@ -1,9 +1,9 @@
-ControlMachine={{ slurm_control_machine }}
+ControlMachine={{ arvados_cluster_slurm_control_machine }}
 SlurmctldPort=6817
 SlurmdPort=6818
 AuthType=auth/munge
-StateSaveLocation={{ slurm_state_save_location }}
-SlurmdSpoolDir={{ slurm_spool_dir }}
+StateSaveLocation={{ arvados_cluster_slurm_state_save_location }}
+SlurmdSpoolDir={{ arvados_cluster_slurm_spool_dir }}
 SwitchType=switch/none
 MpiDefault=none
 SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid
@@ -45,5 +45,5 @@ JobAcctGatherType=jobacct_gather/none
 NodeName=DEFAULT
 PartitionName=DEFAULT MaxTime=INFINITE State=UP
 
-NodeName={{ slurm_nodename_pattern }}
-PartitionName=compute Nodes={{ slurm_nodename_pattern }} Default=YES Shared=YES
+NodeName={{ arvados_cluster_compute_node_pattern }}
+PartitionName=compute Nodes={{ arvados_cluster_compute_node_pattern }} Default=YES Shared=YES

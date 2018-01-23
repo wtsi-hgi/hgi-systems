@@ -1,0 +1,8 @@
+---
+
+- name: restart consul-template
+  become: yes
+  systemd:
+    name: consul-template
+    state: restarted
+    daemon_reload: yes

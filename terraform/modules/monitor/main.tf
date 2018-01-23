@@ -91,13 +91,13 @@ resource "openstack_compute_instance_v2" "monitor" {
 resource "openstack_compute_floatingip_associate_v2" "monitor" {
   count       = "${var.count}"
   provider    = "openstack"
-  floating_ip = "${openstack_networking_floatingip_v2.monitor.address}"
-  instance_id = "${openstack_compute_instance_v2.monitor.id}"
+  floating_ip = "${openstack_networking_floatingip_v2.monitor.*.address[count.index]}"
+  instance_id = "${openstack_compute_instance_v2.monitor.*.id[count.index]}"
 }
 
 resource "infoblox_record" "monitor-dns" {
   count  = "${var.count}"
-  value  = "${openstack_networking_floatingip_v2.monitor.address}"
+  value  = "${openstack_networking_floatingip_v2.monitor.*.address[count.index]}"
   name   = "${format(local.hostname_format, count.index + 1)}"
   domain = "${var.domain}"
   type   = "A"
@@ -106,5 +106,5 @@ resource "infoblox_record" "monitor-dns" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.monitor.address}"
+  value = "${openstack_networking_floatingip_v2.monitor.*.address}"
 }

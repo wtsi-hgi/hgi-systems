@@ -113,6 +113,7 @@
         name: arvados-master
       vars:
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_master_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
 
 - hosts: arvados-keeps
   roles:
@@ -131,12 +132,21 @@
     - arvados-shell
 
 - hosts: arvados-compute-nodes
-  roles:
-    - arvados-compute-node
+  tasks:
+    - name: configure attached-openstack-volume for arvados api database
+      import_role:
+        name: arvados-compute-node
+      vars:
+        arvados_compute_node_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"
 
 # non-host playbooks
 - hosts: arvados-clusters
   gather_facts: no
-  roles:
-    - arvados-cluster
-
+  tasks:
+    - name: configure arvados cluster as a whole
+      import_role:
+        name: arvados-cluster
+      vars:
+        arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+        arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
+        arvados_cluster_consul_template_path: "{{ arvados_cluster_GROUP_consul_template_path }}"

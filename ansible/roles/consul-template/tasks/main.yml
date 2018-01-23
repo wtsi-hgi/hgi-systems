@@ -37,3 +37,25 @@
     dest: /usr/local/bin
   when: download_consul_template|changed
 
+- name: ensure /etc/consul-template.d dir exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    owner: "{{ consul_template_user }}"
+
+- name: generate base consul-template configuration
+  become: yes
+  template:
+    src: 00-consul-template.hcl.j2
+    dest: /etc/consul-template.d/00-consul-template.hcl
+    owner: "{{ consul_template_user }}"
+
+- name: create systemd unit
+  become: yes
+  template:
+    src: consul-template.service.j2
+    dest: /etc/systemd/system/consul-template.service
+    owner: root
+  notify:
+    - restart consul-template

@@ -1,0 +1,21 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Consul-Template
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+User={{ consul_template_user }}
+Type=simple
+AmbientCapabilities=CAP_DAC_OVERRIDE
+ExecStart=/usr/local/bin/consul-template -config="/etc/consul-template.d/"
+ExecReload=/bin/kill -HUP $MAINPID
+TimeoutSec=30
+Restart=always
+RestartSec=30
+StartLimitInterval=350
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target

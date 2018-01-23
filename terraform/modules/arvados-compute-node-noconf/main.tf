@@ -94,13 +94,15 @@ data "template_file" "docker-consul-script" {
   template = "${file("${path.module}/scripts/docker-consul.sh.tpl")}"
 
   vars {
-    CONSUL_RETRY_JOIN     = "${join(",", var.consul_retry_join)}"
-    CONSUL_RECURSORS      = "${join(",", var.upstream_dns_servers)}"
-    CONSUL_ADVERTISE_ADDR = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
-    CONSUL_DATACENTER     = "${var.consul_datacenter}"
-    CONSUL_ACL_TOKEN      = "${data.consul_keys.consul-agent.var.consul_acl_token}"
-    CONSUL_ENCRYPT        = "${data.consul_keys.consul-agent.var.consul_encrypt}"
-    CONSUL_BIND_ADDR      = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
+    CONSUL_RETRY_JOIN = "${join(",", var.consul_retry_join)}"
+    CONSUL_RECURSORS  = "${join(",", var.upstream_dns_servers)}"
+    CONSUL_DATACENTER = "${var.consul_datacenter}"
+    CONSUL_ACL_TOKEN  = "${data.consul_keys.consul-agent.var.consul_acl_token}"
+    CONSUL_ENCRYPT    = "${data.consul_keys.consul-agent.var.consul_encrypt}"
+
+    # Cannot pass IP address of port resource to this data source because of https://github.com/hashicorp/terraform/issues/14536
+    # CONSUL_BIND_ADDR      = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
+    # CONSUL_ADVERTISE_ADDR = "${openstack_networking_port_v2.arvados-compute-port.*.all_fixed_ips.0[count.index]}"
   }
 }
 
