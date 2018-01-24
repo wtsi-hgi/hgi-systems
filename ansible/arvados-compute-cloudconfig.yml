@@ -44,7 +44,7 @@
         dest: "{{ arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file }}"
         content: "{{ cc_consul_template_token }}" 
         mode: 0600
-   - name: apply consul-template role
+    - name: apply consul-template role
       import_role:
         name: consul-template
       vars:
