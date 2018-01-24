@@ -170,6 +170,7 @@
         hgi_consul_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
       when: inventory_hostname not in groups['consul-servers']
     - name: install consul token into consul_template_consul_token_file
+      become: yes
       copy:
         dest: "{{ consul_PLAYBOOK_consul_template_token_file }}"
         content: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
