@@ -50,6 +50,9 @@
     src: 00-consul-template.hcl.j2
     dest: /etc/consul-template.d/00-consul-template.hcl
     owner: "{{ consul_template_user }}"
+  when: "not 'image-building' in group_names"
+  notify:
+    - restart consul-template
 
 - name: create systemd unit
   become: yes

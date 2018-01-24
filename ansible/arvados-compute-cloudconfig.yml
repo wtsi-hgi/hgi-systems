@@ -34,3 +34,9 @@
       file:
         path: /etc/arvados_consul_template_path
         contents: "consul-template/arvados-cluster/{{ cc_arvados_cluster_id }}"
+    - name: apply consul-template role
+      import_role:
+        name: consul-template
+      vars:
+        consul_template_user: mercury
+        consul_template_consul_token: "{{ cc_consul_template_token }}"

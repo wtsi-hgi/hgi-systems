@@ -73,6 +73,9 @@ gitlab_project_settings_ansible_consul:
     ANSIBLE_CONSUL_URL: "http://consul-delta-hgi.hgi.sanger.ac.uk:8500"
     ANSIBLE_CONSUL_TOKEN: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
 
+gitlab_project_settings_consul_template:
+    CONSUL_TEMPLATE_TOKEN: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+
 gitlab_project_settings_infoblox:
     INFOBLOX_PASSWORD: "{{ infoblox_credentials_password }}"
     INFOBLOX_USERNAME: "{{ infoblox_credentials_username }}"

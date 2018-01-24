@@ -10,6 +10,12 @@ else
     >&2 echo "REGION unset or empty"
 fi
 
+if [[ -n "${CONSUL_TEMPLATE_TOKEN:-}" ]]; then
+    export TF_VAR_consul_template_token=${CONSUL_TEMPLATE_TOKEN}
+else
+    >&2 echo "CONSUL_TEMPLATE_TOKEN unset or empty"
+fi
+
 ###############################################################################
 # If you change these image_name values, terraform will DESTROY and RE-CREATE 
 # all instances that use them! BE CAREFUL!
