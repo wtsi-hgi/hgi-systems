@@ -11,3 +11,7 @@ docker:
     - name: test-os3
       dockerfile: os3/Dockerfile
       context: .
+
+checksum_storage:
+  type: consul
+  key: /ci/docker-build-checksums
