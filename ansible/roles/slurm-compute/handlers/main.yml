@@ -4,6 +4,7 @@
     name: munge
     state: restarted
   listen: "reload slurm"
+  when: "not 'image-building' in group_names"
 
 - name: restart slurmd as it does not support reload
   become: yes
@@ -11,3 +12,4 @@
     name: slurmd
     state: restarted
   listen: "reload slurm"
+  when: "not 'image-building' in group_names"

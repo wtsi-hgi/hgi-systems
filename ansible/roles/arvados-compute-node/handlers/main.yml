@@ -3,6 +3,7 @@
   runit:
     name: arvados-docker-cleaner
     state: restarted
+  when: "not 'image-building' in group_names"
 
 - name: reboot host in 1m
   become: yes
