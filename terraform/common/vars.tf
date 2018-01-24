@@ -41,3 +41,7 @@ variable freebsd_base_image_user {
   type    = "string"
   default = "beastie"
 }
+
+variable consul_template_token {
+  type = "string"
+}
