@@ -58,6 +58,13 @@
   notify:
     - reload consul-template
 
+- name: ensure consul-template.d exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0755
+
 - name: configure consul-template to template out slurm.conf
   become: yes
   template:
