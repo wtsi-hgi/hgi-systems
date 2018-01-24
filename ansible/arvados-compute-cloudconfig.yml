@@ -36,10 +36,12 @@
         dnsmasq_apt_cache_valid_time: 3600
         dnsmasq_upstream_dns_servers: "{{ cc_upstream_dns_servers.split(',') }}"
     - name: create arvados consul template path file
+      become: yes
       copy:
         dest: /etc/arvados_consul_template_path
         content: "consul-template/arvados-cluster/{{ cc_arvados_cluster_id }}"
     - name: install consul token into consul_template_consul_token_file
+      become: yes
       copy:
         dest: "{{ arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file }}"
         content: "{{ cc_consul_template_token }}" 
