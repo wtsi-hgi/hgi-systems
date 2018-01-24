@@ -110,6 +110,7 @@ build_docker_iamges:
   tags:
     - docker-privileged
   image: mercury/thrifty-builder
+  entrypoint: bash
   script:
     - ci/build-docker-images.sh
 
