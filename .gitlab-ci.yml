@@ -111,7 +111,7 @@ build_docker_iamges:
     - docker-privileged
   image:
     name: mercury/thrifty-builder
-    entrypoint: ["/bin/bash"]
+    entrypoint: ["/bin/sh"]
   script:
     - ci/build-docker-images.sh
 
