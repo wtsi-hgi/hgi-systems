@@ -24,7 +24,7 @@
   vars:
     arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
   tasks:
-   - name: apply common role
+    - name: apply common role
       import_role:
         name: common
     - name: set up dnsmasq
