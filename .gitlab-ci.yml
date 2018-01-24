@@ -109,7 +109,7 @@ build_docker_iamges:
   stage: ci-setup
   tags:
     - docker-privileged
-  image: python:3.6
+  image: mercury/thrifty-builder
   script:
     - ci/build-docker-images.sh
 
