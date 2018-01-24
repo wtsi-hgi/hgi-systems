@@ -14,4 +14,4 @@ docker:
 
 checksum_storage:
   type: consul
-  key: /ci/docker-build-checksums
+  key: ci/docker-build-checksums
