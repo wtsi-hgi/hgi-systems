@@ -53,7 +53,7 @@ gitlab_runner_registrations:
     limit: 0
     extratags:
       - docker-privileged
-    extraargs: "--docker-privileged --docker-image docker:latest --output-limit 102400"
+    extraargs: "--docker-privileged --docker-image docker:latest --output-limit 102400 --docker-volumes /var/run/docker.sock:/var/run/docker.sock"
   - name: "docker-machine"
     executor: "docker+machine"
     limit: 26
