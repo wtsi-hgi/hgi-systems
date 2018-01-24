@@ -109,8 +109,9 @@ build_docker_iamges:
   stage: ci-setup
   tags:
     - docker-privileged
-  image: mercury/thrifty-builder
-  entrypoint: bash
+  image:
+    name: mercury/thrifty-builder
+    entrypoint: bash
   script:
     - ci/build-docker-images.sh
 
