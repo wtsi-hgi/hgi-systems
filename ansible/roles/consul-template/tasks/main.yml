@@ -52,7 +52,7 @@
   notify:
     - restart consul-template
 
-- name: create systemd unit
+- name: create systemd unit for consul-template
   become: yes
   template:
     src: consul-template.service.j2
@@ -60,3 +60,10 @@
     owner: root
   notify:
     - restart consul-template
+
+- name: enable consul-template systemd unit 
+  become: yes
+  systemd:
+    name: consul-template
+    enabled: yes
+    daemon_reload: yes
