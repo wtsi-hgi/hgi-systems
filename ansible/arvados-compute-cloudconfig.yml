@@ -21,6 +21,8 @@
 # file: arvados-compute-cloudconfig.yml
 
 - hosts: localhost
+  vars:
+    arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
   tasks:
     - name: set up dnsmasq
       import_role:
@@ -34,9 +36,14 @@
       file:
         path: /etc/arvados_consul_template_path
         contents: "consul-template/arvados-cluster/{{ cc_arvados_cluster_id }}"
-    - name: apply consul-template role
+    - name: install consul token into consul_template_consul_token_file
+      copy:
+        dest: "{{ arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file }}"
+        content: "{{ cc_consul_template_token }}" 
+        mode: 0600
+   - name: apply consul-template role
       import_role:
         name: consul-template
       vars:
         consul_template_user: mercury
-        consul_template_consul_token: "{{ cc_consul_template_token }}"
+        consul_template_consul_token_file: "{{ arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file }}"

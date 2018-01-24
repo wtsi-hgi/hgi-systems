@@ -28,8 +28,9 @@
 # consul_template_user:
 #   the user who should run consul-template
 #
-# consul_template_consul_token:
-#   the token consul-template should use to authenticate to consul
+# consul_template_consul_token_file:
+#   the file from which to read the token consul-template should use to 
+#   authenticate to consul
 #
 ###############################################################################
 

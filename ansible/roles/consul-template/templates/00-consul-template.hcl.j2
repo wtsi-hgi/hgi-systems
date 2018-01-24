@@ -18,12 +18,6 @@ consul {
   # clients can connect.
   address = "127.0.0.1:8500"
 
-  # This is the ACL token to use when connecting to Consul. If you did not
-  # enable ACLs on your Consul cluster, you do not need to set this option.
-  #
-  # This option is also available via the environment variable CONSUL_TOKEN.
-  token = "{{ consul_template_consul_token }}"
-
   # This controls the retry behavior when an error is returned from Consul.
   # Consul Template is highly fault tolerant, meaning it does not exit in the
   # face of failure. Instead, it uses exponential back-off and retry functions

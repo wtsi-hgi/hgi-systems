@@ -49,6 +49,13 @@
   notify:
     - reload slurm
 
+- name: apply consul-template role
+  import_role:
+    name: consul-template
+  vars:
+    consul_template_user: mercury
+    consul_template_consul_token_file: "/etc/consul-template.token" # FIXME this variable is set all over the place and needs to match :(
+
 - name: create slurm.conf consul-template
   become: yes
   template:
