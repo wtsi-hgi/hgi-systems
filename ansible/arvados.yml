@@ -132,7 +132,7 @@
   roles:
     - arvados-shell
 
-- hosts: arvados-compute-nodes
+- hosts: arvados-compute-nodes:&image-building
   tasks:
     - name: configure attached-openstack-volume for arvados api database
       import_role:
