@@ -70,7 +70,7 @@
   file:
     path: /etc/consul-template.d
     state: directory
-    mode: 0755
+    mode: 0700
 
 - name: configure consul-template to template out slurm.conf
   become: yes

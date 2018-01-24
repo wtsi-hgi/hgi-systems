@@ -42,15 +42,13 @@
   file:
     path: /etc/consul-template.d
     state: directory
-    owner: "{{ consul_template_user }}"
+    mode: 0700
 
 - name: generate base consul-template configuration
   become: yes
   template:
     src: 00-consul-template.hcl.j2
     dest: /etc/consul-template.d/00-consul-template.hcl
-    owner: "{{ consul_template_user }}"
-  when: "not 'image-building' in group_names"
   notify:
     - restart consul-template
 
