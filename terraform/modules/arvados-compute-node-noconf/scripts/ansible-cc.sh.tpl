@@ -31,7 +31,7 @@ localhost ansible_user=ubuntu cc_consul_datacenter="$${ansible_cc_consul_datacen
 
 EOF
 
-for group in $${ansible_cc_groups[@]}; do
+for group in $${ansible_cc_groups[@]} cloud-config; do
 cat <<EOF >> "$${ansible_cc_tmp_ansible}/cc.inv"
 [$${group}:children]
 cc
