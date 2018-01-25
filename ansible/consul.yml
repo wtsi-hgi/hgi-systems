@@ -130,8 +130,8 @@
         consul_cluster_acl_consul_template_token: "{{ consul_cluster_GROUP_acl_consul_template_token }}"
         consul_cluster_acl_agent_name: "{{ consul_cluster_GROUP_acl_agent_name }}"
         consul_cluster_acl_agent_token: "{{ consul_cluster_GROUP_acl_agent_token }}"
-        consul_cluster_acl_locks_name: "{{ consul_cluster_GROUP_acl_locks_name }}"
-        consul_cluster_acl_locks_token: "{{ consul_cluster_GROUP_acl_locks_token }}"
+        consul_cluster_acl_ci_name: "{{ consul_cluster_GROUP_acl_ci_name }}"
+        consul_cluster_acl_ci_token: "{{ consul_cluster_GROUP_acl_ci_token }}"
         consul_cluster_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
       when: inventory_hostname not in groups['consul-servers']
 

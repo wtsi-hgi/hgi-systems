@@ -1,12 +1,14 @@
 # vault contents:
-# hgi_username: xxxx
-# hgi_password: xxxx
-# ansible_vault_password: xxxx
-# mercury_google_password: xxxx
-# mercury_ssh_key: xxxx
-# hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxxx
-# hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key: xxxx
-# mercury_hgi_arvados_google_service_account_json_key: xxxx
+#   hgi_username: xxx
+#   hgi_password: xxx
+#   ansible_vault_password: xxx
+#   hgi_credentials_mercury_dockerhub_username: xxx
+#   hgi_credentials_mercury_dockerhub_password: xxx
+#   mercury_google_password: xxx
+#   mercury_ssh_key: xxx
+#   hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxx
+#   hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key: xxx
+#   mercury_hgi_arvados_google_service_account_json_key: xxx
 
 hgi_credentials_mercury_google_uid: 112543019536584549283
 

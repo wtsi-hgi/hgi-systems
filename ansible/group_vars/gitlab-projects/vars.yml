@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2017, 2018 Genome Research Ltd.
 #
 # Authors:
 #   Colin Nolan <colin.nolan@sanger.ac.uk>
@@ -81,9 +81,12 @@ gitlab_project_settings_infoblox:
     INFOBLOX_USERNAME: "{{ infoblox_credentials_username }}"
     INFOBLOX_HOST: "https://{{ infoblox_credentials_api_server }}"
 
-gitlab_project_settings_locks_consul:
-    LOCKS_CONSUL_HTTP_ADDR: "{{ consul_credentials_GROUP_creds['locks'].address }}"
-    LOCKS_CONSUL_HTTP_TOKEN: "{{ consul_credentials_GROUP_creds['locks'].token }}"
+gitlab_project_settings_ci:
+    CI_CONSUL_HTTP_ADDR: "{{ consul_credentials_GROUP_creds['ci'].address }}"
+    CI_CONSUL_HTTP_TOKEN: "{{ consul_credentials_GROUP_creds['ci'].token }}"
+    CI_DOCKER_REGISTRY_URL: docker.io
+    CI_DOCKER_REGISTRY_USERNAME: "{{ hgi_credentials_mercury_dockerhub_username }}"
+    CI_DOCKER_REGISTRY_PASSWORD: "{{ hgi_credentials_mercury_dockerhub_password }}"
 
 gitlab_project_settings_gitlab:
     GITLAB_TOKEN: "{{ gitlab_token }}"
