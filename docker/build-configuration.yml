@@ -2,7 +2,7 @@
 
 docker:
   images:
-    - name: test-taos
+    - name: "mercury/test-taos"
       dockerfile: taos/Dockerfile
       context: .
 #    - name: test-pao
