@@ -11,6 +11,10 @@ docker:
     - name: test-os3
       dockerfile: os3/Dockerfile
       context: .
+  registries:
+    - url: "{{ env['CI_DOCKER_REGISTRY_URL'] }}"
+      username: "{{ env['CI_DOCKER_REGISTRY_USERNAME'] }}"
+      password: "{{ env['CI_DOCKER_REGISTRY_PASSWORD'] }}"
 
 checksum_storage:
   type: consul
