@@ -222,15 +222,15 @@
         state: present
         token: "{{ consul_cluster_acl_ansible_token }}"
 
-    - name: create a client ACL token for managing locks
+    - name: create a client ACL token for use in the CI
       delegate_to: "{{ consul_cluster_leader }}"
       consul_acl:
-        name: "{{ consul_cluster_acl_locks_name }}"
-        token: "{{ consul_cluster_acl_locks_token }}"
+        name: "{{ consul_cluster_acl_ci_name }}"
+        token: "{{ consul_cluster_acl_ci_token }}"
         mgmt_token: "{{ consul_cluster_acl_management_token }}"
         token_type: client
         rules:
-          - key: ""
+          - key: "ci"
             policy: write
           - session: ""
             policy: write

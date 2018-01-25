@@ -29,5 +29,5 @@ consul_cluster_GROUP_acl_agent_master_token: "{{ consul_credentials_GROUP_creds[
 consul_cluster_GROUP_server_acl_token: "{{ consul_credentials_GROUP_creds['default'].token }}"
 consul_cluster_GROUP_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
 
-consul_cluster_GROUP_acl_locks_name: lock-manager
-consul_cluster_GROUP_acl_locks_token: "{{ consul_credentials_GROUP_creds['locks'].token }}"
+consul_cluster_GROUP_acl_ci_name: ci
+consul_cluster_GROUP_acl_ci_token: "{{ consul_credentials_GROUP_creds['ci'].token }}"

@@ -12,7 +12,7 @@
 #      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
 #    agent:
 #      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
-#    locks:
+#    ci:
 #      address: xxx:xxx
 #      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX
 
