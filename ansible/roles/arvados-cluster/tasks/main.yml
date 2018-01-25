@@ -59,7 +59,7 @@
     domain: "{{ arvados_cluster_consul_domain }}"
     info: 
       ping_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
-  with_items: "{{ arvados_cluster_compute_node_names }}"
+  with_items: "{{ arvados_cluster_GROUP_compute_node_names }}"
 
 - name: create api_client_authorization for anonymous user
   delegate_to: "{{ arvados_cluster_delegate }}"
@@ -178,20 +178,42 @@
     authorized_user_uuid: mercury
     public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
 
-- name: set consul-template keys for slurm in in consul kv
+- name: set consul-template keys for cluster in in consul kv
   delegate_to: localhost
   tags:
     - slurm
     - munge
     - consul_kv
   consul_kv:
-    key: "{{ item.key }}"
+    key: "{{ arvados_cluster_consul_template_path }}/{{ item.key }}"
     value: "{{ item.value }}"
     state: present
     token: "{{ arvados_cluster_consul_template_token }}"
     host: "{{ arvados_cluster_consul_template_host }}"
   with_items:
-    - key: "{{ arvados_cluster_consul_template_path }}/munge_key_base64"
+    - key: munge_key_base64
       value: "{{ arvados_cluster_munge_key_base64 }}"
-    - key: "{{ arvados_cluster_consul_template_path }}/slurm_conf"
+    - key: slurm_conf
       value: "{{ lookup('template', 'slurm.conf.j2') }}"
+    - key: arvados_cluster_api_host
+      value: "{{ arvados_cluster_api_host }}"
+  when: "not 'image-building' in group_names"
+
+- name: set ping_secret and uuid for each node in consul kv
+  delegate_to: localhost
+  tags:
+    - consul_kv
+  consul_kv:
+    key: "{{ arvados_cluster_consul_template_path }}/compute-node/{{ item[0] }}/{{ item[1].key }}"
+    value: "{{ item[1].value }}"
+    state: present
+    token: "{{ arvados_cluster_consul_template_token }}"
+    host: "{{ arvados_cluster_consul_template_host }}"
+  with_nested: 
+    - "{{ arvados_cluster_GROUP_compute_node_names }}"
+    - - key: ping_secret
+        value: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
+      - key: uuid
+        value: "{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}"
+  when: "not 'image-building' in group_names"
+

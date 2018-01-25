@@ -167,6 +167,31 @@
     mode: 1660
     state: file
 
+- name: create arvados-node-ping consul-template
+  become: yes
+  template:
+    src: arvados-node-ping.ctmpl.j2
+    dest: /etc/arvados-node-ping.ctmpl
+    mode: 0644
+  notify:
+    - reload consul-template
+
+- name: ensure consul-template.d exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0700
+
+- name: configure consul-template to template out arvados-node-ping
+  become: yes
+  template:
+    src: 20-arvados-node-ping.hcl.j2
+    dest: /etc/consul-template.d/20-arvados-node-ping.hcl
+    mode: 0644
+  notify:
+    - reload consul-template
+
 - name: configure cron to run arvados-node-ping every five minutes
   become: yes
   cron:
@@ -176,11 +201,6 @@
     minute: "*/5"
     hour: "*"
     day: "*"
-    job: "/usr/bin/curl -k -d ping_secret={{ arvados_cluster_root_key | pbkdf2_hmac(cloud_resource_name, 32) | b36encode }} https://{{ arvados_cluster_api_host }}/arvados/v1/nodes/{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}/ping"
-  when: "not 'image-building' in group_names"
-  register: node_ping_cron
+    job: "/usr/local/bin/arvados-node-ping"
 
-- name: attempt to ping now
-  command: "/usr/bin/curl -k -d ping_secret={{ arvados_cluster_root_key | pbkdf2_hmac(cloud_resource_name, 32) | b36encode }} https://{{ arvados_cluster_api_host }}/arvados/v1/nodes/{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}/ping"
-  when: "node_ping_cron|changed and not 'image-building' in group_names"
 

@@ -109,10 +109,6 @@ arvados_cluster_workbenchs: "{{ groups['arvados-workbenchs'] | intersect(groups[
 arvados_cluster_workbench_names: "{{ arvados_cluster_workbenchs | map(attribute='cloud_resource_name') | list }}"
 arvados_cluster_workbench_hosts: "{{ arvados_cluster_workbenchs | map(attribute='cloud_resource_fqdn') | list }}"
 
-arvados_cluster_compute_nodes: "{{ groups['arvados-compute-nodes'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
-arvados_cluster_compute_node_names: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_name') | list }}"
-arvados_cluster_compute_node_hosts: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_fqdn') | list }}"
-
 # Public FQDNs of Arvados services
 arvados_cluster_sso_host: "arvados-sso-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_api_host: "arvados-api-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
@@ -122,7 +118,20 @@ arvados_cluster_workbench_host: "arvados-workbench-{{ arvados_cluster_id }}.{{ a
 arvados_cluster_download_host: "arvados-download-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 
+arvados_cluster_GROUP_max_compute_nodes: 200
+
 arvados_cluster_slurm_control_machine: "arvados-master-{{ arvados_cluster_id }}"
-arvados_cluster_compute_node_pattern: "arvados-compute-node-{{ arvados_cluster_id }}-[001-999]"
+
+#arvados_cluster_compute_nodes: "{{ groups['arvados-compute-nodes'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
+#arvados_cluster_compute_node_names: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_name') | list }}"
+#arvados_cluster_compute_node_hosts: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_fqdn') | list }}"
+
+# N.B. the following must match the hostname pattern used in terraform for this cluster
+arvados_cluster_GROUP_compute_node_prefix: "arvados-compute-node-{{ arvados_cluster_id }}-"
+arvados_cluster_GROUP_compute_node_number_format: "%03d"
+
+arvados_cluster_GROUP_compute_node_pattern: "{{ arvados_cluster_GROUP_compute_node_prefix }}[{{ arvados_cluster_GROUP_compute_node_number_format | format(1) }}-{{ arvados_cluster_GROUP_compute_node_number_format | format(arvados_cluster_GROUP_max_compute_nodes) }}]"
+arvados_cluster_GROUP_compute_node_names_lookup_args: "start=1 count={{ arvados_cluster_GROUP_max_compute_nodes }} format={{ arvados_cluster_GROUP_compute_node_prefix }}{{ arvados_cluster_GROUP_compute_node_number_format }}"
+arvados_cluster_GROUP_compute_node_names: "{{ lookup('sequence', arvados_cluster_GROUP_compute_node_names_lookup_args, wantlist=True) }}"
 
 arvados_cluster_delegate: "{{ arvados_cluster_shells[0]['inventory_hostname'] }}"

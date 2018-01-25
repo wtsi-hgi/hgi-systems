@@ -45,5 +45,5 @@ JobAcctGatherType=jobacct_gather/none
 NodeName=DEFAULT
 PartitionName=DEFAULT MaxTime=INFINITE State=UP
 
-NodeName={{ arvados_cluster_compute_node_pattern }}
-PartitionName=compute Nodes={{ arvados_cluster_compute_node_pattern }} Default=YES Shared=YES
+NodeName={{ arvados_cluster_GROUP_compute_node_pattern }}{# FIXME this should be passed in from playbook #}
+PartitionName=compute Nodes={{ arvados_cluster_GROUP_compute_node_pattern }} Default=YES Shared=YES
