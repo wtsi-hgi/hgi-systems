@@ -199,21 +199,31 @@
       value: "{{ arvados_cluster_api_host }}"
   when: "not 'image-building' in group_names"
 
-- name: set ping_secret and uuid for each node in consul kv
+- name: set ping_secret for each node in consul kv
   delegate_to: localhost
   tags:
     - consul_kv
   consul_kv:
-    key: "{{ arvados_cluster_consul_template_path }}/compute-node/{{ item[0] }}/{{ item[1].key }}"
-    value: "{{ item[1].value }}"
+    key: "{{ arvados_cluster_consul_template_path }}/compute-node/{{ item }}/ping_secret"
+    value: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
     state: present
     token: "{{ arvados_cluster_consul_template_token }}"
     host: "{{ arvados_cluster_consul_template_host }}"
-  with_nested: 
+  with_items: 
     - "{{ arvados_cluster_GROUP_compute_node_names }}"
-    - - key: ping_secret
-        value: "{{ arvados_cluster_root_key | pbkdf2_hmac(item[0], 32) | b36encode }}"
-      - key: uuid
-        value: "{{ arvados_cluster_id }}-7ekkf-{{ item[0] | hash('md5') | truncate(15, True, '') }}"
+  when: "not 'image-building' in group_names"
+
+- name: set uuid for each node in consul kv
+  delegate_to: localhost
+  tags:
+    - consul_kv
+  consul_kv:
+    key: "{{ arvados_cluster_consul_template_path }}/compute-node/{{ item }}/uuid"
+    value: "{{ arvados_cluster_id }}-7ekkf-{{ item | hash('md5') | truncate(15, True, '') }}"
+    state: present
+    token: "{{ arvados_cluster_consul_template_token }}"
+    host: "{{ arvados_cluster_consul_template_host }}"
+  with_items: 
+    - "{{ arvados_cluster_GROUP_compute_node_names }}"
   when: "not 'image-building' in group_names"
 
