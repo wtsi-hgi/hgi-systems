@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-ping_secret="{{- '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ with $hostname := file "/etc/hostname" | trimSpace }}{{ key (printf "%s/compute-node/%s/ping_secret" $cluster_path $hostname) }}{{ end }}' -}}"
-uuid="{{- '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ with $hostname := file "/etc/hostname" | trimSpace }}{{ key (printf "%s/compute-node/%s/uuid" $cluster_path $hostname) }}{{ end }}' -}}"
+ping_secret="{{- '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ with $hostname := file "/etc/hostname" | trimSpace }}{{ key (printf "%s/compute-node/%s/ping_secret" $cluster_path $hostname) }}{{ end }}{{ end }}' -}}"
+uuid="{{- '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ with $hostname := file "/etc/hostname" | trimSpace }}{{ key (printf "%s/compute-node/%s/uuid" $cluster_path $hostname) }}{{ end }}{{ end }}' -}}"
 arvados_cluster_api_host="{{ '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ key (printf "%s/arvados_cluster_api_host" $cluster_path) }}{{ end }}' -}}"
 
 /usr/bin/curl -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping"
