@@ -212,8 +212,8 @@
   with_nested: 
     - "{{ arvados_cluster_GROUP_compute_node_names }}"
     - - key: ping_secret
-        value: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
+        value: "{{ arvados_cluster_root_key | pbkdf2_hmac(item[0], 32) | b36encode }}"
       - key: uuid
-        value: "{{ arvados_cluster_id }}-7ekkf-{{ cloud_resource_name | hash('md5') | truncate(15, True, '') }}"
+        value: "{{ arvados_cluster_id }}-7ekkf-{{ item[0] | hash('md5') | truncate(15, True, '') }}"
   when: "not 'image-building' in group_names"
 
