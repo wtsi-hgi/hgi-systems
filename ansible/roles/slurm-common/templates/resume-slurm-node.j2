@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# {{ ansible_managed }}
+
+set -euf -o pipefail
+
+nodename=$(cat /etc/hostname)
+
+function get_current_state {
+  sinfo --noheader -o %t -n $1
+}
+
+current_state=$(get_current_state ${nodename})
+
+if [[ "${current_state}" =~ "^(down|drain|drng)" ]]; then
+   echo "Resuming node ${nodename}"
+   scontrol update NodeName=${nodename} State=RESUME
+   sleep 1
+   new_state=$(get_current_state ${nodename})
+   echo "Node ${nodename} state updated ${current_state} => ${new_state}"
+else
+   echo "Node ${nodename} already is state ${current_state}, no need to resume"
+fi
+
+exit 0

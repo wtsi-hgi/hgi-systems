@@ -56,6 +56,13 @@
     consul_template_user: mercury
     consul_template_consul_token_file: "/etc/consul-template.token" # FIXME this variable is set all over the place and needs to match :(
 
+- name: create /usr/local/bin/resume-slurm-node
+  become: yes
+  template:
+    src: resume-slurm-node.j2
+    dest: /usr/local/bin/resume-slurm-node
+    mode: 0755
+
 - name: create slurm.conf consul-template
   become: yes
   template:
@@ -98,4 +105,3 @@
     mode: 0444
   notify:
     - reload consul-template
-
