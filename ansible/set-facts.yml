@@ -21,7 +21,7 @@
 # file: set-facts.yml
 
 # Set facts on all cloud resources so they will be expanded and referencable via hostvars
-- hosts: cloud-resources
+- hosts: cloud-resources:!noconf
   gather_facts: no
   roles:
     - cloud-resource
