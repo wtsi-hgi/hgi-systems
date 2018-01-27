@@ -17,6 +17,9 @@ if [[ "${current_state}" =~ ^(down|drain|drng) ]]; then
    sleep 1
    new_state=$(get_current_state ${nodename})
    echo "Node ${nodename} state updated ${current_state} => ${new_state}"
+elif [[ "${current_state}" == "idle*" ]]; then
+  echo "Restarting slurmd"
+  systemctl restart slurmd
 else
    echo "Node ${nodename} already is state ${current_state}, no need to resume"
 fi
