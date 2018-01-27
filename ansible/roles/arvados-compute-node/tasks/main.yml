@@ -193,13 +193,13 @@
   notify:
     - reload consul-template
 
-- name: configure cron to run arvados-node-ping every five minutes
+- name: configure cron to run arvados-node-ping every two minutes
   become: yes
   cron:
     cron_file: arvados-node-ping
     user: root
     name: arvados-node-ping
-    minute: "*/5"
+    minute: "*/2"
     hour: "*"
     day: "*"
     job: "/usr/local/bin/arvados-node-ping"

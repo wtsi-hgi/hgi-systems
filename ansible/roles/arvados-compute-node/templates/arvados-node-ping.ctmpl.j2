@@ -14,9 +14,7 @@ pong=$(/usr/bin/curl -k -d ping_secret="${ping_secret}" "https://${arvados_clust
 
 errors=$(echo "${pong}" | jq '.errors')
 
-if [[ "${errors}" == "null" ]]; then
-    # no errors with ping
-else
+if [[ "${errors}" != "null" ]]; then
     echo "Errors: ${errors}"
     echo "${errors}" | grep -q 'Incorrect ping_secret' && (echo "Ping secret incorrect, halting system"; halt)
     exit 1
