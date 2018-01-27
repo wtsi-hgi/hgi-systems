@@ -202,7 +202,7 @@
     minute: "*/2"
     hour: "*"
     day: "*"
-    job: "/usr/local/bin/arvados-node-ping"
+    job: "/usr/local/bin/arvados-node-ping 2>&1 | /usr/bin/logger -t arvados-node-ping"
 
 - name: create /usr/local/bin/resume-slurm-node
   become: yes
