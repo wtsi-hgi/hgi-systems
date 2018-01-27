@@ -9,4 +9,17 @@
 
 {{ 'arvados_cluster_api_host="{{ key (printf "%s/arvados_cluster_api_host" (scratch.Get "template_path")) }}"' }}
 
-/usr/bin/curl -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping"
+# TODO could add additional post data to ping as in https://doc.arvados.org/install/install-compute-ping.html
+pong=$(/usr/bin/curl -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping")
+
+errors=$(echo "${pong}" | jq '.errors')
+
+if [[ "${errors}" == "null" ]]; then
+    # no errors with ping
+else
+    echo "Errors: ${errors}"
+    echo "${errors}" | grep -q 'Incorrect ping_secret' && (echo "Ping secret incorrect, halting system"; halt)
+    exit 1
+fi
+
+/usr/local/bin/resume-slurm-node

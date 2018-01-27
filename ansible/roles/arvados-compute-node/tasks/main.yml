@@ -35,6 +35,7 @@
     - crunch-run
     - runit
     - arvados-docker-cleaner
+    - jq 
 
 ################################################################################
 # arvados-compute-node (deprecated jobs api)
