@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-ping_secret="{{ '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ with $hostname := file "/etc/hostname" | trimSpace }}{{ key (printf "%s/compute-node/%s/ping_secret" $cluster_path $hostname) }}{{ end }}{{ end }}' }}"
+{{ '{{ scratch.Set "template_path" (file "/etc/arvados_consul_template_path" | trimSpace) }}' }}
+{{ '{{ with node }}{{ scratch.Set "hostname" .Node.Node }}{{ end }}' }}
 
-uuid="{{ '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ with $hostname := file "/etc/hostname" | trimSpace }}{{ key (printf "%s/compute-node/%s/uuid" $cluster_path $hostname) }}{{ end }}{{ end }}' }}"
+{{ 'ping_secret="{{ key (printf "%s/compute-node/%s/ping_secret" (scratch.Get "template_path") (scratch.Get "hostname")) }}"' }}
 
-arvados_cluster_api_host="{{ '{{ with $cluster_path := file "' }}{{ arvados_compute_node_consul_template_path_file }}{{ '" | trimSpace }}{{ key (printf "%s/arvados_cluster_api_host" $cluster_path) }}{{ end }}' }}"
+{{ 'uuid="{{ key (printf "%s/compute-node/%s/uuid" (scratch.Get "template_path") (scratch.Get "hostname")) }}"' }}
+
+{{ 'arvados_cluster_api_host="{{ key (printf "%s/arvados_cluster_api_host" (scratch.Get "template_path")) }}"' }}
 
 /usr/bin/curl -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping"
