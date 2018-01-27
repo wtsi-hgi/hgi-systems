@@ -10,7 +10,7 @@
 {{ 'arvados_cluster_api_host="{{ key (printf "%s/arvados_cluster_api_host" (scratch.Get "template_path")) }}"' }}
 
 # TODO could add additional post data to ping as in https://doc.arvados.org/install/install-compute-ping.html
-pong=$(/usr/bin/curl -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping")
+pong=$(/usr/bin/curl -s -S -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping")
 
 errors=$(echo "${pong}" | jq '.errors')
 
