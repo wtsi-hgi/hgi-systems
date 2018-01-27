@@ -100,16 +100,3 @@ syslog {
   facility = "LOCAL5"
 }
 
-# This block defines the configuration for de-duplication mode. Please see the
-# de-duplication mode documentation later in the README for more information
-# on how de-duplication mode operates.
-deduplicate {
-  # This enables de-duplication mode. Specifying any other options also enables
-  # de-duplication mode.
-  enabled = true
-
-  # This is the prefix to the path in Consul's KV store where de-duplication
-  # templates will be pre-rendered and stored.
-  prefix = "consul-template/dedup/"
-}
-
