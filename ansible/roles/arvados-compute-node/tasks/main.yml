@@ -203,4 +203,10 @@
     day: "*"
     job: "/usr/local/bin/arvados-node-ping"
 
+- name: create /usr/local/bin/resume-slurm-node
+  become: yes
+  template:
+    src: resume-slurm-node.j2
+    dest: /usr/local/bin/resume-slurm-node
+    mode: 0755
 
