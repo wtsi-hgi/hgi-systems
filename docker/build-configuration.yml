@@ -2,14 +2,23 @@
 
 docker:
   images:
-    - name: mercury/taos
-      dockerfile: taos/Dockerfile
+    - name: mercury/gitlab-ci-git-push
+      dockerfile: gitlab-ci-git-push/Dockerfile
+      context: .
+    - name: mercury/om
+      dockerfile: om/Dockerfile
+      context: .
+    - name: mercury/os3
+      dockerfile: os3/Dockerfile
       context: .
     - name: mercury/pao
       dockerfile: pao/Dockerfile
       context: .
-    - name: mercury/os3
-      dockerfile: os3/Dockerfile
+    - name: mercury/spark-builder
+      dockerfile: spark-builder/Dockerfile
+      context: .
+    - name: mercury/taos
+      dockerfile: taos/Dockerfile
       context: .
   registries:
     - url: "{{ env['CI_DOCKER_REGISTRY_URL'] }}"
