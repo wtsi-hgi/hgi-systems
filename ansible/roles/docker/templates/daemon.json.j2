@@ -1,7 +1,8 @@
 {
     "bip": "{{ docker_bip }}",
     "mtu": 1400,
-    "dns": ["{{ docker_bip | ipaddr('address') }}"]{#,
+    "dns": ["{{ docker_bip | ipaddr('address') }}"],
+    "registry-mirrors": ["https://docker-hub-mirror.internal.sanger.ac.uk:5000"]{#,
     "default-ulimits": {
         "nofile": {
             "Name": "nofile",
