@@ -9,6 +9,9 @@ ensureSet CI_CONSUL_HTTP_TOKEN CI_CONSUL_HTTP_ADDR CI_LOCK_PREFIX CI_JOB_ID \
           CI_PROJECT_ID CI_PROJECT_URL GITLAB_TOKEN \
           CI_DOCKER_REGISTRY_URL CI_DOCKER_REGISTRY_USERNAME CI_DOCKER_REGISTRY_PASSWORD
 
+# TODO: This should go into the image executing this environment
+pip install -q python-gitlab
+
 echo "thriftybuilder: $(pip show thriftybuilder | grep Version)"
 
 export CONSUL_HTTP_TOKEN=${CI_CONSUL_HTTP_TOKEN}
