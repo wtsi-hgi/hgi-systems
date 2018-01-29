@@ -2,15 +2,15 @@
 
 docker:
   images:
-    - name: "mercury/test-taos"
+    - name: mercury/taos
       dockerfile: taos/Dockerfile
       context: .
-#    - name: test-pao
-#      dockerfile: pao/Dockerfile
-#      context: .
-#    - name: test-os3
-#      dockerfile: os3/Dockerfile
-#      context: .
+    - name: mercury/pao
+      dockerfile: pao/Dockerfile
+      context: .
+    - name: mercury/os3
+      dockerfile: os3/Dockerfile
+      context: .
   registries:
     - url: "{{ env['CI_DOCKER_REGISTRY_URL'] }}"
       username: "{{ env['CI_DOCKER_REGISTRY_USERNAME'] }}"
@@ -19,3 +19,4 @@ docker:
 checksum_storage:
   type: consul
   key: ci/docker-build-checksums
+  lock: ci/docker-build-checksums.lock

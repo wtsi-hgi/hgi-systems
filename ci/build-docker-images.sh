@@ -2,10 +2,15 @@
 
 set -euf -o pipefail
 
-pip show thriftybuilder | grep Version
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source "${SCRIPT_DIRECTORY}/common.sh"
 
-# FIXME: Stop stealing Consul details designed for use with Consul lock - either make own or generalise!
+ensureSet CI_CONSUL_HTTP_TOKEN CI_CONSUL_HTTP_ADDR CI_LOCK_PREFIX \
+          CI_DOCKER_REGISTRY_URL CI_DOCKER_REGISTRY_USERNAME CI_DOCKER_REGISTRY_PASSWORD
+
+echo "thriftybuilder: $(pip show thriftybuilder | grep Version)"
+
 export CONSUL_HTTP_TOKEN=${CI_CONSUL_HTTP_TOKEN}
 export CONSUL_HTTP_ADDR=${CI_CONSUL_HTTP_ADDR}
 
-thrifty -vv docker/build-configuration.yml
+consul-lock execute ${CI_LOCK_PREFIX}/docker-build "thrifty -vv docker/build-configuration.yml"
