@@ -62,6 +62,7 @@ ExecStartPre=-/usr/bin/docker kill consul-agent
 ExecStartPre=-/usr/bin/docker rm consul-agent
 ExecStartPre=/usr/bin/docker pull consul
 ExecStart=/bin/bash -c '/usr/bin/docker run --name consul-agent --net=host -e CONSUL_LOCAL_CONFIG="\$$(cat /etc/consul_local_config.json)" consul agent -bind=$${consul_bind_addr} -client=0.0.0.0'
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
