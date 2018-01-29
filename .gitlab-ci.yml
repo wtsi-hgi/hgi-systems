@@ -308,7 +308,7 @@ terraform-staging-delta-hgiarvados:
     - docker
   image: mercury/taos
   script:
-    - ci/ansible.sh
+    - ci/ansible-locked.sh
   artifacts:
     paths:
       - artifacts
