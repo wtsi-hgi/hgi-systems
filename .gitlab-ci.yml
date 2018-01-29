@@ -40,6 +40,7 @@ before_script:
   - *global-before-script-def
 
 stages:
+  - ci-setup
   - bootstrap-validate
   - bootstrap
   - validate
@@ -97,7 +98,23 @@ stages:
 #   only:
 #     - develop
 #     - staging-emedlab-arvados
-  
+
+
+###############################################################################
+# Stage: ci-setup
+###############################################################################
+build_docker_images:
+  # Do not execute the before script
+  before_script: []
+  stage: ci-setup
+  tags:
+    - docker-privileged
+  image:
+    name: mercury/thrifty-builder
+    entrypoint: [""]
+  script:
+    - ci/build-docker-images.sh
+
 
 ###############################################################################
 # Stage: bootstrap-validate
@@ -291,7 +308,7 @@ terraform-staging-delta-hgiarvados:
     - docker
   image: mercury/taos
   script:
-    - ci/ansible.sh
+    - ci/ansible-locked.sh
   artifacts:
     paths:
       - artifacts
