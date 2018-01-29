@@ -13,4 +13,4 @@ echo "thriftybuilder: $(pip show thriftybuilder | grep Version)"
 export CONSUL_HTTP_TOKEN=${CI_CONSUL_HTTP_TOKEN}
 export CONSUL_HTTP_ADDR=${CI_CONSUL_HTTP_ADDR}
 
-consul-lock execute ${CI_LOCK_PREFIX}/docker-build "thrifty -vv docker/build-configuration.yml"
+consul-lock -v execute ${CI_LOCK_PREFIX}/docker-build "thrifty -vv docker/build-configuration.yml"
