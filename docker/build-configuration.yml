@@ -18,5 +18,7 @@ docker:
 
 checksum_storage:
   type: consul
+  url: "{{ env['CONSUL_HTTP_ADDR'] }}"
+  token: "{{ env['CONSUL_HTTP_TOKEN'] }}"
   key: ci/docker-build-checksums
   lock: ci/docker-build-checksums.lock
