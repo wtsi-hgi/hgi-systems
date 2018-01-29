@@ -103,7 +103,7 @@ stages:
 ###############################################################################
 # Stage: ci-setup
 ###############################################################################
-build_docker_iamges:
+build_docker_images:
   # Do not execute the before script
   before_script: []
   stage: ci-setup
