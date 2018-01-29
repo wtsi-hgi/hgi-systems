@@ -1,4 +1,5 @@
 provider "openstack" {
+  version     = "~> 1.2"
   tenant_name = "${var.env == "production" ? "hgi" : "hgi-dev"}"
 }
 
