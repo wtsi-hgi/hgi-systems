@@ -16,7 +16,7 @@ if [[ -z ${unsetVariables+x} ]]; then
          --metadata="{jobId: ${CI_JOB_ID}}" \
          --on-before-lock=ci/release-dead-job-lock.py \
          --on-before-lock=ci/old-pipeline-suicide.py \
-         ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME}
+         ${ANSIBLE_LOCK_PREFIX}/${CI_JOB_NAME} \
          "${ANSIBLE_SCRIPT}"
 else
     printUnset "${unsetVariables[@]}"
