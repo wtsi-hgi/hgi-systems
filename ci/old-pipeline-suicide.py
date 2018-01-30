@@ -11,6 +11,7 @@ from gitlab import Gitlab
 def main():
     pipeline_id = int(os.environ["CI_PIPELINE_ID"])
     project_id = os.environ["CI_PROJECT_ID"]
+    branch = os.environ["CI_COMMIT_REF_NAME"]
     _parsed_project_url = urlparse(os.environ["CI_PROJECT_URL"])
     ci_url = "%s://%s" % (_parsed_project_url.scheme, _parsed_project_url.netloc)
     gitlab_token = os.environ["GITLAB_TOKEN"]
@@ -24,7 +25,8 @@ def main():
     futures = []
     with ThreadPoolExecutor(max_workers=2) as executor:
         for status in interesting_status:
-            futures.append(executor.submit(project.pipelines.list, order_by="id", sort="desc", per_page=1, status=status))
+            futures.append(executor.submit(project.pipelines.list, order_by="id", sort="desc", per_page=1, ref=branch,
+                                           status=status))
     latest_pipelines = []
     for future in futures:
         latest_pipelines += future.result()
@@ -43,7 +45,9 @@ def main():
               flush=True)
         pipeline = project.pipelines.get(pipeline_id, lazy=True)
         pipeline.cancel()
-        sleep(9999)
+        # Call does not block until actioned so going into a sleep from which it won't wake up...
+        sleep(999)
+        assert False
     else:
         print("Running pipeline (%s) is the latest - continuing" % (pipeline_id, ))
 
