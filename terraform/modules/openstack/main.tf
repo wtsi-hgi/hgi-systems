@@ -135,6 +135,19 @@ resource "openstack_compute_secgroup_v2" "http" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "http-dev" {
+  provider    = "openstack"
+  name        = "http_${var.region}_${var.env}"
+  description = "Incoming http access for development services"
+
+  rule {
+    from_port   = 8000
+    to_port     = 8000
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 resource "openstack_compute_secgroup_v2" "https" {
   provider    = "openstack"
   name        = "https_${var.region}_${var.env}"
@@ -271,6 +284,7 @@ output "security_group_ids" {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
     consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
     http          = "${openstack_compute_secgroup_v2.http.id}"
+    http-dev      = "${openstack_compute_secgroup_v2.http-dev.id}"
     https         = "${openstack_compute_secgroup_v2.https.id}"
     ping          = "${openstack_compute_secgroup_v2.ping.id}"
     ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
