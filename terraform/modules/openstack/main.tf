@@ -135,10 +135,10 @@ resource "openstack_compute_secgroup_v2" "http" {
   }
 }
 
-resource "openstack_compute_secgroup_v2" "http-dev" {
+resource "openstack_compute_secgroup_v2" "http-cogs" {
   provider    = "openstack"
-  name        = "http_${var.region}_${var.env}"
-  description = "Incoming http access for development services"
+  name        = "http-cogs_${var.region}_${var.env}"
+  description = "Incoming http access for studentportal development"
 
   rule {
     from_port   = 8000
@@ -284,7 +284,7 @@ output "security_group_ids" {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
     consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
     http          = "${openstack_compute_secgroup_v2.http.id}"
-    http-dev      = "${openstack_compute_secgroup_v2.http-dev.id}"
+    http-cogs     = "${openstack_compute_secgroup_v2.http-cogs.id}"
     https         = "${openstack_compute_secgroup_v2.https.id}"
     ping          = "${openstack_compute_secgroup_v2.ping.id}"
     ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
