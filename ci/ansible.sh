@@ -5,6 +5,10 @@ set -euf -o pipefail
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
+# Work-around for https://github.com/ansible/ansible/issues/35833
+unset CONSUL_HTTP_TOKEN
+unset CONSUL_HTTP_ADDR
+
 ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD_FILE ANSIBLE_CONSUL_TOKEN ANSIBLE_CONSUL_URL
 echo "Changing to ansible directory"
 cd ansible
