@@ -92,3 +92,12 @@ common:
   # environment-specific sections above.
   crunch_job_wrapper: :slurm_immediate
 
+  # The maximum number of compute nodes that can be in use simultaneously
+  # If this limit is reduced, any existing nodes with slot number >= new limit
+  # will not be counted against the new limit. In other words, the new limit
+  # won't be strictly enforced until those nodes with higher slot numbers
+  # go down.
+  max_compute_nodes: {{ arvados_cluster_GROUP_max_compute_nodes }}
+
+
+
