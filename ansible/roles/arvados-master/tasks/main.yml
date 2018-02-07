@@ -111,6 +111,8 @@
   args:
     removes: /etc/postgresql/{{ arvados_master_postgresql_version }}/main
 
+# FIXME set max_connections = 1024
+
 - name: create postgresql cluster
   become: yes
   command: "pg_createcluster -u postgres -d {{ arvados_master_api_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
