@@ -13,7 +13,7 @@ boto_version=2.46.1-hotfix.1
 yatadis_version=1.0.0
 openstack_info_version=5.5.0
 yaosadis_version=2.0.1
-python_consul_version=0.7.2
+python_consul_version=b5600843ae8b31400bc985d110ac97b1e3afbaaf
 consul_lock_version=4.2.0
 
 echo "Installing ansible using pip3 from github..."
@@ -47,7 +47,8 @@ echo "Installing yaosadis using pip3 from github..."
 pip3 install git+https://github.com/wtsi-hgi/yaosadis.git@${yaosadis_version}
 
 echo "Installing python-consul using pip3..."
-pip3 install python-consul==${python_consul_version}
+#pip3 install python-consul==${python_consul_version}
+pip3 install git+https://github.com/wtsi-hgi/python-consul.git@${python_consul_version}
 
 echo "Installing consul-lock using pip3 from github..."
 pip3 install git+https://github.com/wtsi-hgi/consul-lock.git@${consul_lock_version}
