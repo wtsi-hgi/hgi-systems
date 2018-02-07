@@ -23,7 +23,7 @@
 ################################################################################
 # arvados-compute-node (containers api)
 ################################################################################
-- name: install arvados-crunch-run and it prerequisites and friends
+- name: install arvados-crunch-run and its prerequisites and friends
   become: yes
   apt:
     name: "{{ item }}"
@@ -40,7 +40,7 @@
 ################################################################################
 # arvados-compute-node (deprecated jobs api)
 ################################################################################
-- name: install arvados-crunch-run and it prerequisites and friends
+- name: install arvados-crunch-run and its prerequisites and friends
   become: yes
   apt:
     name: "{{ item }}"

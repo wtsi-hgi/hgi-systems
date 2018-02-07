@@ -178,7 +178,7 @@
     authorized_user_uuid: mercury
     public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
 
-- name: set consul-template keys for cluster in in consul kv
+- name: set consul-template keys for cluster in consul kv
   delegate_to: localhost
   tags:
     - slurm

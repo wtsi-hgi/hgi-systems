@@ -193,7 +193,7 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
     :param filter_value_module_parameter: the name of the module parameter from which the value of the given
     `filter_property` should be equal to
     :type filter_value_module_parameter: str
-    :param module_parameter_to_resource_parameter_map: map where the value is is the name of the resource parameter that
+    :param module_parameter_to_resource_parameter_map: map where the value is the name of the resource parameter that
     is to be set from the value of module parameter identified by the key
     :type module_parameter_to_resource_parameter_map: Dict[str, str]
     :param value_equator: optional function that can be used to decide if the give value associated to a resource

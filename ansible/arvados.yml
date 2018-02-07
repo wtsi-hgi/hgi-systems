@@ -55,7 +55,7 @@
         s3_backup_source_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
         s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/sso"
         ###############################################################################
-        # Restore from s3 if if this file is present (then delete it)
+        # Restore from s3 if this file is present (then delete it)
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
         ###############################################################################
@@ -100,7 +100,7 @@
         s3_backup_source_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
         s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/api"
         ###############################################################################
-        # Restore from s3 if if this file is present (then delete it)
+        # Restore from s3 if this file is present (then delete it)
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
         ###############################################################################

@@ -25,7 +25,7 @@
 ###############################################################################
 
 ###############################################################################
-# Restore from s3 if if this file is present (then delete it)
+# Restore from s3 if this file is present (then delete it)
 ###############################################################################
 s3_backup_restore_indicator_file: ".restore"
 
