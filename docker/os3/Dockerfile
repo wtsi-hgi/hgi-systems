@@ -14,7 +14,7 @@ RUN apt-get -q=2 update \
         bzip2 \
         gzip \
         xorriso \
-	    xz-utils \
+        xz-utils \
     && apt-get autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
