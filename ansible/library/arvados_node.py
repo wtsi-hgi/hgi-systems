@@ -8,7 +8,7 @@ def main():
         "uuid": dict(required=True, type="str"),
         "hostname": dict(required=True, type="str"),
         "domain": dict(required=True, type="str"),
-        "info": dict(required=False, type="dict", default=None),
+        "info": dict(required=False, type="dict", default=None, no_log=True),
     }
 
     filter_property = "uuid"
