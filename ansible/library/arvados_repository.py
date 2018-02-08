@@ -2,6 +2,7 @@
 
 from ansible.module_utils.arvados_common import process
 
+
 def main():
     additional_argument_spec={
         "uuid": dict(required=True, type="str"),
@@ -19,6 +20,7 @@ def main():
 
     process("repositories", additional_argument_spec, filter_property, filter_value_module_parameter,
             module_parameter_to_resource_parameter_map)
+
 
 if __name__ == "__main__":
     main()

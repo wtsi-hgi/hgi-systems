@@ -17,7 +17,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 COMMON_ARGUMENT_SPECIFICATION = {
     "api_host": dict(required=True, type="str"),
-    "api_token": dict(required=True, type="str"),
+    "api_token": dict(required=True, type="str", no_log=True),
     "api_host_insecure": dict(required=False, type="bool", default=False),
     "cache": dict(required=False, type="str", default="~/.cache/arvados/discovery")
 }
