@@ -12,8 +12,11 @@ try:
 except ImportError:
     HAS_FUTURE = False
 
-from ansible.module_utils.basic import AnsibleModule
+from copy import deepcopy
 
+import six
+
+from ansible.module_utils.basic import AnsibleModule
 
 COMMON_ARGUMENT_SPECIFICATION = {
     "api_host": dict(required=True, type="str"),
@@ -81,11 +84,11 @@ def _fail_if_missing_modules(module):
             msg="future is required for this module (try `pip install python-future`)")
 
 
-def get_resource(objtype, api, property, value):
+def get_resource(obj_type, api, property, value):
     """
     Gets a resource, through the given API, where the given property takes the given value.
-    :param objtype: the type of object to commit
-    :type objtype: string
+    :param obj_type: the type of object to commit
+    :type obj_type: string
     :param api: the Arvados API
     :type api: arvados.api
     :param property: the property to select on
@@ -98,7 +101,7 @@ def get_resource(objtype, api, property, value):
     """
     filters = [[property, "=", value]]
     try:
-        result = getattr(api, objtype)().list(filters=filters).execute()
+        result = getattr(api, obj_type)().list(filters=filters).execute()
     except Exception as e:
         raise raise_from(ResourceListException(filters), e)
     items = result["items"]
@@ -130,7 +133,17 @@ def default_value_equator(value_1, value_2):
         return value_1 == value_2
 
 
-def prepare_update(resource, required_property_value_map, property_value_equator=default_value_equator):
+def default_required_value_modifier(value, existing_value):
+    """
+    TODO
+    :param value:
+    :return:
+    """
+    return value
+
+
+def prepare_update(resource, required_property_value_map, value_equator=default_value_equator,
+                   required_value_modifier=default_required_value_modifier):
     """
     Prepares an update to the given resource using the given property values.
     :param resource: the resource to update
@@ -138,8 +151,10 @@ def prepare_update(resource, required_property_value_map, property_value_equator
     :param required_property_value_map: map where the resource property name is the key and the value is the value that
     property should take
     :type required_property_value_map: Dict[str, str]
-    :param property_value_equator: returns `True` if the given two values are to be considered as equal
-    :type property_value_equator: Callable[[Any, Any], bool]
+    :param value_equator: returns `True` if the given two values are to be considered as equal
+    :type value_equator: Callable[[Any, Any], bool]
+    :param required_value_modifier: TODO
+    :type required_value_modifier: Callable[[Any, Any], Any]
     :return: `True` is an update has occurred
     :rtype: bool
     """
@@ -148,19 +163,22 @@ def prepare_update(resource, required_property_value_map, property_value_equator
     for key, value in required_property_value_map.items():
         if value is None:
             continue
-        if key not in resource or not property_value_equator(resource[key], value):
+
+        existing_value = resource.get(key, None)
+        value = required_value_modifier(value, deepcopy(existing_value))
+
+        if key not in resource or not value_equator(existing_value, value):
             updated = True
-            old_value = resource.get(key, None)
             resource[key] = value
-            property_updates[key] = "%s=>%s" % (old_value, value)
+            property_updates[key] = "%s => %s" % (existing_value, value)
     return updated, property_updates
 
 
-def commit_resource(objtype, api, resource, exists):
+def commit_resource(obj_type, api, resource, exists):
     """
     Commit the given resource using the given API.
-    :param objtype: the type of object to commit
-    :type objtype: string
+    :param obj_type: the type of object to commit
+    :type obj_type: string
     :param api: the API to use to commit the change
     :type api: arvados.api
     :param resource: the resource to commit
@@ -170,22 +188,39 @@ def commit_resource(objtype, api, resource, exists):
     """
     if exists:
         try:
-            getattr(api, objtype)().update(uuid=resource["uuid"], body=resource).execute()
+            getattr(api, obj_type)().update(uuid=resource["uuid"], body=resource).execute()
         except Exception as e:
-            raise raise_from(ResourceUpdateException("Failed to update %s: %s" % (objtype, str(e))), e)
+            raise raise_from(ResourceUpdateException("Failed to update %s: %s" % (obj_type, str(e))), e)
     else:
         try:
-            getattr(api, objtype)().create(body=resource).execute()
+            getattr(api, obj_type)().create(body=resource).execute()
         except Exception as e:
-            raise raise_from(ResourceCreateException("Failed to create %s: %s" % (objtype, str(e))), e)
+            raise raise_from(ResourceCreateException("Failed to create %s: %s" % (obj_type, str(e))), e)
 
 
-def process(objtype, additional_argument_spec, filter_property, filter_value_module_parameter,
-            module_parameter_to_resource_parameter_map, value_equator=default_value_equator):
+def _to_unicode(to_convert):
+    """
+    Converts all (byte as we're Py2) strings in the value to unicode strings (which are returned by Arvados API).
+    :param to_convert: value to converted
+    :type to_convert: Union[str, List, Dict]
+    :return: unicoded up value
+    """
+    if isinstance(to_convert, str):
+        return six.u(to_convert)
+    elif isinstance(to_convert, list):
+        return [_to_unicode(item) for item in to_convert]
+    elif isinstance(to_convert, dict):
+        return {_to_unicode(key): _to_unicode(value) for key, value in to_convert.items()}
+    raise ValueError("Cannot convert object of type %s to unicode" % type(to_convert))
+
+
+def process(obj_type, additional_argument_spec, filter_property, filter_value_module_parameter,
+            module_parameter_to_resource_parameter_map, value_equator=default_value_equator,
+            required_value_modifier=default_required_value_modifier):
     """
     TODO
-    :param objtype: the type of object to commit
-    :type objtype: string
+    :param obj_type: the type of object to commit
+    :type obj_type: string
     :param additional_argument_spec: specification for additional Ansible module arguments
     :type additional_argument_spec: Dict[str, Dict]
     :param filter_property: the property to filter on when getting the resource that is to be updated
@@ -198,6 +233,8 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
     :type module_parameter_to_resource_parameter_map: Dict[str, str]
     :param value_equator: optional function that can be used to decide if the give value associated to a resource
     parameter is equal to the given expected value
+    :param required_value_modifier: TODO
+    :type required_value_modifier: Callable[[Any, Any], Any]
     """
     # Yey outdated Python 2 dict concat...
     argument_specification = COMMON_ARGUMENT_SPECIFICATION.copy()
@@ -211,49 +248,53 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
     api = arvados.api(version="v1", cache=module.params["cache"], host=module.params["api_host"],
                       token=module.params["api_token"], insecure=module.params["api_host_insecure"])
     try:
-        getattr(api, objtype)
+        getattr(api, obj_type)
     except AttributeError as e:
         module.fail_json(msg="Arvados API does not appear to support objects of type %s: %s" 
-                         % (objtype, str(e)))
+                         % (obj_type, str(e)))
         
     filter_value = module.params[filter_value_module_parameter]
     try:
-        resource, exists = get_resource(objtype, api, filter_property, filter_value)
+        resource, exists = get_resource(obj_type, api, filter_property, filter_value)
     except ResourceListException as e:
         module.fail_json(msg="Error getting %s resource: %s"
-                         % (objtype, str(e)))
+                         % (obj_type, str(e)))
 
     required_property_value_map = {
-        resource_param: module.params[module_param]
+        _to_unicode(resource_param): _to_unicode(module.params[module_param])
         for module_param, resource_param in module_parameter_to_resource_parameter_map.items()}
-    update_required, property_updates = prepare_update(resource, required_property_value_map, value_equator)
+    update_required, property_updates = prepare_update(
+        resource, required_property_value_map, value_equator, required_value_modifier)
+
+    if update_required:
+        module.fail_json(msg=property_updates)
 
     if module.check_mode:
         module.exit_json(changed=update_required)
     elif not update_required:
-        module.exit_json(changed=False, msg="%s resource already exists with the desired properties" % (objtype))
+        module.exit_json(changed=False, msg="%s resource already exists with the desired properties" % (obj_type))
     else:
         try:
-            commit_resource(objtype, api, resource, exists)
+            commit_resource(obj_type, api, resource, exists)
         except ResourceUpdateException as e:
             module.fail_json(msg="Error while attempting to update %s %s=%s (%s): %s"
-                                  % (objtype, filter_property, filter_value,
+                                  % (obj_type, filter_property, filter_value,
                                      ', '.join(["%s:%s" 
                                                 % (prop, property_updates[prop]) 
                                                 for prop in property_updates.keys()]), str(e)))
         except ResourceCreateException as e:
             module.fail_json(msg="Error while attempting to create %s %s=%s (%s): %s"
-                                  % (objtype, filter_property, filter_value,
+                                  % (obj_type, filter_property, filter_value,
                                      ', '.join(["%s:%s" 
                                                 % (prop, resource[prop]) 
                                                 for prop in property_updates.keys()]), str(e)))
         except Exception as e:
             module.fail_json(msg="Error while committing %s %s=%s (%s): %s"
-                                  % (objtype, filter_property, filter_value,
+                                  % (obj_type, filter_property, filter_value,
                                      ', '.join(["%s:%s" 
                                                 % (prop, property_updates[prop]) 
                                                 for prop in property_updates.keys()]), str(e)))
         module.exit_json(changed=True, msg="%s resource created: %s"
-                         % (objtype, ', '.join(["%s:%s" 
-                                                % (prop, property_updates[prop]) 
-                                                for prop in property_updates.keys()])))
+                         % (obj_type, ', '.join(["%s:%s"
+                                                 % (prop, property_updates[prop])
+                                                 for prop in property_updates.keys()])))
