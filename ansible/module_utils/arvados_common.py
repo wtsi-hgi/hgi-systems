@@ -127,7 +127,7 @@ def default_value_equator(value_1, value_2):
     if isinstance(value_1, list):
         return sorted(value_1) == sorted(value_2)
     else:
-        return str(value_1) == str(value_2)
+        return value_1 == value_2
 
 
 def prepare_update(resource, required_property_value_map, property_value_equator=default_value_equator):
@@ -223,9 +223,10 @@ def process(objtype, additional_argument_spec, filter_property, filter_value_mod
         module.fail_json(msg="Error getting %s resource: %s"
                          % (objtype, str(e)))
 
-    update_required, property_updates = prepare_update(
-        resource, {resource_param: module.params[module_param] for module_param, resource_param in module_parameter_to_resource_parameter_map.items()},
-        value_equator)
+    required_property_value_map = {
+        resource_param: module.params[module_param]
+        for module_param, resource_param in module_parameter_to_resource_parameter_map.items()}
+    update_required, property_updates = prepare_update(resource, required_property_value_map, value_equator)
 
     if module.check_mode:
         module.exit_json(changed=update_required)
