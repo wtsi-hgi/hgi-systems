@@ -205,6 +205,8 @@ def _to_unicode(to_convert):
     :type to_convert: Union[str, List, Dict]
     :return: unicoded up value
     """
+    if isinstance(to_convert, int) or isinstance(to_convert, float) or to_convert is None:
+        return to_convert
     if isinstance(to_convert, str):
         return six.u(to_convert)
     elif isinstance(to_convert, list):
