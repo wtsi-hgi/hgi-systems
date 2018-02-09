@@ -48,23 +48,23 @@
     mode: 0700
 
 - name: create consul-template templates and config for keep
-  become: yes
   block:
     - template:
         src: "{{ item }}.hcl.j2"
         dest: "/etc/consul-template.d/20-{{ item }}.hcl"
         mode: 0644
+      become: yes
       notify:
         - reload consul-template
+      with_items:
+        - arvados-keep-config
+        - arvados-keep-blob-signing-key
+        - arvados-keep-data-manager-api-token
+        - arvados-keep-s3-access-key
+        - arvados-keep-s3-secret-key
   rescue:
     - name: make sure all handlers run
       meta: flush_handlers
-  with_items:
-    - arvados-keep-config
-    - arvados-keep-blob-signing-key
-    - arvados-keep-data-manager-api-token
-    - arvados-keep-s3-access-key
-    - arvados-keep-s3-secret-key
     
 - name: install runit service for arvados-keepstore
   become: yes
