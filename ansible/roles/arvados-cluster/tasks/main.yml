@@ -198,6 +198,16 @@
       value: "{{ lookup('template', 'slurm.conf.j2') }}"
     - key: arvados_cluster_api_host
       value: "{{ arvados_cluster_api_host }}"
+    - key: arvados_keep_config_yaml
+      value: "{{ lookup('template', 'arvados-keep-config.yaml.j2') }}"
+    - key: arvados_keep_blob_signing_key
+      value: "{{ arvados_keep_blob_signing_key }}"
+    - key: arvados_keep_data_manager_api_token
+      value: "{{ arvados_cluster_data_manager_api_token }}"
+    - key: arvados_keep_s3_access_key
+      value: "{{ arvados_keep_s3_access_key }}"
+    - key: arvados_keep_s3_secret_key
+      value: "{{ arvados_keep_s3_secret_key }}"
   when: "not 'image-building' in group_names"
 
 - name: set ping_secret for each node in consul kv
@@ -227,3 +237,5 @@
   with_items:
     - "{{ arvados_cluster_GROUP_compute_node_names }}"
   when: "not 'image-building' in group_names"
+
+

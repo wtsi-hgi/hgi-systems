@@ -117,8 +117,12 @@
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
 - hosts: arvados-keeps
-  roles:
-    - arvados-keep
+  tasks:
+    - name: apply arvados-keep role
+      import_role:
+        name: arvados-keep
+      vars:
+        arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
 
 - hosts: arvados-keepproxies
   roles:
@@ -134,12 +138,17 @@
 
 - hosts: arvados-compute-nodes:!noconf
   tasks:
-    - name: configure attached-openstack-volume for arvados api database
+    - name: apply arvados compute node role
       import_role:
         name: arvados-compute-node
       vars:
         arvados_compute_node_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_compute_node_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+    - name: apply arvados-keep role
+      import_role:
+        name: arvados-keep
+      vars:
+        arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
 
 # non-host playbooks
 - hosts: arvados-clusters

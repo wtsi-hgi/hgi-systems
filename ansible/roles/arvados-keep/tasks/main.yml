@@ -40,15 +40,32 @@
     path: /etc/sv/arvados-keepstore
     state: directory
 
-- name: create arvados keep config YAML file
+- name: ensure consul-template.d exists
   become: yes
-  template:
-    src: "arvados-keep-config.yaml.j2"
-    dest: "{{ arvados_keep_config_file }}"
-    mode: 0755
-  notify:
-   - restart arvados-keepstore
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0700
 
+- name: create consul-template templates and config for keep
+  become: yes
+  block:
+    - template:
+        src: "{{ item }}.hcl.j2"
+        dest: "/etc/consul-template.d/20-{{ item }}.hcl"
+        mode: 0644
+      notify:
+        - reload consul-template
+  rescue:
+    - name: make sure all handlers run
+        meta: flush_handlers
+  with_items:
+    - arvados-keep-config
+    - arvados-keep-blob-signing-key
+    - arvados-keep-data-manager-api-token
+    - arvados-keep-s3-access-key
+    - arvados-keep-s3-secret-key
+    
 - name: install runit service for arvados-keepstore
   become: yes
   template:
@@ -70,46 +87,6 @@
     src: "arvados-keepstore.log.run.j2"
     dest: "/etc/sv/arvados-keepstore/log/run"
     mode: 0755
-  notify:
-   - restart arvados-keepstore
-
-- name: copy blob signing key
-  become: yes
-  copy:
-    content: "{{ arvados_keep_blob_signing_key }}"
-    dest: "{{ arvados_keep_blob_signing_key_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart arvados-keepstore
-
-- name: copy data manager token
-  become: yes
-  copy:
-    content: "{{ arvados_cluster_data_manager_api_token }}"
-    dest: "{{ arvados_keep_data_manager_token_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart arvados-keepstore
-
-- name: copy s3 access key
-  become: yes
-  copy:
-    content: "{{ arvados_keep_s3_access_key }}"
-    dest: "{{ arvados_keep_s3_access_key_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart arvados-keepstore
-
-- name: copy s3 secret key
-  become: yes
-  copy:
-    content: "{{ arvados_keep_s3_secret_key }}"
-    dest: "{{ arvados_keep_s3_secret_key_file }}"
-    owner: root
-    mode: 0600
   notify:
    - restart arvados-keepstore
 
