@@ -20,9 +20,15 @@
 ---
 # file: roles/slurm-common/defaults/main.yml
 
+# N.B. this role is only partially refactored.
+
 ###############################################################################
 # Variables that have no defaults and must be set
 ###############################################################################
+#
+######################################### 
+# Consul
+######################################### 
 #
 # arvados_cluster_consul_template_token:
 #   Consul token to use to write consul-template values to consul kv store
@@ -30,10 +36,45 @@
 # arvados_cluster_consul_template_path: 
 #   Consul KV path to write keys
 #
+######################################### 
+# Keep
+######################################### 
+#
+# arvados_cluster_keep_s3_bucket:
+#   S3 bucket for keep.
+#
+# arvados_cluster_keep_s3_replication:
+#   Replication level keep reports for each object in this S3.
+#
+# arvados_cluster_keep_s3_endpoint:
+#   S3 endpoint for keep.
+#
+# arvados_cluster_keep_s3_access_key:
+#   S3 access key for keep.
+#
+# arvados_cluster_keep_s3_secret_key:
+#   S3 secret key for keep.
+#
+# arvados_cluster_keep_blob_signing_key_file:
+#   Path where keep block signing key is stored. 
+#
+# arvados_cluster_keep_data_manager_token_file:
+#   Path where keep data manager token is stored. 
+#
+# arvados_cluster_keep_s3_access_key_file:
+#   Path where keep S3 access key is stored.
+#
+# arvados_cluster_keep_s3_secret_key_file:
+#   Path where keep S3 secret key is stored. 
+#
 ###############################################################################
 
 ###############################################################################
 # Vars that have defaults that can be overridden
-###############################################################################
+###############################################################################a
 arvados_cluster_slurm_state_save_location: /var/spool/slurm/slurm.state
 arvados_cluster_slurm_spool_dir: /var/spool/slurm/slurmd.spool
+arvados_cluster_keep_blob_signature_ttl: "336h0m0s"
+arvados_cluster_keep_max_buffers: 128
+arvados_cluster_keep_trash_check_interval: "24h0m0s"
+arvados_cluster_keep_trash_lifetime: "168h0m0s"

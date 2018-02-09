@@ -23,6 +23,14 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+- hosts: all
+  gather_facts: no
+  vars:
+    arvados_PLAYBOOK_keep_blob_signing_key_file: "/etc/arvados-keep-blob-signing.key" 
+    arvados_PLAYBOOK_keep_data_manager_token_file: "/etc/arvados-data-manager.token"
+    arvados_PLAYBOOK_keep_s3_access_key_file: "/etc/arvados-keep-s3.access_key"
+    arvados_PLAYBOOK_keep_s3_secret_key_file: "/etc/arvados-keep-s3.secret_key"
+
 - hosts: arvados-ssos
   vars:
     arvados_PLAYBOOK_sso_data_mountpoint: /mnt/arvados-sso-db
@@ -123,6 +131,10 @@
         name: arvados-keep
       vars:
         arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_blob_signing_key_file }}"
+        arvados_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_data_manager_token_file }}"
+        arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_s3_access_key_file }}"
+        arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_s3_secret_key_file }}"
 
 - hosts: arvados-keepproxies
   roles:
@@ -149,6 +161,10 @@
         name: arvados-keep
       vars:
         arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_blob_signing_key_file }}"
+        arvados_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_data_manager_token_file }}"
+        arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_s3_access_key_file }}"
+        arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_s3_secret_key_file }}"
 
 # non-host playbooks
 - hosts: arvados-clusters
@@ -161,3 +177,8 @@
         arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
         arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
         arvados_cluster_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_cluster_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
+        arvados_cluster_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_token_file }}"
+        arvados_cluster_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
+        arvados_cluster_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
+

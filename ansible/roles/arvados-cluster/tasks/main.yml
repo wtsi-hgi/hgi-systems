@@ -179,6 +179,19 @@
     authorized_user_uuid: mercury
     public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
 
+- name: ensure arvados keep s3 bucket exists
+  tags:
+    - s3
+  delegate_to: localhost
+  aws_s3:
+    rgw: true
+    s3_url: "{{ arvados_cluster_keep_s3_endpoint }}"
+    aws_access_key: "{{ arvados_cluster_keep_s3_access_key }}"
+    aws_secret_key: "{{ arvados_cluster_keep_s3_secret_key }}"
+    bucket: "{{ arvados_cluster_keep_s3_bucket }}"
+    permission: private
+    mode: create
+
 - name: set consul-template keys for cluster in consul kv
   delegate_to: localhost
   tags:
@@ -201,13 +214,13 @@
     - key: arvados_keep_config_yaml
       value: "{{ lookup('template', 'arvados-keep-config.yaml.j2') }}"
     - key: arvados_keep_blob_signing_key
-      value: "{{ arvados_keep_blob_signing_key }}"
+      value: "{{ arvados_cluster_keep_blob_signing_key }}"
     - key: arvados_keep_data_manager_api_token
       value: "{{ arvados_cluster_data_manager_api_token }}"
     - key: arvados_keep_s3_access_key
-      value: "{{ arvados_keep_s3_access_key }}"
+      value: "{{ arvados_cluster_keep_s3_access_key }}"
     - key: arvados_keep_s3_secret_key
-      value: "{{ arvados_keep_s3_secret_key }}"
+      value: "{{ arvados_cluster_keep_s3_secret_key }}"
   when: "not 'image-building' in group_names"
 
 - name: set ping_secret for each node in consul kv
