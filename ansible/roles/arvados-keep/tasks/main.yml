@@ -58,7 +58,7 @@
         - reload consul-template
   rescue:
     - name: make sure all handlers run
-        meta: flush_handlers
+      meta: flush_handlers
   with_items:
     - arvados-keep-config
     - arvados-keep-blob-signing-key
