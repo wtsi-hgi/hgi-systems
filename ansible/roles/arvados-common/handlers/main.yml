@@ -1,0 +1,8 @@
+---
+
+- name: reload consul-template
+  become: yes
+  systemd:
+    name: consul-template
+    state: reloaded
+  when: not "image-building" in group_names
