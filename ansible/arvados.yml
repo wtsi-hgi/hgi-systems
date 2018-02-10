@@ -123,6 +123,7 @@
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
         arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
 
 - hosts: arvados-keeps
   tasks:
@@ -135,6 +136,14 @@
         arvados_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_data_manager_token_file }}"
         arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_s3_access_key_file }}"
         arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_s3_secret_key_file }}"
+        arvados_keep_s3_endpoint: "{{ arvados_cluster_GROUP_s3_endpoint }}"
+        arvados_keep_s3_access_key: "{{ arvados_cluster_GROUP_s3_access_key }}"
+        arvados_keep_s3_secret_key: "{{ arvados_cluster_GROUP_s3_secret_key }}"
+        arvados_keep_s3_bucket: "{{ arvados_cluster_GROUP_s3_bucket }}"
+        arvados_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
+        arvados_keep_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
+        arvados_keep_max_buffers: 240 # 240 * 64 MiB = 15 GiB (FIXME this should directly relate to amount of RAM on machine?)
 
 - hosts: arvados-keepproxies
   roles:
@@ -181,4 +190,10 @@
         arvados_cluster_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_token_file }}"
         arvados_cluster_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
         arvados_cluster_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
+        arvados_cluster_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_cluster_keep_s3_endpoint: "{{ arvados_cluster_GROUP_s3_endpoint }}"
+        arvados_cluster_keep_s3_access_key: "{{ arvados_cluster_GROUP_s3_access_key }}"
+        arvados_cluster_keep_s3_secret_key: "{{ arvados_cluster_GROUP_s3_secret_key }}"
+        arvados_cluster_keep_s3_bucket: "{{ arvados_cluster_GROUP_s3_bucket }}"
+        arvados_cluster_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
 

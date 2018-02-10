@@ -295,7 +295,7 @@
   with_items:
     - { token: "{{ arvados_cluster_superuser_api_token }}", file: "{{ arvados_master_superuser_token_file }}" }
     - { token: "{{ arvados_cluster_crunch_dispatcher_api_token }}", file: "{{ arvados_master_crunch_dispatcher_token_file }}" }
-    - { token: "{{ arvados_cluster_data_manager_api_token }}", file: "{{ arvados_master_data_manager_token_file }}" }
+    - { token: "{{ arvados_master_data_manager_api_token }}", file: "{{ arvados_master_data_manager_token_file }}" }
   register: arvados_master_api_token_files
 
 # FIXME remove after bugfix resolved: https://dev.arvados.org/issues/12671

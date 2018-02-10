@@ -36,12 +36,12 @@ arvados_cluster_db_password_api: "{{ arvados_cluster_root_key | pbkdf2_hmac('arv
 arvados_cluster_sso_app_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_sso_app_secret', 50) | b36encode }}"
 arvados_cluster_api_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_api_secret_token', 50) | b36encode }}"
 arvados_cluster_workbench_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_workbench_secret_token', 50) | b36encode }}"
-arvados_cluster_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_blob_signing_key', 50) | b36encode }}"
+arvados_cluster_GROUP_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_blob_signing_key', 50) | b36encode }}"
 
 arvados_cluster_superuser_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_superuser_api_token', 32) | b36encode }}"
 arvados_cluster_anonymous_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_anonymous_api_token', 32) | b36encode }}"
 arvados_cluster_crunch_dispatcher_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_crunch_dispatcher_api_token', 32) | b36encode }}"
-arvados_cluster_data_manager_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_data_manager_api_token', 32) | b36encode }}"
+arvados_cluster_GROUP_data_manager_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_data_manager_api_token', 32) | b36encode }}"
 arvados_cluster_login_sync_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_login_sync_api_token', 32) | b36encode }}"
 
 arvados_cluster_munge_key_base64: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_munge_key_base64', 1024) | b64encode }}"
@@ -61,11 +61,11 @@ arvados_cluster_git_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/om5
 
 arvados_cluster_admin_user_email: "mercury-admin@{{ arvados_cluster_id }}"
 
-arvados_cluster_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
-arvados_cluster_s3_access_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_access_key'] }}"
-arvados_cluster_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_secret_key'] }}"
-arvados_cluster_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
-arvados_cluster_s3_replication: 3
+arvados_cluster_GROUP_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
+arvados_cluster_GROUP_s3_access_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_access_key'] }}"
+arvados_cluster_GROUP_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_secret_key'] }}"
+arvados_cluster_GROUP_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
+arvados_cluster_GROUP_s3_replication: 3
 
 # FIXME: Generic stuff below, figure out how to DRY this out
 
