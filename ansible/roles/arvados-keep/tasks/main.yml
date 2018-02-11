@@ -40,6 +40,13 @@
     path: /etc/sv/arvados-keepstore
     state: directory
 
+- name: create arvados keep restart command
+  become: yes
+  template:
+    src: "arvados_keep_restart_command.sh.j2"
+    dest: "{{ arvados_keep_restart_command }}"
+    mode: 0755
+    
 - name: ensure consul-template.d exists
   become: yes
   file:
@@ -65,7 +72,7 @@
   rescue:
     - name: make sure all handlers run
       meta: flush_handlers
-    
+
 - name: install runit service for arvados-keepstore
   become: yes
   template:
