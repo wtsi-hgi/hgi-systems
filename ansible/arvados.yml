@@ -138,6 +138,11 @@
         arvados_keep_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
         arvados_keep_max_buffers: 240 # 240 * 64 MiB = 15 GiB (FIXME this should directly relate to amount of RAM on machine?)
+    - name: create arvados consul template path file
+      become: yes
+      copy:
+        dest: /etc/arvados_consul_template_path
+        content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
 - hosts: arvados-keepproxies
   roles:
