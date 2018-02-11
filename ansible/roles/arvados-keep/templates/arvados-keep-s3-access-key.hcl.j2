@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 # generate {{ arvados_keep_s3_access_key_file }}
 template {
-  contents = "{{ '{{ with $path := file "' }}{{ arvados_keep_consul_template_path_file }}{{ '" | trimSpace }}{{ key (printf "%s/arvados_keep_s3_access_key" $path) }}{{ end }}' }}"
+  contents = "{{ '{{ with $path := file \\"' }}{{ arvados_keep_consul_template_path_file }}{{ '\\" | trimSpace }}{{ key (printf \\"%s/arvados_keep_s3_access_key\\" $path) }}{{ end }}' }}"
 
   # This is the destination path on disk where the source template will render.
   # If the parent directories do not exist, Consul Template will attempt to
