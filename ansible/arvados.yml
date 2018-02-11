@@ -127,7 +127,7 @@
       vars:
         arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
-        arvados_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_token_file }}"
+        arvados_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
         arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
         arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
         arvados_keep_s3_endpoint: "{{ arvados_cluster_GROUP_s3_endpoint }}"
@@ -172,7 +172,7 @@
       vars:
         arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
-        arvados_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_token_file }}"
+        arvados_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
         arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
         arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
 
@@ -190,7 +190,7 @@
         arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
         arvados_cluster_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_cluster_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
-        arvados_cluster_keep_data_manager_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_token_file }}"
+        arvados_cluster_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
         arvados_cluster_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
         arvados_cluster_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
         arvados_cluster_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"

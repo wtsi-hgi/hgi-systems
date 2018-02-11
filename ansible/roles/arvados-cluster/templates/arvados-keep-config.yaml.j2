@@ -9,7 +9,7 @@ MaxBuffers: {{ arvados_cluster_keep_max_buffers }}
 MaxRequests: 0
 PIDFile: ""
 RequireSignatures: true
-SystemAuthTokenFile: {{ arvados_cluster_keep_data_manager_token_file }}
+SystemAuthTokenFile: {{ arvados_cluster_keep_data_manager_api_token_file }}
 TrashCheckInterval: {{ arvados_cluster_keep_trash_check_interval }}
 TrashLifetime: {{ arvados_cluster_keep_trash_lifetime }}
 Volumes:

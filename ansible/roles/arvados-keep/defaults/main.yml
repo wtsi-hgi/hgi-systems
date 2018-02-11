@@ -30,7 +30,7 @@
 # arvados_keep_blob_signing_key_file:
 #   Path where consul-template renders the blob signing key.
 #
-# arvados_keep_data_manager_token_file:
+# arvados_keep_data_manager_api_token_file:
 #   Path where consul-template renders the data mananger token.
 #
 # arvados_keep_s3_access_key_file:
