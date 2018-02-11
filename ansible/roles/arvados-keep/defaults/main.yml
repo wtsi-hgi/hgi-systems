@@ -45,9 +45,5 @@
 # Vars that have defaults that can be overridden
 ###############################################################################a
 arvados_keep_apt_cache_valid_time: 86400
-arvados_keep_blob_signature_ttl: "336h0m0s"
-arvados_keep_max_buffers: 128
-arvados_keep_trash_check_interval: "24h0m0s"
-arvados_keep_trash_lifetime: "168h0m0s"
 arvados_keep_config_file: "/etc/arvados-keep-config.yaml"
 arvados_keep_restart_command: /usr/local/bin/arvados-keep-restart.sh
