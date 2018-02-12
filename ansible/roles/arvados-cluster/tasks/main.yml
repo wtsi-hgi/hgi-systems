@@ -209,6 +209,8 @@
       value: "{{ arvados_cluster_munge_key_base64 }}"
     - key: slurm_conf
       value: "{{ lookup('template', 'slurm.conf.j2') }}"
+    - key: cgroup_conf
+      value: "{{ lookup('template', 'cgroup.conf.j2') }}"
     - key: arvados_cluster_api_host
       value: "{{ arvados_cluster_api_host }}"
     - key: arvados_keep_config_yaml

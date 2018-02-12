@@ -81,6 +81,15 @@
   notify:
     - reload consul-template
 
+- name: configure consul-template to template out cgroup.conf
+  become: yes
+  template:
+    src: 10-cgroup-conf.hcl.j2
+    dest: /etc/consul-template.d/10-cgroup-conf.hcl
+    mode: 0444
+  notify:
+    - reload consul-template
+
 - name: create munge.key consul-template
   become: yes
   template:
