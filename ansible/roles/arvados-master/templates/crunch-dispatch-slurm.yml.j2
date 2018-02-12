@@ -10,6 +10,6 @@ PollPeriod: 10s
 SbatchArguments:
   - "--partition=compute"
 MinRetryPeriod: 60s
-# CrunchRunCommand:
-#  - crunch-run
-#  - "-cgroup-parent-subsystem=memory"
+CrunchRunCommand:
+  - crunch-run
+  - "-cgroup-parent-subsystem=memory"
