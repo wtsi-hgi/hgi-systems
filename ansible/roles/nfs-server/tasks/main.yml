@@ -1,0 +1,20 @@
+---
+
+- name: install apt requirements
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: installed
+    cache_valid_time: "{{ nfs_server_apt_cache_valid_time }}"
+  with_items:
+    - nfs-common
+    - nfs-kernel-server
+
+- name: update exports file
+  become: yes
+  template:
+    src: exports.j2
+    dest: /etc/exports
+    mode: 0644
+  notify: restart nfs server
+  register: update_exports
