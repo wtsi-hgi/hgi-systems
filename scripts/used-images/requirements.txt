@@ -1,0 +1,3 @@
+gitpython
+tqdm
+boto3

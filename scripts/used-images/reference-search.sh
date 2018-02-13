@@ -20,4 +20,4 @@ git rev-list --all | (
         git grep -h -I -P "${GREP_PATTERN}" "${commit}" || true
         >&2 echo "{\"commit\": ${i}, \"total\": ${totalCommits}}"
     done
-) | grep --only-matching -E "[0-9a-f]{8}" | sort | uniq
+) | grep --only-matching -E "[0-9a-f]{8}" | sort | uniq | jq -R -s -c 'split("\n")'
