@@ -4,7 +4,8 @@ import os
 import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor, Future
-from tempfile import TemporaryDirectory
+from json import JSONDecodeError
+from tempfile import TemporaryDirectory, TemporaryFile, NamedTemporaryFile
 
 import boto3
 import re
@@ -12,7 +13,7 @@ from git import Repo
 from tqdm import tqdm
 from typing import Set, Callable, Iterable, List, Dict
 
-REFERENCE_SEARCH_SCRIPT = "./reference-search.sh"
+IMAGE_USE_SEARCH_SCRIPT = "./git-search.sh"
 TEXT_ENCODING = "utf-8"
 SUCCESS_RETURN_CODE = 0
 
@@ -28,9 +29,10 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 
 
-def get_references_from_repositories(repository_urls: Iterable[str], max_workers: int=None):
+def get_references_in_repositories(image_hashes: Iterable[str], repository_urls: Iterable[str], max_workers: int=None):
     """
     TODO
+    :param image_hashes:
     :param repository_urls:
     :param max_workers:
     :return:
@@ -57,7 +59,7 @@ def get_references_from_repositories(repository_urls: Iterable[str], max_workers
         reference_futures: List[Future] = []
         for repository_url in set(repository_urls):
             progress_callback = create_progress_callback(repository_url)
-            future = executor.submit(get_references_for_repository, repository_url, progress_callback)
+            future = executor.submit(get_references_in_repository, image_hashes, repository_url, progress_callback)
             reference_futures.append(future)
 
     # Gather references from all repositories
@@ -72,27 +74,35 @@ def get_references_from_repositories(repository_urls: Iterable[str], max_workers
     return references
 
 
-def get_references_for_repository(repository_url: str, progress_callback: ProgressCallback=None) \
-        -> Set[str]:
+def get_references_in_repository(references: Iterable[str], repository_url: str,
+                                 progress_callback: ProgressCallback=None) -> Set[str]:
     """
     TODO
     :param repository_url:
     :param progress_callback:
     :return:
     """
+    for reference in references:
+        if "|" in reference:
+            raise ValueError("References cannot contain pipe symbols")
+
     with TemporaryDirectory() as directory:
         Repo.clone_from(repository_url, directory, n=True)
         logger.debug(f"Checked out {repository_url} to {directory}")
 
-        process = subprocess.Popen([REFERENCE_SEARCH_SCRIPT, directory], stderr=subprocess.PIPE, stdout=subprocess.PIPE,
-                                   encoding=TEXT_ENCODING)
+        search_pattern = "|".join(references)
+        logger.debug(f"Search pattern: {search_pattern}")
+        process = subprocess.Popen([IMAGE_USE_SEARCH_SCRIPT, directory, search_pattern],
+                                   stderr=subprocess.PIPE, stdout=subprocess.PIPE, encoding=TEXT_ENCODING)
         if progress_callback is not None:
             while process.poll() is None:
                 raw_progress = process.stderr.readline().strip()
-                if len(raw_progress) > 0:
+                try:
                     progress = json.loads(raw_progress)
                     # TODO: take out magic strings
                     progress_callback(progress["commit"], progress["total"])
+                except JSONDecodeError as e:
+                    pass
 
         stdout, _ = process.communicate()
 
@@ -100,7 +110,7 @@ def get_references_for_repository(repository_url: str, progress_callback: Progre
             # TODO: Proper exception
             raise Exception()
 
-        return set(json.loads(stdout)) - {""}
+        return set(json.loads(stdout)) if len(stdout) > 0 else set()
 
 
 def _get_ceph_client():
@@ -123,7 +133,7 @@ def _get_ceph_client():
     )
 
 
-def get_image_commit_references(bucket: str) -> Set[str]:
+def get_image_names(bucket: str) -> Set[str]:
     """
     TODO
     :return:
@@ -141,22 +151,24 @@ def main():
     TODO
     :return:
     """
-    logger.info("Getting commit references of images held in S3...")
-    references = get_image_commit_references("hgi-openstack-images")
+    logger.info("Getting names of images held in S3...")
+    image_names = get_image_names("hgi-openstack-images")
+    logger.debug(f"Image names: {image_names}")
 
     logger.info("Examining potential images references in repositories...")
     repositories = {
         "https://gitlab.internal.sanger.ac.uk/hgi/hgi-base-image-builder.git",
         "https://gitlab.internal.sanger.ac.uk/hgi/image-creation.git",
         "https://gitlab.internal.sanger.ac.uk/hgi/freebsd-cloud-init-image-builder.git",
-        "https://gitlab.internal.sanger.ac.uk/hgi/hgi-systems.git"}
+        "https://gitlab.internal.sanger.ac.uk/hgi/hgi-systems.git"
+    }
     logger.debug(f"Repositories: {repositories}")
-    used = get_references_from_repositories(repositories)
+    referenced_image_names = get_references_in_repositories(image_names, repositories)
 
-    print(f"Referenced hashes: {references.intersection(used)}", file=sys.stderr)
-    print(references - used)
+    print(f"Referenced images: {image_names.intersection(referenced_image_names)}", file=sys.stderr)
+    print(image_names - referenced_image_names)
 
 
 if __name__ == "__main__":
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     main()
