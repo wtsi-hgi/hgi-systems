@@ -279,6 +279,40 @@ resource "openstack_compute_secgroup_v2" "netdata" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "nfs-server" {
+  provider    = "openstack"
+  name        = "nfs-server_${var.region}_${var.env}"
+  description = "NFS server"
+
+  rule {
+    from_port   = 111
+    to_port     = 111
+    ip_protocol = "tcp"
+    cidr        = "10.0.0.0/8"
+  }
+
+  rule {
+    from_port   = 111
+    to_port     = 111
+    ip_protocol = "udp"
+    cidr        = "10.0.0.0/8"
+  }
+
+  rule {
+    from_port   = 2049
+    to_port     = 2049
+    ip_protocol = "tcp"
+    cidr        = "10.0.0.0/8"
+  }
+
+  rule {
+    from_port   = 2049
+    to_port     = 2049
+    ip_protocol = "udp"
+    cidr        = "10.0.0.0/8"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client = "${openstack_compute_secgroup_v2.consul-client.name}"
@@ -295,6 +329,7 @@ output "security_group_ids" {
     keep-service  = "${openstack_compute_secgroup_v2.keep-service.name}"
     keep-proxy    = "${openstack_compute_secgroup_v2.keep-proxy.name}"
     netdata       = "${openstack_compute_secgroup_v2.netdata.name}"
+    nfs-server    = "${openstack_compute_secgroup_v2.nfs-server.name}"
   }
 }
 

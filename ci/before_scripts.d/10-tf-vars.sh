@@ -29,6 +29,6 @@ export TF_VAR_docker_image_user=ubuntu
 export TF_VAR_freebsd_base_image_name=hgi-base-freebsd11-575611a5
 export TF_VAR_freebsd_base_image_user=beastie
 
-export TF_VAR_arvados_compute_node_image_name=hgi-arvados_compute-xenial-42472045
+export TF_VAR_arvados_compute_node_image_name=hgi-arvados_compute-xenial-c0d9d670
 export TF_VAR_arvados_compute_node_image_user=ubuntu
 
