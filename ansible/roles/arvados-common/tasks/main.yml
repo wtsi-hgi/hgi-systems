@@ -32,6 +32,12 @@
     state: present
   become: yes
 
+- name: add arvados apt dev repository
+  apt_repository: 
+    repo: "deb http://apt.arvados.org/ {{ ansible_distribution_release }}-dev main"
+    state: present
+  become: yes
+
 - name: install prerequisite packages
   become: yes
   apt: 
