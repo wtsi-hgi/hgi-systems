@@ -93,7 +93,7 @@
   become: yes
   file:
     state: directory
-    path: /etc/arvados/arvados-docker-cleaner
+    path: /etc/arvados/docker-cleaner
   notify:
     - restart arvados-docker-cleaner
 
@@ -101,7 +101,7 @@
   become: yes
   template: 
     src: arvados-docker-cleaner.json.j2
-    dest: /etc/arvados/arvados-docker-cleaner/arvados-docker-cleaner.json
+    dest: /etc/arvados/docker-cleaner/docker-cleaner.json
     mode: 0755  
   notify:
     - restart arvados-docker-cleaner
