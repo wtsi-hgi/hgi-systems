@@ -15,4 +15,4 @@ git rev-list --all | (
         git grep -h -I -P "${searchPattern}" "${commit}" || true
         >&2 echo "{\"commit\": ${i}, \"total\": ${totalCommits}}"
     done
-) | grep --only-matching -P "${searchPattern}" | sort | uniq | jq -R -s -c 'split("\n")'
+) | sort | uniq | jq -R -s -c 'split("\n")'

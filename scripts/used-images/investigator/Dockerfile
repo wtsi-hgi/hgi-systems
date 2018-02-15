@@ -1,6 +1,6 @@
 FROM python:3.6
 
-ENV TOOLS_DIRECTORY=/used-images
+ENV TOOLS_DIRECTORY=/investigator
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -15,4 +15,4 @@ RUN pip install --disable-pip-version-check -r requirements.txt
 
 ADD * ./
 
-RUN python manager.py
+CMD []
