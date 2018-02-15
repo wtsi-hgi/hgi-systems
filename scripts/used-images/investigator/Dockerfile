@@ -10,7 +10,7 @@ RUN apt-get update \
 RUN mkdir "${TOOLS_DIRECTORY}"
 WORKDIR "${TOOLS_DIRECTORY}"
 
-ADD requirements.txt .
+ADD requirements.txt requirements.txt
 RUN pip install --disable-pip-version-check -r requirements.txt
 
 ADD * ./
