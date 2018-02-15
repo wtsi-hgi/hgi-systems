@@ -6,7 +6,7 @@ Client:
 {% for host in arvados_cluster_keep_hosts %}
 #    - http://{{ host }}:25107
 {% endfor %}
-PollPeriod: 10s
+PollPeriod: 1s
 SbatchArguments:
   - "--partition=compute"
 MinRetryPeriod: 60s
