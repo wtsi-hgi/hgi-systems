@@ -230,7 +230,7 @@
   become: yes
   lineinfile:
     path: /etc/nginx/nginx.conf
-    regexp: '^[[:space:]]*worker_connections[[:space:]]'
+    regexp: '^\s*worker_connections\s'
     state: absent
   notify:
     - restart nginx
@@ -239,7 +239,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
-    insertbefore: "events {"
+    insertafter: "^\s*pid"
     content: |
       include /etc/nginx/worker_limits.conf;
   notify:
@@ -249,7 +249,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
-    insertafter: "events {"
+    insertafter: "events\s*{"
     content: |
       include /etc/nginx/events.conf;
   notify:
@@ -259,7 +259,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
-    insertafter: "http {"
+    insertafter: "http\s*{"
     content: |
       include /etc/nginx/passenger.conf;
       include /etc/nginx/passenger_settings.conf;
