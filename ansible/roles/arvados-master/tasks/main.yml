@@ -226,7 +226,36 @@
     name: www-data
     shell: /bin/bash
 
-- name: activate passenger in nginx configuration
+- name: remove worker_connections from nginx events section
+  become: yes
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    regexp: '^[[:space:]]*worker_connections[[:space:]]'
+    state: absent
+  notify:
+    - restart nginx
+
+- name: configure nginx worker limits
+  become: yes
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    insertbefore: "events {"
+    content: |
+      include /etc/nginx/worker_limits.conf;
+  notify:
+    - restart nginx
+
+- name: configure nginx events section
+  become: yes
+  blockinfile:
+    path: /etc/nginx/nginx.conf
+    insertafter: "events {"
+    content: |
+      include /etc/nginx/events.conf;
+  notify:
+    - restart nginx
+
+- name: activate passenger in nginx http configuration
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
@@ -237,13 +266,17 @@
   notify:
     - restart nginx
 
-- name: configure passenger nginx
+- name: configure nginx include files
   become: yes
   template: 
-    src: passenger_settings.conf.j2
-    dest: /etc/nginx/passenger_settings.conf
+    src: "{{ item }}.conf.j2"
+    dest: "/etc/nginx/{{ item }}.conf"
   notify:
     - restart nginx
+  with_items:
+    - passenger_settings
+    - events
+    - worker_limits
 
 - name: ensure nginx has restarted before installing arvados api
   meta: flush_handlers
