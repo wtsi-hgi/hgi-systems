@@ -239,7 +239,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
-    insertafter: "^\s*pid"
+    insertafter: '^\s*pid'
     content: |
       include /etc/nginx/worker_limits.conf;
   notify:
@@ -249,7 +249,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
-    insertafter: "events\s*{"
+    insertafter: 'events\s*{'
     content: |
       include /etc/nginx/events.conf;
   notify:
@@ -259,7 +259,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
-    insertafter: "http\s*{"
+    insertafter: 'http\s*{'
     content: |
       include /etc/nginx/passenger.conf;
       include /etc/nginx/passenger_settings.conf;
