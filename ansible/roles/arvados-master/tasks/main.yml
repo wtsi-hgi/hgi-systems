@@ -239,6 +239,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
+    marker: "# {mark} ANSIBLE MANAGED WORKER LIMITS BLOCK"
     insertafter: '^\s*pid'
     content: |
       include /etc/nginx/worker_limits.conf;
@@ -249,6 +250,7 @@
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
+    marker: "# {mark} ANSIBLE MANAGED EVENTS BLOCK"
     insertafter: 'events\s*{'
     content: |
       include /etc/nginx/events.conf;
