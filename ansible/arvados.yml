@@ -23,6 +23,12 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+- hosts: arvados-monitors
+  tasks:
+    - name: configure arvados-monitor
+      import_role:
+        name: arvados-monitor
+
 - hosts: arvados-ssos
   vars:
     arvados_PLAYBOOK_sso_data_mountpoint: /mnt/arvados-sso-db
