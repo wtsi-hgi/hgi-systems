@@ -19,7 +19,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: group_vars/arvados-cluster-wlly8/vars
 
 # vault contents:
 # arvados_cluster_sso_google_oauth_client_id
@@ -36,16 +35,15 @@ arvados_cluster_db_password_api: "{{ arvados_cluster_root_key | pbkdf2_hmac('arv
 arvados_cluster_sso_app_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_sso_app_secret', 50) | b36encode }}"
 arvados_cluster_api_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_api_secret_token', 50) | b36encode }}"
 arvados_cluster_workbench_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_workbench_secret_token', 50) | b36encode }}"
-arvados_cluster_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_blob_signing_key', 50) | b36encode }}"
+arvados_cluster_GROUP_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_blob_signing_key', 50) | b36encode }}"
 
 arvados_cluster_superuser_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_superuser_api_token', 32) | b36encode }}"
 arvados_cluster_anonymous_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_anonymous_api_token', 32) | b36encode }}"
 arvados_cluster_crunch_dispatcher_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_crunch_dispatcher_api_token', 32) | b36encode }}"
-arvados_cluster_data_manager_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_data_manager_api_token', 32) | b36encode }}"
+arvados_cluster_GROUP_data_manager_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_data_manager_api_token', 32) | b36encode }}"
 arvados_cluster_login_sync_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_login_sync_api_token', 32) | b36encode }}"
 
 arvados_cluster_munge_key_base64: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_munge_key_base64', 1024) | b64encode }}"
-
 
 arvados_cluster_id: wlly8
 arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
@@ -53,20 +51,20 @@ arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
 arvados_cluster_domain: "hgi.sanger.ac.uk"
 arvados_cluster_consul_domain: "node.delta-hgiarvados.consul"
 
-arvados_cluster_internal_nets: 
+arvados_cluster_internal_nets:
   - 10.101.0.0/24
 
-arvados_cluster_mercury_shell_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFaC8cjWer8B6KtuH8bNi+A8R3/mL8NhlBB7dqvrcG8czXodLUlB+Q+1P5iYJ4JG4eUCxiZGrcDGXjKFVrK/G5bW7ctcwpQXpa9+rvdfELUCnCZSaB/XG8HCH5yrY+NaIK07wv4AxrK3KouyDYAsiHgcQP+iVRFawSE42hT/fjvTMae7jeNwV6I4oxk9tGZmk0w3eD9JVyfwBC1b6IVlaedQqKvWiQ4/bM/0+MBwEcBCN154JGeLMoWEgj7kdXEHNr+GXnQ7ekcJke0UpORVL0cClUZhovRQSkgu5wrdapB3zEL/qCtH4Lo9HPK1v+VU17oeVVscaU5/9madglSmzL mercury@arvados-shell-wlly8"
+arvados_cluster_mercury_shell_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGOhzKGlZVJONd5yYOejP+551myiz2ZiJClMsPZLTiW+pEeSvZZrlbx5qy6fO3cY+AEWOfnl2tTHId+m2wmya5WSqMGFtHfC7Hy7X0iGA2VgfOVfXgDEeYOvlWyjnqKKItT6Uy1tWKrRE7mV50ZPlJISW2Bp32tUk6prchdymRlbSVHzNLV/ieQc4FnQCOu59kC+5oxVpCn8fXJN/r6yHMKPGh14V+mvl4vXQfmgjs0ZL6qz+2EKbPakffcEXqSXp9XKt/DUDpU6YLqOmyctvwXVJGMacRjvcIkiHQG26enmyuOYLpHn0DVGih2JYf4osZr7WvHb78bQv4ptmL3wmx mercury@arvados-shell-wlly8"
 
-arvados_cluster_git_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC/om5890+bvDjwi13B11ECyeIjTJuwscjlwGLBBmDgiC7SA/vtbQE9beNR6NWiMpRyQQcUkc3HkXEnxOBwSq/LRX/e+6qncXxXGKPMjjJjm7RxQ4Jf05B0s6GvRwyQYpz1r5HlcTBkWTyDupWZfQj6VNq2Y3NX+bSQAOZxTGtoB2Cxq+PssLgtGSISAb478TDgVOn2KgK0XgROYGvT+0oh3N2AbODArVBEHo26SusW512TR2LbXt2WToj2bVLldaML724c6f3yAbd6Cfy9rYOt7Fg05YEHFBzefgJx2rm8L+o6x6q9jEubVffD+dSC0A3HwWMsRaOk9X3SbYc5yDvn git@{{ arvados_cluster_git_host }}"
+arvados_cluster_git_ssh_public_key: "sh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbwvszIDZSjS8mHHM97dCXUYL1epVV5FYNGxv57XgqRv2oYa7sFu1fwGkBzwII3GkT8ztaD68LD8xWQXQ+oXOnvda7WW4BBQmSfXuPBUrs0eN8snoFqYNwhoxILhf/8tV8vE2a8Za+wu+Rbx3z+WbbL0IlXZBF8PI2ghYFh7q+pRBRrCg4uCoiP03QPthHdONOUDkMIkj/AM1olOe23FwI5gx2hE1PA1TqFDk+dHhHVPKJxbdZIx6rSmOKRP75RhXpMW+f5N53PgGosUomv+IDAEZ+vnpm01AEj/nkfaapWd24rCXUez31msx3ZN5lhjCkgGIv48pHCRlSCDBjONPr git@{{ arvados_cluster_git_host }}"
 
 arvados_cluster_admin_user_email: "mercury-admin@{{ arvados_cluster_id }}"
 
-arvados_cluster_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
-arvados_cluster_s3_access_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_access_key'] }}"
-arvados_cluster_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_secret_key'] }}"
-arvados_cluster_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
-arvados_cluster_s3_replication: 3
+arvados_cluster_GROUP_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercurykeep']['s3_host'] }}"
+arvados_cluster_GROUP_s3_access_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_access_key'] }}"
+arvados_cluster_GROUP_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep']['s3_secret_key'] }}"
+arvados_cluster_GROUP_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
+arvados_cluster_GROUP_s3_replication: 3
 
 # FIXME: Generic stuff below, figure out how to DRY this out
 
@@ -110,21 +108,29 @@ arvados_cluster_workbenchs: "{{ groups['arvados-workbenchs'] | intersect(groups[
 arvados_cluster_workbench_names: "{{ arvados_cluster_workbenchs | map(attribute='cloud_resource_name') | list }}"
 arvados_cluster_workbench_hosts: "{{ arvados_cluster_workbenchs | map(attribute='cloud_resource_fqdn') | list }}"
 
-arvados_cluster_compute_nodes: "{{ groups['arvados-compute-nodes'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
-arvados_cluster_compute_node_names: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_name') | list }}"
-arvados_cluster_compute_node_hosts: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_fqdn') | list }}"
-
 # Public FQDNs of Arvados services
 arvados_cluster_sso_host: "arvados-sso-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_api_host: "arvados-api-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_ws_host: "arvados-ws-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_git_host: "arvados-git-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_workbench_host: "arvados-workbench-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
-arvados_cluster_keepproxy_host: "arvados-keep-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_download_host: "arvados-download-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}.{{ arvados_cluster_domain }}"
 
+arvados_cluster_GROUP_max_compute_nodes: 200
+
 arvados_cluster_slurm_control_machine: "arvados-master-{{ arvados_cluster_id }}"
-arvados_cluster_compute_node_pattern: "arvados-compute-node-{{ arvados_cluster_id }}-[001-999]"
+
+#arvados_cluster_compute_nodes: "{{ groups['arvados-compute-nodes'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
+#arvados_cluster_compute_node_names: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_name') | list }}"
+#arvados_cluster_compute_node_hosts: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_fqdn') | list }}"
+
+# N.B. the following must match the hostname pattern used in terraform for this cluster
+arvados_cluster_GROUP_compute_node_prefix: "arvados-compute-node-{{ arvados_cluster_id }}-"
+arvados_cluster_GROUP_compute_node_number_format: "%03d"
+
+arvados_cluster_GROUP_compute_node_pattern: "{{ arvados_cluster_GROUP_compute_node_prefix }}[{{ arvados_cluster_GROUP_compute_node_number_format | format(1) }}-{{ arvados_cluster_GROUP_compute_node_number_format | format(arvados_cluster_GROUP_max_compute_nodes) }}]"
+arvados_cluster_GROUP_compute_node_names_lookup_args: "start=1 count={{ arvados_cluster_GROUP_max_compute_nodes }} format={{ arvados_cluster_GROUP_compute_node_prefix }}{{ arvados_cluster_GROUP_compute_node_number_format }}"
+arvados_cluster_GROUP_compute_node_names: "{{ lookup('sequence', arvados_cluster_GROUP_compute_node_names_lookup_args, wantlist=True) }}"
 
 arvados_cluster_delegate: "{{ arvados_cluster_shells[0]['inventory_hostname'] }}"
