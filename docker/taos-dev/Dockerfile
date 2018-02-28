@@ -8,4 +8,4 @@ RUN apt-get update \
          man \
     && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT ["/bin/bash"]
+CMD ["bash"]
