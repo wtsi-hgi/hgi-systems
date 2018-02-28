@@ -158,6 +158,7 @@ module "arvados-monitor" {
     user = "${module.ssh-gateway.user}"
   }
 
+  arvados_cluster_id   = "ncucu"
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
