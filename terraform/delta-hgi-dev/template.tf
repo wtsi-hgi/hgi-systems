@@ -1,0 +1,1 @@
+../delta-hgiarvados/template.tf
