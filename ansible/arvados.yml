@@ -74,6 +74,55 @@
       vars:
         arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
 
+- hosts: arvados-api-dbs
+  vars:
+    arvados_PLAYBOOK_api_db_data_mountpoint: /mnt/arvados-api-db
+    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+  tasks:
+    - name: configure attached-openstack-volume for arvados api database
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: arvados-api-db-vg
+        attached_openstack_volume_vols:
+          - name: arvados-api-db-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup s3 to backup api server data 
+      import_role:
+        name: s3-backup
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
+        s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/api-db"
+        ###############################################################################
+        # Restore from s3 if this file is present (then delete it)
+        ###############################################################################
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        ###############################################################################
+        # Pre/post tasks
+        ###############################################################################
+        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_api_db_data_mountpoint }}/api-db.out.gz"
+    - name: configure arvados-api-db
+      import_role:
+        name: arvados-api-db
+      vars:
+        arvados_api_db_data_dir: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
+        arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+
 - hosts: arvados-masters
   vars:
     arvados_PLAYBOOK_api_data_mountpoint: /mnt/arvados-api-db
