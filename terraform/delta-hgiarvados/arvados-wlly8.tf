@@ -1,4 +1,4 @@
-module "arvados-wlly8-master" {
+module "arvados-master-wlly8" {
   source = "../modules/arvados-master"
 
   image = {
@@ -21,7 +21,7 @@ module "arvados-wlly8-master" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-wlly8-sso" {
+module "arvados-sso-wlly8" {
   source = "../modules/arvados-sso"
 
   image = {
@@ -44,7 +44,7 @@ module "arvados-wlly8-sso" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-wlly8-workbench" {
+module "arvados-workbench-wlly8" {
   source = "../modules/arvados-workbench"
 
   image = {
@@ -67,7 +67,7 @@ module "arvados-wlly8-workbench" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-wlly8-keepproxy" {
+module "arvados-keepproxy-wlly8" {
   source = "../modules/arvados-keepproxy"
 
   image = {
@@ -91,7 +91,7 @@ module "arvados-wlly8-keepproxy" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-wlly8-keep" {
+module "arvados-keep-wlly8" {
   source = "../modules/arvados-keep"
 
   image = {
@@ -115,7 +115,7 @@ module "arvados-wlly8-keep" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-wlly8-shell" {
+module "arvados-shell-wlly8" {
   source = "../modules/arvados-shell"
 
   image = {
@@ -138,7 +138,7 @@ module "arvados-wlly8-shell" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-wlly8-compute-node-noconf" {
+module "arvados-compute-node-noconf-wlly8" {
   source = "../modules/arvados-compute-node-noconf"
 
   image = {
