@@ -1,1 +1,0 @@
-../delta-hgiarvados/images.tf
