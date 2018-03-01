@@ -71,15 +71,41 @@ end
 def load_from_object_store(image, image_bucket)
     STDERR.puts("Downloading #{image} from the object store to #{IMAGE_DOWNLOAD_DIRECTORY}")
     system("s3cmd get --force 's3://#{image_bucket}/#{image}' '#{IMAGE_DOWNLOAD_DIRECTORY}' >&2") or abort
-    STDERR.puts("Uploading #{image} to Glance...")
     image_location = File.join(IMAGE_DOWNLOAD_DIRECTORY, image)
-    std_out, std_err, status = Open3.capture3(
-        "openstack image create --file '#{image_location}' -c id -f value '#{image}'")
-    FileUtils.rm(image_location)
+
+    begin
+        image_type = get_image_type(image_location)
+        STDERR.puts("Image type identified as \"#{image_type}\"")
+
+        STDERR.puts("Uploading #{image} to Glance...")
+        std_out, std_err, status = Open3.capture3(
+            "openstack image create --disk-format '#{image_type}' --file '#{image_location}' -c id -f value '#{image}'")
+
+        if status.exitstatus != 0
+            abort("Error uploading image to OpenStack: #{std_err}")
+        else
+            return std_out.strip
+        end
+    ensure
+        STDERR.puts("Removing downloaded image")
+        FileUtils.rm(image_location)
+    end
+end
+
+
+def get_image_type(image_location)
+    std_out, std_err, status = Open3.capture3("file '#{image_location}'")
     if status.exitstatus != 0
-        abort("Error uploading image to OpenStack: #{std_err}")
+        raise "Non-zero exit code #{status.exitstatus} when getting file status of #{image_location}: #{std_err}"
+    end
+    file_type = std_out.split(":", 2)[1].downcase
+
+    if file_type.include? "qcow"
+        return "qcow2"
+    elsif file_type.include? "iso"
+        return "iso"
     else
-        return std_out.strip
+        raise "Unknown file type: #{file_type}"
     end
 end
 
