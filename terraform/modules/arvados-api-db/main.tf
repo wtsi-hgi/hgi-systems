@@ -94,6 +94,3 @@ resource "openstack_compute_volume_attach_v2" "arvados-api-db-volume-attach" {
   instance_id = "${openstack_compute_instance_v2.arvados-api-db.id}"
 }
 
-output "ip" {
-  value = "${openstack_networking_floatingip_v2.arvados-api-db.address}"
-}
