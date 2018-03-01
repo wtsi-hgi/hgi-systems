@@ -15,6 +15,7 @@ RUN apt-get -q=2 update \
         gzip \
         xorriso \
         xz-utils \
+        file \
     && apt-get autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
