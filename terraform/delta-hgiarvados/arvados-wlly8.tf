@@ -1,4 +1,4 @@
-module "arvados-master" {
+module "arvados-wlly8-master" {
   source = "../modules/arvados-master"
 
   image = {
@@ -18,10 +18,10 @@ module "arvados-master" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgi-dev"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-sso" {
+module "arvados-wlly8-sso" {
   source = "../modules/arvados-sso"
 
   image = {
@@ -41,10 +41,10 @@ module "arvados-sso" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgi-dev"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-workbench" {
+module "arvados-wlly8-workbench" {
   source = "../modules/arvados-workbench"
 
   image = {
@@ -64,10 +64,10 @@ module "arvados-workbench" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgi-dev"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-keepproxy" {
+module "arvados-wlly8-keepproxy" {
   source = "../modules/arvados-keepproxy"
 
   image = {
@@ -88,10 +88,10 @@ module "arvados-keepproxy" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgi-dev"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-keep" {
+module "arvados-wlly8-keep" {
   source = "../modules/arvados-keep"
 
   image = {
@@ -112,10 +112,10 @@ module "arvados-keep" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgi-dev"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-shell" {
+module "arvados-wlly8-shell" {
   source = "../modules/arvados-shell"
 
   image = {
@@ -135,10 +135,10 @@ module "arvados-shell" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgi-dev"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
-module "arvados-compute-node-noconf" {
+module "arvados-wlly8-compute-node-noconf" {
   source = "../modules/arvados-compute-node-noconf"
 
   image = {
@@ -148,7 +148,7 @@ module "arvados-compute-node-noconf" {
 
   count              = 1
   flavour            = "m1.xlarge"
-  domain             = "node.delta-hgi-dev.consul"
+  domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
   network_id         = "${module.openstack.network_id}"
@@ -161,7 +161,7 @@ module "arvados-compute-node-noconf" {
   arvados_cluster_id   = "wlly8"
   extra_ansible_groups = []
 
-  consul_datacenter     = "delta-hgi-dev"
+  consul_datacenter     = "delta-hgiarvados"
   consul_retry_join     = "${module.consul-server.retry_join}"
   upstream_dns_servers  = ["172.18.255.1", "172.18.255.2", "172.18.255.3"] # FIXME this should be defined elsewhere
   consul_template_token = "${var.consul_template_token}"
