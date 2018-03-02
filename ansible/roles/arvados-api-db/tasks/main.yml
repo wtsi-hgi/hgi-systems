@@ -30,6 +30,7 @@
     state: directory
   with_items:
     - postgresql
+    - python-psycopg2
 
 - name: create etc-postgresql dir
   become: yes
