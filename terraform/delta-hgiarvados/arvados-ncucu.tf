@@ -29,7 +29,7 @@ module "arvados-api-db" {
     user = "${var.base_image_user}"
   }
 
-  flavour            = "m1.3xlarge"
+  flavour            = "m1.2xlarge"
   domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
   key_pair_ids       = "${module.openstack.key_pair_ids}"
@@ -193,7 +193,7 @@ module "arvados-compute-node-noconf" {
     user = "${var.arvados_compute_node_image_user}"
   }
 
-  count              = 50
+  count              = 10
   flavour            = "m1.xlarge"
   domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
