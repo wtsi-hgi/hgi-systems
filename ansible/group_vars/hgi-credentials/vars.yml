@@ -4,6 +4,7 @@
 #   ansible_vault_password: xxx
 #   hgi_credentials_mercury_dockerhub_username: xxx
 #   hgi_credentials_mercury_dockerhub_password: xxx
+#   mercury_system_password_crypted: xxx
 #   mercury_google_password: xxx
 #   mercury_ssh_key: xxx
 #   hgi_credentials_pem_WILDCARD_hgi_internal_sanger_ac_uk_key: xxx
