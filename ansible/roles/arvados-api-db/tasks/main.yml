@@ -30,7 +30,6 @@
     state: directory
   with_items:
     - postgresql
-    - python-psycopg2
 
 - name: create etc-postgresql dir
   become: yes
@@ -63,6 +62,7 @@
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - "postgresql={{ arvados_api_db_postgresql_package_version }}"
+    - python-psycopg2
 
 - name: set ownership of postgres dirs
   become: yes
