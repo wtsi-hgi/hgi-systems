@@ -328,22 +328,22 @@ resource "openstack_compute_secgroup_v2" "nfs-server" {
 
 output "security_group_ids" {
   value = {
-    consul-client = "${openstack_compute_secgroup_v2.consul-client.id}"
-    consul-server = "${openstack_compute_secgroup_v2.consul-server.id}"
-    http          = "${openstack_compute_secgroup_v2.http.id}"
-    http-cogs     = "${openstack_compute_secgroup_v2.http-cogs.id}"
-    https         = "${openstack_compute_secgroup_v2.https.id}"
-    ping          = "${openstack_compute_secgroup_v2.ping.id}"
-    ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
+    consul-client  = "${openstack_compute_secgroup_v2.consul-client.id}"
+    consul-server  = "${openstack_compute_secgroup_v2.consul-server.id}"
+    http           = "${openstack_compute_secgroup_v2.http.id}"
+    http-cogs      = "${openstack_compute_secgroup_v2.http-cogs.id}"
+    https          = "${openstack_compute_secgroup_v2.https.id}"
+    ping           = "${openstack_compute_secgroup_v2.ping.id}"
+    ssh            = "${openstack_compute_secgroup_v2.ssh.id}"
     postgres-local = "${openstack_compute_secgroup_v2.postgres-local.id}"
-    tcp-local     = "${openstack_compute_secgroup_v2.tcp-local.id}"
-    udp-local     = "${openstack_compute_secgroup_v2.udp-local.id}"
-    slurm-master  = "${openstack_compute_secgroup_v2.slurm-master.id}"
-    slurm-compute = "${openstack_compute_secgroup_v2.slurm-compute.id}"
-    keep-service  = "${openstack_compute_secgroup_v2.keep-service.id}"
-    keep-proxy    = "${openstack_compute_secgroup_v2.keep-proxy.id}"
-    netdata       = "${openstack_compute_secgroup_v2.netdata.id}"
-    nfs-server    = "${openstack_compute_secgroup_v2.nfs-server.id}"
+    tcp-local      = "${openstack_compute_secgroup_v2.tcp-local.id}"
+    udp-local      = "${openstack_compute_secgroup_v2.udp-local.id}"
+    slurm-master   = "${openstack_compute_secgroup_v2.slurm-master.id}"
+    slurm-compute  = "${openstack_compute_secgroup_v2.slurm-compute.id}"
+    keep-service   = "${openstack_compute_secgroup_v2.keep-service.id}"
+    keep-proxy     = "${openstack_compute_secgroup_v2.keep-proxy.id}"
+    netdata        = "${openstack_compute_secgroup_v2.netdata.id}"
+    nfs-server     = "${openstack_compute_secgroup_v2.nfs-server.id}"
   }
 }
 
