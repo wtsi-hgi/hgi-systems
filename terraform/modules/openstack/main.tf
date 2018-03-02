@@ -174,6 +174,19 @@ resource "openstack_compute_secgroup_v2" "ssh" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "postgres-local" {
+  provider    = "openstack"
+  name        = "postgres-local_${var.region}_${var.env}"
+  description = "Local network access on postgres port 5432"
+
+  rule {
+    from_port   = 5432
+    to_port     = 5432
+    ip_protocol = "tcp"
+    cidr        = "10.0.0.0/8"
+  }
+}
+
 resource "openstack_compute_secgroup_v2" "tcp-local" {
   provider    = "openstack"
   name        = "tcp-local_${var.region}_${var.env}"
@@ -322,6 +335,7 @@ output "security_group_ids" {
     https         = "${openstack_compute_secgroup_v2.https.id}"
     ping          = "${openstack_compute_secgroup_v2.ping.id}"
     ssh           = "${openstack_compute_secgroup_v2.ssh.id}"
+    postgres-local = "${openstack_compute_secgroup_v2.postgres-local.id}"
     tcp-local     = "${openstack_compute_secgroup_v2.tcp-local.id}"
     udp-local     = "${openstack_compute_secgroup_v2.udp-local.id}"
     slurm-master  = "${openstack_compute_secgroup_v2.slurm-master.id}"

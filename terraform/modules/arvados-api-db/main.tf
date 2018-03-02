@@ -49,8 +49,7 @@ resource "openstack_compute_instance_v2" "arvados-api-db" {
     "${var.security_group_ids["ping"]}",
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["consul-client"]}",
-    "${var.security_group_ids["tcp-local"]}",
-    "${var.security_group_ids["udp-local"]}",
+    "${var.security_group_ids["postgres-local"]}",
   ]
 
   network {
