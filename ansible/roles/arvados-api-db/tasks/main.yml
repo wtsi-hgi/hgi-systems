@@ -129,6 +129,8 @@
     - connections
     - resources
     - runtime_stats
+    - query_tuning
+    - write_ahead_log
 
 - name: ensure postgresql has restarted before creating user and db
   meta: flush_handlers
