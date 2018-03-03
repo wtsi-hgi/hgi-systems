@@ -15,3 +15,5 @@
     passenger_pre_start http://127.0.0.1:{{ arvados_master_api_backend_port }}/arvados/v1/jobs;
 
     large_client_header_buffers 4 32k;
+
+    passenger_buffer_response off;
