@@ -69,3 +69,11 @@
     chdir: /usr/local/src/netdata
   when: netdata_git_source.changed
 
+- name: configure netdata consul service
+  become: yes
+  template:
+    src: consul-netdata.json.j2
+    dest: /etc/consul.d/consul-netdata.json
+    owner: root
+  notify:
+    - reload consul
