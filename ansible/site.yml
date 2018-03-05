@@ -44,6 +44,7 @@
 - import_playbook: consul.yml
 
 # Playbooks that only support root hosts
+- import_playbook: netdata.yml
 - import_playbook: arvados.yml
 - import_playbook: cookie-jars.yml
 - import_playbook: cookie-monsters.yml
