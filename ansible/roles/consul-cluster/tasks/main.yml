@@ -189,6 +189,8 @@
             policy: write
           - key: ""
             policy: write
+          - service: ""
+            policy: write
 
     - name: store client agent ACL token in consul kv for reading by terraform (TODO migrate to vault)
       delegate_to: "{{ consul_cluster_leader }}"
