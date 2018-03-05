@@ -190,4 +190,4 @@ hail-computers
 hailers
 
 [netdata:children]
-arvados-keepproxies
+arvados
