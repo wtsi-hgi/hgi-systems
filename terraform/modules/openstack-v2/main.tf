@@ -4,10 +4,12 @@ variable "mercury_keypair" {}
 variable "jr17_keypair" {}
 variable "subnet" {}
 variable "gateway_ip" {}
+
 variable "dns_nameservers" {
   type    = "list"
   default = []
 }
+
 variable "host_routes" {
   type    = "list"
   default = []
