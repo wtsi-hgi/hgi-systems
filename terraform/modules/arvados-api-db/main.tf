@@ -50,6 +50,7 @@ resource "openstack_compute_instance_v2" "arvados-api-db" {
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["consul-client"]}",
     "${var.security_group_ids["postgres-local"]}",
+    "${var.security_group_ids["netdata"]}",
   ]
 
   network {

@@ -55,6 +55,7 @@ resource "openstack_compute_instance_v2" "arvados-sso" {
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["https"]}",
     "${var.security_group_ids["consul-client"]}",
+    "${var.security_group_ids["netdata"]}",
   ]
 
   network {
