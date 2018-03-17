@@ -22,6 +22,7 @@ RUN apt-get update \
          openssh-client \
          pkg-config \
          python3-pip \
+         qemu \
     && rm -rf /var/lib/apt/lists/*
 
 # Install go
