@@ -17,7 +17,9 @@ RUN apt-get update \
          make \
          openssh-client \
          pkg-config \
+         python3-dev \
          python3-pip \
+         python3-setuptools \
          qemu \
          ruby \
     && rm -rf /var/lib/apt/lists/*
