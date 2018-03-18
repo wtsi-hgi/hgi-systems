@@ -1,0 +1,4 @@
+FROM ubuntu:16.04
+
+COPY scripts/get-python-gitlab.sh /tmp/get-python-gitlab.sh
+RUN /tmp/get-python-gitlab.sh && rm /tmp/get-python-gitlab.sh
