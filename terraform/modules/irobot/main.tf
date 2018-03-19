@@ -41,7 +41,7 @@ resource "openstack_compute_instance_v2" "irobot" {
     "${var.security_group_ids["ping"]}",
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["http"]}",
-    "${var.security_group_ids["iRods"]}",
+    "${var.security_group_ids["irods"]}",
   ]
 
   network {

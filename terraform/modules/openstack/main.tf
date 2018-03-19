@@ -313,10 +313,10 @@ resource "openstack_compute_secgroup_v2" "nfs-server" {
   }
 }
 
-resource "openstack_compute_secgroup_v2" "iRods" {
+resource "openstack_compute_secgroup_v2" "irods" {
   provider    = "openstack"
-  name        = "iRods_${var.region}_${var.env}"
-  description = "Access iRods"
+  name        = "irods_${var.region}_${var.env}"
+  description = "Access irods"
 
   rule {
     from_port   = 1247
@@ -343,7 +343,7 @@ output "security_group_ids" {
     keep-proxy    = "${openstack_compute_secgroup_v2.keep-proxy.id}"
     netdata       = "${openstack_compute_secgroup_v2.netdata.id}"
     nfs-server    = "${openstack_compute_secgroup_v2.nfs-server.id}"
-    iRods    	  = "${openstack_compute_secgroup_v2.iRods.id}"
+    irods    	  = "${openstack_compute_secgroup_v2.irods.id}"
   }
 }
 
