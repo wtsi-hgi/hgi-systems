@@ -1,0 +1,8 @@
+---
+
+- hosts: irobots
+  roles:
+    - name: irobot
+  vars:
+    irobot_irods_url: "{{ irobot_irods_url }}"
+    irobot_irods_username: "{{ irobot_irods_username }}"

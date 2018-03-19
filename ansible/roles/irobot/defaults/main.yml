@@ -1,0 +1,8 @@
+# The following variables MUST be set:
+#   - irobot_irods_url:
+#   - irobot_irods_username:
+#   - irobot_irods_password:
+
+---
+
+irobot_install_directory: /tmp
