@@ -69,6 +69,7 @@
 [arvados-ssos]
 [arvados-workbenches]
 [netdata]
+[irobots]
 
 [hgs4:children]
 mesos-masters
