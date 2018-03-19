@@ -23,6 +23,19 @@ variable "bastion" {
   default = {}
 }
 
+variable "extra_ansible_groups" {
+  type    = "list"
+  default = []
+}
+
+locals {
+  ansible_groups = [
+    "arvados-masters",
+    "arvados-cluster-${var.arvados_cluster_id}",
+    "irobots"
+  ]
+}
+
 resource "openstack_networking_floatingip_v2" "irobot" {
   provider = "openstack"
   pool     = "nova"
@@ -51,7 +64,7 @@ resource "openstack_compute_instance_v2" "irobot" {
   user_data = "#cloud-config\nhostname: irobot-${var.arvados_cluster_id}\nfqdn: irobot-${var.arvados_cluster_id}.${var.domain}"
 
   metadata = {
-    ansible_groups = "dockerers"
+    ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
     user           = "${var.image["user"]}"
     bastion_host   = "${var.bastion["host"]}"
     bastion_user   = "${var.bastion["user"]}"
