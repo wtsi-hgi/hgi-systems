@@ -2,8 +2,8 @@ module "irobot" {
   source = "../modules/irobot"
 
   image = {
-    name = "${var.base_image_name}"
-    user = "${var.base_image_user}"
+    name = "${var.docker_image_name}"
+    user = "${var.docker_image_user}"
   }
 
   count              = 1
