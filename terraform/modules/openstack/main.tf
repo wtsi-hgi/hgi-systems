@@ -313,15 +313,14 @@ resource "openstack_compute_secgroup_v2" "nfs-server" {
   }
 }
 
-resource "openstack_compute_secgroup_v2" "irods" {
+resource "openstack_compute_secgroup_v2" "krb5" {
   provider    = "openstack"
-  name        = "irods_${var.region}_${var.env}"
-  description = "Access irods"
+  name        = "krb5_${var.region}_${var.env}"
+  description = "Kerberos authentication"
 
   rule {
-    from_port   = 1247
-    to_port     = 1247
-    ip_protocol = "tcp"
+    to_port     = 88
+    ip_protocol = "udp"
     cidr        = "0.0.0.0/0"
   }
 }
@@ -343,7 +342,7 @@ output "security_group_ids" {
     keep-proxy    = "${openstack_compute_secgroup_v2.keep-proxy.id}"
     netdata       = "${openstack_compute_secgroup_v2.netdata.id}"
     nfs-server    = "${openstack_compute_secgroup_v2.nfs-server.id}"
-    irods    	  = "${openstack_compute_secgroup_v2.irods.id}"
+    krb5    	  = "${openstack_compute_secgroup_v2.krb5.id}"
   }
 }
 
