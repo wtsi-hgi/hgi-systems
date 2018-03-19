@@ -1,7 +1,7 @@
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
-variable "count" {}
+variable "arvados_cluster_id" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -26,13 +26,12 @@ variable "bastion" {
 resource "openstack_networking_floatingip_v2" "irobot" {
   provider = "openstack"
   pool     = "nova"
-  count    = "${var.count}"
 }
 
 resource "openstack_compute_instance_v2" "irobot" {
   provider    = "openstack"
-  count       = "${var.count}"
-  name        = "irobot-${count.index + 1}"
+  count       = 1
+  name        = "irobot-${var.arvados_cluster_id}"
   image_name  = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${var.key_pair_ids["mercury"]}"
@@ -49,7 +48,7 @@ resource "openstack_compute_instance_v2" "irobot" {
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: irobot-${count.index + 1}\nfqdn: irobot-${count.index + 1}.${var.domain}"
+  user_data = "#cloud-config\nhostname: irobot-${var.arvados_cluster_id}\nfqdn: irobot-${var.arvados_cluster_id}.${var.domain}"
 
   metadata = {
     ansible_groups = "dockerers"
@@ -77,15 +76,13 @@ resource "openstack_compute_instance_v2" "irobot" {
 
 resource "openstack_compute_floatingip_associate_v2" "irobot" {
   provider    = "openstack"
-  count       = "${var.count}"
-  floating_ip = "${openstack_networking_floatingip_v2.irobot.*.address[count.index]}"
-  instance_id = "${openstack_compute_instance_v2.irobot.*.id[count.index]}"
+  floating_ip = "${openstack_networking_floatingip_v2.irobot.address}"
+  instance_id = "${openstack_compute_instance_v2.irobot.id}"
 }
 
 resource "infoblox_record" "irobot" {
-  count  = "${var.count}"
-  value  = "${openstack_networking_floatingip_v2.irobot.*.address[count.index]}"
-  name   = "irobot-${count.index + 1}"
+  value  = "${openstack_networking_floatingip_v2.irobot.address}"
+  name   = "irobot-${var.arvados_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
@@ -93,5 +90,5 @@ resource "infoblox_record" "irobot" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.irobot.*.address}"
+  value = "${openstack_networking_floatingip_v2.irobot.address}"
 }
