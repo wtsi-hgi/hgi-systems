@@ -1,5 +1,5 @@
 module "hail-master-ew7" {
-  source = "../modules/hail-master"
+  source = "../modules/hail-2-master"
   count  = 1
 
   image = {
@@ -23,7 +23,7 @@ module "hail-master-ew7" {
 }
 
 module "hail-compute-ew7" {
-  source = "../modules/hail-compute"
+  source = "../modules/hail-2-compute"
   count  = 1
 
   image = {

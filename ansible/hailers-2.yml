@@ -22,22 +22,22 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
-- hosts: hailers_2
+- hosts: hailers-2
   vars:
-    hailers_PLAYBOOK_s3_host: "{{ hgi_software_s3_credentials['s3_host'] }}"
-    hailers_PLAYBOOK_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
-    hailers_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
-    hailers_PLAYBOOK_s3_backup_bucket: "hail-backup"
-    hailers_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
-    hailers_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
-    hailers_PLAYBOOK_created_restore_indicator_file: ".created-restore"
+    hailers2_PLAYBOOK_s3_host: "{{ hgi_software_s3_credentials['s3_host'] }}"
+    hailers2_PLAYBOOK_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
+    hailers2_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
+    hailers2_PLAYBOOK_s3_backup_bucket: "hail-backup"
+    hailers2_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
+    hailers2_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
+    hailers2_PLAYBOOK_created_restore_indicator_file: ".created-restore"
   tasks:
     - name: assert essential hail group membership
       assert:
         that: 
-          - "inventory_hostname in groups['hail-masters'] or
+          - "inventory_hostname in groups['hail-2-masters'] or
              inventory_hostname in groups['hail-computers']"
-        msg: "all hosts in hailers group must also be in group hail-masters and/or hail-computers"
+        msg: "all hosts in hailers2 group must also be in group hail-2-masters and/or hail-computers"
     - name: assert required vars defined in hail-cluster-<hail_cluster_id>
       assert:
         that: 
@@ -87,7 +87,7 @@
           - "tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''"
           - "tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''"
           - "tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''"
-      when: inventory_hostname in groups['hail-masters']
+      when: inventory_hostname in groups['hail-2-masters']
     - name: configure attached openstack volume for hail master
       import_role: 
         name: attached-openstack-volume
@@ -97,23 +97,23 @@
           - name: hail-data
             size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
             fstype: xfs
-            mountpoint: "{{ hailers_PLAYBOOK_data_dir }}"
+            mountpoint: "{{ hailers2_PLAYBOOK_data_dir }}"
         attached_openstack_volumes:
           - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
-        attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_created_restore_indicator_file }}"
-      when: inventory_hostname in groups['hail-masters']
+        attached_openstack_volume_fs_create_indicator_file: "{{ hailers2_PLAYBOOK_created_restore_indicator_file }}"
+      when: inventory_hostname in groups['hail-2-masters']
     - name: get spark url and checksum from s3
       tags: s3
       import_role:
         name: s3_geturl
       vars:
         s3_geturl_bucket: hgi-software
-        s3_geturl_url: "https://{{ hailers_PLAYBOOK_s3_host }}"
-        s3_geturl_access_key: "{{ hailers_PLAYBOOK_s3_access_key }}"
-        s3_geturl_secret_key: "{{ hailers_PLAYBOOK_s3_secret_key }}"
+        s3_geturl_url: "https://{{ hailers2_PLAYBOOK_s3_host }}"
+        s3_geturl_access_key: "{{ hailers2_PLAYBOOK_s3_access_key }}"
+        s3_geturl_secret_key: "{{ hailers2_PLAYBOOK_s3_secret_key }}"
         s3_geturl_object: "spark-{{ hail_cluster_spark_build }}.tgz"
-        s3_geturl_checksum_var: "hailers_PLAYBOOK_spark_tgz_checksum"
-        s3_geturl_url_var: "hailers_PLAYBOOK_spark_tgz_url"
+        s3_geturl_checksum_var: "hailers2_PLAYBOOK_spark_tgz_checksum"
+        s3_geturl_url_var: "hailers2_PLAYBOOK_spark_tgz_url"
     # TODO: Create and populate hail-tutorial-data S3 bucket.
     - name: import role hail
       import_role:
@@ -126,14 +126,14 @@
         hail_ssh_key: "{{ hail_cluster_ssh_key }}"
         hail_ssl_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
         hail_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
-        hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
+        hail_master_host_list: "{{ (groups['hail-2-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
-        hail_master_data_dir: "{{ hailers_PLAYBOOK_data_dir }}"
+        hail_master_data_dir: "{{ hailers2_PLAYBOOK_data_dir }}"
         hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_name'] }}"
         hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_domain'] }}"
-        hail_backup_s3_host: "{{ hailers_PLAYBOOK_s3_host }}"
-        hail_backup_s3_access_key: "{{ hailers_PLAYBOOK_s3_access_key }}"
-        hail_backup_s3_secret_key: "{{ hailers_PLAYBOOK_s3_secret_key }}"
+        hail_backup_s3_host: "{{ hailers2_PLAYBOOK_s3_host }}"
+        hail_backup_s3_access_key: "{{ hailers2_PLAYBOOK_s3_access_key }}"
+        hail_backup_s3_secret_key: "{{ hailers2_PLAYBOOK_s3_secret_key }}"
         hail_tutorial_data_s3_bucket: "hail-tutorial-data"
         ###############################################################################
         # Versions
@@ -184,14 +184,14 @@
         ###############################################################################
         # Backup settings
         ###############################################################################
-        hail_backup_s3_backup_bucket: "{{ hailers_PLAYBOOK_s3_backup_bucket }}"
-        hail_data_backup_path: "{{ hailers_PLAYBOOK_data_backup_path }}"
-        hail_s3_backup_restore_indicator_file: "{{ hailers_PLAYBOOK_created_restore_indicator_file }}"
+        hail_backup_s3_backup_bucket: "{{ hailers2_PLAYBOOK_s3_backup_bucket }}"
+        hail_data_backup_path: "{{ hailers2_PLAYBOOK_data_backup_path }}"
+        hail_s3_backup_restore_indicator_file: "{{ hailers2_PLAYBOOK_created_restore_indicator_file }}"
         ###############################################################################
         # Spark settings
         ###############################################################################
-        hail_spark_tgz_url: "{{ hailers_PLAYBOOK_spark_tgz_url }}"
-        hail_spark_tgz_checksum: "{{ hailers_PLAYBOOK_spark_tgz_checksum }}"
+        hail_spark_tgz_url: "{{ hailers2_PLAYBOOK_spark_tgz_url }}"
+        hail_spark_tgz_checksum: "{{ hailers2_PLAYBOOK_spark_tgz_checksum }}"
         #hail_spark_master_backend_port: "8080"
         hail_spark_local_ip: "{{ cloud_resource_private_ip }}"
         hail_spark_hadoop_anonymous_buckets:

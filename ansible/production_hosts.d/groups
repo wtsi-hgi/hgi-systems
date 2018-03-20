@@ -58,6 +58,8 @@
 [spark-masters]
 [spark-computers]
 [sparkers]
+[hail-2-masters]
+[hail-2-computers]
 [hail-masters]
 [hail-computers]
 [hgi]
@@ -186,8 +188,13 @@ spark-computers
 hail-masters
 hail-computers
 
+[hailers-2:children]
+hail-2-masters
+hail-2-computers
+
 [hgi:children]
 hailers
+hailers-2
 
 [netdata:children]
 arvados

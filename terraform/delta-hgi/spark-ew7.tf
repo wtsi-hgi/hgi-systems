@@ -1,5 +1,5 @@
 module "spark-master-ew7" {
-  source = "../modules/spark-master"
+  source = "../modules/spark-2-master"
   count  = 0
 
   image = {
@@ -23,7 +23,7 @@ module "spark-master-ew7" {
 }
 
 module "spark-compute-ew7" {
-  source = "../modules/spark-compute"
+  source = "../modules/spark-2-compute"
   count  = 0
 
   image = {
