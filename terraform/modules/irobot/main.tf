@@ -32,7 +32,7 @@ locals {
   ansible_groups = [
     "arvados-masters",
     "arvados-cluster-${var.arvados_cluster_id}",
-    "irobots"
+    "irobots",
   ]
 }
 
