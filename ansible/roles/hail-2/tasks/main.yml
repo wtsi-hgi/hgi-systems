@@ -41,12 +41,14 @@
       ###############################################################################
       spark_version: "{{ hail_spark_version }}"
       spark_build_version: "{{ hail_spark_build_version }}"
-      spark_hadoop_version: 2.8.3
+      spark_hadoop_version: "{{ hail_spark_hadoop_version }}"
       ###############################################################################
       # Source URL and checksum (use builds on Apache mirrors by default)
       ###############################################################################
       spark_tgz_url: "{{ hail_spark_tgz_url }}"
       spark_tgz_checksum: "{{ hail_spark_tgz_checksum }}"
+      spark_hadoop_tgz_url: "{{ hail_spark_hadoop_tgz_url }}"
+      spark_hadoop_tgz_checksum: "{{ hail_spark_hadoop_tgz_checksum }}"
       ###############################################################################
       # Directories and Paths
       ###############################################################################

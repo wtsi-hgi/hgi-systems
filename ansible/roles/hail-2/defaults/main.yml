@@ -24,7 +24,7 @@
 # Variables that have no defaults and must be set
 ###############################################################################
 #
-# hail_jupyter_token: 
+# hail_jupyter_token:
 #   an authentication token used to login to Jupyter notebook
 #
 # hail_ssh_key:
@@ -73,8 +73,9 @@ hail_version_branch: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\1') }}"
 hail_version_commit: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\2') }}"
 hail_spark_build_version: "2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c"
 hail_spark_version: "{{ hail_spark_build_version | regex_replace('([0-9.]+)-.*', '\\1') }}"
+hail_spark_hadoop_version: "2.8.2"
 hail_seaborn_version: "0.8.1"
-hail_anaconda_version: "5.1.0"
+hail_anaconda_version: "4.4.0"
 
 ###############################################################################
 # Directories
@@ -128,6 +129,8 @@ hail_s3_backup_restore_indicator_file: ""
 ###############################################################################
 hail_spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
 hail_spark_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+hail_spark_hadoop_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz"
+hail_spark_hadoop_tgz_checksum: "sha256:{{ lookup('url', 'https://www.apache.org/dist/hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz.sha256').split(' ')[0] }}"
 hail_spark_master_backend_port: "8080"
 hail_spark_local_ip: "127.0.0.1"
 hail_spark_hadoop_anonymous_buckets: []
