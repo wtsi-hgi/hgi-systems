@@ -1,7 +1,7 @@
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
-variable "arvados_cluster_id" {}
+variable "irobot_cluster_id" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -30,8 +30,6 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "arvados-masters",
-    "arvados-cluster-${var.arvados_cluster_id}",
     "irobots",
   ]
 }
@@ -44,7 +42,7 @@ resource "openstack_networking_floatingip_v2" "irobot" {
 resource "openstack_compute_instance_v2" "irobot" {
   provider    = "openstack"
   count       = 1
-  name        = "irobot-${var.arvados_cluster_id}"
+  name        = "irobot-${var.irobot_cluster_id}"
   image_name  = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${var.key_pair_ids["mercury"]}"
@@ -61,7 +59,7 @@ resource "openstack_compute_instance_v2" "irobot" {
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: irobot-${var.arvados_cluster_id}\nfqdn: irobot-${var.arvados_cluster_id}.${var.domain}"
+  user_data = "#cloud-config\nhostname: irobot-${var.irobot_cluster_id}\nfqdn: irobot-${var.irobot_cluster_id}.${var.domain}"
 
   metadata = {
     ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
@@ -95,7 +93,7 @@ resource "openstack_compute_floatingip_associate_v2" "irobot" {
 
 resource "infoblox_record" "irobot" {
   value  = "${openstack_networking_floatingip_v2.irobot.address}"
-  name   = "irobot-${var.arvados_cluster_id}"
+  name   = "irobot-${var.irobot_cluster_id}"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600

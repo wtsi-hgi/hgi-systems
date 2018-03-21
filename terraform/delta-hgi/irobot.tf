@@ -6,6 +6,7 @@ module "irobot" {
     user = "${var.docker_image_user}"
   }
 
+  irobot_cluster_id  = "test"
   count              = 1
   flavour            = "m1.medium"
   domain             = "hgi.sanger.ac.uk"

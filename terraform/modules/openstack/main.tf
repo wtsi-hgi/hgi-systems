@@ -332,6 +332,7 @@ resource "openstack_compute_secgroup_v2" "krb5" {
   description = "Kerberos authentication"
 
   rule {
+    from_port   = 88
     to_port     = 88
     ip_protocol = "udp"
     cidr        = "0.0.0.0/0"
