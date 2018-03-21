@@ -23,7 +23,7 @@
 - name: import spark role
   tags: s3
   import_role:
-    name: spark
+    name: spark-2.2
   vars:
       ###############################################################################
       # Variables that have no defaults and must be set

@@ -144,7 +144,7 @@
         hail_spark_build_version: "{{ hail_cluster_spark_build }}"
         #hail_spark_version: "{{ hail_spark_build_version | regex_replace('([0-9.]+)-.*', '\\1') }}"
         hail_seaborn_version: "{{ hail_cluster_seaborn_version | default('0.8.1') }}"
-        hail_anaconda_version: "{{ hail_cluster_anaconda_version | default('5.1.0') }}"
+        hail_anaconda_version: "{{ hail_cluster_anaconda_version | default('4.4.0') }}"
         ###############################################################################
         # Directories
         ###############################################################################
