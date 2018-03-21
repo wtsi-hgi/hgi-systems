@@ -7,6 +7,7 @@
 
 hail_cluster_id: as45
 hail_cluster_spark_build: 2.1.2-bin-hadoop2.8.2-netlib-lgpl-5ec42a8c
+hail_cluster_hadoop_version: 2.8.2
 
 hail_cluster_authorized_keys:
   - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQChr4SkTeqEfnkadMVWIGN4Ea0UBJZl33ZWPt3Sg4818GeVpXGLWuoWx5pPkrShoj7G2FIgPcP+elEdB0wakyUVRak0+l/LE2AFWBXE6eI6YGfYqPKd6BjaNmCRjXNf/CvgCDXti/suYVxwPXj4+ARsquPmnMvKXLeMu/qMUf/nGwvxKLV8tYs2A6V+L9ZCRySjFuWAIF39bnob6ddFYyoC8O7sCl/3vz1+CXIYXe6+Ru7bb+CY6/CnZyA9wXa+Y2+IXpyWp7h4mWIdC9OET1DAo8TW+fbsbvLFIcGXcPiIXMkhsbC6mEn8IvEhpqy48vBUbZREEyecmZ2GLIJbEEUT as45@mib110129i"

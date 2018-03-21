@@ -44,8 +44,9 @@
           - "hail_cluster_id is defined"
           - "hail_cluster_jupyter_token is defined"
           - "hail_cluster_spark_build is defined"
+          - "hail_cluster_hadoop_version is defined"
           - "hail_cluster_ssh_key is defined"
-        msg: "'hail_cluster_id', 'hail_cluster_jupyter_token', 'hail_cluster_spark_build', and 'hail_cluster_ssh_key' must all be defined (probably in group hail-cluster-{% if hail_cluster_id is defined %}{{ hail_cluster_id }}{% else %}<hail_cluster_id>{% endif %})"
+        msg: "'hail_cluster_id', 'hail_cluster_jupyter_token', 'hail_cluster_spark_build', 'hail_cluster_hadoop_version', and 'hail_cluster_ssh_key' must all be defined (probably in group hail-cluster-{% if hail_cluster_id is defined %}{{ hail_cluster_id }}{% else %}<hail_cluster_id>{% endif %})"
     - name: assert hail_cluster_id must be a string
       assert:
         that:
@@ -114,6 +115,18 @@
         s3_geturl_object: "spark-{{ hail_cluster_spark_build }}.tgz"
         s3_geturl_checksum_var: "hailers_PLAYBOOK_spark_tgz_checksum"
         s3_geturl_url_var: "hailers_PLAYBOOK_spark_tgz_url"
+    - name: get hadoop url and checksum from s3
+      tags: s3
+      import_role:
+        name: s3_geturl
+      vars:
+        s3_geturl_bucket: hgi-software
+        s3_geturl_url: "https://{{ hailers_PLAYBOOK_s3_host }}"
+        s3_geturl_access_key: "{{ hailers_PLAYBOOK_s3_access_key }}"
+        s3_geturl_secret_key: "{{ hailers_PLAYBOOK_s3_secret_key }}"
+        s3_geturl_object: "hadoop-{{ hail_cluster_hadoop_version }}.tgz"
+        s3_geturl_checksum_var: "hailers_PLAYBOOK_hadoop_tgz_checksum"
+        s3_geturl_url_var: "hailers_PLAYBOOK_hadoop_tgz_url"
     # TODO: Create and populate hail-tutorial-data S3 bucket.
     - name: import role hail
       import_role:
@@ -143,6 +156,7 @@
         #hail_version_commit: "{{ hail_version | regex_replace('(.*)[-](.*)', '\\2') }}"
         hail_spark_build_version: "{{ hail_cluster_spark_build }}"
         #hail_spark_version: "{{ hail_spark_build_version | regex_replace('([0-9.]+)-.*', '\\1') }}"
+        hail_spark_hadoop_version: "{{ hail_cluster_hadoop_version }}"
         hail_seaborn_version: "{{ hail_cluster_seaborn_version | default('0.8.0') }}"
         hail_anaconda_version: "{{ hail_cluster_anaconda_version | default('4.4.0') }}"
         ###############################################################################
@@ -192,6 +206,8 @@
         ###############################################################################
         hail_spark_tgz_url: "{{ hailers_PLAYBOOK_spark_tgz_url }}"
         hail_spark_tgz_checksum: "{{ hailers_PLAYBOOK_spark_tgz_checksum }}"
+        hail_spark_hadoop_tgz_url: "{{ hailers_PLAYBOOK_hadoop_tgz_url }}"
+        hail_spark_hadoop_tgz_checksum: "{{ hailers_PLAYBOOK_hadoop_tgz_checksum }}"
         #hail_spark_master_backend_port: "8080"
         hail_spark_local_ip: "{{ cloud_resource_private_ip }}"
         hail_spark_hadoop_anonymous_buckets:
