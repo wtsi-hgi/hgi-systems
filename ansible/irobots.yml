@@ -1,5 +1,5 @@
 ---
 
--hosts: irobots
- roles:
+- hosts: irobots
+  roles:
     - irobot
