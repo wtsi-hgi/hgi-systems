@@ -2,4 +2,4 @@
 
 -hosts: irobots
  roles:
-    - name: irobot
+    - irobot
