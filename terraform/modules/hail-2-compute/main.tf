@@ -31,7 +31,7 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "hail-computers",
+    "hail-2-computers",
     "hail-cluster-${var.hail_cluster_id}",
     "consul-agents",
     "hgi-credentials",

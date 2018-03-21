@@ -35,7 +35,7 @@ variable "volume_size_gb" {
 
 locals {
   ansible_groups = [
-    "hail-masters",
+    "hail-2-masters",
     "hail-cluster-${var.hail_cluster_id}",
     "consul-agents",
     "hgi-credentials",

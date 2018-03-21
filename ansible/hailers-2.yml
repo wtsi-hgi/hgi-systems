@@ -24,13 +24,13 @@
 
 - hosts: hailers-2
   vars:
-    hailers2_PLAYBOOK_s3_host: "{{ hgi_software_s3_credentials['s3_host'] }}"
-    hailers2_PLAYBOOK_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
-    hailers2_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
-    hailers2_PLAYBOOK_s3_backup_bucket: "hail-backup"
-    hailers2_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
-    hailers2_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
-    hailers2_PLAYBOOK_created_restore_indicator_file: ".created-restore"
+    hailers_PLAYBOOK_s3_host: "{{ hgi_software_s3_credentials['s3_host'] }}"
+    hailers_PLAYBOOK_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"
+    hailers_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
+    hailers_PLAYBOOK_s3_backup_bucket: "hail-backup"
+    hailers_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
+    hailers_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
+    hailers_PLAYBOOK_created_restore_indicator_file: ".created-restore"
   tasks:
     - name: assert essential hail group membership
       assert:
