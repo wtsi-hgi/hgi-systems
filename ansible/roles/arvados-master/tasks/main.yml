@@ -280,6 +280,15 @@
     - events
     - worker_limits
 
+- name: add PASSENGER_INSTANCE_REGISTRY_DIR env var to root .bash_profile
+  become: yes
+  lineinfile:
+    path: /root/.bash_profile
+    line: "export PASSENGER_INSTANCE_REGISTRY_DIR=/var/run/nginx/passenger"
+    regexp: '^\s*export\s*PASSENGER_INSTANCE_REGISTRY_DIR\s*='
+    create: yes
+    state: present
+
 - name: ensure nginx has restarted before installing arvados api
   meta: flush_handlers
 

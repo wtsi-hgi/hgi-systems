@@ -58,6 +58,8 @@
 [spark-masters]
 [spark-computers]
 [sparkers]
+[hail-2-masters]
+[hail-2-computers]
 [hail-masters]
 [hail-computers]
 [hgi]
@@ -66,6 +68,7 @@
 [arvados-keepproxies]
 [arvados-keeps]
 [arvados-masters]
+[arvados-api-dbs]
 [arvados-ssos]
 [arvados-workbenches]
 [netdata]
@@ -135,6 +138,7 @@ consul-servers
 sparkers
 hailers
 arvados-masters
+arvados-api-dbs
 arvados-ssos
 
 # OpenStack instances to be created by Ansible
@@ -173,6 +177,7 @@ arvados-compute-nodes
 arvados-keepproxies
 arvados-keeps
 arvados-masters
+arvados-api-dbs
 arvados-ssos
 arvados-workbenches
 
@@ -183,9 +188,20 @@ spark-computers
 [hailers:children]
 hail-masters
 hail-computers
+hailers-2
+
+[hailers-2:children]
+hail-2-masters
+hail-2-computers
+
+[hail-masters:children]
+hail-2-masters
+
+[hail-computers:children]
+hail-2-computers
 
 [hgi:children]
 hailers
 
 [netdata:children]
-arvados-keepproxies
+arvados

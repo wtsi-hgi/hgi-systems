@@ -1,0 +1,111 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/spark/defaults/main.yml
+
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+# spark_ssh_key:
+#   a private ssh key used to authenticate between nodes in the spark cluster
+#
+# spark_ssl_cert:
+#   an SSL certificate for the master host
+#
+# spark_ssl_key:
+#   the SSL private key corresponding to spark_ssl_cert
+#
+# spark_master_host_list:
+#   list of (usually only one) master host for this cluster
+#
+# spark_worker_host_list:
+#   list of worker hosts in this cluster
+#
+# spark_master_external_hostname:
+#   hostname by which the master host is externally accessible
+#
+# spark_master_external_domain:
+#   domain under which the master host is externally accessible
+#
+###############################################################################
+
+###############################################################################
+# Versions
+###############################################################################
+spark_version: 2.2.0
+spark_build_version: "{{ spark_version }}"
+spark_hadoop_version: 2.8.3
+
+###############################################################################
+# Source URL and checksum (use builds on Apache mirrors by default)
+###############################################################################
+spark_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz"
+spark_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop2.7.tgz.md5') | regex_replace('^.*:', '') | regex_replace(' ', '') | lower }}"
+spark_hadoop_tgz_url: "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz"
+spark_hadoop_tgz_checksum: "md5:{{ lookup('url', 'https://www.apache.org/dist/hadoop/common/hadoop-{{ spark_hadoop_version }}/hadoop-{{ spark_hadoop_version }}.tar.gz.md5').split(',')[1] | regex_replace('^([0-9a-f]+)\\s.*$', '\\1') }}"
+
+###############################################################################
+# Directories and Paths
+###############################################################################
+spark_prefix_dir: "/usr/local/spark-{{ spark_version }}"
+spark_hadoop_prefix_dir: "/usr/local/hadoop-{{ spark_hadoop_version }}"
+spark_ssl_key_file: /etc/ssl.key
+spark_ssl_cert_file: /etc/ssl.cert
+
+###############################################################################
+# Spark settings
+###############################################################################
+spark_jars: ""
+spark_executor_extra_classpath_list: []
+spark_driver_extra_classpath_list: []
+spark_local_ip: "127.0.0.1"
+spark_master_host: "127.0.0.1"
+spark_master_port: "7077"
+spark_hadoop_default_s3a_endpoint: ""
+spark_hadoop_anonymous_buckets: []
+spark_executor_memory_gb: 1
+
+###############################################################################
+# Master server settings
+###############################################################################
+spark_master_server_name: "{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}"
+spark_master_external_path: ""
+spark_master_backend_port: 8080
+spark_master_webui_p: true
+
+###############################################################################
+# Users/Groups
+###############################################################################
+spark_user: spark
+spark_group: "{{ spark_user }}"
+spark_authorized_keys: []
+
+###############################################################################
+# Node types
+###############################################################################
+spark_master_p: "{{ inventory_hostname in spark_master_host_list }}"
+spark_worker_p: "{{ inventory_hostname in spark_worker_host_list }}"
+
+###############################################################################
+# General settings
+###############################################################################
+spark_apt_cache_valid_time: 86400
+

@@ -2,12 +2,18 @@
     passenger_log_file /var/log/nginx/passenger.log;
     passenger_instance_registry_dir /var/run/nginx/passenger;
 
-    passenger_max_pool_size 100;
+    passenger_max_pool_size 250;
+    passenger_min_instances 250;
+    passenger_pool_idle_time 3600; # default 300
     passenger_max_request_queue_size 5000;
     passenger_request_queue_overflow_status_code 513;
     passenger_intercept_errors on;
+
+    passenger_socket_backlog 8192; # matching nginx worker_connections
 
     # pre-start arvados api server
     passenger_pre_start http://127.0.0.1:{{ arvados_master_api_backend_port }}/arvados/v1/jobs;
 
     large_client_header_buffers 4 32k;
+
+    passenger_buffer_response off;

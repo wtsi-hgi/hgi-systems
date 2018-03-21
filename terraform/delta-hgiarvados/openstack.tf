@@ -1,6 +1,6 @@
 provider "openstack" {
   version     = "~> 1.2"
-  tenant_name = "${var.env == "production" ? "hgiarvados" : "hgi-dev"}"
+  tenant_name = "hgiarvados"
 }
 
 module "openstack" {

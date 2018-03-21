@@ -1,0 +1,12 @@
+<html>
+  <head>
+    <title>Netdata</title>
+  </head>
+  <body>
+    <ul>
+      {{ '{{ range service "netdata" }}
+      <li><a href="/{{.Name}}/{{.Node}}/">{{.Node}}</a></li>
+      {{ end}}' }}
+    </ul>
+  </body>
+</html>

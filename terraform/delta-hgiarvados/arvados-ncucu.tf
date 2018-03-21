@@ -21,6 +21,29 @@ module "arvados-master" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
+module "arvados-api-db" {
+  source = "../modules/arvados-api-db"
+
+  image = {
+    name = "${var.base_image_name}"
+    user = "${var.base_image_user}"
+  }
+
+  flavour            = "m1.2xlarge"
+  domain             = "node.delta-hgiarvados.consul"
+  security_group_ids = "${module.openstack.security_group_ids}"
+  key_pair_ids       = "${module.openstack.key_pair_ids}"
+  network_id         = "${module.openstack.network_id}"
+
+  bastion = {
+    host = "${module.ssh-gateway.host}"
+    user = "${module.ssh-gateway.user}"
+  }
+
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+}
+
 module "arvados-sso" {
   source = "../modules/arvados-sso"
 
@@ -138,6 +161,31 @@ module "arvados-shell" {
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
 }
 
+module "arvados-debugshell" {
+  source = "../modules/arvados-shell-new"
+
+  image = {
+    name = "${var.base_image_name}"
+    user = "${var.base_image_user}"
+  }
+
+  count              = 1
+  shell_name         = "debugshell"
+  flavour            = "m1.medium"
+  domain             = "hgi.sanger.ac.uk"
+  security_group_ids = "${module.openstack.security_group_ids}"
+  key_pair_ids       = "${module.openstack.key_pair_ids}"
+  network_id         = "${module.openstack.network_id}"
+
+  bastion = {
+    host = "${module.ssh-gateway.host}"
+    user = "${module.ssh-gateway.user}"
+  }
+
+  arvados_cluster_id   = "ncucu"
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+}
+
 module "arvados-monitor" {
   source = "../modules/arvados-monitor"
 
@@ -170,7 +218,7 @@ module "arvados-compute-node-noconf" {
     user = "${var.arvados_compute_node_image_user}"
   }
 
-  count              = 50
+  count              = 2
   flavour            = "m1.xlarge"
   domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"

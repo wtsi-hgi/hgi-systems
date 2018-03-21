@@ -22,7 +22,7 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
-- hosts: hailers
+- hosts: hailers:!hailers-2
   vars:
     hailers_PLAYBOOK_s3_host: "{{ hgi_software_s3_credentials['s3_host'] }}"
     hailers_PLAYBOOK_s3_access_key: "{{ hgi_software_s3_credentials['s3_access_key'] }}"

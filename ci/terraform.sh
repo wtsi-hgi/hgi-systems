@@ -65,7 +65,6 @@ echo "Generating /tmp/ansible_vault.pw"
 (echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
 echo "Calling terraform apply"
-# FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
 set +e
 terraform apply -input=false -refresh=false -parallelism=${PARALLELISM} plan
 apply_exit_code=$?

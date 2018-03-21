@@ -42,6 +42,10 @@ RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh
 # Install openstack client (PyPi version is much more up-to-date than that install via apt!)
 RUN pip3 install python-openstackclient==3.9.0
 
+# Install glance-proxy
+COPY scripts/get-glance-proxy.sh /tmp/get-glance-proxy.sh
+RUN /tmp/get-glance-proxy.sh && rm /tmp/get-glance-proxy.sh
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []

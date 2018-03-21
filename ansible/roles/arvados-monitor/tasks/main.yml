@@ -33,3 +33,64 @@
   with_items:
     - nginx
     - arvados-health
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ arvados_monitor_ssl_cert }}"
+    dest: "{{ arvados_monitor_ssl_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ arvados_monitor_ssl_key }}"
+    dest: "{{ arvados_monitor_ssl_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart nginx
+
+- name: template out arvados monitor nginx conf ctmpl
+  become: yes
+  template:
+    src: "arvados_monitor.conf.ctmpl.j2"
+    dest: "{{ arvados_monitor_nginx_conf_ctmpl_file }}"
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart consul-template
+
+- name: template out netdata.html.ctmpl
+  become: yes
+  template:
+    src: "netdata.html.ctmpl.j2"
+    dest: "{{ arvados_monitor_netdata_html_ctmpl_file }}"
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart consul-template
+
+- name: configure consul-template
+  become: yes
+  template:
+    src: "{{ item }}.hcl.j2"
+    dest: "/etc/consul-template.d/{{ item }}.hcl"
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart consul-template
+  with_items:
+    - "10-nginx-arvados-monitor"
+    - "20-nginx-netdata-html"
+
+- name: template out index.html
+  become: yes
+  template:
+    src: "index.html.j2"
+    dest: "/usr/share/nginx/html/index.html"
+    mode: 0700
+    owner: www-data
