@@ -326,6 +326,18 @@ resource "openstack_compute_secgroup_v2" "nfs-server" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "krb5" {
+  provider    = "openstack"
+  name        = "krb5_${var.region}_${var.env}"
+  description = "Kerberos authentication"
+
+  rule {
+    to_port     = 88
+    ip_protocol = "udp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client  = "${openstack_compute_secgroup_v2.consul-client.id}"
@@ -344,6 +356,7 @@ output "security_group_ids" {
     keep-proxy     = "${openstack_compute_secgroup_v2.keep-proxy.id}"
     netdata        = "${openstack_compute_secgroup_v2.netdata.id}"
     nfs-server     = "${openstack_compute_secgroup_v2.nfs-server.id}"
+    krb5           = "${openstack_compute_secgroup_v2.krb5.id}"
   }
 }
 

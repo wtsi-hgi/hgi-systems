@@ -53,5 +53,6 @@
 - import_playbook: hailers.yml
 - import_playbook: hailers-2.yml
 - import_playbook: openstack-tenant-cleaners.yml
+- import_playbook: irobots.yml
 #- import_playbook: spark.yml
 
