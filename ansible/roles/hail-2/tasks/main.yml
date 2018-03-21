@@ -137,6 +137,8 @@
     - r-base
     - nfs-common
 
+- include_tasks: conda-6096-patch.yml
+
 - name: install conda prerequisites
   become: yes
   conda:
