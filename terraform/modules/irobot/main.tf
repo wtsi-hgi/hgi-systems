@@ -2,6 +2,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
 variable "irobot_cluster_id" {}
+variable "count" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -41,7 +42,6 @@ resource "openstack_networking_floatingip_v2" "irobot" {
 
 resource "openstack_compute_instance_v2" "irobot" {
   provider    = "openstack"
-  count       = 1
   name        = "irobot-${var.irobot_cluster_id}"
   image_name  = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
