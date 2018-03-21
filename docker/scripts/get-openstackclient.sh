@@ -7,11 +7,13 @@ build_deps=(
     python3-pip
     python3-wheel
     python3-dev
+    libssl-dev
 )
 
 deps=(
     python3
     python3-setuptools
+    libssl1.0.0
 )
 
 echo "Installing prereqs and build deps: ${build_deps[@]} ${deps[@]}"

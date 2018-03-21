@@ -6,25 +6,14 @@ RUN apt-get update \
          software-properties-common \
     && apt-get install -y --no-install-recommends \
          bash \
-         build-essential \
          curl \
-         g++ \
-         gcc \
          git \
-         libc6-dev \
-         libffi-dev \
-         libssl-dev \
-         make \
-         openssh-client \
-         pkg-config \
-         python3-dev \
-         python3-pip \
-         python3-setuptools \
-         qemu \
          ruby \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install python-gitlab
+# Install python-gitlab
+COPY scripts/get-python-gitlab.sh /tmp/get-python-gitlab.sh
+RUN /tmp/get-python-gitlab.sh && rm /tmp/get-python-gitlab.sh
 
 RUN curl -L -o /usr/local/bin/mc https://dl.minio.io/client/mc/release/linux-amd64/mc && \
     chmod a+x /usr/local/bin/mc
@@ -36,12 +25,17 @@ RUN /tmp/get-go.sh && rm /tmp/get-go.sh
 # Setup go environment
 ENV PATH /usr/local/go/bin:$PATH
 
-# Install openstack client (PyPi version is much more up-to-date than that install via apt!)
-RUN pip3 install python-openstackclient==3.9.0
+# Install openstack client
+COPY scripts/get-openstackclient.sh /tmp/get-openstackclient.sh
+RUN /tmp/get-openstackclient.sh && rm /tmp/get-openstackclient.sh
 
 # Install glance-proxy
 COPY scripts/get-glance-proxy.sh /tmp/get-glance-proxy.sh
 RUN /tmp/get-glance-proxy.sh && rm /tmp/get-glance-proxy.sh
+
+# Install qemu-img
+COPY scripts/get-qemu-img.sh /tmp/get-qemu-img.sh
+RUN /tmp/get-qemu-img.sh && rm /tmp/get-qemu-img.sh
 
 # Set workdir and entrypoint
 WORKDIR /tmp

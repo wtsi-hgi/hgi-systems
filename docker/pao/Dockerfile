@@ -39,8 +39,9 @@ RUN /tmp/get-packer.sh && rm /tmp/get-packer.sh
 COPY scripts/get-ansible.sh /tmp/get-ansible.sh
 RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh
 
-# Install openstack client (PyPi version is much more up-to-date than that install via apt!)
-RUN pip3 install python-openstackclient==3.9.0
+# Install openstack client
+COPY scripts/get-openstackclient.sh /tmp/get-openstackclient.sh
+RUN /tmp/get-openstackclient.sh && rm /tmp/get-openstackclient.sh
 
 # Install glance-proxy
 COPY scripts/get-glance-proxy.sh /tmp/get-glance-proxy.sh

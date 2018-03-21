@@ -21,7 +21,9 @@ RUN apt-get update \
         libnetlib-java \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip3 install python-gitlab
+# Install python-gitlab
+COPY scripts/get-python-gitlab.sh /tmp/get-python-gitlab.sh
+RUN /tmp/get-python-gitlab.sh && rm /tmp/get-python-gitlab.sh
 
 RUN pip install j2cli
 
