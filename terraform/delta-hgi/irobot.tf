@@ -2,7 +2,7 @@ module "irobot" {
   source = "../modules/irobot"
 
   image = {
-    name = "${var.docker_image_name}"
+    name = "hgi-docker-xenial-926b0ea4"
     user = "${var.docker_image_user}"
   }
 
