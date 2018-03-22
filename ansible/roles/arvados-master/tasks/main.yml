@@ -30,7 +30,6 @@
     path: "{{ arvados_master_api_data_dir }}/{{ item }}"
     state: directory
   with_items:
-    - postgresql
     - arvados-api
 
 - name: ensure /var/www exists
@@ -38,19 +37,6 @@
   file:
     path: /var/www
     state: directory
-
-- name: create etc-postgresql dir
-  become: yes
-  file:
-    path: "{{ arvados_master_api_data_dir }}/etc-postgresql"
-    state: directory
-
-- name: link etc-postgresql dir to /etc/postgresql
-  become: yes
-  file:
-    path: /etc/postgresql
-    src: "{{ arvados_master_api_data_dir }}/etc-postgresql"
-    state: link
 
 - name: link arvados-api dir to arvados data dir
   become: yes
@@ -68,7 +54,7 @@
 ################################################################################
 # arvados-api
 ################################################################################
-- name: install arvados api server prerequisites including postgresql
+- name: install arvados api server prerequisites
   become: yes
   apt:
     name: "{{ item }}"
@@ -76,7 +62,6 @@
     update_cache: yes
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
-    - "postgresql={{ arvados_master_postgresql_package_version }}"
     - bison
     - build-essential
     - gettext
@@ -90,18 +75,6 @@
     - python-psycopg2
     - zlib1g-dev
 
-- name: set ownership of postgres dirs
-  become: yes
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: postgres
-    group: postgres
-    recurse: yes
-  with_items: 
-    - "{{ arvados_master_api_data_dir }}/etc-postgresql"
-    - "{{ arvados_master_api_data_dir }}/postgresql"
-
 - name: set ownership of arvados-api dir
   become: yes
   file:
@@ -110,39 +83,6 @@
     owner: www-data
     group: www-data
     recurse: yes
-
-- name: delete default main postgresql cluster
-  become: yes
-  command: "pg_dropcluster --stop {{ arvados_master_postgresql_version }} main"
-  args:
-    removes: /etc/postgresql/{{ arvados_master_postgresql_version }}/main
-
-# FIXME set max_connections = 1024
-
-- name: create postgresql cluster
-  become: yes
-  command: "pg_createcluster -u postgres -d {{ arvados_master_api_data_dir }}/postgresql/{{ arvados_master_postgresql_version }}/arvados_api -p 5432 --start {{ arvados_master_postgresql_version }} arvados_api"
-  args:
-    creates: /etc/postgresql/{{ arvados_master_postgresql_version }}/arvados_api
-  register: arvados_master_REGISTER_configure_postgresql
-
-- name: create postgresql user for arvados api
-  become: yes
-  become_user: postgres
-  postgresql_user:
-    name: "{{ arvados_cluster_db_user_api }}"
-    password: "{{ arvados_cluster_db_password_api }}"
-    encrypted: yes
-    role_attr_flags: "NOSUPERUSER,NOCREATEROLE"
-
-- name: create arvados api database
-  become: yes
-  become_user: postgres
-  postgresql_db:
-    name: "{{ arvados_cluster_db_name_api }}"
-    template: template0
-    encoding: UTF8
-    owner: "{{ arvados_cluster_db_user_api }}"
 
 - name: ensure /usr/local/src directory exists
   become: yes
