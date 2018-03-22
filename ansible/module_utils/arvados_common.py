@@ -153,12 +153,14 @@ def prepare_update(resource, required_property_value_map, value_equator=default_
     :type required_property_value_map: Dict[str, str]
     :param value_equator: returns `True` if the given two values are to be considered as equal
     :type value_equator: Callable[[Any, Any], bool]
-    :param required_value_modifier: TODO
+    :param required_value_modifier: modifies the required value given the required value as the first argument and the
+    existing value as the second
     :type required_value_modifier: Callable[[Any, Any], Any]
-    :return: `True` is an update has occurred
-    :rtype: bool
+    :return: tuple where the first element is `True` if an update is  required and the second is a description of the
+    updates, designed for human consumption
+    :rtype: Tuple[bool, Dict[str, str]]
     """
-    updated = False
+    update_required = False
     property_updates = dict()
     for key, value in required_property_value_map.items():
         if value is None:
@@ -168,10 +170,10 @@ def prepare_update(resource, required_property_value_map, value_equator=default_
         value = required_value_modifier(value, deepcopy(existing_value))
 
         if key not in resource or not value_equator(existing_value, value):
-            updated = True
+            update_required = True
             resource[key] = value
             property_updates[key] = "%s => %s" % (existing_value, value)
-    return updated, property_updates
+    return update_required, property_updates
 
 
 def commit_resource(obj_type, api, resource, exists):
@@ -267,9 +269,6 @@ def process(obj_type, additional_argument_spec, filter_property, filter_value_mo
         for module_param, resource_param in module_parameter_to_resource_parameter_map.items()}
     update_required, property_updates = prepare_update(
         resource, required_property_value_map, value_equator, required_value_modifier)
-
-    if update_required:
-        module.fail_json(msg=property_updates)
 
     if module.check_mode:
         module.exit_json(changed=update_required)
