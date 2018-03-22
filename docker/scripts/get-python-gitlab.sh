@@ -11,7 +11,7 @@ deps=(
     python3-setuptools
 )
 
-build_deps_remove=$(comm -23 <(echo ${build_deps[@]} | sort) <(dpkg -l | awk '{print $2}' | cut -f1 -d: | sort))
+build_deps_remove=$(comm -23 <(for dep in "${build_deps[@]}"; do echo "${dep}"; done | sort) <(dpkg -l | awk '{print $2}' | cut -f1 -d: | sort))
 
 echo "Installing prereqs and build deps: ${build_deps[@]} ${deps[@]}"
 apt-get update && apt-get install -y --no-install-recommends ${build_deps[@]} ${deps[@]}
