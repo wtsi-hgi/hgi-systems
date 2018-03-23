@@ -1,5 +1,5 @@
 # pao
-FROM python:3.6.2
+FROM ubuntu:17.10
 
 ENV DEBIAN_FRONTEND noninteractive
 
