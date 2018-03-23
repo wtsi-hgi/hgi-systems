@@ -2,6 +2,27 @@
 
 set -euf -o pipefail
 
+build_deps=(
+    build-essential
+    gcc
+    git
+    python3-pip
+    python3-wheel
+    python3-dev
+    libssl-dev
+)
+
+deps=(
+    python3
+    python3-setuptools
+    libssl1.0.0
+)
+
+build_deps_remove=$(comm -23 <(for dep in "${build_deps[@]}"; do echo "${dep}"; done | sort) <(dpkg -l | awk '{print $2}' | cut -f1 -d: | sort))
+
+echo "Installing prereqs and build deps: ${build_deps[@]} ${deps[@]}"
+apt-get update && apt-get install -y --no-install-recommends ${build_deps[@]} ${deps[@]}
+
 # Create temporary directory for building
 export TMPDIR=$(mktemp -d)
 
@@ -55,4 +76,16 @@ pip3 install git+https://github.com/wtsi-hgi/consul-lock.git@${consul_lock_versi
 
 echo "removing $TMPDIR"
 cd
-rm -rf ${TMPDIR}
+rm -rf "${TMPDIR}"
+
+XDG_CACHE_HOME=${XDG_CACHE_HOME:-${HOME}/.cache}
+echo "Clearing XDG_CACHE_HOME: ${XDG_CACHE_HOME}"
+rm -rf "${XDG_CACHE_HOME}"
+
+echo "Removing build deps: ${build_deps_remove[@]}"
+apt-get remove -y ${build_deps_remove[@]}
+apt-get autoremove -y
+
+echo "Clearing apt cache"
+rm -rf /var/lib/apt/lists/*
+
