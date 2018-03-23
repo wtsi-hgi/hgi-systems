@@ -47,6 +47,17 @@ RUN /tmp/get-openstackclient.sh && rm /tmp/get-openstackclient.sh
 COPY scripts/get-glance-proxy.sh /tmp/get-glance-proxy.sh
 RUN /tmp/get-glance-proxy.sh && rm /tmp/get-glance-proxy.sh
 
+# Install python-gitlab
+COPY scripts/get-python-gitlab.sh /tmp/get-python-gitlab.sh
+RUN /tmp/get-python-gitlab.sh && rm /tmp/get-python-gitlab.sh
+
+RUN curl -L -o /usr/local/bin/mc https://dl.minio.io/client/mc/release/linux-amd64/mc && \
+    chmod a+x /usr/local/bin/mc
+
+# Install qemu-img
+COPY scripts/get-qemu-img.sh /tmp/get-qemu-img.sh
+RUN /tmp/get-qemu-img.sh && rm /tmp/get-qemu-img.sh
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
