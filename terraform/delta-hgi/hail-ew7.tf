@@ -1,5 +1,5 @@
 module "hail-master-ew7" {
-  source = "../modules/hail-2-master"
+  source = "../modules/hail-master"
   count  = 1
 
   image = {
