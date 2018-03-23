@@ -23,7 +23,7 @@ module "hail-master-ew7" {
 }
 
 module "hail-compute-ew7" {
-  source = "../modules/hail-2-compute"
+  source = "../modules/hail-compute"
   count  = 1
 
   image = {
