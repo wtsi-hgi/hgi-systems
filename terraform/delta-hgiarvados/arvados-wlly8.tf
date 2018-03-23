@@ -18,7 +18,7 @@ module "arvados-master-wlly8" {
   }
 
   arvados_cluster_id   = "wlly8"
-  extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+  extra_ansible_groups = ["consul-cluster-delta-hgiarvados","arvados-api-dbs"]
 }
 
 module "arvados-sso-wlly8" {
