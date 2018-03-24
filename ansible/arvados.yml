@@ -78,7 +78,7 @@
       vars:
         arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
 
-- hosts: arvados-api-dbs
+- hosts: arvados-api-dbs:!arvados-masters
   vars:
     arvados_PLAYBOOK_api_db_data_mountpoint: /mnt/arvados-api-db
     arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
@@ -167,6 +167,15 @@
         # Pre/post tasks
         ###############################################################################
         s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_api_data_mountpoint }}/api-db.out.gz"
+    - name: configure arvados-api-db on arvados-master
+      import_role:
+        name: arvados-api-db
+      vars:
+        arvados_api_db_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+      when: "'arvados-api-dbs' in group_names"
     - name: configure arvados-master
       import_role:
         name: arvados-master
