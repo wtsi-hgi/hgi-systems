@@ -95,13 +95,13 @@
   become: yes
   become_user: "{{ hail_user }}"
   template:
-    src: "tutorial-{{ item }}.j2"
+    src: "{{ item }}.j2"
     dest: "{{ hail_master_data_dir }}/tutorials/{{ item }}"
   with_items: 
-    - connect-to-the-node-terminal.ipynb
-    - run-on-spark-cluster.ipynb
-    - reading-and-writing-to-your-s3-bucket.ipynb
-    - hail-overview-s3.ipynb  
+    - tutorials/connect-to-the-node-terminal.ipynb
+    - tutorials/run-on-spark-cluster.ipynb
+    - tutorials/reading-and-writing-to-your-s3-bucket.ipynb
+    - tutorials/hail-overview-s3.ipynb
 
 - name: copy ssl certificate
   become: yes
