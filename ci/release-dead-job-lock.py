@@ -11,7 +11,7 @@ from gitlab import Gitlab, sys
 logger = logging.getLogger(__name__)
 logger.addHandler(StreamHandler())
 
-JOB_ID_LOCK_METADATA_KEY = os.environ["CI_PROJECT_ID"]+"_jobId"
+JOB_ID_LOCK_METADATA_KEY = "jobId_"+os.environ["CI_PROJECT_ID"]
 
 
 def is_ci_job_running(job_id: int):
