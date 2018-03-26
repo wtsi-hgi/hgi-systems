@@ -1,0 +1,34 @@
+# Copyright (c) 2014 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/chronos/vars/main.yml
+
+chronos_libmesos_so: "{{ mesos_prefix }}/lib/libmesos.so"
+chronos_java_bin: "/software/jdk1.7.0_71/bin/java"
+chronos_java_heap: "2048m"
+chronos_java_cp: "{{ hgi_pkglocal_dir }}/chronos-git-2.3.2-fa85bbd4/target/chronos-2.3.2_mesos-0.20.1-SNAPSHOT.jar"
+chronos_java_main: "org.apache.mesos.chronos.scheduler.Main"
+chronos_mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
+chronos_zk_hosts: "{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}"
+chronos_zk_path: "/chronos/state"
+chronos_mesos_role: "*"
+chronos_http_credentials: "{{ hgi_username }}:{{ hgi_password }}"
+chronos_failover_timeout_s: 1200
+chronos_hostname: "{{ hostvars[inventory_hostname]['ansible_fqdn'] }}"

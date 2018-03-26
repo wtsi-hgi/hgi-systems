@@ -1,0 +1,40 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/cookie-monster/tasks/iinit.yml
+- name: Create ~/.irods
+  file: path=/home/cmonster/.irods state=directory
+        owner=cmonster group=hgi mode=0755
+  become: true
+  register: irods_dir
+
+- name: Copy irods_environment.json
+  copy: src=irods_environment.json dest=/home/cmonster/.irods/irods_environment.json
+        owner=cmonster group=hgi mode=0644
+  become: true
+  when: irods_dir|succeeded
+  register: irods_environment
+
+- name: iinit
+  shell: echo "{{ cmonster_iinit_password }}" | iinit
+  args:
+    creates: /home/cmonster/.irods/.irodsA
+  become: true
+  become_user: cmonster
+  when: irods_environment|succeeded

@@ -1,0 +1,355 @@
+# This script excepts the following Secret Variables to be defined in
+# Gitlab project settings:
+#  ANSIBLE_VAULT_PASSWORD
+#  SSH_PRIVATE_KEY (e.g. "-----BEGIN RSA PRIVATE KEY-----
+#                         ...
+#                         -----END RSA PRIVATE KEY-----)"
+#  DELTA_OS_AUTH_URL
+#  DELTA_OS_USERNAME
+#  DELTA_OS_PASSWORD
+#  EMEDLAB_OS_AUTH_URL
+#  EMEDLAB_OS_USERNAME
+#  EMEDLAB_OS_PASSWORD
+#  EMEDLAB_HTTP_PROXY
+#  S3_ACCESS_KEY
+#  S3_HOST
+#  S3_SECRET_KEY
+#  S3_IMAGE_BUCKET
+#  TERRAFORM_CONSUL_TOKEN
+#  INFOBLOX_USERNAME
+#  INFOBLOX_PASSWORD
+#  INFOBLOX_HOST
+#  INFOBLOX_SSLVERIFY
+variables:
+  GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
+  GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
+  TF_LOG: "" # anything other than "" to trace
+  CI_LOCK_PREFIX: "ci/locks"
+  ANSIBLE_LOCK_PREFIX: "${CI_LOCK_PREFIX}/ansible"
+
+# In general, additional variables should *not* be defined above unless they are 
+# required to process .gitlab-ci.yml itself (i.e. they are used in this file outside 
+# of the job scripts). 
+# 
+# To set or override a variable, create or edit a script in the before_scripts.d directory at 
+# either the repo level or in the hgi image creation subrepo. The contents of those 
+# two directories will be combined and the scripts sourced in "version" order (sort -V).
+
+.global-before-script: &global-before-script-def 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
+before_script:
+  - *global-before-script-def
+
+stages:
+  - ci-setup
+  - bootstrap-validate
+  - bootstrap
+  - validate
+  - terraform
+  - ansible
+  - sync
+
+###############################################################################
+# Helper YAML definitions
+###############################################################################
+.production-delta-hgi: &production-delta-hgi-def
+  variables:
+    ENV: "production"
+    REGION: "delta-hgi"
+  only:
+    - master
+    - production-delta-hgi
+  
+.staging-delta-hgi: &staging-delta-hgi-def
+  variables:
+    ENV: "staging"
+    REGION: "delta-hgi"
+  only:
+    - develop
+    - staging-delta-hgi
+  
+.production-delta-hgiarvados: &production-delta-hgiarvados-def
+  variables:
+    ENV: "production"
+    REGION: "delta-hgiarvados"
+  only:
+    - master
+    - production-delta-hgiarvados
+  
+.staging-delta-hgiarvados: &staging-delta-hgiarvados-def
+  variables:
+    ENV: "staging"
+    REGION: "delta-hgiarvados"
+  only:
+    - develop
+    - staging-delta-hgiarvados
+
+# .production-emedlab-arvados: &production-emedlab-arvados-def
+#   variables:
+#     ENV: "production"
+#     REGION: "emedlab-arvados"
+#   only:
+#     - master
+#     - production-emedlab-arvados
+  
+# .staging-emedlab-arvados: &staging-emedlab-arvados-def
+#   variables:
+#     ENV: "staging"
+#     REGION: "emedlab-arvados"
+#   only:
+#     - develop
+#     - staging-emedlab-arvados
+
+
+###############################################################################
+# Stage: ci-setup
+###############################################################################
+build_docker_images:
+  # Do not execute the before script
+  before_script: []
+  stage: ci-setup
+  tags:
+    - docker-privileged
+  image:
+    name: mercury/thrifty-builder
+    entrypoint: [""]
+  script:
+    - ci/build-docker-images.sh
+
+
+###############################################################################
+# Stage: bootstrap-validate
+###############################################################################
+validate_s3:
+  stage: bootstrap-validate
+  tags:
+   - docker
+  image: mercury/taos
+  script:
+    - "ci/validate-s3.sh"
+  only:
+    - master
+
+.openstack-vars-validate: &openstack-vars-validate-def
+  stage: bootstrap-validate
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - 'test -n "${OS_AUTH_URL}" || (echo "OS_AUTH_URL must be set!"; exit 1)'
+    - 'test -n "${OS_USERNAME}" || test -n "${OS_USERID}" || (echo "OS_USERNAME or OS_USERID must be set!"; exit 1)'
+    - 'test -n "${OS_PASSWORD}" || (echo "OS_PASSWORD must be set!"; exit 1)'
+    - 'test -n "${OS_TENANT_NAME}" || (echo "OS_TENANT_NAME must be set!"; exit 1)'
+    - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
+  dependencies: []
+
+openstack-vars-validate-production-delta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *production-delta-hgi-def
+    
+openstack-vars-validate-staging-delta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *staging-delta-hgi-def
+    
+openstack-vars-validate-production-delta-hgiarvados:
+  <<: *openstack-vars-validate-def
+  <<: *production-delta-hgiarvados-def
+    
+openstack-vars-validate-staging-delta-hgiarvados:
+  <<: *openstack-vars-validate-def
+  <<: *staging-delta-hgiarvados-def
+
+# openstack-vars-validate-production-emedlab-arvados:
+#   <<: *openstack-vars-validate-def
+#   <<: *production-emedlab-arvados-def
+    
+# openstack-vars-validate-staging-emedlab-arvados:
+#   <<: *openstack-vars-validate-def
+#   <<: *staging-emedlab-arvados-def
+    
+
+###############################################################################
+# Stage: bootstrap
+###############################################################################
+.ansible-bootstrap: &ansible-bootstrap-def
+  stage: bootstrap
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - ci/ansible-bootstrap.sh
+  cache:
+    paths:
+    - tmp
+  artifacts:
+    paths:
+      - artifacts
+    when: always
+
+ansible-bootstrap-production-delta-hgi:
+  <<: *ansible-bootstrap-def
+  <<: *production-delta-hgi-def
+
+###############################################################################
+# Stage: validate
+###############################################################################
+# XXX: This isn't really a pure validation job as it will change the environment to make it valid
+.os_images_validate: &os-images-validate-def
+  stage: bootstrap-validate
+  tags:
+    - docker
+  image: mercury/os3
+  script:
+    - ci/terraform-prepare-os-images.py ${S3_IMAGE_BUCKET}
+
+os-images-validate-production-delta-hgi:
+  <<: *os-images-validate-def
+  <<: *production-delta-hgi-def
+
+os-images-validate-staging-delta-hgi:
+  <<: *os-images-validate-def
+  <<: *staging-delta-hgi-def
+
+os-images-validate-production-delta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *production-delta-hgiarvados-def
+
+os-images-validate-staging-delta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *staging-delta-hgiarvados-def
+
+.terraform-validate: &terraform-validate-def
+  stage: validate
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - ci/terraform-validate.sh
+
+terraform-validate-production-delta-hgi:
+  <<: *terraform-validate-def
+  <<: *production-delta-hgi-def
+    
+terraform-validate-staging-delta-hgi:
+  <<: *terraform-validate-def
+  <<: *staging-delta-hgi-def
+    
+terraform-validate-production-delta-hgiarvados:
+  <<: *terraform-validate-def
+  <<: *production-delta-hgiarvados-def
+    
+terraform-validate-staging-delta-hgiarvados:
+  <<: *terraform-validate-def
+  <<: *staging-delta-hgiarvados-def
+
+# terraform-validate-production-emedlab-arvados:
+#   <<: *terraform-validate-def
+#   <<: *production-emedlab-arvados-def
+    
+# terraform-validate-staging-emedlab-arvados:
+#   <<: *terraform-validate-def
+#   <<: *staging-emedlab-arvados-def
+
+terraform-validate-modules:
+  stage: validate
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - ci/terraform-fmt.sh "terraform/modules"
+  dependencies: []
+
+
+###############################################################################
+# Stage: terraform
+###############################################################################
+.terraform: &terraform-def
+  stage: terraform
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - ci/terraform.sh
+  artifacts:
+    paths:
+      - artifacts
+    when: always
+
+terraform-production-delta-hgi:
+  <<: *terraform-def
+  <<: *production-delta-hgi-def
+
+terraform-staging-delta-hgi:
+  <<: *terraform-def
+  <<: *staging-delta-hgi-def
+
+terraform-production-delta-hgiarvados:
+  <<: *terraform-def
+  <<: *production-delta-hgiarvados-def
+
+terraform-staging-delta-hgiarvados:
+  <<: *terraform-def
+  <<: *staging-delta-hgiarvados-def
+
+# terraform-production-emedlab-arvados:
+#   <<: *terraform-def
+#   <<: *production-emedlab-arvados-def
+
+# terraform-staging-emedlab-arvados:
+#   <<: *terraform-def
+#   <<: *staging-emedlab-arvados-def
+
+
+###############################################################################
+# Stage: ansible
+###############################################################################
+.ansible: &ansible-def
+  stage: ansible
+  tags:
+    - docker
+  image: mercury/taos
+  script:
+    - ci/ansible-locked.sh
+  artifacts:
+    paths:
+      - artifacts
+    when: always
+
+ansible-production-delta-hgi:
+  <<: *ansible-def
+  <<: *production-delta-hgi-def
+
+ansible-staging-delta-hgi:
+  <<: *ansible-def
+  <<: *staging-delta-hgi-def
+
+ansible-production-delta-hgiarvados:
+  <<: *ansible-def
+  <<: *production-delta-hgiarvados-def
+
+ansible-staging-delta-hgiarvados:
+  <<: *ansible-def
+  <<: *staging-delta-hgiarvados-def
+
+# ansible-production-emedlab-arvados:
+#   <<: *ansible-def
+#   <<: *production-emedlab-arvados-def
+
+# ansible-staging-emedlab-arvados:
+#   <<: *ansible-def
+#   <<: *staging-emedlab-arvados-def
+
+
+###############################################################################
+# Stage: sync
+###############################################################################
+github-sync:
+  stage: sync
+  tags:
+    - docker
+  image: mercury/gitlab-ci-git-push
+  script:
+    - git checkout origin/master && subrepos/gitlab-ci-git-push/git-push ${GITHUB_REPO} ${CI_COMMIT_REF_NAME}
+  dependencies: []
+  only:
+    - master
+

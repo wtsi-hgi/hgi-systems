@@ -1,0 +1,25 @@
+{#
+# Copyright (c) 2014 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#}
+{% set zk_count = mesos_zk_count|int %}
+[program:{{ mesos_master_supervisor_program }}]
+command={{ mesos_master_bin }} --work_dir={{ mesos_work_dir }} --log_dir={{ mesos_log_dir }} --zk={{ mesos_zk_uri }} --quorum={{ (zk_count//2)+1 }} --roles={{ mesos_master_roles }} --user_sorter="{{ mesos_master_user_sorter }}"  --weights="{{ mesos_master_weights }}" --cluster="{{ mesos_master_cluster_name }}" --quiet --allocation_interval={{ mesos_master_allocation_interval }} --webui_dir="{{ mesos_master_webui_dir }}" --no-root_submissions --no-authenticate --authenticate_slaves --credentials="{{ mesos_master_credentials_file }}"
+

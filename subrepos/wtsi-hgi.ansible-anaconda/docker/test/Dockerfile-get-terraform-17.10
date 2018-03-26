@@ -1,0 +1,4 @@
+FROM ubuntu:17.10
+
+COPY scripts/get-terraform.sh /tmp/get-terraform.sh
+RUN /tmp/get-terraform.sh && rm /tmp/get-terraform.sh

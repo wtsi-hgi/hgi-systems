@@ -1,0 +1,4 @@
+FROM ubuntu:16.04
+
+COPY scripts/get-qemu-img.sh /tmp/get-qemu-img.sh
+RUN /tmp/get-qemu-img.sh && rm /tmp/get-qemu-img.sh

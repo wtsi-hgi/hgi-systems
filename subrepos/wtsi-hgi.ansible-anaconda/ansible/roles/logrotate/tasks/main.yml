@@ -1,0 +1,8 @@
+---
+
+#- name: Remove previous logrotate settings
+#
+#
+#
+#
+#((?<=\n\n)|^)abc\n{([^}]*)}

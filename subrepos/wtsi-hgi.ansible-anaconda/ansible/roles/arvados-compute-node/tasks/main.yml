@@ -1,0 +1,213 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/arvados-compute-node/tasks/main.yml
+
+################################################################################
+# arvados-compute-node (containers api)
+################################################################################
+- name: install arvados-crunch-run and its prerequisites and friends
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - python-arvados-python-client
+    - crunch-run
+    - runit
+    - arvados-docker-cleaner
+    - jq 
+
+################################################################################
+# arvados-compute-node (deprecated jobs api)
+################################################################################
+- name: install arvados-crunch-run and its prerequisites and friends
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - curl
+    - perl
+    - python-virtualenv
+    - fuse
+    - python-arvados-python-client
+    - python-arvados-fuse
+    - crunchrunner
+    - crunchstat
+    - arvados-docker-cleaner
+    - iptables
+    - ca-certificates
+
+- name: setup cgroup accounting in grub
+  become: yes
+  lineinfile: 
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX='
+    state: present
+    line: GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1 "
+  register: grubconf
+
+- name: update-grub
+  become: yes
+  when: grubconf|changed
+  command: update-grub
+  notify: reboot compute node
+
+- name: configure FUSE
+  become: yes
+  template:
+    src: "fuse.conf.j2"
+    dest: "/etc/fuse.conf"
+    mode: 0755
+
+- name: create fuse group
+  become: yes
+  group:
+    name: fuse
+    gid: 200
+    system: yes
+
+- name: create arvados-docker-cleaner config directory
+  become: yes
+  file:
+    state: directory
+    path: /etc/arvados/docker-cleaner
+  notify:
+    - restart arvados-docker-cleaner
+
+- name: configure docker cleaner
+  become: yes
+  template: 
+    src: arvados-docker-cleaner.json.j2
+    dest: /etc/arvados/docker-cleaner/docker-cleaner.json
+    mode: 0755  
+  notify:
+    - restart arvados-docker-cleaner
+
+- name: create runit directory for arvados-docker-cleaner
+  become: yes
+  file:
+    path: /etc/sv/arvados-docker-cleaner
+    state: directory
+
+- name: install runit service for arvados-docker-cleaner
+  become: yes
+  template:
+    src: "arvados-docker-cleaner.run.j2"
+    dest: "/etc/sv/arvados-docker-cleaner/run"
+    mode: 0755
+
+- name: create runit log directory for arvados-docker-cleaner
+  become: yes
+  file:
+    path: /etc/sv/arvados-docker-cleaner/log
+    state: directory
+
+- name: install runit log service for arvados-docker-cleaner
+  become: yes
+  template:
+    src: "arvados-docker-cleaner.log.run.j2"
+    dest: "/etc/sv/arvados-docker-cleaner/log/run"
+    mode: 0755
+
+- name: enable and start arvados-docker-cleaner
+  become: yes
+  runit:
+    name: arvados-docker-cleaner
+    enabled: yes
+    state: started
+    service_dir: /etc/service
+    service_src: /etc/sv
+
+- name: create crunch group
+  become: yes
+  group:
+    name: crunch
+    gid: 1001
+    state: present
+
+- name: create crunch user
+  become: yes
+  user:
+    name: crunch
+    group: crunch
+    groups: 
+      - crunch
+      - fuse
+      - docker
+    uid: 1001
+    state: present
+
+- name: ensure /dev/fuse permissions are correct
+  become: yes
+  file: 
+    path: /dev/fuse
+    group: fuse
+    mode: 1660
+    state: file
+
+- name: create arvados-node-ping consul-template
+  become: yes
+  template:
+    src: arvados-node-ping.ctmpl.j2
+    dest: /etc/arvados-node-ping.ctmpl
+    mode: 0644
+  notify:
+    - reload consul-template
+
+- name: ensure consul-template.d exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0700
+
+- name: configure consul-template to template out arvados-node-ping
+  become: yes
+  template:
+    src: 20-arvados-node-ping.hcl.j2
+    dest: /etc/consul-template.d/20-arvados-node-ping.hcl
+    mode: 0644
+  notify:
+    - reload consul-template
+
+- name: configure cron to run arvados-node-ping every two minutes
+  become: yes
+  cron:
+    cron_file: arvados-node-ping
+    user: root
+    name: arvados-node-ping
+    minute: "*/2"
+    hour: "*"
+    day: "*"
+    job: "/usr/local/bin/arvados-node-ping 2>&1 | /usr/bin/logger -t arvados-node-ping"
+
+- name: create /usr/local/bin/resume-slurm-node
+  become: yes
+  template:
+    src: resume-slurm-node.j2
+    dest: /usr/local/bin/resume-slurm-node
+    mode: 0755
+

@@ -1,0 +1,17 @@
+#!/bin/bash 
+
+set -euf -o pipefail
+
+MOUNTPOINT="{{ s3_backup_source_dir }}"
+
+# Verify the source dir is a mount point 
+mountpoint ${MOUNTPOINT} || (>&2 echo "Path ${MOUNTPOINT} is not a mount point, refusing to continue."; exit 1)
+
+# Verify that the mount point is empty
+if [ "$(ls -A ${MOUNTPOINT})" ]; then
+   >&2 echo "Path ${MOUNTPOINT} is not empty, refusing to continue with restore."
+   exit 2
+fi
+
+# Restore with --force to write onto the mountpoint
+duplicity restore --no-encryption --force {{ s3_backup_dest_url }} ${MOUNTPOINT}

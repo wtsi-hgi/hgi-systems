@@ -1,0 +1,21 @@
+---
+
+_common_options:
+  - daily
+  - copytruncate
+  - maxsize 1G
+  - missingok
+  - compress
+  - rotate 1
+
+logrotate_conf_dir: /etc/logrotate.d/
+
+logrotate_scripts:
+  - name: syslog
+    path: /var/log/syslog
+    options: "{{ _common_options }}"
+  - name: kern.log
+    path: /var/log/kern.log
+    options: "{{ _common_options }}"
+
+logrotate_replace_old_configurations: true

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for file in "{{ arvados_keep_blob_signing_key_file }}" "{{ arvados_keep_config_file }}" "{{ arvados_keep_data_manager_api_token_file }}" "{{ arvados_keep_s3_access_key_file }}" "{{ arvados_keep_s3_secret_key_file }}"; do
+  if [[ ! -f "${file}" ]]; then
+    echo "${file} does not exist yet, not restarting arvados keep"
+    exit 0
+  fi
+done
+
+echo "All required files are present, restarting arvados keep"
+sv restart arvados-keepstore

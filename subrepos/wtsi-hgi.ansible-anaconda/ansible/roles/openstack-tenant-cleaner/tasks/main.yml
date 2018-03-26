@@ -1,0 +1,21 @@
+---
+
+- name: Install apt prerequisites
+  become: yes
+  apt:
+    name: python-docker
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+
+- name: Create data directory
+  become: yes
+  file:
+    path: "{{ openstack_tenant_cleaner_host_data_directory }}"
+    state: directory
+
+- name: Create configuration
+  become: yes
+  template:
+    src: config.yml.j2
+    dest: "{{ openstack_tenant_cleaner_host_data_directory }}/config.yml"
+  notify: Restart the cleaner container

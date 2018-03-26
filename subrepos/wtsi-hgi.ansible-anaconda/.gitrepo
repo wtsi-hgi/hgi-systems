@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/wtsi-hgi/ansible-anaconda.git
+	remote = https://github.com/wtsi-hgi/hgi-systems.git
 	branch = master
-	commit = c0a36a4817e4b36bb3726f10cdb733010730ecb2
-	parent = 95ba657ac0eb59933fd1011348467c7b5ce63190
+	commit = e2b3c50dfdb83fcec17cffedc6424b6ee1a805e9
+	parent = b92c195b7dc8cea7fdd576415ac0d2c71816671d
 	cmdver = 0.3.1

@@ -1,0 +1,4 @@
+FROM ubuntu:17.10
+
+COPY scripts/get-ansible.sh /tmp/get-ansible.sh
+RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh

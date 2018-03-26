@@ -1,0 +1,24 @@
+version: 0.1
+log:
+  fields:
+    service: registry
+  level: info
+proxy:
+  remoteurl: https://registry-1.docker.io
+storage:
+  cache:
+    blobdescriptor: inmemory
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000
+  headers:
+    X-Content-Type-Options: [nosniff]
+  tls:
+    certificate: "{{ gitlab_runner_docker_registry_cert_file }}"
+    key: "{{ gitlab_runner_docker_registry_key_file }}"
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3

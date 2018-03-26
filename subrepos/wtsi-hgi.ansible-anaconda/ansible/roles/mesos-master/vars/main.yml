@@ -1,0 +1,63 @@
+# Copyright (c) 2014 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/mesos-master/vars/main.yml
+
+mesos_master_prefix: "{{ mesos_prefix }}"
+mesos_master_bin: "{{ mesos_master_prefix }}/sbin/mesos-master"
+mesos_work_dir: "{{ hgi_dir }}/mesos"
+mesos_log_dir: "{{ hgi_log_dir }}/mesos"
+mesos_zk_uri: "zk://{% for host in groups['zookeepers'] %}{{ host }}:2181{% if not loop.last %},{% endif %}{% endfor %}/mesos"
+mesos_zk_count: "{{ groups['zookeepers'] | length }}"
+
+# The supervisor name for this supervised program
+mesos_master_supervisor_program: "mesos-master"
+
+# Path to a file with a list of credentials.
+# Each line contains 'principal' and 'secret' separated by whitespace.
+# Path could be of the form 'file:///path/to/file' or '/path/to/file'.
+mesos_master_credentials_file: "{{ hgi_conf_dir }}/mesos-master.credentials"
+
+# Human readable name for the cluster,
+# displayed in the webui.
+mesos_master_cluster_name: "{{ hgi_cluster_name }}"
+
+# Amount of time to wait between performing
+# (batch) allocations (e.g., 500ms, 1sec, etc). (default: 1secs)
+mesos_master_allocation_interval: "500ms"
+
+# A comma seperated list of the allocation
+# roles that frameworks in this cluster may
+# belong to.
+mesos_master_roles: "default"
+
+# A comma seperated list of role/weight pairs
+# of the form 'role=weight,role=weight'. Weights
+# are used to indicate forms of priority.
+mesos_master_weights: "default=1"
+
+# Policy to use for allocating resources
+# between users. May be one of:
+#   dominant_resource_fairness (drf) (default: drf)
+mesos_master_user_sorter: "drf"
+
+# Location of the webui files/assets
+mesos_master_webui_dir: "{{ mesos_master_prefix}}/share/mesos/webui"
+

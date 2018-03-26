@@ -1,0 +1,238 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors: 
+#   Colin Nolan <colin.nolan@sanger.ac.uk>
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/consul-cluster/tasks/main.yml
+
+- name: configure consul-cluster only when there are servers configured
+  when: "(consul_cluster_server_ips | length) > 0"
+  block:
+    - name: gather consul cluster info
+      delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts: 
+        consul_bin: /opt/consul/bin/consul
+        mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+      register: consul_cluster_info
+
+    - import_tasks: fix-peerless-cluster.yml
+      when: "consul_cluster_info.results | map(attribute='consul_info') | map(attribute='raft') | map(attribute='num_peers') | list | intersect(['0']) | length == 1"
+
+    - name: ensure consul cluster has a leader from the perspective of all servers
+      delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts:
+        consul_bin: /opt/consul/bin/consul
+        mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
+      ignore_errors: yes
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+      register: consul_cluster_info_leader
+      until: "consul_cluster_info_leader.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_addr') != ''"
+      retries: 12
+      delay: 5
+
+    - name: create ACL token required for the server to communicate fully with the rest of the cluster
+      delegate_to: "{{ item }}"
+      consul_acl:
+        # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
+        host: localhost
+        name: "server_token"
+        token: "{{ consul_cluster_server_acl_token }}"
+        mgmt_token: "{{ consul_cluster_acl_master_token }}"
+        token_type: client
+        rules:
+          - agent: ""
+            policy: write
+          - node: ""
+            policy: write
+          - service: "consul"
+            policy: write
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+
+    - name: gather consul cluster info again
+      delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts: 
+        consul_bin: /opt/consul/bin/consul
+        mgmt_token: "{{ consul_cluster_acl_agent_master_token }}"
+      with_items: "{{ consul_cluster_servers | json_query('[*].inventory_hostname') }}"
+      register: consul_cluster_info
+
+    - name: add DNS entry for cluster
+      delegate_to: "{{ consul_cluster_infoblox_delegate }}"
+      infoblox:
+        action: set_a_record
+        server: "{{ consul_cluster_infoblox_api_server }}"
+        dns_view: "{{ consul_cluster_infoblox_dns_view }}"
+        api_version: "{{ consul_cluster_infoblox_api_version }}"
+        username: "{{ consul_cluster_infoblox_username }}"
+        password: "{{ consul_cluster_infoblox_password }}"
+        name: "{{ consul_cluster_dns_name }}.hgi.sanger.ac.uk"
+        addresses: "{{ consul_cluster_server_wan_ips }}"
+        ttl: "{{ consul_cluster_dns_ttl_in_seconds }}"
+
+    - name: create a management ACL token
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_management_name }}"
+        token: "{{ consul_cluster_acl_management_token }}"
+        mgmt_token: "{{ consul_cluster_acl_master_token }}"
+        token_type: management
+        rules:
+          - agent: ""
+            policy: write
+          - event: ""
+            policy: write
+          - key: ""
+            policy: write
+          - keyring: write
+          - node: ""
+            policy: write
+          - operator: write
+          - query: ""
+            policy: write
+          - service: ""
+            policy: write
+          - session: ""
+            policy: write
+
+    - name: create a client ACL token for terraform
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_terraform_name }}"
+        token: "{{ consul_cluster_acl_terraform_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - key: "" 
+            policy: read
+          - session: ""
+            policy: write
+          - key: "terraform" 
+            policy: write
+          - node: ""
+            policy: write
+          - service: ""
+            policy: write
+
+    - name: create a client ACL token for ansible
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_ansible_name }}"
+        token: "{{ consul_cluster_acl_ansible_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - key: "" 
+            policy: read
+          - session: ""
+            policy: write
+          - key: "ansible" 
+            policy: write
+          - node: ""
+            policy: write
+          - service: ""
+            policy: write
+
+    - name: create a client ACL token for consul-template
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_consul_template_name }}"
+        token: "{{ consul_cluster_acl_consul_template_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - key: "" 
+            policy: read
+          - node: ""
+            policy: read
+          - service: ""
+            policy: read
+          - agent: ""
+            policy: read
+          - key: "consul-template"
+            policy: write
+          - session: ""
+            policy: write
+
+    - name: create a client ACL token for agents
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_agent_name }}"
+        token: "{{ consul_cluster_acl_agent_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - node: ""
+            policy: write
+          - key: ""
+            policy: write
+          - service: ""
+            policy: write
+
+    - name: store client agent ACL token in consul kv for reading by terraform (TODO migrate to vault)
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_kv:
+        key: "terraform/consul_cluster_acl_agent_token"
+        value: "{{ consul_cluster_acl_agent_token }}"
+        state: present
+        token: "{{ consul_cluster_acl_terraform_token }}"
+
+    - name: store consul encrypt key in consul kv for reading by terraform (TODO migrate to vault)
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_kv:
+        key: "terraform/consul_encrypt"
+        value: "{{ consul_cluster_encrypt }}"
+        state: present
+        token: "{{ consul_cluster_acl_terraform_token }}"
+
+    - name: store consul cluster server wan ips in consul kv
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_kv:
+        key: "ansible/{{ consul_cluster_datacenter }}/consul_cluster_server_wan_ips"
+        value: "{{ consul_cluster_server_wan_ips | to_json }}"
+        state: present
+        token: "{{ consul_cluster_acl_ansible_token }}"
+
+    - name: store consul server ips in consul kv
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_kv:
+        key: "ansible/{{ consul_cluster_datacenter }}/consul_cluster_server_ips"
+        value: "{{ consul_cluster_server_ips | to_json }}"
+        state: present
+        token: "{{ consul_cluster_acl_ansible_token }}"
+
+    - name: create a client ACL token for use in the CI
+      delegate_to: "{{ consul_cluster_leader }}"
+      consul_acl:
+        name: "{{ consul_cluster_acl_ci_name }}"
+        token: "{{ consul_cluster_acl_ci_token }}"
+        mgmt_token: "{{ consul_cluster_acl_management_token }}"
+        token_type: client
+        rules:
+          - key: "ci"
+            policy: write
+          - session: ""
+            policy: write

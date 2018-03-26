@@ -1,0 +1,69 @@
+# Copyright (c) 2018 Genome Research Ltd.
+#
+# Authors: 
+#   Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+# file: roles/consul-template/tasks/main.yml
+---
+
+- name: download consul-template binary
+  become: yes
+  get_url:
+    url: "https://releases.hashicorp.com/consul-template/{{ consul_template_version }}/consul-template_{{ consul_template_version }}_linux_amd64.tgz"
+    checksum: "{{ consul_template_linux_amd64_checksum }}"
+    dest: "/root/consul-template_{{ consul_template_version }}_linux_amd64.tgz"
+  register: download_consul_template
+
+- name: expand consul-template binary
+  become: yes
+  unarchive:
+    remote_src: yes
+    src: "/root/consul-template_{{ consul_template_version }}_linux_amd64.tgz"
+    dest: /usr/local/bin
+  when: download_consul_template|changed
+
+- name: ensure /etc/consul-template.d dir exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0700
+
+- name: generate base consul-template configuration
+  become: yes
+  template:
+    src: 00-consul-template.hcl.j2
+    dest: /etc/consul-template.d/00-consul-template.hcl
+  notify:
+    - restart consul-template
+
+- name: create systemd unit for consul-template
+  become: yes
+  template:
+    src: consul-template.service.j2
+    dest: /etc/systemd/system/consul-template.service
+    owner: root
+  notify:
+    - restart consul-template
+
+- name: enable consul-template systemd unit 
+  become: yes
+  systemd:
+    name: consul-template
+    enabled: yes
+    daemon_reload: yes

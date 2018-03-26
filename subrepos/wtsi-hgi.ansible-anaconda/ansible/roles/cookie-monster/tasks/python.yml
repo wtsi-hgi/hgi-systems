@@ -1,0 +1,43 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/cookie-monster/tasks/python.yml
+- name: Add deadsnakes PPA
+  apt_repository: repo='ppa:fkrull/deadsnakes' state=present
+  become: true
+  register: python_ppa
+
+- name: Install Python 3.5
+  apt: pkg=python3.5 state=present update_cache=true
+  become: true
+  when: python_ppa|succeeded
+  register: python
+
+- name: Install pip
+  shell: curl https://bootstrap.pypa.io/get-pip.py | python3.5
+  args:
+    creates: /usr/local/bin/pip3.5
+  become: true
+  when: python|succeeded
+  register: pip
+
+- name: Install virtualenv
+  pip: name=virtualenv state=present executable=pip3.5
+  become: true
+  when: pip|succeeded

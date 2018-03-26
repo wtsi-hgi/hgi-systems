@@ -1,0 +1,13 @@
+---
+
+# Check dynamic inventory and set dynamic groups and facts (must all be gather_facts: no)
+- import_playbook: dynamic-inventory-sanity-check.yml
+- import_playbook: set-facts.yml
+
+# Configure critical ssh bastion host infrastructure before gathering facts
+- import_playbook: ssh-gateways.yml
+
+# Run common role
+- hosts: all:!non-hosts:!noconf
+  roles: 
+    - common

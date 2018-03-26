@@ -1,0 +1,37 @@
+---
+
+general:
+  run-every: 30m
+  log:
+    location: cleaner.log
+    level: DEBUG
+  tracking-database: tracking.db
+  max-simultaneous-deletes: 3
+
+cleanup:
+{% for cleanup in openstack_tenant_cleaner_cleanups %}
+  - openstack-auth-url: http://delta.internal.sanger.ac.uk:5000/v2.0/
+    tenant: {{ cleanup.tenant }}
+    credentials: {{ cleanup.credentials }}
+
+    instances:
+      remove-if-older-than: 12h
+      exclude:
+        - "gitlab-runner-delta-hgi-ci-.*"
+        - "runner-.+-gitlab-runner-.+"
+
+    images:
+      remove-only-if-unused: true
+      remove-if-older-than: 7d
+      exclude:
+        - ".*-latest"
+        - "cirros  uec"     # For some reason, this image is not protected yet is un-deletable
+
+    key-pairs:
+      remove-only-if-unused: true
+      remove-if-older-than: 12h
+      exclude:
+        - "cn13.*"
+        - "jr17.*"
+        - "ansible_mercury_key"
+{% endfor %}

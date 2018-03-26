@@ -1,0 +1,1 @@
+[{% for ip in consul_cluster_server_ips %}"{{ ip }}:8300"{% if not loop.last %},{% endif %}{% endfor %}]

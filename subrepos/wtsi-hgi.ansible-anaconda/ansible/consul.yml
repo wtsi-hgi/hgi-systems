@@ -1,0 +1,184 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: consul.yml
+
+- import_playbook: hgi-preamble-playbook.yml
+
+- hosts: consul-servers
+  vars:
+    consul_PLAYBOOK_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
+    consul_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
+    consul_PLAYBOOK_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort }}"
+    consul_PLAYBOOK_server_advertise_addresses: "{{ consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
+    consul_PLAYBOOK_server_data_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
+    consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
+    consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
+    consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
+    consul_PLAYBOOK_s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ consul_PLAYBOOK_server_data_mountpoint }}"
+  tasks:
+    - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
+      assert:
+        that: consul_PLAYBOOK_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
+        msg: "one or more consul servers ({{ consul_PLAYBOOK_server_inventory_hostnames }}) are not active in this play, please ensure the limit includes consul-servers"
+    - name: check that a terraform volume is present for server
+      assert:
+        that:
+          - tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''
+          - tf_type_openstack_compute_instance_v2_GROUP_volume_name != ''
+          - tf_type_openstack_compute_instance_v2_GROUP_volume_size != ''
+        msg: "terraform volume not configured for terraform server."
+      when: inventory_hostname in groups['consul-servers'] and tf_id is defined
+    - name: check that an openstack volume is present for server
+      assert:
+        that: 
+          - openstack_instances_GROUP_volume_device != ''
+          - openstack_instances_GROUP_volume_name != ''
+          - openstack_instances_GROUP_volume_size != ''
+        msg: "openstack volume not configured for openstack server."
+      when: inventory_hostname in groups['consul-servers'] and tf_id is not defined
+    - name: ensure mountpoint is specified
+      assert:
+        that: consul_PLAYBOOK_server_data_mountpoint != "/mnt/"
+        msg: "mountpoint name is missing: {{ consul_PLAYBOOK_server_data_mountpoint }}"
+      when: inventory_hostname in groups['consul-servers']
+    - name: configure attached-openstack-volume for consul-servers
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: consul-vg
+        attached_openstack_volume_vols:
+          - name: consul-data
+            size: "{{ ((consul_PLAYBOOK_attached_volume_size_gb | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ consul_PLAYBOOK_server_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ consul_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ consul_PLAYBOOK_created_restore_indicator_file }}"
+      when: inventory_hostname in groups['consul-servers']
+    - name: import hgi-consul
+      import_role:
+        name: hgi-consul
+      vars:
+        hgi_consul_server_host_list: "{{ (groups['consul-servers'] | map('extract', hostvars) | selectattr('consul_cluster_GROUP_name', 'equalto', consul_cluster_GROUP_name)) | map(attribute='inventory_hostname') | list() }}"
+        hgi_consul_agent_host_list: "{{ (groups['consul-agents'] | map('extract', hostvars) | selectattr('consul_cluster_GROUP_name', 'equalto', consul_cluster_GROUP_name)) | map(attribute='inventory_hostname') | list() }}"
+        hgi_consul_acl_token: "{% if inventory_hostname in groups['consul-servers'] %}{{ consul_credentials_GROUP_creds['default'].token }}{% else %}{{ consul_credentials_GROUP_creds['agent'].token }}{% endif %}"
+        hgi_consul_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+        hgi_consul_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
+        hgi_consul_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
+        hgi_consul_volume_size_gb: "{{ consul_PLAYBOOK_attached_openstack_tf_volume_size if tf_id is defined else hostvars[openstack_instance_volumes[0].inventory_hostname]['openstack_volume_size_gb'] }}"
+        hgi_consul_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+        hgi_consul_node_name: "{{ cloud_resource_name }}"
+        hgi_consul_servers: "{{ consul_PLAYBOOK_server_advertise_addresses }}"
+        hgi_consul_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"
+        hgi_consul_data_dir: "{% if inventory_hostname in groups['consul-servers'] %}{{ consul_PLAYBOOK_server_data_mountpoint }}/data{% else %}/var/consul/data{% endif %}"
+        hgi_consul_advertise_address: "{{ cloud_resource_private_ip }}"
+        hgi_consul_advertise_address_wan: "{{ cloud_resource_public_ip }}"
+        hgi_consul_servers_wan: "{{ consul_PLAYBOOK_servers_wan_all }}"
+        hgi_consul_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+        hgi_consul_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+        hgi_consul_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+        hgi_consul_retry_join_list: "{{ (groups['consul-servers'] | map('extract', hostvars, 'cloud_resource_private_ip') | list()) }}" 
+        hgi_consul_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
+        hgi_consul_s3_backup_dest_path: "{{ consul_PLAYBOOK_s3_backup_dest_path }}"
+
+# Higher-level infrastructure built on top of hosts
+- hosts: consul-clusters
+  gather_facts: no
+  tasks:
+    - name: import hgi-consul
+      import_role:
+        name: consul-cluster
+      vars:
+        consul_cluster_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
+        consul_cluster_infoblox_username: "{{ consul_cluster_GROUP_infoblox_username }}"
+        consul_cluster_infoblox_password: "{{ consul_cluster_GROUP_infoblox_password }}"
+        consul_cluster_infoblox_api_server: "{{ consul_cluster_GROUP_infoblox_api_server }}"
+        consul_cluster_infoblox_api_version: "{{ consul_cluster_GROUP_infoblox_api_version }}"
+        consul_cluster_dns_name: "{{ consul_cluster_GROUP_dns_name }}"
+        consul_cluster_servers: "{{ consul_cluster_GROUP_servers }}"
+        consul_cluster_server_ips: "{{ consul_cluster_GROUP_server_ips }}"
+        consul_cluster_server_wan_ips: "{{ consul_cluster_GROUP_server_wan_ips }}"
+        consul_cluster_server_acl_token: "{{ consul_cluster_GROUP_server_acl_token }}"
+        consul_cluster_acl_master_token: "{{ consul_cluster_GROUP_acl_master_token }}"
+        consul_cluster_acl_agent_master_token: "{{ consul_cluster_GROUP_acl_agent_master_token }}"
+        consul_cluster_acl_management_name: "{{ consul_cluster_GROUP_acl_management_name }}"
+        consul_cluster_acl_management_token: "{{ consul_cluster_GROUP_acl_management_token }}"
+        consul_cluster_acl_terraform_name: "{{ consul_cluster_GROUP_acl_terraform_name }}"
+        consul_cluster_acl_terraform_token: "{{ consul_cluster_GROUP_acl_terraform_token }}"
+        consul_cluster_acl_ansible_name: "{{ consul_cluster_GROUP_acl_ansible_name }}"
+        consul_cluster_acl_ansible_token: "{{ consul_cluster_GROUP_acl_ansible_token }}"
+        consul_cluster_acl_consul_template_name: "{{ consul_cluster_GROUP_acl_consul_template_name }}"
+        consul_cluster_acl_consul_template_token: "{{ consul_cluster_GROUP_acl_consul_template_token }}"
+        consul_cluster_acl_agent_name: "{{ consul_cluster_GROUP_acl_agent_name }}"
+        consul_cluster_acl_agent_token: "{{ consul_cluster_GROUP_acl_agent_token }}"
+        consul_cluster_acl_ci_name: "{{ consul_cluster_GROUP_acl_ci_name }}"
+        consul_cluster_acl_ci_token: "{{ consul_cluster_GROUP_acl_ci_token }}"
+        consul_cluster_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+      when: inventory_hostname not in groups['consul-servers']
+
+- hosts: consul-agents,consul-servers
+  vars:
+    consul_PLAYBOOK_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort }}"
+    consul_PLAYBOOK_server_advertise_addresses: "{{ consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
+    consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}" 
+    consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
+    consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
+  tasks:
+    - name: ensure consul servers are active in hgi-consul play (as otherwise consul_servers will not be available)
+      assert:
+        that: consul_PLAYBOOK_server_inventory_hostnames | difference(ansible_current_hosts) | length == 0
+        msg: "one or more consul servers ({{ consul_PLAYBOOK_server_inventory_hostnames }}) are not active in hgi-consul play, please ensure the limit includes consul-servers"
+    - name: import hgi-consul
+      import_role:
+        name: hgi-consul
+      vars:
+        hgi_consul_server_host_list: "{{ (groups['consul-servers'] | map('extract', hostvars) | selectattr('consul_cluster_GROUP_name', 'equalto', consul_cluster_GROUP_name)) | map(attribute='inventory_hostname') | list() }}"
+        hgi_consul_agent_host_list: "{{ (groups['consul-agents'] | map('extract', hostvars) | selectattr('consul_cluster_GROUP_name', 'equalto', consul_cluster_GROUP_name)) | map(attribute='inventory_hostname') | list() }}"
+        hgi_consul_acl_token: "{% if inventory_hostname in groups['consul-servers'] %}{{ consul_credentials_GROUP_creds['default'].token }}{% else %}{{ consul_credentials_GROUP_creds['agent'].token }}{% endif %}"
+        hgi_consul_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+        hgi_consul_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
+        hgi_consul_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
+        hgi_consul_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+        hgi_consul_node_name: "{{ cloud_resource_name }}"
+        hgi_consul_servers: "{{ consul_PLAYBOOK_server_advertise_addresses }}"
+        hgi_consul_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"
+        hgi_consul_data_dir: "/var/consul/data"
+        hgi_consul_advertise_address: "{{ cloud_resource_private_ip }}"
+        hgi_consul_advertise_address_wan: "{{ cloud_resource_public_ip }}"
+        hgi_consul_servers_wan: "{{ consul_PLAYBOOK_servers_wan_all }}"
+        hgi_consul_retry_join_list: "{{ (groups['consul-servers'] | map('extract', hostvars, 'cloud_resource_private_ip') | list()) }}" 
+        hgi_consul_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
+      when: inventory_hostname not in groups['consul-servers']
+    - name: install consul token into consul_template_consul_token_file
+      become: yes
+      copy:
+        dest: "{{ consul_PLAYBOOK_consul_template_token_file }}"
+        content: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+        mode: 0600
+    - name: apply consul-template role
+      import_role:
+        name: consul-template
+      vars:
+        consul_template_user: mercury
+        consul_template_consul_token_file: "{{ consul_PLAYBOOK_consul_template_token_file }}"
+

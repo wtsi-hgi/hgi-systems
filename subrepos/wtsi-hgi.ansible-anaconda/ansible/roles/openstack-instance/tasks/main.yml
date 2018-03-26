@@ -1,0 +1,90 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/openstack-instance/tasks/main.yml
+
+- name: bootstrap openstack network if it is managed by ansible
+  when: managed_by is defined and managed_by == "ansible"
+  block:
+    - name: create an openstack instance
+      when: os_id is not defined
+      delegate_to: "{{ openstack_delegate }}"
+      os_server: 
+        state: present
+        auth: "{{ openstack_auth }}"
+        image: "{{ openstack_instance_image_name }}"
+        name: "{{ openstack_name }}"
+        wait: yes
+        auto_ip: yes
+        reuse_ips: no
+        flavor: "{{ openstack_instance_flavor }}"
+        key_name: "{{ openstack_instance_key_name }}"
+        network: "{{ openstack_instance_network_name }}"
+        security_groups: "{{ openstack_instance_security_groups }}"
+        volumes: "{{ openstack_instance_volume_names }}"
+        meta: "managed_by=ansible,user={{ openstack_instance_ssh_user }},host={{ openstack_name }}.hgi.sanger.ac.uk,port=22"
+      tags: 
+          - openstack-instance
+      register: create_instance
+
+    - name: gather facts again
+      when: os_id is not defined
+      delegate_to: "{{ openstack_delegate }}"
+      os_server_facts:
+        auth: "{{ openstack_auth }}"
+        server: "{{ openstack_name }}"
+        detailed: yes
+      register: gather_os_server_facts
+
+    - name: set os_accessIPv4 fact from openstack_server_facts
+      when: os_id is not defined
+      set_fact:
+        os_accessIPv4: "{{ openstack_servers[0].accessIPv4 }}"
+
+    - name: sets DNS A record for the instance in the hgi.sanger.ac.uk zone
+      delegate_to: "{{ openstack_instance_infoblox_delegate }}"
+      infoblox:
+        action: set_a_record
+        server: "{{ openstack_instance_infoblox_api_server }}"
+        dns_view: "{{ openstack_instance_infoblox_dns_view }}"
+        api_version: "{{ openstack_instance_infoblox_api_version }}"
+        username: "{{ openstack_instance_infoblox_username }}"
+        password: "{{ openstack_instance_infoblox_password }}"
+        name: "{{ openstack_name }}.hgi.sanger.ac.uk"
+        address: "{{ os_accessIPv4 }}"
+        ttl: "{{ openstack_instance_dns_ttl }}"
+
+    - name: set ansible_host to dns hostname
+      when: os_id is not defined
+      set_fact:
+        ansible_host: "{{ openstack_name }}.hgi.sanger.ac.uk"
+
+    - name: wait for instance to come up
+      when: create_instance|changed
+      local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} timeout=240 connect_timeout=15 state=started
+      become: no
+
+    - name: wait for cloud-init to finish
+      when: create_instance|changed
+      become: no
+      raw: timeout 120 /bin/bash -c 'until stat /var/lib/cloud/instance/boot-finished &>/dev/null; do echo -n "."; sleep 1; done'
+      args:
+        executable: /bin/bash
+

@@ -1,0 +1,89 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/docker/tasks/main.yml
+
+- name: add docker signing key
+  tags: docker 
+  become: yes
+  apt_key: 
+    url: https://download.docker.com/linux/ubuntu/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: add docker edge apt repo
+  tags: docker
+  become: yes
+  apt_repository:
+    repo: "deb https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} edge"
+    state: present
+    update_cache: yes
+  when: ansible_os_family == 'Debian'
+
+- name: install extra aufs kernel docker prerequisites on Ubuntu <= 14.04
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+  with_items:
+    - linux-image-extra-{{ ansible_kernel }}
+    - linux-image-extra-virtual
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version <= '14'
+
+- name: ensure /etc/docker directory exists
+  tags: docker
+  become: yes
+  file:
+    path: /etc/docker
+    state: directory
+    mode: 0755
+
+- name: configure docker daemon
+  tags: docker
+  become: yes
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify: systemd restart docker
+
+- name: ensure old docker.io or docker-engine packages are not installed 
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=absent
+  with_items:
+    - docker-engine
+    - docker.io
+  when: ansible_os_family == 'Debian'
+
+- name: install docker-ce (apt)
+  tags: docker
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+  with_items:
+    - docker-ce={{ docker_apt_version }}
+  when: ansible_os_family == 'Debian'
+
+- name: add ansible user to docker group
+  become: yes
+  user:
+    append: yes
+    groups:
+      - docker
+    name: "{{ ansible_user }}"

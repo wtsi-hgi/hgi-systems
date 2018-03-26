@@ -1,0 +1,271 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+
+# file: arvados.yml
+
+- import_playbook: hgi-preamble-playbook.yml
+
+- hosts: arvados-monitors
+  tasks:
+    - name: configure arvados-monitor
+      import_role:
+        name: arvados-monitor
+      vars:
+        arvados_monitor_ssl_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
+        arvados_monitor_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+        arvados_monitor_server_name: "{{ cloud_resource_fqdn }}"
+
+- hosts: arvados-ssos
+  vars:
+    arvados_PLAYBOOK_sso_data_mountpoint: /mnt/arvados-sso-db
+    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+  tasks:
+    - name: configure attached-openstack-volume for arvados sso database
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: arvados-sso-vg
+        attached_openstack_volume_vols:
+          - name: arvados-sso-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup s3 to backup sso data 
+      import_role:
+        name: s3-backup
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
+        s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/sso"
+        ###############################################################################
+        # Restore from s3 if this file is present (then delete it)
+        ###############################################################################
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        # Pre/post tasks
+        ###############################################################################
+        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_sso_data_mountpoint }}/sso-db.out.gz"
+    - name: configure arvados-sso
+      import_role:
+        name: arvados-sso
+      vars:
+        arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
+
+- hosts: arvados-api-dbs:!arvados-masters
+  vars:
+    arvados_PLAYBOOK_api_db_data_mountpoint: /mnt/arvados-api-db
+    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+  tasks:
+    - name: configure attached-openstack-volume for arvados api database
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: arvados-api-db-vg
+        attached_openstack_volume_vols:
+          - name: arvados-api-db-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup s3 to backup api server data 
+      import_role:
+        name: s3-backup
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
+        s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/api-db"
+        ###############################################################################
+        # Restore from s3 if this file is present (then delete it)
+        ###############################################################################
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        ###############################################################################
+        # Pre/post tasks
+        ###############################################################################
+        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_api_db_data_mountpoint }}/api-db.out.gz"
+    - name: configure arvados-api-db
+      import_role:
+        name: arvados-api-db
+      vars:
+        arvados_api_db_data_dir: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
+        arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+
+- hosts: arvados-masters
+  vars:
+    arvados_PLAYBOOK_api_data_mountpoint: /mnt/arvados-api-db
+    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+  tasks:
+    - name: configure attached-openstack-volume for arvados api database
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: arvados-api-vg
+        attached_openstack_volume_vols:
+          - name: arvados-api-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup s3 to backup api server data 
+      import_role:
+        name: s3-backup
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/api"
+        ###############################################################################
+        # Restore from s3 if this file is present (then delete it)
+        ###############################################################################
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        ###############################################################################
+        # Pre/post tasks
+        ###############################################################################
+        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_api_data_mountpoint }}/api-db.out.gz"
+    - name: configure arvados-api-db on arvados-master
+      import_role:
+        name: arvados-api-db
+      vars:
+        arvados_api_db_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+      when: "'arvados-api-dbs' in group_names"
+    - name: configure arvados-master
+      import_role:
+        name: arvados-master
+      vars:
+        arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+
+- hosts: arvados-keeps
+  tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+    - name: apply arvados-keep role
+      import_role:
+        name: arvados-keep
+      vars:
+        arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
+        arvados_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
+        arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
+        arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
+        arvados_keep_s3_endpoint: "{{ arvados_cluster_GROUP_s3_endpoint }}"
+        arvados_keep_s3_access_key: "{{ arvados_cluster_GROUP_s3_access_key }}"
+        arvados_keep_s3_secret_key: "{{ arvados_cluster_GROUP_s3_secret_key }}"
+        arvados_keep_s3_bucket: "{{ arvados_cluster_GROUP_s3_bucket }}"
+        arvados_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
+        arvados_keep_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
+    - name: create arvados consul template path file
+      become: yes
+      copy:
+        dest: /etc/arvados_consul_template_path
+        content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+
+- hosts: arvados-keepproxies
+  roles:
+    - arvados-keepproxy
+
+- hosts: arvados-workbenches
+  roles:
+    - arvados-workbench
+
+- hosts: arvados-shells
+  roles:
+    - arvados-shell
+
+- hosts: arvados-compute-nodes:!noconf
+  tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+    - name: apply arvados compute node role
+      import_role:
+        name: arvados-compute-node
+      vars:
+        arvados_compute_node_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_compute_node_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+    - name: apply arvados-keep role
+      import_role:
+        name: arvados-keep
+      vars:
+        arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
+        arvados_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
+        arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
+        arvados_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
+
+# non-host playbooks
+- hosts: arvados-clusters
+  gather_facts: no
+  tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+    - name: configure arvados cluster as a whole
+      import_role:
+        name: arvados-cluster
+      vars:
+        arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+        arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
+        arvados_cluster_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_cluster_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
+        arvados_cluster_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
+        arvados_cluster_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
+        arvados_cluster_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
+        arvados_cluster_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_cluster_keep_s3_endpoint: "{{ arvados_cluster_GROUP_s3_endpoint }}"
+        arvados_cluster_keep_s3_access_key: "{{ arvados_cluster_GROUP_s3_access_key }}"
+        arvados_cluster_keep_s3_secret_key: "{{ arvados_cluster_GROUP_s3_secret_key }}"
+        arvados_cluster_keep_s3_bucket: "{{ arvados_cluster_GROUP_s3_bucket }}"
+        arvados_cluster_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
+        arvados_cluster_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
+        arvados_cluster_keep_max_buffers: 240 # 240 * 64 MiB = 15 GiB (FIXME this should directly relate to amount of RAM on machine?)
+

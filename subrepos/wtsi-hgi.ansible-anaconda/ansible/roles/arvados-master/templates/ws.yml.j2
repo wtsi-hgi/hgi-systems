@@ -1,0 +1,9 @@
+Client:
+  APIHost: "{{ arvados_cluster_api_host }}:443"
+Listen: ":{{ arvados_master_ws_backend_port }}"
+Postgres:
+  dbname: "{{ arvados_cluster_db_name_api }}"
+  host: "localhost"
+  password: "{{ arvados_cluster_db_password_api }}"
+  user: "{{ arvados_cluster_db_user_api }}"
+  

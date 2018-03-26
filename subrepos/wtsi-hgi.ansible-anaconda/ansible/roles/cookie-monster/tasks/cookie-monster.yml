@@ -1,0 +1,65 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/cookie-monster/tasks/cookie-monster.yml
+- name: Clone HGI Cookie Monster
+  git: repo=https://github.com/wtsi-hgi/hgi-cookie-monster.git
+       version=master dest=/home/cmonster/hgi-cookie-monster accept_hostkey=yes
+  become: true
+  become_user: cmonster
+  environment:
+    http_proxy: "{{ sanger_http_proxy }}"
+    https_proxy: "{{ sanger_https_proxy }}"
+  register: cmonster_clone
+
+- name: Install Cookie Monster requirements in a virtualenv
+  pip: requirements=/home/cmonster/hgi-cookie-monster/requirements.txt
+       virtualenv=/home/cmonster/hgi-cookie-monster/.venv
+  become: true
+  become_user: cmonster
+  environment:
+    http_proxy: "{{ sanger_http_proxy }}"
+    https_proxy: "{{ sanger_https_proxy }}"
+  when: cmonster_clone|succeeded
+
+- name: Create ~/.cookie-monster
+  file: path=/home/cmonster/.cookie-monster state=directory
+        owner=cmonster group=hgi mode=0755
+  become: true
+  register: cmonster_dir
+
+- name: Copy Cookie Monster setup.conf
+  template: src=cookie-monster.conf.j2 dest=/home/cmonster/.cookie-monster/setup.conf
+            owner=cmonster group=hgi
+  become: true
+  when: cmonster_dir|succeeded
+
+- name: Create Cookie Monster logging directory
+  file: path={{ cmonster_log_dir }} state=directory
+        owner=cmonster group=hgi mode=0755
+  become: true
+
+- name: Copy Cookie Monster invocation script
+  template: src=wake-the-monster.sh.j2 dest=/home/cmonster/wake-the-monster.sh
+            owner=cmonster group=hgi mode=0744
+  become: true
+
+- name: Copy Cookie Monster logrotate configuration
+  copy: src=logrotate.conf dest=/etc/logrotate.d/cookie-monster
+  become: true

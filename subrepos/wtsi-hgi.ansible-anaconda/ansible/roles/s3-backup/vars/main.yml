@@ -1,0 +1,14 @@
+---
+
+s3_backup_configuration_directory: /etc/duplicity
+
+s3_backup_duplicity_backup_sh_install_directory: /opt/duplicity-backup-sh
+s3_backup_duplicity_backup_sh_script_name: duplicity-backup.sh
+s3_backup_duplicity_backup_sh_configuration_file: "{{ s3_backup_configuration_directory }}/duplicity-backup-sh.conf"
+
+s3_backup_s3cmd_configuration_file: "{{ s3_backup_configuration_directory }}/.s3cfg"
+s3_backup_restore_mountpoint_script: "/usr/local/bin/duplicity-restore-{{ s3_backup_source_dir | regex_replace('[^A-Za-z0-9._-]','_') }}"
+
+s3_backup_dest_url: "s3://{{ s3_backup_s3_host }}/{{ s3_backup_s3_bucket }}/{{ s3_backup_dest_path }}"
+
+s3_backup_run_script_location: "{{ s3_backup_duplicity_backup_sh_install_directory }}/run-backup.sh"

@@ -1,0 +1,7 @@
+# vault.yml contains:
+#   consul_cluster_GROUP_encrypt
+
+consul_cluster_GROUP_name: consul-cluster-delta-hgiarvados
+consul_cluster_GROUP_datacenter: delta-hgiarvados
+consul_cluster_GROUP_dns_name: consul-delta-hgiarvados
+

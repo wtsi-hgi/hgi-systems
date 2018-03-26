@@ -1,0 +1,4 @@
+FROM ubuntu:16.04
+
+COPY scripts/get-ansible.sh /tmp/get-ansible.sh
+RUN /tmp/get-ansible.sh && rm /tmp/get-ansible.sh

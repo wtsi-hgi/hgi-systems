@@ -1,0 +1,110 @@
+# Copyright (c) 2017, 2018 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/slurm/tasks/main.yml
+
+- name: install slurm and munge (apt)
+  tags: slurm
+  become: yes
+  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+  with_items:
+    - slurm-llnl
+    - munge
+  when: ansible_os_family == 'Debian'
+  notify:
+    - reload slurm
+
+- name: ensure state save location exists
+  become: yes
+  file:
+    path: "{{ slurm_state_save_location | dirname }}"
+    state: directory
+    mode: 0755
+  notify:
+    - reload slurm
+
+- name: ensure spool dir exists
+  become: yes
+  file:
+    path: "{{ slurm_spool_dir }}"
+    state: directory
+    mode: 0755
+  notify:
+    - reload slurm
+
+- name: apply consul-template role
+  import_role:
+    name: consul-template
+  vars:
+    consul_template_user: mercury
+    consul_template_consul_token_file: "/etc/consul-template.token" # FIXME this variable is set all over the place and needs to match :(
+
+- name: create slurm.conf consul-template
+  become: yes
+  template:
+    src: slurm.conf.ctmpl.j2
+    dest: /etc/slurm-llnl/slurm.conf.ctmpl
+    mode: 0444
+  notify:
+    - reload consul-template
+
+- name: ensure consul-template.d exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0700
+
+- name: configure consul-template to template out slurm.conf
+  become: yes
+  template:
+    src: 10-slurm-conf.hcl.j2
+    dest: /etc/consul-template.d/10-slurm-conf.hcl
+    mode: 0444
+  notify:
+    - reload consul-template
+
+- name: configure consul-template to template out cgroup.conf
+  become: yes
+  template:
+    src: 10-cgroup-conf.hcl.j2
+    dest: /etc/consul-template.d/10-cgroup-conf.hcl
+    mode: 0444
+  notify:
+    - reload consul-template
+
+- name: create munge.key consul-template
+  become: yes
+  template:
+    src: munge.key.ctmpl.j2
+    dest: /etc/munge/munge.key.ctmpl
+    mode: 0444
+  notify:
+    - reload consul-template
+
+- name: configure consul-template to template out munge.key
+  become: yes
+  template:
+    src: 10-munge-key.hcl.j2
+    dest: /etc/consul-template.d/10-munge-key.hcl
+    mode: 0444
+  notify:
+    - reload consul-template
+

@@ -1,0 +1,45 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/cookie-common/tasks/main.yml
+- name: Create hgi group
+  group: name=hgi gid=1313 state=present
+  become: true
+
+# FIXME This doesn't work when users are managed by LDAP
+# Workaround: Add cmonster user to /etc/{passwd,shadow} manually
+
+# - name: Create cmonster user and home directory
+#   user: name=cmonster uid=15700 group=1313
+#         home=/home/cmonster createhome=yes
+#         shell=/bin/bash update_password=on_create state=present
+#   become: true
+
+- name: Disable Ubuntu MOTD
+  file: path=/etc/update-motd.d recurse=true mode=0444
+  become: true
+
+- name: Copy Cookie Monster MOTD
+  copy: src=motd dest=/etc/motd owner=root group=root
+  become: true
+
+- name: Install logrotate
+  apt: pkg=logrotate state=present
+  become: true
+  register: logrotate

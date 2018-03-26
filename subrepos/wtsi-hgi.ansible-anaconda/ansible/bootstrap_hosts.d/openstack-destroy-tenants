@@ -1,0 +1,31 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+
+[openstack-destroy-tenants]
+delta-hgi-ci-tenant tenant=delta-hgi-ci-tenant openstack_tenant_id=e95a9c47113a4a1499e6c51c04d4d15e
+
+[openstack:children]
+openstack-destroy-tenants
+
+[infoblox-credentials:children]
+openstack-destroy-tenants
+
+[non-hosts:children]
+openstack-destroy-tenants

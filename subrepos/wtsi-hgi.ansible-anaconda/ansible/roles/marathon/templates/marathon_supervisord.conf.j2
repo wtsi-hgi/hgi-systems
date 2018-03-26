@@ -1,0 +1,24 @@
+{#
+# Copyright (c) 2014 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+#}
+[program:marathon]
+environment=MESOS_NATIVE_JAVA_LIBRARY="{{ marathon_libmesos_so }}",MESOS_NATIVE_LIBRARY="{{ marathon_libmesos_so }}"
+command={{ marathon_java_bin }} -jar {{ marathon_jar }} --master {{ marathon_mesos_zk_uri }} --ha --zk {{ marathon_zk_uri }} --failover_timeout {{ marathon_failover_timeout_s }} --hostname "{{ marathon_hostname }}" --mesos_role "{{ marathon_mesos_role }}" --local_port_min {{ marathon_local_port_min }} --local_port_max {{ marathon_local_port_max }} --http_credentials "{{ hgi_username }}:{{ hgi_password }}" --http_port {{ marathon_http_port }} --checkpoint --event_subscriber http_callback --task_launch_timeout {{ marathon_task_launch_timeout }}

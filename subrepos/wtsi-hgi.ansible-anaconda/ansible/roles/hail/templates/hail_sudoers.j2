@@ -1,0 +1,8 @@
+# Allow hail user to run /usr/sbin/service hail commands
+{% for svc in ['hail'] %}{% for cmd in ['stop','start','restart','status'] %}
+{{ hail_user }} ALL=(root) NOPASSWD: /usr/sbin/service {{ svc }} {{ cmd }}
+{% endfor %}{% endfor %}
+# Allow hail user to run /usr/bin/pip install/uninstall commands as root
+{% for cmd in ['install','uninstall'] %}
+{{ hail_user }} ALL=(root) NOPASSWD: /usr/bin/pip {{ cmd }} *
+{% endfor %}

@@ -1,0 +1,58 @@
+# Copyright (c) 2016 Genome Research Ltd.
+#
+# Author: Christopher Harrison <ch12@sanger.ac.uk>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 3 of the License, or (at your
+# option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+---
+# file: roles/irods-client/tasks/baton_from_source.yml
+- name: Download baton
+  get_url:
+    url: "{{ baton_url }}"
+    dest: "{{ ansible_env.HOME }}/baton-{{ baton_version }}.tar.gz"
+  register: baton_downloaded
+
+- name: Extract baton
+  unarchive:
+    src: "{{ ansible_env.HOME }}/baton-{{ baton_version }}.tar.gz"
+    dest: "{{ ansible_env.HOME }}"
+    creates: "{{ ansible_env.HOME }}/baton-{{ baton_version }}/README"
+    copy: no
+  when: baton_downloaded|succeeded
+  register: baton_extracted
+
+- name: Build baton
+  command: "{{ item }}"
+  args:
+    chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
+    creates: "{{ ansible_env.HOME }}/baton-{{ baton_version }}/src/baton"
+  with_items:
+    - ./configure --with-irods
+    - make
+  when: baton_extracted|succeeded
+  register: baton_built
+
+- name: Install baton
+  command: make install
+  args:
+    chdir: "{{ ansible_env.HOME }}/baton-{{ baton_version }}"
+  when: baton_built|changed
+  become: true
+
+- name: Set LD_LIBRARY_PATH
+  # FIXME? Is this a good idea?...
+  lineinfile: dest=/etc/environment state=present
+              line="LD_LIBRARY_PATH=\"/usr/local/lib:/usr/lib:/lib\""
+  become: true
