@@ -159,6 +159,7 @@
         hail_spark_hadoop_version: "{{ hail_cluster_hadoop_version }}"
         hail_seaborn_version: "{{ hail_cluster_seaborn_version | default('0.8.0') }}"
         hail_anaconda_version: "{{ hail_cluster_anaconda_version | default('4.4.0') }}"
+        hail_python_version: "{{ hail_cluster_python_version | default('2') }}"
         ###############################################################################
         # Directories
         ###############################################################################
