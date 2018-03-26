@@ -27,12 +27,14 @@ gitlab-projects
 
 [hgi-credentials:children]
 hgi-systems-gitlab
+sanger-image-builder-gitlab
 
 [terragrunt-locks-credentials:children]
 hgi-systems-gitlab
 
 [consul-credentials:children]
 hgi-systems-gitlab
+sanger-image-builder-gitlab
 
 [infoblox-credentials:children]
 hgi-systems-gitlab
