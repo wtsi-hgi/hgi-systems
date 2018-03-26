@@ -21,4 +21,4 @@ consul-lock -v execute \
     -i=10 \
     --metadata="{jobId: ${CI_JOB_ID}}" \
     --on-before-lock=ci/release-dead-job-lock.py \
-    ${CI_LOCK_PREFIX}/docker-build "thrifty -vv docker/build-configuration.yml"
+    ${CI_LOCK_PREFIX}/docker-build_${CI_PROJECT_ID} "thrifty -vv docker/build-configuration.yml"
