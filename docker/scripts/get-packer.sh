@@ -19,6 +19,9 @@ go get github.com/mitchellh/gox
 echo "getting packer source"
 mkdir -p $GOPATH/src/github.com/hashicorp
 cd $GOPATH/src/github.com/hashicorp
+# FIXME revert to building from hashicorp released version 
+# instead of wtsi-hgi fix/ansible-inventory-dir once the fix 
+# is merged: https://github.com/hashicorp/packer/pull/6065
 git clone https://github.com/wtsi-hgi/packer
 cd packer
 git checkout fix/ansible-inventory-dir
