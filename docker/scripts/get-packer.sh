@@ -19,9 +19,9 @@ go get github.com/mitchellh/gox
 echo "getting packer source"
 mkdir -p $GOPATH/src/github.com/hashicorp
 cd $GOPATH/src/github.com/hashicorp
-git clone https://github.com/hashicorp/packer
+git clone https://github.com/wtsi-hgi/packer
 cd packer
-git checkout v1.1.1
+git checkout fix/ansible-inventory-dir
 
 echo "building packer"
 export XC_ARCH="amd64"
