@@ -19,6 +19,6 @@ export CONSUL_HTTP_ADDR=${CI_CONSUL_HTTP_ADDR}
 
 consul-lock -v execute \
     -i=10 \
-    --metadata="{jobId: ${CI_JOB_ID}}" \
+    --metadata="{${CI_PROJECT_ID}_jobId: ${CI_JOB_ID}}" \
     --on-before-lock=ci/release-dead-job-lock.py \
     ${CI_LOCK_PREFIX}/docker-build "thrifty -vv docker/build-configuration.yml"
