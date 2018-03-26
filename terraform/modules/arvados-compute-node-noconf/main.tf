@@ -115,10 +115,7 @@ data "template_file" "ansible-cc-script" {
     ANSIBLE_CC_DOCKER_IMAGE          = "mercury/taos"                                                                   # TODO this could be pinned to the same version we are running in?
     ANSIBLE_CC_PLAYBOOK              = "arvados-compute-cloudconfig.yml"
     ANSIBLE_CC_GROUPS                = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
-    ANSIBLE_CC_UPSTREAM_DNS_SERVERS  = "${join(",", var.upstream_dns_servers)}"
-    ANSIBLE_CC_CONSUL_DATACENTER     = "${var.consul_datacenter}"
-    ANSIBLE_CC_ARVADOS_CLUSTER_ID    = "${var.arvados_cluster_id}"
-    ANSIBLE_CC_CONSUL_TEMPLATE_TOKEN = "${var.consul_template_token}"
+    ANSIBLE_CC_HOST_VARS             = "ansible_user=ubuntu cc_consul_datacenter='${var.consul_datacenter}' cc_upstream_dns_servers='${join(",", var.upstream_dns_servers)}' cc_arvados_cluster_id='${var.arvados_cluster_id}' cc_consul_template_token='${var.consul_template_token}'"
   }
 }
 

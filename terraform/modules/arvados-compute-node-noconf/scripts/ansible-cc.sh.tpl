@@ -13,12 +13,9 @@ log "Working in temp dir $${ansible_cc_tmp}"
 
 # Process template expansions into local variables
 IFS=',' read -r -a ansible_cc_groups <<< "${ANSIBLE_CC_GROUPS}"
-ansible_cc_consul_datacenter="${ANSIBLE_CC_CONSUL_DATACENTER}"
-ansible_cc_upstream_dns_servers="${ANSIBLE_CC_UPSTREAM_DNS_SERVERS}"
 ansible_cc_playbook="${ANSIBLE_CC_PLAYBOOK}"
 ansible_cc_docker_image="${ANSIBLE_CC_DOCKER_IMAGE}"
-ansible_cc_arvados_cluster_id="${ANSIBLE_CC_ARVADOS_CLUSTER_ID}"
-ansible_cc_consul_template_token="${ANSIBLE_CC_CONSUL_TEMPLATE_TOKEN}"
+ansible_cc_host_vars="${ANSIBLE_CC_HOST_VARS}"
 
 # Clone hgi-systems repo
 git clone --depth=1 https://gitlab.internal.sanger.ac.uk/hgi/hgi-systems.git "$${ansible_cc_tmp}/hgi-systems"
@@ -27,7 +24,7 @@ ansible_cc_tmp_ansible="$${ansible_cc_tmp}/hgi-systems/ansible"
 # Generate ansible inventory
 cat <<EOF > "$${ansible_cc_tmp_ansible}/cc.inv"
 [cc]
-localhost ansible_user=ubuntu cc_consul_datacenter="$${ansible_cc_consul_datacenter}" cc_upstream_dns_servers="$${ansible_cc_upstream_dns_servers}" cc_arvados_cluster_id="$${ansible_cc_arvados_cluster_id}" cc_consul_template_token="$${ansible_cc_consul_template_token}"
+localhost $${ansible_cc_host_vars}
 
 EOF
 
