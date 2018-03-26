@@ -22,7 +22,7 @@ module "hail-master-ks20-2" {
   hail_cluster_id      = "ks20-2"
 }
 
-module "hail-compute-ks20" {
+module "hail-compute-ks20-2" {
   source = "../modules/hail-compute"
   count  = 2
 
