@@ -12,6 +12,12 @@
     - nfs-common
     - nfs-kernel-server
 
+- name: install Anaconda pip prerequisites
+  pip:
+    executable: "{{ hail_anaconda_prefix_dir }}/bin/pip"
+    name: parsimonious
+    version: 0.8.0
+
 - name: setup s3 to backup hail data 
   import_role:
     name: s3-backup
