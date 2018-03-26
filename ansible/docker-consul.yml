@@ -24,13 +24,8 @@
 
 - hosts: docker-consul-agents
   vars:
-    docker_consul_PLAYBOOK_agent_config_dir: "/etc/docker-consul-agent-config.d"
-#    docker_consul_PLAYBOOK_server_inventory_hostnames: "{{ groups['consul-servers'] | intersect(groups[consul_cluster_GROUP_name]) | default([]) | sort }}"
-#    docker_consul_PLAYBOOK_server_advertise_addresses: "{{ docker_consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
-#    docker_consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}" 
-#    docker_consul_PLAYBOOK_servers_wan: "{{ docker_consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
-#    docker_consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ docker_consul_PLAYBOOK_servers_wan }}{% else %}{{ docker_consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
-#    docker_consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
+    docker_consul_PLAYBOOK_agent_config_dir: /etc/docker-consul-agent-config.d
+    docker_consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
   tasks:
     - name: assert docker-consul-agents cannot also be consul-agents or consul-servers
       assert:
@@ -38,6 +33,11 @@
           - "(not inventory_hostname in groups['consul-agents']) and 
              (not inventory_hostname in groups['consul-servers'])"
         msg: "docker-consul-agents must not also be consul-agents or consul-servers"
+    - name: assert we are in the consul_credentials group
+      assert:
+        that:
+          - "inventory_hostname in groups['consul_credentials']"
+        msg: "docker-consul-agents must also be in group consul_credentials"
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
@@ -52,7 +52,6 @@
         - docker_consul_cluster_GROUP_retry_join
         - docker_consul_cluster_GROUP_recursor
         - docker_consul_cluster_GROUP_datacenter
-        - docker_consul_cluster_GROUP_acl_token
         - docker_consul_cluster_GROUP_encrypt
     - name: import docker-consul-agent role
       import_role:
@@ -61,26 +60,9 @@
         docker_consul_agent_retry_join: "{{ docker_consul_cluster_GROUP_retry_join }}" 
         docker_consul_agent_recursors:  "{{ docker_consul_cluster_GROUP_recursors }}"
         docker_consul_agent_datacenter:  "{{ docker_consul_cluster_GROUP_datacenter }}"
-        docker_consul_agent_acl_token:  "{{ docker_consul_cluster_GROUP_acl_token }}"
+        docker_consul_agent_acl_token:  "{{ consul_credentials_GROUP_creds['agent'].token }}"
         docker_consul_agent_encrypt:  "{{ docker_consul_cluster_GROUP_encrypt }}"
         docker_consul_agent_config_dir: "{{ docker_consul_PLAYBOOK_agent_config_dir }}"
-
-        hgi_consul_server_host_list: "{{ (groups['consul-servers'] | map('extract', hostvars) | selectattr('consul_cluster_GROUP_name', 'equalto', consul_cluster_GROUP_name)) | map(attribute='inventory_hostname') | list() }}"
-        hgi_consul_agent_host_list: "{{ (groups['consul-agents'] | map('extract', hostvars) | selectattr('consul_cluster_GROUP_name', 'equalto', consul_cluster_GROUP_name)) | map(attribute='inventory_hostname') | list() }}"
-        hgi_consul_acl_token: "{% if inventory_hostname in groups['consul-servers'] %}{{ consul_credentials_GROUP_creds['default'].token }}{% else %}{{ consul_credentials_GROUP_creds['agent'].token }}{% endif %}"
-        hgi_consul_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
-        hgi_consul_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
-        hgi_consul_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
-        hgi_consul_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
-        hgi_consul_node_name: "{{ cloud_resource_name }}"
-        hgi_consul_servers: "{{ consul_PLAYBOOK_server_advertise_addresses }}"
-        hgi_consul_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"
-        hgi_consul_data_dir: "/var/consul/data"
-        hgi_consul_advertise_address: "{{ cloud_resource_private_ip }}"
-        hgi_consul_advertise_address_wan: "{{ cloud_resource_public_ip }}"
-        hgi_consul_servers_wan: "{{ consul_PLAYBOOK_servers_wan_all }}"
-        hgi_consul_retry_join_list: "{{ (groups['consul-servers'] | map('extract', hostvars, 'cloud_resource_private_ip') | list()) }}" 
-        hgi_consul_upstream_dns_servers: 
     - name: install consul token into consul_template_consul_token_file
       become: yes
       copy:
@@ -93,6 +75,3 @@
       vars:
         consul_template_user: mercury
         consul_template_consul_token_file: "{{ docker_consul_PLAYBOOK_consul_template_token_file }}"
-
-
-

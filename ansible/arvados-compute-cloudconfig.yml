@@ -23,6 +23,7 @@
 - hosts: localhost
   vars:
     arvados_compute_cloudconfig_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
+    arvados_compute_cloudconfig_PLAYBOOK_agent_config_dir: /etc/docker-consul-agent-config.d
   tasks:
     - name: apply common role
       import_role:
@@ -35,6 +36,16 @@
           - "node.{{ cc_consul_datacenter }}.consul"
         dnsmasq_apt_cache_valid_time: 3600
         dnsmasq_upstream_dns_servers: "{{ cc_upstream_dns_servers.split(',') }}"
+    - name: import docker-consul-agent role
+      import_role:
+        name: docker-consul-agent
+      vars:
+        docker_consul_agent_retry_join: "consul.{{ cc_consul_datacenter }}.hgi.sanger.ac.uk" 
+        docker_consul_agent_recursors:  "{{ cc_consul_recursors }}"
+        docker_consul_agent_datacenter:  "{{ cc_consul_datacenter }}"
+        docker_consul_agent_acl_token:  "{{ cc_consul_agent_token }}"
+        docker_consul_agent_encrypt:  "{{ cc_consul_encrypt }}"
+        docker_consul_agent_config_dir: /etc/docker-consul-agent-config.d
     - name: create arvados consul template path file
       become: yes
       copy:
