@@ -1,4 +1,0 @@
-FROM ubuntu:16.04
-
-COPY scripts/get-terraform.sh /tmp/get-terraform.sh
-RUN /tmp/get-terraform.sh && rm /tmp/get-terraform.sh

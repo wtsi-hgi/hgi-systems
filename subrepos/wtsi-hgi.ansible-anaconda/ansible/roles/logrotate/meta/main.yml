@@ -1,5 +1,0 @@
----
-
-dependencies:
-  - role: wtsi-hgi.ansible-logrotate
-    become: yes

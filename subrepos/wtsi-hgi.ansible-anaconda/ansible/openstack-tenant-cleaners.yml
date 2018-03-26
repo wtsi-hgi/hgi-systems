@@ -1,6 +1,0 @@
----
-
-- hosts: openstack-tenant-cleaners
-  gather_facts: no
-  roles:
-    - openstack-tenant-cleaner

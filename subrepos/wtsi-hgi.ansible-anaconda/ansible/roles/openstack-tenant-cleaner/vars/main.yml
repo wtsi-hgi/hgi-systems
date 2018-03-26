@@ -1,5 +1,0 @@
----
-
-openstack_tenant_cleaner_docker_data_directory: /data
-openstack_tenant_cleaner_docker_image_repository: quay.io
-openstack_tenant_cleaner_docker_image_name: wtsi-hgi/openstack-tenant-cleaner

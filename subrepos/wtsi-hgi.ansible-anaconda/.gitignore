@@ -1,3 +1,4 @@
-*.retry
-fact_cache
-artifacts
+**~
+Dockerfile.*
+requirements.yml
+xssh

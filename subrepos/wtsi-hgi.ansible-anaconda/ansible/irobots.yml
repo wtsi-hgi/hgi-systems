@@ -1,5 +1,0 @@
----
-
-- hosts: irobots
-  roles:
-    - irobot

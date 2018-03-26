@@ -1,7 +1,0 @@
----
-
-- name: reload consul
-  become: yes
-  systemd:
-    name: consul
-    state: reloaded

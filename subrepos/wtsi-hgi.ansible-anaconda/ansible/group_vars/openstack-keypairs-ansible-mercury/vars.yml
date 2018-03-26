@@ -1,2 +1,0 @@
-
-openstack_keypair_public_key_file: "{{ playbook_dir }}/files/public_keys/mercury-farm3"

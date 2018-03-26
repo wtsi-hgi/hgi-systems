@@ -1,8 +1,0 @@
-production:
-  adapter: postgresql
-  encoding: utf8
-  database: "{{ arvados_cluster_db_name_api }}"
-  username: "{{ arvados_cluster_db_user_api }}"
-  password: "{{ arvados_cluster_db_password_api }}"
-  host: "{{ arvados_cluster_api_db_names[0] | default('localhost') }}"
-  template: template0

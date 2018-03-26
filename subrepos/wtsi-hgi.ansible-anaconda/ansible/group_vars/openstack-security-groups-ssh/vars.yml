@@ -1,4 +1,0 @@
-openstack_security_group_rules:
-  - protocol: tcp
-    port_range_min: 22
-

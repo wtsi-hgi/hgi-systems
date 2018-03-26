@@ -1,3 +1,0 @@
-arvados_keepproxy_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
-arvados_keepproxy_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
-

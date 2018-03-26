@@ -1,3 +1,0 @@
-canary_groups:
-  - canary-terraform-delta-hgi
-  - canary-openstack-delta-hgi

@@ -1,5 +1,0 @@
-.terraform
-output.json
-plan*
-production.tfstate
-production.tfstate.txt

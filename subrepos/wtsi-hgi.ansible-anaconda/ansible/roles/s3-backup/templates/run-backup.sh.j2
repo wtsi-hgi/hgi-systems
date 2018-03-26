@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -euf -o pipefail
-
-{{ s3_backup_before_task }}
-
-/usr/local/bin/{{ s3_backup_duplicity_backup_sh_script_name }} -c {{ s3_backup_duplicity_backup_sh_configuration_file }} -b
-
-{{ s3_backup_after_task }}

@@ -1,4 +1,0 @@
-FROM ubuntu:16.04
-
-COPY scripts/get-openstackclient.sh /tmp/get-openstackclient.sh
-RUN /tmp/get-openstackclient.sh && rm /tmp/get-openstackclient.sh

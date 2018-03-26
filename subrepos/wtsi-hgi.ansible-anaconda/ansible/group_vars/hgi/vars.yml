@@ -1,4 +1,0 @@
-
-hgi_software_s3_bucket: hgi-software
-hgi_software_s3_credentials: "{{ s3_credentials['sanger-ceph-mercury'] }}" # N.B. actually getting these credentials requires membership of s3_credentials group
-
