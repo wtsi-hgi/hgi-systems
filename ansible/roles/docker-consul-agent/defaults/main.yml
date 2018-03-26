@@ -1,0 +1,53 @@
+# Copyright (c) 2018 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/docker-consul-agent/defaults/main.yml
+
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+# docker_consul_agent_retry_join: 
+#   List of consul servers to join
+# docker_consul_agent_recursors: 
+#   List of upstream DNS server IPs
+# docker_consul_agent_datacenter: 
+#   Consul datacenter this agent belongs to
+# docker_consul_agent_acl_token: 
+#   Consul agent ACL token
+# docker_consul_agent_encrypt: 
+#   Consul agent encrypt key
+#
+###############################################################################
+
+###############################################################################
+# Directories
+###############################################################################
+docker_consul_agent_config_dir: "/etc/docker-consul-agent-config.d"
+
+###############################################################################
+# Defaults for consul agent config
+###############################################################################
+docker_consul_agent_bind_addr: "{{ ansible_default_ipv4.address }}"
+docker_consul_agent_advertise_addr: "{{ ansible_default_ipv4.address }}"
+docker_consul_agent_client_addr: 0.0.0.0
+docker_consul_agent_retry_join_json: "{{ docker_consul_agent_retry_join | to_json }}"
+docker_consul_agent_recursors_json: "{{ docker_consul_agent_recursors | to_json }}"
+

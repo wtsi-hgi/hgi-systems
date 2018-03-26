@@ -1,0 +1,42 @@
+# Copyright (c) 2018 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/docker-consul-agent/tasks/main.yml
+
+- name: configure docker-consul-agent systemd service
+  become: yes
+  template:
+    src: "docker-consul-agent.service.j2"
+    dest: "docker-consul-agent.service"
+  notify: systemd restart docker-consul-agent
+
+- name: add bash alias to run consul in docker
+  become: yes
+  copy:
+    content: "alias consul='docker run --net=host consul'"
+    dest: /etc/profile.d/consul-alias.sh
+
+- name: configure docker-consul-agent (when not image-building)
+  become: yes
+  template:
+    src: "00-docker-consul-agent.json.j2"
+    dest: "{{ docker_consul_agent_config_dir }}/00-docker-consul-agent.json"
+  when: "not 'image-building' in group_names"
+  notify: systemd restart docker-consul-agent

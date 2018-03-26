@@ -1,0 +1,10 @@
+{
+  "leave_on_terminate": true, 
+  "retry_join": {{ docker_consul_agent_retry_join_json }},
+  "recursors": {{ docker_consul_agent_recursors_json }},
+  "advertise_addr": "{{ docker_consul_agent_advertise_addr }}",
+  "datacenter": "{{ docker_consul_agent_datacenter }}",
+  "acl_datacenter": "{{ docker_consul_agent_datacenter }}",
+  "acl_token": "{{ docker_consul_agent_acl_token }}",
+  "encrypt": "{{ docker_consul_agent_encrypt }}"
+}
