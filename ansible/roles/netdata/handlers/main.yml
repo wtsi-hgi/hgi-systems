@@ -5,3 +5,4 @@
   systemd:
     name: consul
     state: reloaded
+  when: "not 'image-building' in group_names"
