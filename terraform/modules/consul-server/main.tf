@@ -86,13 +86,21 @@ resource "openstack_compute_floatingip_associate_v2" "consul-server" {
   instance_id = "${openstack_compute_instance_v2.consul-server.*.id[count.index]}"
 }
 
-# FIXME add multi-address capability to terraform-provider-infoblox and add a round-robin record here
-
 resource "infoblox_record" "consul-server" {
   count  = "${var.count}"
   value  = "${openstack_networking_floatingip_v2.consul-server.*.address[count.index]}"
   name   = "${format(local.hostname_format, count.index + 1)}"
   domain = "${var.domain}"
+  type   = "A"
+  ttl    = 600
+  view   = "internal"
+}
+
+resource "infoblox_record" "consul-server-multi" {
+  count  = "${var.count}"
+  value  = "${openstack_networking_floatingip_v2.consul-server.*.address[count.index]}"
+  name   = "consul"
+  domain = "${format("%s.%s", var.consul_datacenter, var.domain)}"
   type   = "A"
   ttl    = 600
   view   = "internal"
