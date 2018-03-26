@@ -31,6 +31,6 @@
         ###############################################################################
         # Variables that have no defaults and must be set
         ###############################################################################
-        netdata_foo: ""
+        netdata_consul_config_dir: "{{ netdata_GROUP_consul_config_dir }}"
       tags:
         - netdata
