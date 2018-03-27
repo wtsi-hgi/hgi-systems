@@ -40,7 +40,8 @@
       import_role:
         name: docker-consul-agent
       vars:
-        docker_consul_agent_retry_join: "consul.{{ cc_consul_datacenter }}.hgi.sanger.ac.uk" 
+        docker_consul_agent_retry_join:
+          - "consul.{{ cc_consul_datacenter }}.hgi.sanger.ac.uk" 
         docker_consul_agent_recursors: "{{ cc_upstream_dns_servers.split(',') }}"
         docker_consul_agent_datacenter:  "{{ cc_consul_datacenter }}"
         docker_consul_agent_acl_token:  "{{ cc_consul_agent_token }}"
