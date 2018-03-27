@@ -24,7 +24,7 @@
   become: yes
   template:
     src: "docker-consul-agent.service.j2"
-    dest: "docker-consul-agent.service"
+    dest: "/etc/systemd/system/docker-consul-agent.service"
   notify: systemd restart docker-consul-agent
 
 - name: add bash alias to run consul in docker
