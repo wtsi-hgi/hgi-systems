@@ -98,7 +98,7 @@ data "template_file" "ansible-cc-script" {
     ANSIBLE_CC_DOCKER_IMAGE = "mercury/taos"                                                                                                                                                                                                                                                                                                                                                                                             # TODO this could be pinned to the same version we are running in?
     ANSIBLE_CC_PLAYBOOK     = "arvados-compute-cloudconfig.yml"
     ANSIBLE_CC_GROUPS       = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
-    ANSIBLE_CC_HOST_VARS    = "ansible_user=ubuntu cc_consul_datacenter='${var.consul_datacenter}' cc_upstream_dns_servers='${join(",", var.upstream_dns_servers)}' cc_arvados_cluster_id='${var.arvados_cluster_id}' cc_consul_template_token='${var.consul_template_token}' cc_consul_agent_token='${var.data.consul_keys.consul-agent.var.consul_acl_token}' cc_consul_encrypt='${data.consul_keys.consul-agent.var.consul_encrypt}'"
+    ANSIBLE_CC_HOST_VARS    = "ansible_user=ubuntu cc_consul_datacenter='${var.consul_datacenter}' cc_upstream_dns_servers='${join(",", var.upstream_dns_servers)}' cc_arvados_cluster_id='${var.arvados_cluster_id}' cc_consul_template_token='${var.consul_template_token}' cc_consul_agent_token='${data.consul_keys.consul-agent.var.consul_acl_token}' cc_consul_encrypt='${data.consul_keys.consul-agent.var.consul_encrypt}'"
   }
 }
 
