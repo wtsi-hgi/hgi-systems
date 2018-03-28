@@ -371,6 +371,7 @@ output "security_group_ids" {
     netdata        = "${openstack_compute_secgroup_v2.netdata.id}"
     nfs-server     = "${openstack_compute_secgroup_v2.nfs-server.id}"
     krb5           = "${openstack_compute_secgroup_v2.krb5.id}"
+    irobot         = "${openstack_compute_secgroup_v2.irobot.id}"
   }
 }
 
