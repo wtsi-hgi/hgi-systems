@@ -339,6 +339,19 @@ resource "openstack_compute_secgroup_v2" "krb5" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "irobot" {
+  provider    = "openstack"
+  name        = "irobot_${var.region}_${var.env}"
+  description = "iRobot"
+
+  rule {
+    from_port   = 5000
+    to_port     = 5000
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client  = "${openstack_compute_secgroup_v2.consul-client.id}"
