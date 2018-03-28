@@ -97,7 +97,7 @@
   become_user: "{{ hail_user }}"
   template:
     src: "{{ item }}.j2"
-    dest: "{{ hail_master_data_dir }}/tutorials/{{ item }}"
+    dest: "{{ hail_master_data_dir }}/tutorials/{{ item | basename }}"
   with_items: 
     - tutorials/connect-to-the-node-terminal.ipynb
     - tutorials/run-on-spark-cluster.ipynb
