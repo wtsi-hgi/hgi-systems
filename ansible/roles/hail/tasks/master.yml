@@ -13,6 +13,7 @@
     - nfs-kernel-server
 
 - name: install Anaconda pip prerequisites
+  become: yes
   pip:
     executable: "{{ hail_anaconda_prefix_dir }}/bin/pip"
     name: parsimonious
