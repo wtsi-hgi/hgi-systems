@@ -1,0 +1,95 @@
+[precache] #############################################################
+
+# The directory that stores the contents of the precache. If using the
+# containerised application, this should be set to the location of the
+# bind mounted volume within the container.
+location = /precache
+
+# The precache tracking database filename. If a single filename
+# component is given, then it is assumed to reside within the precache
+# location; otherwise it will be stored at the specified location. (This
+# probably won't need to be changed.)
+index = .precache.db
+
+# Maximum size of the precache: it can be set to "unlimited" to grow
+# indefinitely (until the disk fills) or a defined limit. Upon reaching
+# the limit, oldest files (in terms of access time) are removed. The
+# limit should be the number of bytes, optionally suffixed with "B";
+# decimal (base 1000: k, M, G, T) or binary (base 1024: ki, Mi, Gi, Ti)
+# multiplier prefixes may also be used with the "B" suffix.
+size = unlimited
+
+# Age threshold (in terms of access time) for files in the precache to
+# be culled in the event of a capacity overflow (i.e., this does not
+# apply to an unlimited precache). The threshold can be set to
+# "unlimited" to avoid this behaviour (assumed, if this setting is
+# omitted), or a value suffixed with any of the following units:
+# h(our(s)), d(ay(s)), w(eek(s)) or y(ear(s)).
+age_threshold = unlimited
+
+# Maximum age (in terms of access time) of files in the precache: it can
+# be set to "unlimited", so that files never expire, or a defined limit.
+# Upon reaching the limit, files are removed. The limit should be
+# suffixed with any of the following units: h(our(s)), d(ay(s)),
+# w(eek(s)) or y(ear(s)).
+expiry = unlimited
+
+# Size of file blocks for MD5 checksumming: it should be the number of
+# bytes, optionally suffixed with "B"; decimal (base 1000: k, M, G, T)
+# or binary (base 1024: ki, Mi, Gi, Ti) multiplier prefixes may also be
+# used with the "B" suffix.
+chunk_size = 64MB
+
+[irods] ################################################################
+
+# Maximum number of concurrent connections to iRODS.
+max_connections = 30
+
+[httpd] ################################################################
+
+# IPv4 address to which the HTTP API server should bind.
+bind_address = 0.0.0.0
+
+# Port to which the HTTP API server should listen. If using the
+# containerised application, this should be mapped to a host port.
+listen = {{ irobot_container_port }}
+
+# Response timeout: it can be set to "unlimited" to keep responses alive
+# until their content is available (not recommended), or to a specific
+# number of milliseconds (with an optional "ms" suffix) or seconds (with
+# a mandatory "s" suffix).
+timeout = 5s
+
+# Available authentication handlers, set to a comma-separated list of at
+# least one of "basic" and "arvados". Note that the corresponding
+# authentication section must appear for each specified handler.
+authentication = arvados
+
+[arvados_auth] #########################################################
+# This section must appear if using the Arvados authentication handler
+
+# The Arvados authentication handler will make a request to the Arvados
+# API host at this hostname, forwarding the credentials in attempt to
+# validate them
+api_host = {{ irobot_arvados_api_host }}
+
+# The version of the Arvados API served by the above host
+api_version = v1
+
+# How long to cache a authenticated response from the validation URL;
+# can be set to "never", or a positive, numeric time suffixed with any
+# of the following units: s(ec(ond)(s)), m(in(ute)(s))
+cache = 10 min
+
+[logging] ##############################################################
+
+# The destination of all log messages; it should be set to either
+# "STDERR" to stream to standard error, otherwise it will be considered
+# as a filename for appendage. Note that if logging is sent to file
+# while containerised, that file should be within a bind mounted
+# directory so it can be accessed and persist.
+output = STDERR
+
+# Minimum logging level output, to decreasing granularity: "debug",
+# "info", "warning", "error" or "critical".
+level = debug

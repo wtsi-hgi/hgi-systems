@@ -1,0 +1,45 @@
+---
+
+- name: validate setup variables
+  assert:
+    that:
+      - "{{ irobot_irods_authentication_file_contents | mandatory }}"
+      - "{{ irobot_arvados_api_host | mandatory }}"
+
+- name: clone iRobot repository
+  git:
+    repo: "{{ irobot_git_repository }}"
+    version: "{{ irobot_version }}"
+    dest: "{{ irobot_docker_build_directory }}"
+    clone: yes
+
+- name: build iRobot Docker image
+  become: yes
+  docker_image:
+    name: "{{ irobot_image_name }}"
+    path: "{{ build_directory.path }}"
+    dockerfile: "{{ irobot_docker_build_directory}}/Dockerfile"
+
+- name: create irods_enviornment.json
+  become: yes
+  template:
+    src: irods_environment.json.j2
+    dest: "{{ irobot_irods_environment_json_host_location }}"
+
+- name: create .irodsA file
+  become: yes
+  copy:
+    content: "{{ irobot_irods_authentication_file_contents }}"
+    dest: "{{ irobot_irods_authentication_file_host_location }}"
+    mode: 0400
+
+- name: create iRobot container
+  become: yes
+  docker_container:
+    name: "{{ irobot_container_name }}"
+    image: "{{ irobot_image_name }}"
+    volumes:
+      - "{{ irobot_irods_environment_json_host_location }}:/root/.irods/irods_environment.json:ro"
+      - "{{ irobot_irods_authentication_file_host_location }}:/root/.irods/.irodsA:ro"
+    published_ports:
+      - "{{ irobot_container_port }}:{{ irobot_container_port }}"
