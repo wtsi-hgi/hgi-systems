@@ -29,6 +29,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "volume_size_gb" {
+  default = 250
+}
+
 locals {
   ansible_groups = [
     "irobots",
@@ -102,4 +106,16 @@ resource "infoblox_record" "irobot" {
 
 output "ip" {
   value = "${openstack_networking_floatingip_v2.irobot.address}"
+}
+
+resource "openstack_blockstorage_volume_v2" "irobot-volume" {
+  count = "${var.count}"
+  name  = "irobot-${var.irobot_cluster_id}-volume"
+  size  = "${var.volume_size_gb}"
+}
+
+resource "openstack_compute_volume_attach_v2" "irobot-volume-attach" {
+  count       = "${var.count}"
+  volume_id   = "${openstack_blockstorage_volume_v2.irobot-volume.id}"
+  instance_id = "${openstack_compute_instance_v2.irobot.*.id[count.index]}"
 }

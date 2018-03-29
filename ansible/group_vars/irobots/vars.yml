@@ -1,3 +1,6 @@
+# In vault:
+#   - irobot_irods_authentication_file_contents
+
 ---
 
 irobot_arvados_api_host: arvados-api-ncucu.hgi.sanger.ac.uk
