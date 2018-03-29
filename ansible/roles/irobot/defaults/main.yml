@@ -10,7 +10,7 @@ irobot_version: 13750370d5786a4e0f883ec010b3dcbecd210d45
 irobot_image_name: irobot
 irobot_container_name: irobot
 irobot_container_port: 5000
-irobot_host_portirobot_host_port: 5000
+irobot_host_port: 5000
 
 irobot_irods_authentication_file_host_location: /etc/irods/.irodsA
 irobot_irods_environment_json_host_location: /etc/irods/irods_environment.json
