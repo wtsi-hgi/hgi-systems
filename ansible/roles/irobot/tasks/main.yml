@@ -3,8 +3,8 @@
 - name: validate setup variables
   assert:
     that:
-      - "{{ irobot_irods_authentication_file_contents | mandatory }}"
-      - "{{ irobot_arvados_api_host | mandatory }}"
+      - irobot_irods_authentication_file_contents | mandatory
+      - irobot_arvados_api_host | mandatory
   no_log: True
 
 - name: clone iRobot repository
