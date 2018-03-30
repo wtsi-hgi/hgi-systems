@@ -218,7 +218,7 @@ module "arvados-compute-node-noconf" {
     user = "${var.arvados_compute_node_image_user}"
   }
 
-  count              = 2
+  count              = 4
   flavour            = "m1.xlarge"
   domain             = "node.delta-hgiarvados.consul"
   security_group_ids = "${module.openstack.security_group_ids}"
