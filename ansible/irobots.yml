@@ -19,5 +19,5 @@
       import_role:
         name: irobot
       vars:
-        irobot_arvados_api_host: "{{ irobot_arvados_api_host }}"
-        irobot_irods_authentication_file_contents: "{{ irobot_irods_authentication_file_contents }}"
+        irobot_arvados_api_host: "{{ irobots_GROUP_arvados_api_host }}"
+        irobot_irods_authentication_file_contents: "{{ irobots_GROUP_irods_authentication_file_contents }}"
