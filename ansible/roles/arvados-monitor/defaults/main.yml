@@ -42,3 +42,4 @@ arvados_monitor_ssl_key_file: /etc/ssl.key
 arvados_monitor_ssl_cert_file: /etc/ssl.cert
 arvados_monitor_nginx_conf_ctmpl_file: /etc/nginx/arvados_monitor.conf.ctmpl
 arvados_monitor_netdata_html_ctmpl_file: /etc/nginx/netdata.html.ctmpl
+arvados_monitor_dash_html_ctmpl_file: /etc/nginx/dash.html.ctmpl

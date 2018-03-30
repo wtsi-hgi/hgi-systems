@@ -74,6 +74,16 @@
   notify:
    - restart consul-template
 
+- name: template out dash.html.ctmpl
+  become: yes
+  template:
+    src: "dash.html.ctmpl.j2"
+    dest: "{{ arvados_monitor_dash_html_ctmpl_file }}"
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart consul-template
+
 - name: configure consul-template
   become: yes
   template:
@@ -86,6 +96,7 @@
   with_items:
     - "10-nginx-arvados-monitor"
     - "20-nginx-netdata-html"
+    - "20-nginx-dash-html"
 
 - name: template out index.html
   become: yes
