@@ -86,7 +86,7 @@
 
     <div style="width: 100%; text-align: center; display: inline-block;">
       {{ '{{ range service "netdata" }}' }}
-      <li><a href="/{{.Name}}/{{.Node}}/">{{.Node}}</a></li>
+      {{ '<li><a href="/{{.Name}}/{{.Node}}/">{{.Node}}</a></li>' }}
       <div style="width: 100%; height: 24vh; text-align: center; display: inline-block;">
 	<div style="width: 100%; height: 15px; text-align: center; display: inline-block;">
 	  <b>{{ '{{.Node}}' }}</b>
