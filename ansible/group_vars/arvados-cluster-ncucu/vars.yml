@@ -37,6 +37,7 @@ arvados_cluster_sso_app_secret: "{{ arvados_cluster_root_key | pbkdf2_hmac('arva
 arvados_cluster_api_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_api_secret_token', 50) | b36encode }}"
 arvados_cluster_workbench_secret_token: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_workbench_secret_token', 50) | b36encode }}"
 arvados_cluster_GROUP_blob_signing_key: "{{ arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_blob_signing_key', 50) | b36encode }}"
+arvados_cluster_GROUP_blog_signature_ttl_s: 1209600
 
 arvados_cluster_superuser_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_superuser_api_token', 32) | b36encode }}"
 arvados_cluster_anonymous_api_token: "{{  arvados_cluster_root_key | pbkdf2_hmac('arvados_cluster_anonymous_api_token', 32) | b36encode }}"

@@ -184,6 +184,7 @@
         arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
 
 - hosts: arvados-keeps
   tasks:
@@ -267,5 +268,5 @@
         arvados_cluster_keep_s3_bucket: "{{ arvados_cluster_GROUP_s3_bucket }}"
         arvados_cluster_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
         arvados_cluster_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
+        arvados_cluster_keep_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
         arvados_cluster_keep_max_buffers: 240 # 240 * 64 MiB = 15 GiB (FIXME this should directly relate to amount of RAM on machine?)
-

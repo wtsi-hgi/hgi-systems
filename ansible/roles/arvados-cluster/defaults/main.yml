@@ -74,7 +74,7 @@
 ###############################################################################a
 arvados_cluster_slurm_state_save_location: /var/spool/slurm/slurm.state
 arvados_cluster_slurm_spool_dir: /var/spool/slurm/slurmd.spool
-arvados_cluster_keep_blob_signature_ttl: "336h0m0s"
+arvados_cluster_keep_blob_signature_ttl_s: 1209600
 arvados_cluster_keep_max_buffers: 128
 arvados_cluster_keep_trash_check_interval: "24h0m0s"
 arvados_cluster_keep_trash_lifetime: "168h0m0s"
