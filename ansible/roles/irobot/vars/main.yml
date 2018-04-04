@@ -2,3 +2,4 @@
 
 irobot_irods_environment_json_location: /root/.irods/irods_environment.json
 irobot_irods_authentication_file_location: /root/.irods/.irodsA
+irobot_configuration_file_location: /etc/irobot.conf

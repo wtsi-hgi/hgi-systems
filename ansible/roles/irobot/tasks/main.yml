@@ -7,7 +7,6 @@
       - irobot_arvados_api_host | mandatory
   no_log: True
 
-
 - name: install apt requirements
   become: yes
   apt:
@@ -41,6 +40,7 @@
   with_items:
     - "{{ irobot_irods_environment_json_host_location }}"
     - "{{ irobot_irods_authentication_file_host_location }}"
+    - "{{ irobot_configuration_file_host_location }}"
 
 - name: create irods_enviornment.json
   become: yes
@@ -56,13 +56,23 @@
     mode: 0400
   no_log: True
 
+- name: create irobot configuration file
+  become: yes
+  template:
+    src: irobot.conf.j2
+    dest: "{{ irobot_configuration_file_host_location }}"
+
 - name: create iRobot container
   become: yes
   docker_container:
     name: "{{ irobot_container_name }}"
     image: "{{ irobot_image_name }}"
+    state: started
+    env:
+      IROBOT_CONF: "{{ irobot_configuration_file_location }}"
     volumes:
       - "{{ irobot_irods_environment_json_host_location }}:{{ irobot_irods_environment_json_location }}:ro"
       - "{{ irobot_irods_authentication_file_host_location }}:{{ irobot_irods_authentication_file_location }}:ro"
+      - "{{ irobot_configuration_file_host_location }}:{{ irobot_configuration_file_location }}:ro"
     published_ports:
       - "{{ irobot_container_port }}:{{ irobot_host_port }}"

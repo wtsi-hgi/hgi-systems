@@ -1,0 +1,9 @@
+---
+
+- name: restart started iRobot container
+  become: yes
+  docker_container:
+    restart: yes
+    state: started
+  listen: restart_irobot_container
+
