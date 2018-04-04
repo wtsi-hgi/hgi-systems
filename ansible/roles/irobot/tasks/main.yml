@@ -33,6 +33,15 @@
     path: "{{irobot_docker_build_directory }}"
     dockerfile: "{{ irobot_docker_build_directory}}/Dockerfile"
 
+- name: make directories for configuration files
+  become: yes
+  file:
+    path: "{{ item | dirname }}"
+    state: directory
+  with_items:
+    - "{{ irobot_irods_environment_json_host_location }}"
+    - "{{ irobot_irods_authentication_file_host_location }}"
+
 - name: create irods_enviornment.json
   become: yes
   template:
