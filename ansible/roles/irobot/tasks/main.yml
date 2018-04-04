@@ -53,7 +53,7 @@
     name: "{{ irobot_container_name }}"
     image: "{{ irobot_image_name }}"
     volumes:
-      - "{{ irobot_irods_environment_json_host_location }}:/root/.irods/irods_environment.json:ro"
-      - "{{ irobot_irods_authentication_file_host_location }}:/root/.irods/.irodsA:ro"
+      - "{{ irobot_irods_environment_json_host_location }}:{{ irobot_irods_environment_json_location }}:ro"
+      - "{{ irobot_irods_authentication_file_host_location }}:{{ irobot_irods_authentication_file_location }}:ro"
     published_ports:
       - "{{ irobot_container_port }}:{{ irobot_host_port }}"
