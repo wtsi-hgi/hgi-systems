@@ -6,6 +6,7 @@ RUN apt-get update \
          emacs \
          less \
          man \
+         jq \
     && rm -rf /var/lib/apt/lists/*
 
 CMD ["bash"]
