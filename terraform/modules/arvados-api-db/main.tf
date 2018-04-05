@@ -2,6 +2,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
 variable "arvados_cluster_id" {}
+variable "volume_size_gb" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -86,7 +87,7 @@ resource "openstack_compute_instance_v2" "arvados-api-db" {
 
 resource "openstack_blockstorage_volume_v2" "arvados-api-db-volume" {
   name = "arvados-api-db-${var.arvados_cluster_id}-volume"
-  size = 200
+  size = "${var.volume_size_gb}"
 }
 
 resource "openstack_compute_volume_attach_v2" "arvados-api-db-volume-attach" {

@@ -42,6 +42,7 @@ module "arvados-api-db" {
 
   arvados_cluster_id   = "ncucu"
   extra_ansible_groups = ["consul-cluster-delta-hgiarvados"]
+  volume_size_gb       = 1000
 }
 
 module "arvados-sso" {
