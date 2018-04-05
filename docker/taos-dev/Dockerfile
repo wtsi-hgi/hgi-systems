@@ -7,6 +7,7 @@ RUN apt-get update \
          less \
          man \
          jq \
+         sudo \
     && rm -rf /var/lib/apt/lists/*
 
 CMD ["bash"]
