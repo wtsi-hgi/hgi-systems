@@ -38,12 +38,12 @@ while getopts "c:nd:h" opt; do
 			exit 0
 			;;
 		\?)
-			1>&2 echo "Invalid option: ${OPTARG}"
 			usage
+			exit 1
 			;;
 		:)
-			1>&2 echo "Invalid option: ${OPTARG} requires an argument"
 			usage
+			exit 1
 			;;
 	esac
 done
