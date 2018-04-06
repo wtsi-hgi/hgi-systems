@@ -26,7 +26,7 @@ cp /mnt/host/.gitconfig ~/.gitconfig
 cp /mnt/host/.gitignore_global ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global
 
->&2 echo "Setting SSH key"
+>&2 echo "Setting SSH keys"
 mkdir -p ~/.ssh
 echo "${SSH_PRIVATE_KEY}" | sed 's/\\n/\n/g' > ~/.ssh/10-ci.key
 ln -s /mnt/host/id_rsa ~/.ssh/0-${HOST_USER_NAME}.key
@@ -35,4 +35,4 @@ eval $(ssh-agent) > /dev/null 2>&1
 ssh-add ~/.ssh/*.key > /dev/null 2>&1
 
 >&2 echo "Starting shell..."
-b
+bash
