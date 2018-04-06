@@ -18,20 +18,18 @@ export OS_PASSWORD="${DELTA_OS_PASSWORD}"
 export OS_USERNAME="${DELTA_OS_USERNAME}"
 export OS_AUTH_URL="${DELTA_OS_AUTH_URL}"
 
->&2 echo "Setting Terraform environment variables"
-export CONSUL_TOKEN=$"{TERRAFORM_CONSUL_TOKEN}"
-export CONSUL_HTTP_ADDR="${CI_CONSUL_HTTP_ADDR}"
-
 >&2 echo "Setup Git"
 # Note: copying the below files so that they can be changed
 cp /mnt/host/.gitconfig ~/.gitconfig
 cp /mnt/host/.gitignore_global ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global
 
->&2 echo "Setting up s3cmd"
-if [[ -f /mnt/host/.s3cfg ]]; then
-    ln -s /mnt/host/.s3cfg ~/.s3cfg
-fi
+>&2 echo "Sourcing before scripts"
+(/mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d &> /tmp/sourcing.log) \
+    || (echo "Before scripts failed with exit code $0" && cat /tmp/sourcing.log && echo "(Failure above)" && exit 1)
+rm /tmp/sourcing.log
+# XXX: There's inevitably a much better way of coping with errors whilst sourcing than doing it twice!
+. /mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d &> /dev/null
 
 >&2 echo "Starting shell..."
 bash

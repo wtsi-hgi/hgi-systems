@@ -62,5 +62,4 @@ GIT_GLOBAL_IGNORE="$(git config --global core.excludesfile || echo /dev/null)"
 		-v "${REPOSITORY_ROOT}:/mnt/host/hgi-systems" -w /mnt/host/hgi-systems \
 		-v ~/.gitconfig:/mnt/host/.gitconfig:ro -v "${GIT_GLOBAL_IGNORE}:/mnt/host/.gitignore_global:ro" \
 		-v ~/.ssh/id_rsa:/mnt/host/id_rsa:ro \
-		-v ~/.s3cfg:/mnt/host/.s3cfg:ro \
 		mercury/taos-dev "/mnt/host/hgi-systems/${SCRIPT_DIRECTORY#"$REPOSITORY_ROOT"}/_setup.sh"
