@@ -46,13 +46,14 @@ options:
 -n      Set to not pull latest taos-dev Docker image on start [default: 0]
 ```
 
+### Example
 ```bash
 $ ./start.sh
 Updating taos-dev docker image...
 New line characters in variable with key "SSH_PRIVATE_KEY" have been escaped to \\n
 Updating apt cache in the background
-Setting up user
-Change user
+Setting up copy of the host user
+Change to user cn13
 Setting SSH key
 Setting Ansible Vault password
 Setting OpenStack environment variables
