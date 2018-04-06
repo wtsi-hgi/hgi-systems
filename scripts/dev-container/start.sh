@@ -50,8 +50,8 @@ done
 shift $((OPTIND -1))
 
 if [[ "${pullDockerImage}" -eq 1 ]]; then
-	>&2 echo "Updating taos-dev docker image"
-	docker pull mercury/taos-dev
+	>&2 echo "Updating taos-dev docker image..."
+	docker pull mercury/taos-dev > /dev/null
 fi
 
 GIT_GLOBAL_IGNORE="$(git config --global core.excludesfile || echo /dev/null)"
@@ -63,4 +63,4 @@ GIT_GLOBAL_IGNORE="$(git config --global core.excludesfile || echo /dev/null)"
 		-v ~/.gitconfig:/mnt/host/.gitconfig:ro -v "${GIT_GLOBAL_IGNORE}:/mnt/host/.gitignore_global:ro" \
 		-v ~/.ssh/id_rsa:/mnt/host/id_rsa:ro \
 		-v ~/.s3cfg:/mnt/host/.s3cfg:ro \
-		mercury/taos-dev "/mnt/host/hgi-systems/${SCRIPT_DIRECTORY#"$REPOSITORY_ROOT"}/setup.sh"
+		mercury/taos-dev "/mnt/host/hgi-systems/${SCRIPT_DIRECTORY#"$REPOSITORY_ROOT"}/_setup.sh"

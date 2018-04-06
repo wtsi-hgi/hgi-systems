@@ -12,4 +12,4 @@ useradd -G sudo -s /bin/bash -m --uid "${HOST_USER_ID}" --gid "${HOST_USER_GROUP
 sed -i 's/\%sudo\tALL=(ALL:ALL) ALL$/\%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/' /etc/sudoers
 
 >&2 echo "Change user"
-HOME="/home/${HOST_USER_NAME}" su -p -l "${HOST_USER_NAME}" -s "${SCRIPT_DIRECTORY}/user-setup.sh"
+HOME="/home/${HOST_USER_NAME}" su -p -l "${HOST_USER_NAME}" -s "${SCRIPT_DIRECTORY}/_user-setup.sh"
