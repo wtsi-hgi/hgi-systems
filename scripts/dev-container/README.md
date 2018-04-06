@@ -7,9 +7,10 @@ it can be worked on in the container or on the host machine.
 It offers the advantages that developers:
 - Do not have to spend time setting up the correct environment.
 - Can develop on any machine, including their own.
-- Only need to know their own GitLab token.
+- Only need to know their own GitLab token - no other secrets are permanently stored on the user's machine.
 
-### Setup Tools
+
+### Tools
 - Ansible
 - Terraform
 - s3cmd
@@ -46,7 +47,7 @@ options:
 ```
 
 ```bash
-$ ./start.sh -c ../../../dwgs-config.yml
+$ ./start.sh
 Updating taos-dev docker image...
 New line characters in variable with key "SSH_PRIVATE_KEY" have been escaped to \\n
 Updating apt cache in the background
@@ -63,3 +64,4 @@ Starting shell...
 
 ## Notes
 - The container user (a copy of the host user) has password-less `sudo` access.
+- `ssh-agent` is running with access to both the host user's key and the key used to access HGI systems machines.
