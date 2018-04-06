@@ -602,6 +602,13 @@
 - name: ensure nginx has restarted before checking it is functional remotely via https
   meta: flush_handlers
 
+# Note: if nginx has fallen over, this task will pick it back up
+- name: start nginx
+  become: yes
+  systemd:
+    name: nginx
+    state: started
+
 - name: verify arvados-ws is functional remotely via https
   delegate_to: "{{ arvados_master_remote_check_delegate }}"
   uri:
