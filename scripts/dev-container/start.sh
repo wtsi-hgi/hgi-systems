@@ -3,7 +3,7 @@ set -eu -o pipefail
 
 EXECUTABLE_NAME="$(basename "$0")"
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-REPOSITORY_ROOT="$(git rev-parse --show-toplevel)"
+REPOSITORY_ROOT="$(cd ${SCRIPT_DIRECTORY} && git rev-parse --show-toplevel)"
 
 dwgsConfig=~/.dwgs-config.yml
 pullDockerImage=1
