@@ -24,6 +24,9 @@ cp /mnt/host/.gitconfig ~/.gitconfig
 cp /mnt/host/.gitignore_global ~/.gitignore_global
 git config --global core.excludesfile ~/.gitignore_global
 
+>&2 echo "Set GitLab specific variables"
+export CI_PROJECT_DIR=/mnt/host/hgi-systems/
+
 >&2 echo "Sourcing before scripts"
 (/mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d &> /tmp/sourcing.log) \
     || (echo "Before scripts failed with exit code $0" && cat /tmp/sourcing.log && echo "(Failure above)" && exit 1)
