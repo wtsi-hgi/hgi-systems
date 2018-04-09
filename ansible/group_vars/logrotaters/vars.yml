@@ -8,9 +8,7 @@ _common_options:
   - compress
   - rotate 1
 
-logrotate_conf_dir: /etc/logrotate.d/
-
-logrotate_scripts:
+logrotaters_logrotate_scripts:
   - name: syslog
     path: /var/log/syslog
     options: "{{ _common_options }}"
@@ -18,4 +16,4 @@ logrotate_scripts:
     path: /var/log/kern.log
     options: "{{ _common_options }}"
 
-logrotate_replace_old_configurations: true
+logrotaters_logrotate_replace_old_configurations: true

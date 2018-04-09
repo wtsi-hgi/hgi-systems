@@ -2,4 +2,4 @@
 
 - hosts: logrotaters
   roles:
-    - logrotate
+    - name: logrotate
