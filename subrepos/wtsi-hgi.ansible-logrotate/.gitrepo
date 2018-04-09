@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/wtsi-hgi/ansible-logrotate.git
 	branch = feature/27-remove-old-configurations
-	commit = 857f5ca70a06e08e4d413d30be5e220bdfd6a720
-	parent = 05e2e830dc826b6131662bb20a34c7e17d32f872
+	commit = d45c5a2a7a0b9a3d37af49211a2c202c1ea16e1c
+	parent = 0c87a94d2a0d0ebb282bb543e32e5a66c90341c2
 	cmdver = 0.3.1
