@@ -390,9 +390,7 @@
   vars:
     logrotate_scripts:
       - name: arvados_api_db
-        paths:
-          - "{{ arvados_master_api_data_dir }}/arvados-api/current/log/*.log"
-          - "{{ arvados_master_api_data_dir }}/arvados-api/shared/*.log"
+        path: "{{ arvados_master_api_data_dir }}/arvados-api/shared/*.log"
         options:
           - compress
           - copytruncate
