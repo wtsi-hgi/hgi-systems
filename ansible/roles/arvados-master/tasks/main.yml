@@ -384,6 +384,22 @@
     RAILS_ENV: production
   when: arvados_master_mercury_admin_user_script.changed
 
+- name: setup logrotate to rotate API logs
+  become: yes
+  import_role: wtsi-hgi.ansible-logrotate
+  vars:
+    logrotate_scripts:
+      - name: arvados_api_db
+        paths:
+          - "{{ arvados_master_api_data_dir }}/arvados-api/current/log/*.log"
+          - "{{ arvados_master_api_data_dir }}/arvados-api/shared/*.log"
+        options:
+          - compress
+          - copytruncate
+          - daily
+          - missingok
+          - size 1G
+
 ##############################################################################
 # crunch-dispatch-slurm (crunch v2 slurm dispatcher)
 ##############################################################################
