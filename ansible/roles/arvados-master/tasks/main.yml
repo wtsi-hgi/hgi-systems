@@ -386,7 +386,8 @@
 
 - name: setup logrotate to rotate API logs
   become: yes
-  import_role: wtsi-hgi.ansible-logrotate
+  import_role:
+    name: wtsi-hgi.ansible-logrotate
   vars:
     logrotate_scripts:
       - name: arvados_api_db
