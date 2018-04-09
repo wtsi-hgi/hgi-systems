@@ -38,7 +38,7 @@ It offers the advantages that developers:
 $ ./start.sh -h
 Usage: start.sh [options]
 
-Aggregate uncompressed mpistat data streamed from standard input
+Start hgi-systems development container
 
 options:
 -c      docker-with-gitlab-secrets configuration file location [default: /Users/cn13/.dwgs-config.yml]

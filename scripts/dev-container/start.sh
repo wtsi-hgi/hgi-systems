@@ -13,7 +13,7 @@ usage() {
   cat <<-EOF
 	Usage: $(basename ${EXECUTABLE_NAME}) [options]
 
-	Start hgi-systems development container.
+	Start hgi-systems development container
 
 	options:
 	-c	docker-with-gitlab-secrets configuration file location [default: ${dwgsConfig}]
