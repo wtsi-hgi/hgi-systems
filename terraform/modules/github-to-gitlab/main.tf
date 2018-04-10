@@ -1,7 +1,6 @@
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
-variable "count" {}
 
 variable "security_group_ids" {
   type    = "map"
@@ -26,10 +25,6 @@ variable "bastion" {
 variable "extra_ansible_groups" {
   type    = "list"
   default = []
-}
-
-variable "volume_size_gb" {
-  default = 250
 }
 
 locals {
@@ -104,16 +99,4 @@ resource "infoblox_record" "github-to-gitlab" {
 
 output "ip" {
   value = "${openstack_networking_floatingip_v2.github-to-gitlab.address}"
-}
-
-resource "openstack_blockstorage_volume_v2" "github-to-gitlab-volume" {
-  count = "${var.count}"
-  name  = "github-to-gitlab-volume"
-  size  = "${var.volume_size_gb}"
-}
-
-resource "openstack_compute_volume_attach_v2" "github-to-gitlab-volume-attach" {
-  count       = "${var.count}"
-  volume_id   = "${openstack_blockstorage_volume_v2.github-to-gitlab-volume.id}"
-  instance_id = "${openstack_compute_instance_v2.github-to-gitlab.*.id[count.index]}"
 }

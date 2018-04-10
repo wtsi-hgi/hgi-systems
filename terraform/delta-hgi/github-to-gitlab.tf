@@ -6,7 +6,6 @@ module "github-to-gitlab" {
     user = "${var.docker_image_user}"
   }
 
-  count              = 1
   flavour            = "m1.medium"
   domain             = "hgi.sanger.ac.uk"
   security_group_ids = "${module.openstack.security_group_ids}"
