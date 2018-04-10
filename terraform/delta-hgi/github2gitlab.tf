@@ -1,12 +1,12 @@
-module "irobot" {
-  source = "../modules/github2gitlab"
+module "github-to-gitlab" {
+  source = "../modules/github-to-gitlab"
 
   image = {
     name = "hgi-docker-xenial-926b0ea4"
     user = "${var.docker_image_user}"
   }
 
-  irobot_cluster_id  = "ncucu"
+  github2gitlab_cluster_id  = "ncucu"
   count              = 1
   flavour            = "m1.medium"
   domain             = "hgi.sanger.ac.uk"

@@ -3,14 +3,14 @@
     become: yes
     copy:
       dest: ~/.git-credentials
-      content: {{ gitlab_auth_url }}
+      content: "{{ gitlab_auth_url }}"
       mode: 0400
 
   - name: create ssh authorized_keys
     become: yes
     copy:
       dest: ~/.ssh/authorized_keys
-      content: {{ gitlab_authorised_key }}
+      content: "{{ gitlab_authorised_key }}"
       mode: 0400
 
   - name: create github2gitlab container

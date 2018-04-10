@@ -55,7 +55,6 @@ resource "openstack_compute_instance_v2" "github2gitlab" {
     "${var.security_group_ids["ping"]}",
     "${var.security_group_ids["ssh"]}",
     "${var.security_group_ids["http"]}",
-    "${var.security_group_ids["github2gitlab"]}",
   ]
 
   network {
