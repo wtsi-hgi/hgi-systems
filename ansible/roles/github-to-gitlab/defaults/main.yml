@@ -1,0 +1,9 @@
+# Requires:
+#   - mattermost_webhook_url
+#   - gitlab_auth_url
+#   - git_credentials_content
+
+---
+  github2gitlab_image_version: something
+  github2gitlab_host_conf_file: something
+  gitlab_authorised_key: something
