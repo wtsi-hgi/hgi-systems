@@ -6,21 +6,21 @@
       content: "{{ gitlab_auth_url }}"
       mode: 0400
 
-  - name: create ssh authorized_keys
+  - name: create config file
     become: yes
-    copy:
-      dest: ~/.ssh/authorized_keys
-      content: "{{ gitlab_authorised_key }}"
-      mode: 0400
+    template:
+      src: config.json.j2
+      dest: "{{ github_to_gitlab_host_conf_file }}"
 
-  - name: create github2gitlab container
+  - name: create github-to-gitlab container
     become: yes
     docker_container:
-      name: "mercury/github2gitlab:{{ github2gitlab_image_version }}"
-      image: "github2gitlab"
+      name: "mercury/github-to-gitlab:{{ github_to_gitlab_image_version }}"
+      image: "github-to-gitlab"
       state: started
-      command: "python -m github2gitlab --mattermost-webhook-url {{ mattermost_webhook_url }} --host 0.0.0.0"
+      command: "github2gitlab --mattermost-webhook-url {{ mattermost_webhook_url }} --host 0.0.0.0"
       volumes:
-        - "{{ github2gitlab_host_conf_file }}:/github-to-gitlab-hook/config.json:ro"
+        - "{{ github_to_gitlab_host_conf_file }}:/github-to-gitlab/config.json"
+        - "~/.git-credentials:~/.git-credentials:ro"
       published_ports:
         - "80:8080"

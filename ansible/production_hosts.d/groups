@@ -71,6 +71,7 @@
 [arvados-workbenches]
 [netdata]
 [irobots]
+[github-to-gitlab]
 
 [hgs4:children]
 mesos-masters

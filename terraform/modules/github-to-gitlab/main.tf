@@ -1,7 +1,7 @@
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
-variable "github2gitlab_cluster_id" {}
+variable "github-to-gitlab_cluster_id" {}
 variable "count" {}
 
 variable "security_group_ids" {
@@ -35,18 +35,18 @@ variable "volume_size_gb" {
 
 locals {
   ansible_groups = [
-    "github2gitlabs",
+    "github-to-gitlab",
   ]
 }
 
-resource "openstack_networking_floatingip_v2" "github2gitlab" {
+resource "openstack_networking_floatingip_v2" "github-to-gitlab" {
   provider = "openstack"
   pool     = "nova"
 }
 
-resource "openstack_compute_instance_v2" "github2gitlab" {
+resource "openstack_compute_instance_v2" "github-to-gitlab" {
   provider    = "openstack"
-  name        = "github2gitlab-${var.github2gitlab_cluster_id}"
+  name        = "github-to-gitlab"
   image_name  = "${var.image["name"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${var.key_pair_ids["mercury"]}"
@@ -62,7 +62,7 @@ resource "openstack_compute_instance_v2" "github2gitlab" {
     access_network = true
   }
 
-  user_data = "#cloud-config\nhostname: github2gitlab-${var.github2gitlab_cluster_id}\nfqdn: github2gitlab-${var.github2gitlab_cluster_id}.${var.domain}"
+  user_data = "#cloud-config\nhostname: github-to-gitlab\nfqdn: github-to-gitlab.${var.domain}"
 
   metadata = {
     ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
@@ -88,15 +88,15 @@ resource "openstack_compute_instance_v2" "github2gitlab" {
   }
 }
 
-resource "openstack_compute_floatingip_associate_v2" "github2gitlab" {
+resource "openstack_compute_floatingip_associate_v2" "github-to-gitlab" {
   provider    = "openstack"
-  floating_ip = "${openstack_networking_floatingip_v2.github2gitlab.address}"
-  instance_id = "${openstack_compute_instance_v2.github2gitlab.id}"
+  floating_ip = "${openstack_networking_floatingip_v2.github-to-gitlab.address}"
+  instance_id = "${openstack_compute_instance_v2.github-to-gitlab.id}"
 }
 
-resource "infoblox_record" "github2gitlab" {
-  value  = "${openstack_networking_floatingip_v2.github2gitlab.address}"
-  name   = "github2gitlab-${var.github2gitlab_cluster_id}"
+resource "infoblox_record" "github-to-gitlab" {
+  value  = "${openstack_networking_floatingip_v2.github-to-gitlab.address}"
+  name   = "github-to-gitlab"
   domain = "${var.domain}"
   type   = "A"
   ttl    = 600
@@ -104,17 +104,17 @@ resource "infoblox_record" "github2gitlab" {
 }
 
 output "ip" {
-  value = "${openstack_networking_floatingip_v2.github2gitlab.address}"
+  value = "${openstack_networking_floatingip_v2.github-to-gitlab.address}"
 }
 
-resource "openstack_blockstorage_volume_v2" "github2gitlab-volume" {
+resource "openstack_blockstorage_volume_v2" "github-to-gitlab-volume" {
   count = "${var.count}"
-  name  = "github2gitlab-${var.github2gitlab_cluster_id}-volume"
+  name  = "github-to-gitlab-volume"
   size  = "${var.volume_size_gb}"
 }
 
-resource "openstack_compute_volume_attach_v2" "github2gitlab-volume-attach" {
+resource "openstack_compute_volume_attach_v2" "github-to-gitlab-volume-attach" {
   count       = "${var.count}"
-  volume_id   = "${openstack_blockstorage_volume_v2.github2gitlab-volume.id}"
-  instance_id = "${openstack_compute_instance_v2.github2gitlab.*.id[count.index]}"
+  volume_id   = "${openstack_blockstorage_volume_v2.github-to-gitlab-volume.id}"
+  instance_id = "${openstack_compute_instance_v2.github-to-gitlab.*.id[count.index]}"
 }

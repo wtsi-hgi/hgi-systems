@@ -6,7 +6,6 @@ module "github-to-gitlab" {
     user = "${var.docker_image_user}"
   }
 
-  github2gitlab_cluster_id  = "ncucu"
   count              = 1
   flavour            = "m1.medium"
   domain             = "hgi.sanger.ac.uk"

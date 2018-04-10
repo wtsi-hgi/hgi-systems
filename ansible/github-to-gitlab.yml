@@ -2,11 +2,11 @@
 
   - hosts: github-to-gitlab
     tasks:
-
       - name: import github-to-gitlab role
         import_role:
           name: github-to-gitlab
         vars:
           vars:
             mattermost_webhook_url: "{{ github_to_gitlab_mattermost_webhook_url }}"
-            gitlab_auth_url: "{{ irobots_GROUP_irods_authentication_file_contents }}"
+            gitlab_auth_url: "{{ github_to_gitlab_gitlab_auth_url }}"
+            gitlab_url: "{{ gitlab_url }}"
