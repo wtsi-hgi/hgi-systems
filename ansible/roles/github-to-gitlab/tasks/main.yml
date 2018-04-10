@@ -1,4 +1,11 @@
 ---
+  - name: validate setup variables
+    assert:
+      that:
+        - mattermost_webhook_url | mandatory
+        - gitlab_auth_url | mandatory
+    no_log: True
+
   - name: create gitlab credentials
     become: yes
     copy:
