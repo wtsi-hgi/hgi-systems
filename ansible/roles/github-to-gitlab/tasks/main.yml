@@ -6,11 +6,11 @@
         - gitlab_auth_url | mandatory
     no_log: True
 
-  - name: create gitlab credentials
+  - name: create gitlab config file
     become: yes
-    copy:
-      dest: ~/.git-credentials
-      content: "{{ gitlab_auth_url }}"
+    template:
+      src: gitconfig.j2
+      dest: /etc/gitconfig
       mode: 0400
 
   - name: create config file
@@ -28,6 +28,6 @@
       command: "github2gitlab --mattermost-webhook-url {{ mattermost_webhook_url }} --host 0.0.0.0"
       volumes:
         - "{{ github_to_gitlab_host_conf_file }}:/github-to-gitlab/config.json"
-        - "~/.git-credentials:~/.git-credentials:ro"
+        - "/etc/gitconfig:/etc/gitconfig:ro"
       published_ports:
         - "80:8080"
