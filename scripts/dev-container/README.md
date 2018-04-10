@@ -21,7 +21,8 @@ It offers the advantages that developers:
 ## Prerequisites
 - git
 - docker (for HGI members: use hgs4 or OpenStack instance)
-- [docker-with-gitlab-secrets](https://github.com/wtsi-hgi/docker-with-gitlab-secrets) (for HGI members: `module add module add hgi/dockerwithgitlabsecrets/latest`)
+- [docker-with-gitlab-secrets](https://github.com/wtsi-hgi/docker-with-gitlab-secrets) (for HGI members on network
+machines use `module add module add hgi/dockerwithgitlabsecrets/latest` else `pip install dockerwithgitlabsecrets`)
 - docker-with-gitlab-secrets configuration for [hgi-systems](https://github.com/wtsi-hgi/hgi-systems), e.g.
   ```
   gitlab:
