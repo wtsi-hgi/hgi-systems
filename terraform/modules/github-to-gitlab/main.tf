@@ -1,7 +1,6 @@
 variable "flavour" {}
 variable "domain" {}
 variable "network_id" {}
-variable "github-to-gitlab_cluster_id" {}
 variable "count" {}
 
 variable "security_group_ids" {
