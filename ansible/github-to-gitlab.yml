@@ -8,4 +8,4 @@
         vars:
           mattermost_webhook_url: "{{ github_to_gitlab_mattermost_webhook_url }}"
           gitlab_auth_url: "{{ github_to_gitlab_gitlab_auth_url }}"
-          gitlab_url: "{{ gitlab_url }}"
+          gitlab_url: "{{ github_to_gitlab_gitlab_url }}"
