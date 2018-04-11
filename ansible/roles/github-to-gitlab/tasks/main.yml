@@ -3,7 +3,8 @@
     assert:
       that:
         - github_to_gitlab_mattermost_webhook_url | mandatory
-        - github_to_gitlab_gitlab_auth_url | mandatory
+        - github_to_gitlab_gitlab_username | mandatory
+        - github_to_gitlab_gitlab_password | mandatory
     no_log: True
 
   - name: create gitlab config file
