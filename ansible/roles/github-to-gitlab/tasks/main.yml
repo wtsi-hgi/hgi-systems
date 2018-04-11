@@ -7,6 +7,16 @@
         - github_to_gitlab_gitlab_password | mandatory
     no_log: True
 
+  - name: install apt requirements
+    become: yes
+    apt:
+      name: python-pip
+
+  - name: install pip requirements
+    become: yes
+    pip:
+      name: docker-py
+
   - name: create gitlab config file
     become: yes
     template:

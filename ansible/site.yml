@@ -37,7 +37,7 @@
 - import_playbook: chronosians.yml
 - import_playbook: mesos-slaves.yml
 - import_playbook: bamboosians.yml
-- import_playbook: github-to-gitlab.yml
+- import_playbook: github-to-gitlabs.yml
 
 # We need consul-agents for DNS functionality
 # some subsequent roles may not work if they 
