@@ -2,8 +2,8 @@
   - name: validate setup variables
     assert:
       that:
-        - mattermost_webhook_url | mandatory
-        - gitlab_auth_url | mandatory
+        - github_to_gitlab_mattermost_webhook_url | mandatory
+        - github_to_gitlab_gitlab_auth_url | mandatory
     no_log: True
 
   - name: create gitlab config file
@@ -25,7 +25,7 @@
       name: "mercury/github-to-gitlab:{{ github_to_gitlab_image_version }}"
       image: "github-to-gitlab"
       state: started
-      command: "github2gitlab --mattermost-webhook-url {{ mattermost_webhook_url }} --host 0.0.0.0"
+      command: "github2gitlab --mattermost-webhook-url {{ github_to_gitlab_mattermost_webhook_url }} --host 0.0.0.0"
       volumes:
         - "{{ github_to_gitlab_host_conf_file }}:/github-to-gitlab/config.json"
         - "/etc/gitconfig:/etc/gitconfig:ro"

@@ -6,8 +6,8 @@
         import_role:
           name: github-to-gitlab
         vars:
-          mattermost_webhook_url: "{{ github_to_gitlab_mattermost_webhook_url }}"
-          gitlab_auth_url: "{{ github_to_gitlab_gitlab_auth_url }}"
-          gitlab_url: "{{ github_to_gitlab_gitlab_url }}"
-          github_to_gitlab_gitlab_username: "{{ github_to_gitlab_gitlab_username }}"
-          github_to_gitlab_gitlab_password: "{{ github_to_gitlab_gitlab_password }}"
+          github_to_gitlab_mattermost_webhook_url: "{{ github_to_gitlab_GROUP_mattermost_webhook_url }}"
+          github_to_gitlab_gitlab_auth_url: "{{ github_to_gitlab_GROUP_gitlab_auth_url }}"
+          github_to_gitlab_gitlab_url: "{{ github_to_gitlab_GROUP_gitlab_url }}"
+          github_to_gitlab_gitlab_username: "{{ github_to_gitlab_GROUP_gitlab_username }}"
+          github_to_gitlab_gitlab_password: "{{ github_to_gitlab_GROUP_gitlab_password }}"
