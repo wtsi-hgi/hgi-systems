@@ -29,7 +29,7 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "github-to-gitlab",
+    "github-to-gitlabs",
   ]
 }
 

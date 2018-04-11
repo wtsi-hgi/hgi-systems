@@ -1,6 +1,6 @@
 ---
 
-  - hosts: github-to-gitlab
+  - hosts: github-to-gitlabs
     tasks:
       - name: import github-to-gitlab role
         import_role:
