@@ -37,7 +37,6 @@
 - import_playbook: chronosians.yml
 - import_playbook: mesos-slaves.yml
 - import_playbook: bamboosians.yml
-- import_playbook: github-to-gitlabs.yml
 
 # We need consul-agents for DNS functionality
 # some subsequent roles may not work if they 
@@ -54,5 +53,6 @@
 - import_playbook: hailers.yml
 - import_playbook: openstack-tenant-cleaners.yml
 - import_playbook: irobots.yml
+- import_playbook: github-to-gitlabs.yml
 #- import_playbook: spark.yml
 
