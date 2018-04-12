@@ -3,5 +3,6 @@
 #   - gitlab_auth_url
 
 ---
-  github_to_gitlab_image_version: 0.1.0
-  github_to_gitlab_host_conf_file: /etc/github-to-gitlab-config.json
+
+github_to_gitlab_image_version: 0.1.0
+github_to_gitlab_host_conf_file: /etc/github-to-gitlab-config.json

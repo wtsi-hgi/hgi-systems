@@ -38,7 +38,7 @@
       state: started
       command: "github2gitlab --mattermost-webhook-url {{ github_to_gitlab_mattermost_webhook_url }} --host 0.0.0.0"
       volumes:
-        - "{{ github_to_gitlab_host_conf_file }}:/github-to-gitlab/config.json"
+        - "{{ github_to_gitlab_host_conf_file }}:/github-to-gitlab/config.json:ro"
         - "/etc/gitconfig:/etc/gitconfig:ro"
       published_ports:
         - "80:8080"
