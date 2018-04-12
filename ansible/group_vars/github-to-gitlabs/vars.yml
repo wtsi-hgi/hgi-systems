@@ -3,4 +3,5 @@
 #   github_to_gitlab_GROUP_gitlab_password: xxx
 ---
 github_to_gitlab_GROUP_gitlab_url: https://gitlab.internal.sanger.ac.uk
+github_to_gitlab_GROUP_gitlab_hgi_url: https://gitlab.internal.sanger.ac.uk/hgi
 github_to_gitlab_GROUP_gitlab_username: mercury

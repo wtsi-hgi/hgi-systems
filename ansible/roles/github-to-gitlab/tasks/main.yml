@@ -29,20 +29,13 @@
       - name: credential.{{ github_to_gitlab_gitlab_url }}/.helper
         value: "!cred(){ echo password={{ github_to_gitlab_gitlab_password }}; };cred"
 
-  - name: create config file
-    become: yes
-    template:
-      src: config.json.j2
-      dest: "{{ github_to_gitlab_host_conf_file }}"
-      mode: 0600
-
   - name: create github-to-gitlab container
     become: yes
     docker_container:
       name: "github-to-gitlab"
       image: "mercury/github-to-gitlab:{{ github_to_gitlab_image_version }}"
       state: started
-      command: "github2gitlab --mattermost-webhook-url {{ github_to_gitlab_mattermost_webhook_url }} --host 0.0.0.0"
+      command: "github2gitlab --mattermost-webhook-url {{ github_to_gitlab_mattermost_webhook_url }} --gitlab-base-url {{ github_to_gitlab_gitlab_hgi_url }} --host 0.0.0.0"
       volumes:
         - "{{ github_to_gitlab_host_conf_file }}:/github-to-gitlab/config.json:ro"
         - "/etc/gitconfig:/etc/gitconfig:ro"
