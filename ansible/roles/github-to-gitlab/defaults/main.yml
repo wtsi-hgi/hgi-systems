@@ -1,7 +1,9 @@
 # Requires:
-#   - mattermost_webhook_url
-#   - gitlab_auth_url
-
+#   - github_to_gitlab_mattermost_webhook_url
+#   - github_to_gitlab_gitlab_url
+#   - github_to_gitlab_gitlab_hgi_url
+#   - github_to_gitlab_gitlab_username
+#   - github_to_gitlab_gitlab_password
 ---
 
 github_to_gitlab_image_version: 0.1.0
