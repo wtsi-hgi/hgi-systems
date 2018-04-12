@@ -7,4 +7,3 @@
 ---
 
 github_to_gitlab_image_version: 0.2.0
-github_to_gitlab_host_conf_file: /etc/github-to-gitlab-config.json
