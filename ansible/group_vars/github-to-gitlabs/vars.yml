@@ -1,7 +1,6 @@
 # Vault contains:
 #   github_to_gitlab_GROUP_mattermost_webhook_url: xxx
-#   github_to_gitlab_GROUP_gitlab_auth_url: xxx
-#   github_to_gitlab_GROUP_gitlab_username: xxx
 #   github_to_gitlab_GROUP_gitlab_password: xxx
 ---
-  github_to_gitlab_GROUP_gitlab_url: https://gitlab.internal.sanger.ac.uk
+github_to_gitlab_GROUP_gitlab_url: https://gitlab.internal.sanger.ac.uk
+github_to_gitlab_GROUP_gitlab_username: mercury

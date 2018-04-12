@@ -26,15 +26,8 @@
     with_items:
       - name: credential.{{ github_to_gitlab_gitlab_url }}/.username
         value: "{{ github_to_gitlab_gitlab_username }}"
-      - name: credential.{{ github_to_gitlab_gitlab_url }}/.password
-        value: "{{ github_to_gitlab_gitlab_password }}"
-
-  - name: create gitlab config file
-    become: yes
-    template:
-      src: gitconfig.j2
-      dest: /etc/gitconfig
-      mode: 0400
+      - name: credential.{{ github_to_gitlab_gitlab_url }}/.helper
+        value: "!cred(){ echo password={{ github_to_gitlab_gitlab_password }}; };cred"
 
   - name: create config file
     become: yes
