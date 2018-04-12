@@ -17,6 +17,18 @@
     pip:
       name: docker-py
 
+  - name: configure gitlab credentials
+    become: yes
+    git_config:
+      scope: system
+      name: "{{ item.name }}"
+      value: "{{ item.value }}"
+    with_items:
+      - name: credential.{{ github_to_gitlab_gitlab_url }}/.username
+        value: "{{ github_to_gitlab_gitlab_username }}"
+      - name: credential.{{ github_to_gitlab_gitlab_url }}/.password
+        value: "{{ github_to_gitlab_gitlab_password }}"
+
   - name: create gitlab config file
     become: yes
     template:
@@ -29,6 +41,7 @@
     template:
       src: config.json.j2
       dest: "{{ github_to_gitlab_host_conf_file }}"
+      mode: 0600
 
   - name: create github-to-gitlab container
     become: yes
