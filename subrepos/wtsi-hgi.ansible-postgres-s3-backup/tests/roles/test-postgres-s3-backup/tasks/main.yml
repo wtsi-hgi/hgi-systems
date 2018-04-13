@@ -1,0 +1,38 @@
+---
+
+- name: import postgres-s3-backup role variables
+  include_vars:
+    file: "{{ item }}"
+  with_items:
+    - ../postgres-s3-backup/defaults/main.yml
+    - ../postgres-s3-backup/vars/main.yml
+
+- name: set bucket to name of the host
+  set_fact:
+    postgres_s3_backup_s3_bucket: "{{ inventory_hostname }}"
+
+- name: including backup role
+  include_role:
+    name: postgres-s3-backup
+  vars:
+    postgres_s3_backup_run_once_now: true
+
+- name: get backup information
+  become: yes
+  backup_info:
+    script: "{{ postgres_s3_backup_info_script_location }}"
+    python: "{{ postgres_s3_backup_venv_location }}/bin/python"
+    mc: "{{ postgres_s3_backup_mc_location }}"
+    mc-config: "{{ postgres_s3_backup_mc_configuration_location | dirname }}"
+    mc-s3-location: "{{ postgres_s3_backup_s3_location }}"
+  register: backup_information
+
+- name: read dump backup
+  become: yes
+  shell: "{{ postgres_s3_backup_mc_location }} -C {{ postgres_s3_backup_mc_configuration_location | dirname }} cat {{ postgres_s3_backup_s3_location }}{{ backup_information.latest }} | gzip -d"
+  register: backup
+
+- name: assert the dump looks valid
+  assert:
+    that:
+      - "'-- PostgreSQL database dump' in backup.stdout_lines"

@@ -1,0 +1,12 @@
+{
+    "version": "9",
+    "hosts": {
+        "{{ postgres_s3_backup_mc_host_alias }}": {
+            "url": "{{ postgres_s3_backup_s3_url }}",
+            "accessKey": "{{ postgres_s3_backup_s3_access_key }}",
+            "secretKey": "{{ postgres_s3_backup_s3_secret_key }}",
+            "api": "s3v4",
+            "lookup": "auto"
+        }
+    }
+}

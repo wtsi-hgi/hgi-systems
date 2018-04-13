@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/wtsi-hgi/ansible-postgres-s3-backup.git
+	branch = master
+	commit = 9b4db87e0627d41cd35b584968b376fadc21ec34
+	parent = 28b8a10c7cae7c3a03039ddd848349a3a86e8997
+	cmdver = 0.3.1

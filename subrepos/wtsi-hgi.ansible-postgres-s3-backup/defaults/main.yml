@@ -1,0 +1,36 @@
+# Required variables:
+#   postgres_s3_backup_s3_url
+#   postgres_s3_backup_s3_access_key
+#   postgres_s3_backup_s3_secret_key
+#   postgres_s3_backup_s3_bucket
+
+---
+
+postgres_s3_backup_s3_directory_in_bucket: /
+
+# Note: to reduce your pipeline's susceptibility to change/outages of external websites, consider using self-hosted copy
+postgres_s3_backup_mc_download_source: https://dl.minio.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2018-03-25T01-22-22Z
+postgres_s3_backup_mc_download_checksum: sha256:faa61548ef9732cf4f2d51d262aab58aceb2dd6e1391233f8ebd2dfc25979b20
+
+postgres_s3_backup_pg_dumpall_user: postgres
+
+postgres_s3_backup_install_directory: /opt/postgres-s3-backup
+postgres_s3_backup_mc_location: "{{ postgres_s3_backup_install_directory }}/mc"
+postgres_s3_backup_script_location: "{{ postgres_s3_backup_install_directory }}/backup.sh"
+postgres_s3_backup_venv_location: "{{ postgres_s3_backup_install_directory }}/venv"
+postgres_s3_backup_info_script_location: "{{ postgres_s3_backup_install_directory }}/backup-info.py"
+
+postgres_s3_backup_mc_configuration_location: /etc/postgres-s3-backup/mc/config.json
+
+postgres_s3_backup_run_periodically: true
+postgres_s3_backup_run_once_now: false
+
+postgres_s3_backup_run_name: postgres-s3-backup
+postgres_s3_backup_run_day: "*"
+postgres_s3_backup_run_hour: 4
+postgres_s3_backup_run_minute: 0
+
+postgres_s3_backup_s3_ceph_support: true
+
+postgres_s3_backup_number_to_keep: 14
+postgres_s3_backup_name_suffix: ""
