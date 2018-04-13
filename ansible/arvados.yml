@@ -51,6 +51,8 @@
         attached_openstack_volumes:
           - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+
+    # TODO: Handle restore of data backup to S3
     - name: setup s3 to backup sso data 
       import_role:
         name: s3-backup
@@ -68,15 +70,26 @@
         # Restore from s3 if this file is present (then delete it)
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
-        ###############################################################################
-        # Pre/post tasks
-        ###############################################################################
-        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_sso_data_mountpoint }}/sso-db.out.gz"
+
     - name: configure arvados-sso
       import_role:
         name: arvados-sso
       vars:
         arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
+
+    - name: setup SSO database backup to S3
+      import_role:
+        name: wtsi-hgi.ansible-postgres-s3-backup
+      vars:
+        postgres_s3_backup_s3_url: "https://{{ arvados_GROUP_backup_s3_host }}"
+        postgres_s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        postgres_s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        postgres_s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        postgres_s3_backup_s3_directory_in_bucket: "arvados/{{ arvados_cluster_id }}/sso/db"
+        # TODO: download S3 copy of minio (postgres_s3_backup_mc_download_source)
+        postgres_s3_backup_run_hour: 3,15
+        postgres_s3_backup_number_to_keep: 28
+        postgres_s3_backup_name_suffix: -sso.sql.gz
 
 - hosts: arvados-api-dbs:!arvados-masters
   vars:
@@ -96,6 +109,8 @@
         attached_openstack_volumes:
           - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+
+    # TODO: Handle restore of data backup to S3
     - name: setup s3 to backup api server data 
       import_role:
         name: s3-backup
@@ -114,10 +129,7 @@
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
         ###############################################################################
-        ###############################################################################
-        # Pre/post tasks
-        ###############################################################################
-        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_api_db_data_mountpoint }}/api-db.out.gz"
+
     - name: configure arvados-api-db
       import_role:
         name: arvados-api-db
@@ -126,6 +138,20 @@
         arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+
+    - name: setup API database backup to S3
+      import_role:
+        name: wtsi-hgi.ansible-postgres-s3-backup
+      vars:
+        postgres_s3_backup_s3_url: "https://{{ arvados_GROUP_backup_s3_host }}"
+        postgres_s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        postgres_s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        postgres_s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        postgres_s3_backup_s3_directory_in_bucket: "arvados/{{ arvados_cluster_id }}/api/db"
+        # TODO: download S3 copy of minio (postgres_s3_backup_mc_download_source)
+        postgres_s3_backup_run_hour: 3,15
+        postgres_s3_backup_number_to_keep: 28
+        postgres_s3_backup_name_suffix: -api.sql.gz
 
 - hosts: arvados-masters
   vars:
@@ -145,7 +171,8 @@
         attached_openstack_volumes:
           - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
-    - name: setup s3 to backup api server data 
+
+    - name: setup s3 to backup api server data
       import_role:
         name: s3-backup
       vars:
@@ -163,10 +190,7 @@
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
         ###############################################################################
-        ###############################################################################
-        # Pre/post tasks
-        ###############################################################################
-        s3_backup_before_task: "sudo -u postgres pg_dumpall | gzip > {{ arvados_PLAYBOOK_api_data_mountpoint }}/api-db.out.gz"
+
     - name: configure arvados-api-db on arvados-master
       import_role:
         name: arvados-api-db
@@ -176,6 +200,7 @@
         arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
       when: "'arvados-api-dbs' in group_names"
+
     - name: configure arvados-master
       import_role:
         name: arvados-master
@@ -206,6 +231,7 @@
         arvados_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
         arvados_keep_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
+
     - name: create arvados consul template path file
       become: yes
       copy:
@@ -228,12 +254,14 @@
   tasks:
     - name: include arvados playbook vars
       include_vars: arvados_playbook_vars.yml
+
     - name: apply arvados compute node role
       import_role:
         name: arvados-compute-node
       vars:
         arvados_compute_node_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_compute_node_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+
     - name: apply arvados-keep role
       import_role:
         name: arvados-keep
@@ -250,6 +278,7 @@
   tasks:
     - name: include arvados playbook vars
       include_vars: arvados_playbook_vars.yml
+
     - name: configure arvados cluster as a whole
       import_role:
         name: arvados-cluster
