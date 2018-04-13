@@ -1,0 +1,50 @@
+---
+  - name: validate setup variables
+    assert:
+      that:
+        - github_to_gitlab_mattermost_webhook_url | mandatory
+        - github_to_gitlab_gitlab_username | mandatory
+        - github_to_gitlab_gitlab_password | mandatory
+    no_log: True
+
+  - name: install apt requirements
+    become: yes
+    apt:
+      name: python-pip
+
+  - name: install pip requirements
+    become: yes
+    pip:
+      name: docker-py
+
+  - name: configure gitlab credentials
+    become: yes
+    git_config:
+      scope: system
+      name: "{{ item.name }}"
+      value: "{{ item.value }}"
+    with_items:
+      - name: credential.{{ github_to_gitlab_gitlab_url }}/.username
+        value: "{{ github_to_gitlab_gitlab_username }}"
+      - name: credential.{{ github_to_gitlab_gitlab_url }}/.helper
+        value: "!cred(){ echo password={{ github_to_gitlab_gitlab_password }}; };cred"
+
+  - name: create config file
+    become: yes
+    template:
+      src: config.yml.j2
+      dest: /etc/github-to-gitlab-config.yml
+      mode: 0400
+
+  - name: create github-to-gitlab container
+    become: yes
+    docker_container:
+      name: "github-to-gitlab"
+      image: "mercury/github-to-gitlab:{{ github_to_gitlab_image_version }}"
+      state: started
+      command: "github2gitlab --config-file /github-to-gitlab/config.yml --host 0.0.0.0"
+      volumes:
+        - "/etc/github-to-gitlab-config.yml:/github-to-gitlab/config.yml:ro"
+        - "/etc/gitconfig:/etc/gitconfig:ro"
+      published_ports:
+        - "80:8080"
