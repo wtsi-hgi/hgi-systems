@@ -7,10 +7,37 @@
 # Configure critical ssh bastion host infrastructure before gathering facts
 - import_playbook: ssh-gateways.yml
 
+- hosts: all:!non-hosts
+  gather_facts: no
+  tasks:
+    - set_fact:
+        hgi_preamble_playbook_ran: "{{ hgi_preamble_playbook_ran | default(false) }}"
+
 # Run common role
 - hosts: all:!non-hosts:!noconf
-  roles: 
-    - common
+  tasks:
+    - import_role:
+        name: common
+      when: not hgi_preamble_playbook_ran
 
 # Run Docker role
-- import_playbook: dockerers.yml
+- hosts: dockerers
+  tasks:
+    - when: not hgi_preamble_playbook_ran
+      block:
+      - import_role:
+          name: docker
+
+      - name: add mercury to docker group
+        become: yes
+        user:
+          append: yes
+          groups:
+            - docker
+          name: mercury
+
+# Set fact that hgi-preamble has been ran
+- hosts: all:!non-hosts
+  tasks:
+    - set_fact:
+        hgi_preamble_playbook_ran: true
