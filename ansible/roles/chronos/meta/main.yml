@@ -21,5 +21,4 @@
 # file: roles/chronos/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: mesos }
+  - role: mesos

@@ -21,5 +21,4 @@
 # file: roles/marathon/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: mesos }
+  - role: mesos

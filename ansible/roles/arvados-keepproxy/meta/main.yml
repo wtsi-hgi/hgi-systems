@@ -21,5 +21,4 @@
 # file: roles/arvados-keepproxy/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: arvados-common }
+  - role: arvados-common

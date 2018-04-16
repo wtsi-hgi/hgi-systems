@@ -21,6 +21,4 @@
 # file: roles/arvados-shell/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: arvados-common }
-  - { role: docker }
+  - role: arvados-common

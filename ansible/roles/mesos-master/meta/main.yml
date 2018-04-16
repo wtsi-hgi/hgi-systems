@@ -21,5 +21,4 @@
 # file: roles/mesos-master/meta/main.yml
 
 dependencies:
-  - { role: common, non_root_compatibility: true }
-  - { role: mesos }
+  - role: mesos
