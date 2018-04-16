@@ -11,3 +11,6 @@
 - hosts: all:!non-hosts:!noconf
   roles: 
     - common
+
+# Run Docker role
+- import_playbook: dockerers.yml

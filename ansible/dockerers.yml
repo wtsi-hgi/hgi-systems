@@ -19,6 +19,7 @@
 #
 ---
 # file: dockerers.yml
+
 - hosts: dockerers
   roles:
     - docker
