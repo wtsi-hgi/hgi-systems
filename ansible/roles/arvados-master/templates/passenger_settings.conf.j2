@@ -9,7 +9,7 @@
     passenger_request_queue_overflow_status_code 513;
     passenger_intercept_errors on;
 
-    passenger_socket_backlog 8192; # matching nginx worker_connections
+    passenger_socket_backlog 131072; # matching nginx worker_connections * worker_processes(cores if auto)
 
     # pre-start arvados api server
     passenger_pre_start http://127.0.0.1:{{ arvados_master_api_backend_port }}/arvados/v1/jobs;
