@@ -3,6 +3,7 @@
 - name: restart iRobot container
   become: yes
   docker_container:
+    name: "{{ irobot_container_name }}"
     restart: yes
     state: started
   listen: restart_irobot_container
