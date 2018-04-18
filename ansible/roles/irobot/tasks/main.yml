@@ -47,6 +47,7 @@
   template:
     src: irods_environment.json.j2
     dest: "{{ irobot_irods_environment_json_host_location }}"
+  notify: restart_irobot_container
 
 - name: create .irodsA file
   become: yes
@@ -55,12 +56,14 @@
     dest: "{{ irobot_irods_authentication_file_host_location }}"
     mode: 0400
   no_log: True
+  notify: restart_irobot_container
 
 - name: create irobot configuration file
   become: yes
   template:
     src: irobot.conf.j2
     dest: "{{ irobot_configuration_file_host_location }}"
+  notify: restart_irobot_container
 
 - name: create iRobot container
   become: yes
