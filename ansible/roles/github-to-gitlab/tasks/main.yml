@@ -19,6 +19,7 @@
 
   - name: configure gitlab credentials
     become: yes
+    no_log: True
     git_config:
       scope: system
       name: "{{ item.name }}"
