@@ -13,20 +13,24 @@
     - set_fact:
         hgi_preamble_playbook_ran: "{{ hgi_preamble_playbook_ran | default(false) }}"
 
+    - set_fact:
+        hgi_preamble_run_common: "{{ not (hgi_preamble_playbook_ran or (skip_common | default(false))) }}"
+
 # Run common role
 - hosts: all:!non-hosts:!noconf
   tasks:
-    - import_role:
+    - include_role:
         name: common
-      when: not hgi_preamble_playbook_ran
+        private: true
+      when: hgi_preamble_run_common
 
 # Run Docker role
 - hosts: dockerers
   tasks:
-    - when: not hgi_preamble_playbook_ran
-      block:
-      - import_role:
+    - block:
+      - include_role:
           name: docker
+          private: true
 
       - name: add mercury to docker group
         become: yes
@@ -35,6 +39,8 @@
           groups:
             - docker
           name: mercury
+
+      when: hgi_preamble_run_common
 
 # Set fact that hgi-preamble has been ran
 - hosts: all:!non-hosts
