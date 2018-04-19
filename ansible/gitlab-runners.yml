@@ -18,11 +18,24 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: gitlab-runners.yml
 
 - import_playbook: hgi-preamble-playbook.yml
 
 - hosts: gitlab-runners
   roles:
-    - docker-machine
-    - gitlab-runner
+    - name: docker-machine
+
+    - name: gitlab-runner
+      vars:
+        gitlab_runner_projects: "{{ gitlab_runner_GROUP_projects }}"
+        gitlab_runner_descriptions: "{{ gitlab_runner_GROUP_descriptions }}"
+        gitlab_runner_s3_endpoint: "{{ gitlab_runner_GROUP_s3_endpoint }}"
+        gitlab_runner_s3_access_key: "{{ gitlab_runner_GROUP_s3_access_key }}"
+        gitlab_runner_s3_secret_key: "{{ gitlab_runner_GROUP_s3_secret_key }}"
+        gitlab_runner_s3_bucket: "{{ gitlab_runner_GROUP_s3_bucket }}"
+        gitlab_runner_ssh_private_key_file: "{{ gitlab_runner_GROUP_ssh_private_key_file }}"
+        gitlab_runner_docker_machine_key: "{{ gitlab_runner_GROUP_docker_machine_key }}"
+        gitlab_runner_docker_machine_ca_key: "{{ gitlab_runner_GROUP_docker_machine_ca_key }}"
+        gitlab_runner_concurrent: "{{ gitlab_runner_GROUP_concurrent }}"
+        gitlab_runner_registrations: "{{ gitlab_runner_GROUP_registrations }}"
+        gitlab_runner_tokens: "{{ gitlab_runner_GROUP_tokens }}"

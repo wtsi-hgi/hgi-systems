@@ -17,8 +17,19 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
+
+# Required variables:
+#   gitlab_runner_projects
+#   gitlab_runner_descriptions
+#   gitlab_runner_s3_endpoint
+#   gitlab_runner_s3_access_key
+#   gitlab_runner_s3_secret_key
+#   gitlab_runner_s3_bucket
+#   gitlab_runner_ssh_private_key_file
+#   gitlab_runner_docker_machine_key
+#   gitlab_runner_docker_machine_ca_key
+
 ---
-# file: roles/gitlab-runner/defaults/main.yml
 
 gitlab_runner_concurrent: 1
 
