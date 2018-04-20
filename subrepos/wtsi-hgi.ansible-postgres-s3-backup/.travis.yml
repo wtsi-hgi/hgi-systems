@@ -1,0 +1,9 @@
+---
+
+sudo: required
+
+services:
+  - docker
+
+script:
+- ./run-tests-in-docker.sh

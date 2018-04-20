@@ -1,0 +1,6 @@
+---
+
+postgres_s3_backup_s3_url: http://minio-server:9000
+postgres_s3_backup_s3_access_key: example-access-key
+postgres_s3_backup_s3_secret_key: example-secret-key
+postgres_s3_backup_s3_ceph_support: true

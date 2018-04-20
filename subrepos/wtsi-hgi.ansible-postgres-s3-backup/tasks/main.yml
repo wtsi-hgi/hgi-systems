@@ -1,0 +1,101 @@
+---
+
+- name: validate required variables have been set
+  assert:
+    that:
+      - item | mandatory
+  with_items:
+    - "{{ postgres_s3_backup_s3_url }}"
+    - "{{ postgres_s3_backup_s3_access_key }}"
+    - "{{ postgres_s3_backup_s3_secret_key }}"
+    - "{{ postgres_s3_backup_s3_bucket }}"
+  no_log: True
+
+- name: validate variable values
+  assert:
+    that:
+      - postgres_s3_backup_s3_directory_in_bucket.startswith("/")
+      - "'/' not in postgres_s3_backup_s3_bucket"
+      - "'://' in postgres_s3_backup_s3_url"
+      - "' ' not in postgres_s3_backup_name_suffix"
+
+- name: install required system dependencies
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - sudo
+    - gzip
+    - virtualenv
+    - jq
+    - python3
+
+- name: create required directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ postgres_s3_backup_mc_location | dirname }}"
+    - "{{ postgres_s3_backup_mc_configuration_location | dirname }}"
+    - "{{ postgres_s3_backup_script_location | dirname }}"
+
+- name: create pip environment
+  become: yes
+  pip:
+    name: "{{ lookup('file', 'files/scripts/requirements.txt').split('\n') }}"
+    virtualenv: "{{ postgres_s3_backup_venv_location }}"
+    virtualenv_python: python3
+
+- name: add backup information script
+  become: yes
+  copy:
+    src: files/scripts/backup-info.py
+    dest: "{{ postgres_s3_backup_info_script_location }}"
+
+- name: install mc
+  become: yes
+  get_url:
+    url: "{{ postgres_s3_backup_mc_download_source }}"
+    dest: "{{ postgres_s3_backup_mc_location }}"
+    checksum: "{{ postgres_s3_backup_mc_download_checksum }}"
+    mode: 0770
+
+- name: create mc configuration file
+  become: yes
+  template:
+    src: mc-config.json.j2
+    dest: "{{ postgres_s3_backup_mc_configuration_location }}"
+
+- name: create backup bucket
+  delegate_to: localhost
+  s3_bucket:
+    s3_url: "{{ postgres_s3_backup_s3_url }}"
+    aws_access_key: "{{ postgres_s3_backup_s3_access_key }}"
+    aws_secret_key: "{{ postgres_s3_backup_s3_secret_key }}"
+    ceph: "{{ postgres_s3_backup_s3_ceph_support }}"
+    name: "{{ postgres_s3_backup_s3_bucket }}"
+    state: present
+
+- name: install backup script
+  become: yes
+  template:
+    src: backup.sh.j2
+    dest: "{{ postgres_s3_backup_script_location }}"
+    mode: 0774
+
+- name: setup cron to run backup script
+  become: yes
+  cron:
+    name: "{{ postgres_s3_backup_run_name }}"
+    day: "{{ postgres_s3_backup_run_day }}"
+    hour: "{{ postgres_s3_backup_run_hour }}"
+    minute: "{{ postgres_s3_backup_run_minute }}"
+    job: "{{ postgres_s3_backup_script_location }}"
+  when: postgres_s3_backup_run_periodically
+
+- name: run backup as one-off task
+  become: yes
+  command: "{{ postgres_s3_backup_script_location }}"
+  when: postgres_s3_backup_run_once_now
