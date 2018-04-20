@@ -20,5 +20,3 @@
 ---
 # file: roles/ssh-gateway/meta/main.yml
 
-dependencies:
-  - { role: common }

@@ -21,6 +21,5 @@
 # file: roles/bamboo/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: rsyslog }
+  - role: rsyslog
 

@@ -21,7 +21,6 @@
 # file: roles/hail/meta/main.yml
 
 dependencies:
-  - role: common
   - role: wtsi-hgi.ansible-anaconda
     vars:
       anaconda_python_ver: "{{ hail_python_version }}"

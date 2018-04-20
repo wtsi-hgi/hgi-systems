@@ -21,7 +21,6 @@
 # file: roles/arvados-master/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: arvados-common }
+  - role: arvados-common
   - role: arvados-slurm-master
     arvados_slurm_master_consul_template_path_file: "{{ arvados_master_consul_template_path_file }}"
