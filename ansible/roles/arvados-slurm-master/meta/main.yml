@@ -21,8 +21,7 @@
 # file: roles/arvados-slurm-master/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: arvados-common }
+  - role: arvados-common
   - role: slurm-master
     slurm_munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
     slurm_control_machine: "{{ arvados_cluster_slurm_control_machine }}"

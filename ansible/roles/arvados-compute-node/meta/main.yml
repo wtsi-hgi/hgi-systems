@@ -21,8 +21,6 @@
 # file: roles/arvados-keepproxy/meta/main.yml
 
 dependencies:
-  - { role: common }
-  - { role: arvados-common }
-  - { role: docker }
+  - role: arvados-common
   - role: arvados-slurm-compute
     arvados_slurm_compute_consul_template_path_file: "{{ arvados_compute_node_consul_template_path_file }}"
