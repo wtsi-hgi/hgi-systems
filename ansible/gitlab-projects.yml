@@ -18,10 +18,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: gitlab-projects.yml
 
 - hosts: gitlab-projects
   gather_facts: no
   roles:
-    - gitlab-project
-
+    - name: gitlab-project
+      vars:
+        gitlab_project_url: "{{ gitlab_project_GROUP_url }}"
+        gitlab_project_token: "{{ gitlab_project_GROUP_token }}"
+        gitlab_project_project: "{{ gitlab_project_GROUP_project }}"
+        gitlab_project_settings: "{{ gitlab_project_GROUP_settings }}"

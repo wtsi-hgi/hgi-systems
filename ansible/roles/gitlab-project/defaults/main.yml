@@ -17,7 +17,13 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
+
+# Required variables:
+#   gitlab_project_url
+#   gitlab_project_token
+#   gitlab_project_project
+#   gitlab_project_settings
+
 ---
-# file: roles/gitlab-project/defaults/main.yml
 
 gitlab_build_variables_delegate: localhost

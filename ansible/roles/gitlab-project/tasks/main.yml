@@ -20,14 +20,24 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/gitlab-project/tasks/main.yml
+
+- name: ensure required variables have been set
+  assert:
+    that:
+      - item is defined
+  with_items:
+    - "{{ gitlab_project_url }}"
+    - "{{ gitlab_project_token }}"
+    - "{{ gitlab_project_project }}"
+    - "{{ gitlab_project_settings }}"
+  no_log: true
 
 - name: Set GitLab Build Variables
   delegate_to: "{{ gitlab_build_variables_delegate }}"
   tags: 
     - gitlab-project
   gitlab_ci_build_variables:
-    gitlab_url: "{{ gitlab_url }}"
-    gitlab_token: "{{ gitlab_token }}"
-    gitlab_project: "{{ gitlab_project }}"
-    variables: "{{ {}|combine(*gitlab_project_settings) }}"
+    gitlab_url: "{{ gitlab_project_url }}"
+    gitlab_token: "{{ gitlab_project_token }}"
+    gitlab_project: "{{ gitlab_project_project }}"
+    variables: "{{ {} | combine(*gitlab_project_settings) }}"
