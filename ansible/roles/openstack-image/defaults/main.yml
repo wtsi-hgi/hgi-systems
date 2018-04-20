@@ -20,7 +20,7 @@
 ---
 # file: roles/openstack-image/defaults/main.yml
 
-openstack_image_tmp_dir: /lustre/scratch115/teams/hgi/users/mercury/tmp
+openstack_image_tmp_dir: /tmp
 openstack_image_s3_bucket: "hgi-openstack-images"
 openstack_image_s3_endpoint: "https://{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
 openstack_image_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
