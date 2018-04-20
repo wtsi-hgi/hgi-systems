@@ -39,3 +39,7 @@
         gitlab_runner_concurrent: "{{ gitlab_runner_GROUP_concurrent }}"
         gitlab_runner_registrations: "{{ gitlab_runner_GROUP_registrations }}"
         gitlab_runner_tokens: "{{ gitlab_runner_GROUP_tokens }}"
+        gitlab_runner_gitlab_url: "{{ gitlab_runner_GROUP_gitlab_url }}"
+        gitlab_runner_gitlab_token: "{{ gitlab_runner_GROUP_gitlab_token }}"
+        gitlab_runner_docker_registry_cert: "{{ gitlab_runner_GROUP_docker_registry_cert }}"
+        gitlab_runner_docker_registry_key: "{{ gitlab_runner_GROUP_docker_registry_key }}"

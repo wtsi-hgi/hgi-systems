@@ -20,6 +20,25 @@
 ---
 # file: roles/gitlab-runner/tasks/main.yml
 
+- name: check mandatory variables have been set
+  assert:
+    that:
+      - item is defined
+    msg: "{{ item }} is not defined"
+  with_items:
+    - "{{ gitlab_runner_projects }}"
+    - "{{ gitlab_runner_descriptions }}"
+    - "{{ gitlab_runner_s3_endpoint }}"
+    - "{{ gitlab_runner_s3_access_key }}"
+    - "{{ gitlab_runner_s3_secret_key }}"
+    - "{{ gitlab_runner_s3_bucket }}"
+    - "{{ gitlab_runner_ssh_private_key_file }}"
+    - "{{ gitlab_runner_docker_machine_key }}"
+    - "{{ gitlab_runner_docker_machine_ca_key }}"
+    - "{{ gitlab_runner_gitlab_url }}"
+    - "{{ gitlab_runner_gitlab_token }}"
+  no_log: true
+
 - name: add gitlab signing key
   tags: gitlab-runner
   become: yes
@@ -128,8 +147,8 @@
     - gitlab-runner-register
   become: yes
   gitlab_ci_multi_runner_register:
-    gitlab_url: "{{ gitlab_url }}"
-    gitlab_token: "{{ gitlab_token }}"
+    gitlab_url: "{{ gitlab_runner_gitlab_url }}"
+    gitlab_token: "{{ gitlab_runner_gitlab_token }}"
     registration_url: "{{ item[1].url }}"
     registration_token: "{{ item[1].token }}"
     executor: "{{ item[0].executor }}"
@@ -163,9 +182,9 @@
     - gitlab-runner-register
   delegate_to: localhost
   gitlab_ci_project_runners:
-    gitlab_url: "{{ gitlab_url }}"
+    gitlab_url: "{{ gitlab_runner_gitlab_url }}"
     gitlab_project: "{{ item }}"
-    gitlab_token: "{{ gitlab_token }}"
+    gitlab_token: "{{ gitlab_runner_gitlab_token }}"
     gitlab_runners: "{{ gitlab_runner_descriptions }}"
   with_items: "{{ gitlab_runner_projects }}"
 
@@ -184,7 +203,7 @@
 - name: copy docker registry cert
   become: yes
   copy:
-    content: "{{ gitlab_runner_docker_registry_cert }}"
+    content: "{{ gitlab_runner_docker_registry_cert_file }}"
     dest: "{{ gitlab_runner_docker_registry_cert_file }}"
     owner: root
     mode: 0600

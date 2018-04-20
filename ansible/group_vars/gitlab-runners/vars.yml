@@ -37,8 +37,8 @@ _gitlab_runner_GROUP_os_project_name: "{{ openstack_auth.project_name }}"
 _gitlab_runner_GROUP_os_username: "{{ openstack_auth.username }}"
 _gitlab_runner_GROUP_os_password: "{{ openstack_auth.password }}"
 
-_gitlab_runner_GROUP_os_image_name: "{{ hostvars[gitlab_runner_GROUP_image]['openstack_name'] }}"
-_gitlab_runner_GROUP_os_ssh_user: "{{ hostvars[gitlab_runner_GROUP_image]['openstack_image_user'] }}"
+_gitlab_runner_GROUP_os_image_name: "{{ hostvars[gitlab_runner_HOST_image]['openstack_name'] }}"
+_gitlab_runner_GROUP_os_ssh_user: "{{ hostvars[gitlab_runner_HOST_image]['openstack_image_user'] }}"
 gitlab_runner_GROUP_ssh_private_key_file: "/etc/gitlab-runner-ssh-private-key"
 
 _gitlab_runner_GROUP_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
@@ -77,3 +77,6 @@ gitlab_runner_GROUP_projects:
 
 gitlab_runner_GROUP_docker_registry_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
 gitlab_runner_GROUP_docker_registry_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+
+gitlab_runner_GROUP_gitlab_url: "{{ gitlab_url }}"
+gitlab_runner_GROUP_gitlab_token: "{{ gitlab_token }}"

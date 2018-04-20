@@ -37,7 +37,7 @@ requirements:
 """
 
 try:
-    from gitlab import Gitlab, GitlabDeleteError, GitlabGetError
+    from gitlab import Gitlab, GitlabDeleteError, GitlabGetError, GitlabListError
     _HAS_DEPENDENCIES = True
 except ImportError as e:
     _IMPORT_ERROR = e
@@ -50,6 +50,12 @@ import json
 from base64 import b64encode
 from tempfile import NamedTemporaryFile
 from ansible.module_utils.basic import AnsibleModule
+
+
+class GitLabCiMultiRunnerRegisterError(Exception):
+    """
+    Base exception for exceptions created in this module.
+    """
 
 
 def main():
@@ -189,15 +195,19 @@ def delete_runner(runner, projects):
     :param projects: projects that may have the runner registered
     """
     # GitLab won't let us remove a runner until it's no longer associated to a project
-    for project in projects:
-        if runner.id in {runner.id for runner in project.runners.list(all=True)}:
-            try:
-                project.runners.delete(runner.id)
-            except GitlabDeleteError as e:
-                if "Only one project associated with the runner" in e.error_message:
-                    break
-                else:
-                    raise
+    project = None
+    try:
+        for project in projects:
+            if runner.id in {runner.id for runner in project.runners.list(all=True)}:
+                try:
+                    project.runners.delete(runner.id)
+                except GitlabDeleteError as e:
+                    if "Only one project associated with the runner" in e.error_message:
+                        break
+                    else:
+                        raise
+    except GitlabListError as e:
+        raise GitLabCiMultiRunnerRegisterError("Error listing runners for project \"%s\": %s" % (project, e.error_message))
     try:
         runner.delete()
     except GitlabDeleteError as e:

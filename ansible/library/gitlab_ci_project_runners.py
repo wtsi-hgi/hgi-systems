@@ -73,14 +73,14 @@ def main():
     if not _HAS_DEPENDENCIES:
         module.fail_json(msg="A required Python module is not installed: %s" % _IMPORT_ERROR)
 
-    connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
+    gitlab_client = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
     try:
-        project = connector.projects.get(module.params["gitlab_project"])
+        project = gitlab_client.projects.get(module.params["gitlab_project"])
     except GitlabGetError as e:
         module.fail_json(msg="Failed to get project %s from gitlab API endpoint %s: %s" % (module.params["gitlab_project"], module.params["gitlab_url"], e))
 
     try:
-        runners_list = connector.runners.list(all=True)
+        runners_list = gitlab_client.runners.list(all=True)
     except GitlabGetError as e:
         module.fail_json(msg="Failed to get runners from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
 
@@ -134,7 +134,7 @@ def main():
                     # TODO: should probably check this is the only project associated with the runner 
                     # and possibly require an argument such as delete_runners = True
                     try:
-                        connector.runners.delete(runner_id)
+                        gitlab_client.runners.delete(runner_id)
                     except GitlabDeleteError as e:
                         module.fail_json(msg="Failed to delete runner %s: %s" % (runner_id, e), information=information)
 
