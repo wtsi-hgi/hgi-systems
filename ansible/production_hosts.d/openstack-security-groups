@@ -21,15 +21,20 @@
 [openstack-security-groups-ssh]
 os.delta-hgi.security_group.ssh managed_by=ansible
 os.delta-hgi-ci.security_group.ssh managed_by=ansible
+os.zeta-hgi.security_group.ssh managed_by=ansible
+os.zeta-hgi-ci.security_group.ssh managed_by=ansible
 
 [openstack-security-groups-docker-machine]
 os.delta-hgi-ci.security_group.docker-machine managed_by=ansible
+os.zeta-hgi-ci.security_group.docker-machine managed_by=ansible
 
 [openstack-security-groups-docker-registry]
 os.delta-hgi-ci.security_group.docker-registry managed_by=ansible
+os.zeta-hgi-ci.security_group.docker-registry managed_by=ansible
 
 [openstack-security-groups-consul-server]
 os.delta-hgi.security_group.consul-server managed_by=ansible
+os.zeta-hgi.security_group.consul-server managed_by=ansible
 
 [openstack-security-groups:children]
 openstack-security-groups-ssh

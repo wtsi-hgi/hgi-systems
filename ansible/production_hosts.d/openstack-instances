@@ -3,17 +3,33 @@ os.delta-hgi.instance.consul-server-delta-hgi-01 volume=os.delta-hgi.volume.cons
 os.delta-hgi.instance.consul-server-delta-hgi-02 volume=os.delta-hgi.volume.consul02 netgroup=openstack-netgroups-consul-servers image=os.delta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi.keypair.ansible-mercury managed_by=ansible
 os.delta-hgi.instance.consul-server-delta-hgi-03 volume=os.delta-hgi.volume.consul03 netgroup=openstack-netgroups-consul-servers image=os.delta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi.keypair.ansible-mercury managed_by=ansible
 
+# TODO: enable for zeta consul
+#[openstack-instance-consul-servers-zeta-hgi]
+#os.zeta-hgi.instance.consul-server-zeta-hgi-01 volume=os.zeta-hgi.volume.consul01 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
+#os.zeta-hgi.instance.consul-server-zeta-hgi-02 volume=os.zeta-hgi.volume.consul02 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
+#os.zeta-hgi.instance.consul-server-zeta-hgi-03 volume=os.zeta-hgi.volume.consul03 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
+#
+#[consul-cluster-zetata-hgi:children]
+#openstack-instance-consul-servers-zeta-hgi
+
 [consul-cluster-delta-hgi:children]
 openstack-instance-consul-servers-delta-hgi
 
 [openstack-instance-consul-servers:children]
 openstack-instance-consul-servers-delta-hgi
+# TODO: enable for zeta consul
+#openstack-instance-consul-servers-zeta-hgi
 
 [consul-cluster-delta-hgi:children]
 openstack-instance-consul-servers-delta-hgi
 
+# TODO: enable for zeta consul
+#[consul-cluster-zeta-hgi:children]
+#openstack-instance-consul-servers-zeta-hgi
+
 [openstack-instance-gitlab-runners]
 os.delta-hgi-ci.instance.gitlab-runner-delta-hgi-ci-01 netgroup=openstack-netgroups-gitlab-runners image=os.delta-hgi-ci.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi-ci.keypair.ansible-mercury gitlab_runner_HOST_image=os.delta-hgi-ci.image.hgi-docker-xenial-926b0ea4 managed_by=ansible
+os.zeta-hgi-ci.instance.gitlab-runner-zeta-hgi-ci-01 netgroup=openstack-netgroups-gitlab-runners image=os.zeta-hgi-ci.image.hgi-docker-xenial-926b0ea4 keypair=os.zeta-hgi-ci.keypair.ansible-mercury gitlab_runner_HOST_image=os.zeta-hgi-ci.image.hgi-docker-xenial-926b0ea4 managed_by=ansible
 
-[openstack-instance-openstack-tenant-cleaners]
-os.delta-hgi.instance.openstack-tenant-cleaner netgroup=openstack-netgroups-hgi image=os.delta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi.keypair.ansible-mercury managed_by=ansible
+#[openstack-instance-openstack-tenant-cleaners]
+#os.delta-hgi.instance.openstack-tenant-cleaner netgroup=openstack-netgroups-hgi image=os.delta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.delta-hgi.keypair.ansible-mercury managed_by=ansible

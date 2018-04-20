@@ -21,6 +21,8 @@
 [openstack-keypairs-ansible-mercury]
 os.delta-hgi.keypair.ansible-mercury managed_by=ansible
 os.delta-hgi-ci.keypair.ansible-mercury managed_by=ansible
+os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
+os.zeta-hgi-ci.keypair.ansible-mercury managed_by=ansible
 
 [openstack-keypairs:children]
 openstack-keypairs-ansible-mercury

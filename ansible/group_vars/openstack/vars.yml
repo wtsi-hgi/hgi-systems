@@ -1,13 +1,16 @@
-# Vault contains entries like this:
-#openstack_logins:
-#  cluster-username:
-#    auth_url: xxx
-#    username: xxx
-#    password: xxx
+# Vault contains:
+#   openstack_auth_urls
+#   openstack_logins:
+#     cluster-username:
+#       auth_url: xxx
+#       username: xxx
+#       password: xxx
 
 openstack_tenant_auths:
-  delta-hgi-ci: "{{ openstack_logins['delta-mercury'] | combine({'project_name': 'hgi-ci'}) }}"
   delta-hgi: "{{ openstack_logins['delta-mercury'] | combine({'project_name': 'hgi'}) }}"
+  delta-hgi-ci: "{{ openstack_logins['delta-mercury'] | combine({'project_name': 'hgi-ci'}) }}"
+  zeta-hgi: "{{ openstack_logins['zeta-mercury'] | combine({'project_name': 'hgi'}) }}"
+  zeta-hgi-ci: "{{ openstack_logins['zeta-mercury'] | combine({'project_name': 'hgi-ci'}) }}"
 
 openstack_tenant: "{{ inventory_hostname.split('.')[1] }}"
 openstack_type: "{{ inventory_hostname.split('.')[2] }}"
