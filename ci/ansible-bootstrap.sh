@@ -11,7 +11,7 @@ ensureSet CI_PROJECT_DIR REGION ANSIBLE_VAULT_PASSWORD_FILE TERRAFORM_CONSUL_TOK
 # if we've made it this far, gitlab runner must be working
 # check to see if terraform remote state is working
 echo "Testing terraform remote state for ${REGION}"
-tstate=$(cd terraform/${REGION} terraform init && echo "ok")
+tstate=$(cd terraform/${REGION} && terraform init && echo "ok")
 if [[ "${tstate}" == "ok" ]]; then
     echo "Terraform remote state is ok, no need to bootstrap with ansible"
     exit 0
