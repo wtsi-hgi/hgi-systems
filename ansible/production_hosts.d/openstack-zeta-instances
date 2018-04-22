@@ -26,7 +26,7 @@ os.zeta-hgi.instance.consul-server-zeta-hgi-03 volume=os.zeta-hgi.volume.consul0
 [consul-cluster-zeta-hgi:children]
 openstack-instance-consul-servers-zeta-hgi
 
-[openstack-instance-consul-servers:children]
+[openstack-instance-docker-consul-servers:children]
 openstack-instance-consul-servers-zeta-hgi
 
 [openstack-instance-gitlab-runners]

@@ -38,9 +38,12 @@
 [consul-agents]
 [consul-servers]
 [core-consul-servers]
+[docker-consul-agents]
+[docker-consul-servers]
 [sanger-gitlab]
 [openstack-tenant-cleaners]
 [openstack-instance-consul-servers]
+[openstack-instance-docker-consul-servers]
 [openstance-instance-openstack-tenant-cleaners]
 [sanger-networks]
 [s3-credentials]
@@ -55,6 +58,7 @@
 [arvados-clusters]
 [consul-cluster-delta-hgi]
 [consul-cluster-delta-hgiarvados]
+[consul-cluster-zeta-hgi]
 [spark-masters]
 [spark-computers]
 [sparkers]
@@ -110,6 +114,8 @@ openstack-instance-gitlab-runners
 [consul-credentials:children]
 consul-agents
 consul-servers
+docker-consul-agents
+docker-consul-servers
 arvados-clusters
 
 [consul-commoners:children]
@@ -119,8 +125,12 @@ consul-servers
 [consul-servers:children]
 openstack-instance-consul-servers
 
+[docker-consul-servers:children]
+openstack-instance-docker-consul-servers
+
 [core-consul-servers:children]
 openstack-instance-consul-servers
+openstack-instance-docker-consul-servers
 
 [sanger-gitlab:children]
 gitlab-runners
@@ -134,6 +144,7 @@ consul-commoners
 [s3-credentials:children]
 gitlab-runners
 consul-servers
+docker-consul-servers
 sparkers
 hailers
 arvados-masters
@@ -144,7 +155,7 @@ arvados-ssos
 [openstack-instances:children]
 openstack-instance-gitlab-runners
 openstack-instance-consul-servers
-openstance-instance-openstack-tenant-cleaners
+openstack-instance-openstack-tenant-cleaners
 
 [openstack:children]
 openstack-instances
