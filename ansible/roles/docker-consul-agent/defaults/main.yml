@@ -30,6 +30,8 @@
 #   List of upstream DNS server IPs
 # docker_consul_agent_datacenter: 
 #   Consul datacenter this agent belongs to
+# docker_consul_agent_acl_datacenter: 
+#   Consul datacenter that is authoritative for ACLs
 # docker_consul_agent_acl_token: 
 #   Consul agent ACL token
 # docker_consul_agent_encrypt: 

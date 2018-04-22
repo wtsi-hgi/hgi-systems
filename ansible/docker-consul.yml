@@ -22,6 +22,76 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+- hosts: docker-consul-servers
+  vars:
+    docker_consul_PLAYBOOK_server_config_dir: /etc/docker-consul-server-config.d
+    docker_consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
+  tasks:
+    - name: assert docker-consul-servers cannot also be consul-servers or consul-servers
+      assert:
+        that: 
+          - "(not inventory_hostname in groups['consul-agents']) and 
+             (not inventory_hostname in groups['consul-servers'])"
+        msg: "docker-consul-servers must not also be consul-agents or consul-servers"
+    - name: assert we are in the consul_credentials group
+      assert:
+        that:
+          - "inventory_hostname in groups['consul_credentials']"
+        msg: "docker-consul-servers must also be in group consul_credentials"
+    - name: assert required vars defined in consul_credentials group
+      assert:
+        that: 
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined (probably in group consul_credentials"
+      with_items:
+        - "consul_credentials_GROUP_creds['default'].token"
+        - "consul_credentials_GROUP_creds['master'].token"
+        - "consul_credentials_GROUP_creds['agent-master'].token"
+    - name: assert we are a member of a docker-consul-cluster
+      assert:
+        that:
+          - "docker_consul_cluster_id is defined"
+        msg: "docker-consul-servers must all be members of a docker-consul-cluster, which should define docker_consul_cluster_id, but docker_consul_cluster_id was not defined"
+    - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_id>
+      assert:
+        that: 
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_id }}"
+      with_items:
+        - docker_consul_cluster_GROUP_retry_join
+        - docker_consul_cluster_GROUP_recursors
+        - docker_consul_cluster_GROUP_acl_datacenter
+        - docker_consul_cluster_GROUP_datacenter
+        - docker_consul_cluster_GROUP_encrypt
+    - name: import docker-consul-server role
+      import_role:
+        name: docker-consul-server
+      vars:
+        ###############################################################################
+        # Variables that have no defaults and must be set
+        ###############################################################################
+        docker_consul_server_retry_join: "{{ docker_consul_cluster_GROUP_retry_join }}" 
+        docker_consul_server_retry_join_wan: "{{ docker_consul_cluster_GROUP_retry_join_wan }}"
+        docker_consul_server_recursors:  "{{ docker_consul_cluster_GROUP_recursors }}"
+        docker_consul_server_acl_datacenter:  "{{ docker_consul_cluster_GROUP_acl_datacenter }}"
+        docker_consul_server_datacenter:  "{{ docker_consul_cluster_GROUP_datacenter }}"
+        docker_consul_server_acl_token: "{{ consul_credentials_GROUP_creds['default'].token }}"
+        docker_consul_server_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+        docker_consul_server_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
+        docker_consul_server_encrypt:  "{{ docker_consul_cluster_GROUP_encrypt }}"
+        ###############################################################################
+        # Directories
+        ###############################################################################
+        docker_consul_server_config_dir: "{{ docker_consul_PLAYBOOK_server_config_dir }}"
+        ###############################################################################
+        # Defaults for consul agent config
+        ###############################################################################
+        docker_consul_server_bind_addr: "{{ cloud_resource_private_ip }}"
+        docker_consul_server_advertise_addr: "{{ cloud_resource_private_ip }}"
+        docker_consul_server_advertise_addr_wan: "{{ cloud_resource_public_ip }}"
+        docker_consul_server_client_addr: 0.0.0.0
+        docker_consul_server_bootstrap_expect: 3 # TODO this should be configured somewhere
+
 - hosts: docker-consul-agents
   vars:
     docker_consul_PLAYBOOK_agent_config_dir: /etc/docker-consul-agent-config.d
@@ -38,6 +108,13 @@
         that:
           - "inventory_hostname in groups['consul_credentials']"
         msg: "docker-consul-agents must also be in group consul_credentials"
+    - name: assert required vars defined in consul_credentials group
+      assert:
+        that: 
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined (probably in group consul_credentials"
+      with_items:
+        - "consul_credentials_GROUP_creds['agent'].token"
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
@@ -50,7 +127,7 @@
         msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_id }}"
       with_items:
         - docker_consul_cluster_GROUP_retry_join
-        - docker_consul_cluster_GROUP_recursor
+        - docker_consul_cluster_GROUP_recursors
         - docker_consul_cluster_GROUP_datacenter
         - docker_consul_cluster_GROUP_encrypt
     - name: import docker-consul-agent role
@@ -59,10 +136,16 @@
       vars:
         docker_consul_agent_retry_join: "{{ docker_consul_cluster_GROUP_retry_join }}" 
         docker_consul_agent_recursors:  "{{ docker_consul_cluster_GROUP_recursors }}"
+        docker_consul_agent_acl_datacenter:  "{{ docker_consul_cluster_GROUP_acl_datacenter }}"
         docker_consul_agent_datacenter:  "{{ docker_consul_cluster_GROUP_datacenter }}"
         docker_consul_agent_acl_token:  "{{ consul_credentials_GROUP_creds['agent'].token }}"
         docker_consul_agent_encrypt:  "{{ docker_consul_cluster_GROUP_encrypt }}"
         docker_consul_agent_config_dir: "{{ docker_consul_PLAYBOOK_agent_config_dir }}"
+
+- hosts: docker-consul-servers, docker-consul-agents
+  vars:
+    docker_consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
+  tasks:
     - name: install consul token into consul_template_consul_token_file
       become: yes
       copy:

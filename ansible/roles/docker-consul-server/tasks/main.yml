@@ -40,3 +40,20 @@
     dest: "{{ docker_consul_server_config_dir }}/00-docker-consul-server.json"
   when: "not 'image-building' in group_names"
   notify: systemd restart docker-consul-server
+
+- name: create ACL token required for the server to communicate fully with the rest of the cluster
+  consul_acl:
+    # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
+    host: localhost
+    name: "server_token"
+    token: "{{ docker_consul_server_acl_token }}"
+    mgmt_token: "{{ docker_consul_server_acl_master_token }}"
+    token_type: client
+    rules:
+      - agent: ""
+        policy: write
+      - node: ""
+        policy: write
+      - service: "consul"
+        policy: write
+

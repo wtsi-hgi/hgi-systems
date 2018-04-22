@@ -1,0 +1,11 @@
+# vault.yml contains:
+#   docker_consul_cluster_GROUP_encrypt
+
+docker_consul_cluster_id: zeta-hgi
+
+docker_consul_cluster_GROUP_acl_datacenter: zeta-hgi
+docker_consul_cluster_GROUP_datacenter: zeta-hgi
+docker_consul_cluster_GROUP_retry_join: "consul.zeta-hgi.hgi.sanger.ac.uk"
+docker_consul_cluster_GROUP_retry_join_wan: "consul.hgi.sanger.ac.uk"
+docker_consul_cluster_GROUP_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"
+

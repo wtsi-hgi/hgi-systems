@@ -41,7 +41,8 @@
 # We need consul-agents for DNS functionality
 # some subsequent roles may not work if they 
 # come before (I'm looking at you SLURM)
-- import_playbook: consul.yml
+- import_playbook: docker-consul.yml
+- import_playbook: consul.yml # FIXME after delta is retired, remove this
 
 # Playbooks that only support root hosts
 - import_playbook: netdata.yml

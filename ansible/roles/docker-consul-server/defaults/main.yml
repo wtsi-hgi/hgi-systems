@@ -30,6 +30,8 @@
 #   List of consul servers in the WAN to join
 # docker_consul_server_recursors: 
 #   List of upstream DNS server IPs
+# docker_consul_server_acl_datacenter: 
+#   Consul datacenter that is authoritative for ACLs
 # docker_consul_server_datacenter: 
 #   Consul datacenter this agent belongs to
 # docker_consul_server_acl_master_token:
