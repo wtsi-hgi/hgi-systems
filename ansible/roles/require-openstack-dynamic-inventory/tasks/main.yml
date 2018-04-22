@@ -1,13 +1,13 @@
 
-- name: ensure we have openstack-delta-hgi dynamic inventory
+- name: ensure we have openstack-zeta-hgi dynamic inventory
   when: managed_by is defined and managed_by == "ansible"
   assert:
-    that: groups['canary-openstack-delta-hgi'] is defined
-    msg: "openstack-delta-hgi dynamic inventory does not appear to have run (group 'canary-openstack-delta-hgi' not present)"
+    that: groups['canary-openstack-zeta-hgi'] is defined
+    msg: "openstack-zeta-hgi dynamic inventory does not appear to have run (group 'canary-openstack-zeta-hgi' not present)"
 
-- name: ensure we have openstack-delta-hgi-ci dynamic inventory
+- name: ensure we have openstack-zeta-hgi-ci dynamic inventory
   when: managed_by is defined and managed_by == "ansible"
   assert:
-    that: groups['canary-openstack-delta-hgi-ci'] is defined
-    msg: "openstack-delta-hgi-ci dynamic inventory does not appear to have run (group 'canary-openstack-delta-hgi-ci' not present)"
+    that: groups['canary-openstack-zeta-hgi-ci'] is defined
+    msg: "openstack-zeta-hgi-ci dynamic inventory does not appear to have run (group 'canary-openstack-zeta-hgi-ci' not present)"
 
