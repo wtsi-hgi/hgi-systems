@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2017, 2018 Genome Research Ltd.
 #
 # Authors:
 # * Joshua C. Randall <jcrandall@alum.mit.edu>
@@ -18,14 +18,19 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-[openstack-volumes-consul]
+[openstack-volumes-consul-delta]
 os.delta-hgi.volume.consul01 managed_by=ansible
 os.delta-hgi.volume.consul02 managed_by=ansible
 os.delta-hgi.volume.consul03 managed_by=ansible
-# TODO: enable for zeta consul
-#os.zeta-hgi.volume.consul01 managed_by=ansible
-#os.zeta-hgi.volume.consul02 managed_by=ansible
-#os.zeta-hgi.volume.consul03 managed_by=ansible
+
+[openstack-volumes-consul-zeta]
+os.zeta-hgi.volume.consul01 managed_by=ansible
+os.zeta-hgi.volume.consul02 managed_by=ansible
+os.zeta-hgi.volume.consul03 managed_by=ansible
+
+[openstack-volumes-consul:children]
+openstack-volumes-consul-delta
+openstack-volumes-consul-zeta
 
 [openstack-volumes:children]
 openstack-volumes-consul
