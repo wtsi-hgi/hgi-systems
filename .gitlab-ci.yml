@@ -83,6 +83,38 @@ stages:
     - develop
     - staging-delta-hgiarvados
 
+.production-zeta-hgi: &production-zeta-hgi-def
+  variables:
+    ENV: "production"
+    REGION: "zeta-hgi"
+  only:
+    - master
+    - production-zeta-hgi
+  
+.staging-zeta-hgi: &staging-zeta-hgi-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta-hgi"
+  only:
+    - develop
+    - staging-zeta-hgi
+  
+.production-zeta-hgiarvados: &production-zeta-hgiarvados-def
+  variables:
+    ENV: "production"
+    REGION: "zeta-hgiarvados"
+  only:
+    - master
+    - production-zeta-hgiarvados
+  
+.staging-zeta-hgiarvados: &staging-zeta-hgiarvados-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta-hgiarvados"
+  only:
+    - develop
+    - staging-zeta-hgiarvados
+
 # .production-emedlab-arvados: &production-emedlab-arvados-def
 #   variables:
 #     ENV: "production"
@@ -158,6 +190,22 @@ openstack-vars-validate-staging-delta-hgiarvados:
   <<: *openstack-vars-validate-def
   <<: *staging-delta-hgiarvados-def
 
+openstack-vars-validate-production-zeta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgi-def
+    
+openstack-vars-validate-staging-zeta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgi-def
+    
+openstack-vars-validate-production-zeta-hgiarvados:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgiarvados-def
+    
+openstack-vars-validate-staging-zeta-hgiarvados:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgiarvados-def
+
 # openstack-vars-validate-production-emedlab-arvados:
 #   <<: *openstack-vars-validate-def
 #   <<: *production-emedlab-arvados-def
@@ -189,6 +237,10 @@ ansible-bootstrap-production-delta-hgi:
   <<: *ansible-bootstrap-def
   <<: *production-delta-hgi-def
 
+ansible-bootstrap-production-zeta-hgi:
+  <<: *ansible-bootstrap-def
+  <<: *production-zeta-hgi-def
+
 ###############################################################################
 # Stage: validate
 ###############################################################################
@@ -217,6 +269,22 @@ os-images-validate-staging-delta-hgiarvados:
   <<: *os-images-validate-def
   <<: *staging-delta-hgiarvados-def
 
+os-images-validate-production-zeta-hgi:
+  <<: *os-images-validate-def
+  <<: *production-zeta-hgi-def
+
+os-images-validate-staging-zeta-hgi:
+  <<: *os-images-validate-def
+  <<: *staging-zeta-hgi-def
+
+os-images-validate-production-zeta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *production-zeta-hgiarvados-def
+
+os-images-validate-staging-zeta-hgiarvados:
+  <<: *os-images-validate-def
+  <<: *staging-zeta-hgiarvados-def
+
 .terraform-validate: &terraform-validate-def
   stage: validate
   tags:
@@ -240,6 +308,22 @@ terraform-validate-production-delta-hgiarvados:
 terraform-validate-staging-delta-hgiarvados:
   <<: *terraform-validate-def
   <<: *staging-delta-hgiarvados-def
+
+terraform-validate-production-zeta-hgi:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgi-def
+    
+terraform-validate-staging-zeta-hgi:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgi-def
+    
+terraform-validate-production-zeta-hgiarvados:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgiarvados-def
+    
+terraform-validate-staging-zeta-hgiarvados:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgiarvados-def
 
 # terraform-validate-production-emedlab-arvados:
 #   <<: *terraform-validate-def
@@ -290,6 +374,22 @@ terraform-staging-delta-hgiarvados:
   <<: *terraform-def
   <<: *staging-delta-hgiarvados-def
 
+terraform-production-zeta-hgi:
+  <<: *terraform-def
+  <<: *production-zeta-hgi-def
+
+terraform-staging-zeta-hgi:
+  <<: *terraform-def
+  <<: *staging-zeta-hgi-def
+
+terraform-production-zeta-hgiarvados:
+  <<: *terraform-def
+  <<: *production-zeta-hgiarvados-def
+
+terraform-staging-zeta-hgiarvados:
+  <<: *terraform-def
+  <<: *staging-zeta-hgiarvados-def
+
 # terraform-production-emedlab-arvados:
 #   <<: *terraform-def
 #   <<: *production-emedlab-arvados-def
@@ -329,6 +429,22 @@ ansible-production-delta-hgiarvados:
 ansible-staging-delta-hgiarvados:
   <<: *ansible-def
   <<: *staging-delta-hgiarvados-def
+
+ansible-production-zeta-hgi:
+  <<: *ansible-def
+  <<: *production-zeta-hgi-def
+
+ansible-staging-zeta-hgi:
+  <<: *ansible-def
+  <<: *staging-zeta-hgi-def
+
+ansible-production-zeta-hgiarvados:
+  <<: *ansible-def
+  <<: *production-zeta-hgiarvados-def
+
+ansible-staging-zeta-hgiarvados:
+  <<: *ansible-def
+  <<: *staging-zeta-hgiarvados-def
 
 # ansible-production-emedlab-arvados:
 #   <<: *ansible-def
