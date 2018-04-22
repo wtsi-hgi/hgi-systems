@@ -14,6 +14,18 @@ elif [[ "$REGION" == "delta-hgiarvados" ]]; then
     export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
     export OS_TENANT_NAME="hgiarvados"
     echo "OS vars for delta-hgiarvados set"
+elif [[ "$REGION" == "zeta-hgi" ]]; then
+    export OS_USERNAME=${ZETA_OS_USERNAME}
+    export OS_PASSWORD=${ZETA_OS_PASSWORD}
+    export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
+    export OS_TENANT_NAME="hgi"
+    echo "OS vars for zeta-hgi set"
+elif [[ "$REGION" == "zeta-hgiarvados" ]]; then
+    export OS_USERNAME=${ZETA_OS_USERNAME}
+    export OS_PASSWORD=${ZETA_OS_PASSWORD}
+    export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
+    export OS_TENANT_NAME="hgiarvados"
+    echo "OS vars for zeta-hgiarvados set"
 elif [[ "$REGION" == "delta-hgi-dev" ]]; then
     export OS_USERNAME=${DELTA_OS_USERNAME}
     export OS_PASSWORD=${DELTA_OS_PASSWORD}
