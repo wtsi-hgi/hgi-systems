@@ -18,17 +18,12 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-[openstack-keypairs-ansible-mercury]
-os.delta-hgi.keypair.ansible-mercury managed_by=ansible
-os.delta-hgi-ci.keypair.ansible-mercury managed_by=ansible
-os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
-os.zeta-hgi-ci.keypair.ansible-mercury managed_by=ansible
-
-[openstack-keypairs:children]
-openstack-keypairs-ansible-mercury
+[openstack-tenants]
+os.zeta-hgi.tenant external_network_id="bfd77d25-d230-436a-a85a-b28b3dbdb814"
+os.zeta-hgi-ci.tenant external_network_id="bfd77d25-d230-436a-a85a-b28b3dbdb814"
 
 [openstack:children]
-openstack-keypairs
+openstack-tenants
 
 [non-hosts:children]
-openstack-keypairs
+openstack-tenants

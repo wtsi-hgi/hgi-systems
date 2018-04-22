@@ -233,6 +233,10 @@ openstack-vars-validate-staging-zeta-hgiarvados:
       - artifacts
     when: always
 
+ansible-bootstrap-production-delta-hgi:
+  <<: *ansible-bootstrap-def
+  <<: *production-delta-hgi-def
+
 ansible-bootstrap-production-zeta-hgi:
   <<: *ansible-bootstrap-def
   <<: *production-zeta-hgi-def

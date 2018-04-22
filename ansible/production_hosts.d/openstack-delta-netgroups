@@ -20,15 +20,12 @@
 
 [openstack-networks-hgi]
 os.delta-hgi.network.hgi managed_by=ansible
-os.zeta-hgi.network.hgi managed_by=ansible
 
 [openstack-subnets-hgi]
 os.delta-hgi.subnet.hgi managed_by=ansible
-os.zeta-hgi.subnet.hgi managed_by=ansible
 
 [openstack-routers-hgi]
 os.delta-hgi.router.hgi managed_by=ansible 
-os.zeta-hgi.router.hgi managed_by=ansible
 
 [openstack-netgroups-hgi:children]
 openstack-networks-hgi
@@ -41,15 +38,12 @@ netgroup=openstack-netgroups-hgi
 
 [openstack-networks-hgi-ci]
 os.delta-hgi-ci.network.hgi-ci managed_by=ansible
-os.zeta-hgi-ci.network.hgi-ci managed_by=ansible
 
 [openstack-subnets-hgi-ci]
 os.delta-hgi-ci.subnet.hgi-ci managed_by=ansible
-os.zeta-hgi-ci.subnet.hgi-ci managed_by=ansible
 
 [openstack-routers-hgi-ci]
 os.delta-hgi-ci.router.hgi-ci managed_by=ansible
-os.zeta-hgi-ci.router.hgi-ci managed_by=ansible
 
 [openstack-netgroups-hgi-ci:children]
 openstack-networks-hgi-ci
@@ -62,15 +56,12 @@ netgroup=openstack-netgroups-hgi-ci
 
 [openstack-networks-gitlab-runners]
 os.delta-hgi-ci.network.gitlab-runners managed_by=ansible
-os.zeta-hgi-ci.network.gitlab-runners managed_by=ansible
 
 [openstack-subnets-gitlab-runners]
 os.delta-hgi-ci.subnet.gitlab-runners managed_by=ansible
-os.zeta-hgi-ci.subnet.gitlab-runners managed_by=ansible
 
 [openstack-routers-gitlab-runners]
 os.delta-hgi-ci.router.gitlab-runners managed_by=ansible
-os.zeta-hgi-ci.router.gitlab-runners managed_by=ansible
 
 [openstack-netgroups-gitlab-runners:children]
 openstack-networks-gitlab-runners
@@ -83,15 +74,12 @@ netgroup=openstack-netgroups-gitlab-runners
 
 [openstack-networks-consul-servers]
 os.delta-hgi.network.consul-servers managed_by=ansible
-os.zeta-hgi.network.consul-servers managed_by=ansible
 
 [openstack-subnets-consul-servers]
 os.delta-hgi.subnet.consul-servers managed_by=ansible
-os.zeta-hgi.subnet.consul-servers managed_by=ansible
 
 [openstack-routers-consul-servers]
 os.delta-hgi.router.consul-servers managed_by=ansible
-os.zeta-hgi.router.consul-servers managed_by=ansible
 
 [openstack-netgroups-consul-servers:children]
 openstack-networks-consul-servers

@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2017, 2018 Genome Research Ltd.
 #
 # Authors:
 # * Joshua C. Randall <jcrandall@alum.mit.edu>
@@ -18,15 +18,19 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-[openstack-tenants]
-os.delta-hgi.tenant external_network_id="9f50f282-2a4c-47da-88f8-c77b6655c7db"
-os.delta-hgi-ci.tenant external_network_id="9f50f282-2a4c-47da-88f8-c77b6655c7db"
-os.zeta-hgi.tenant external_network_id="bfd77d25-d230-436a-a85a-b28b3dbdb814"
-os.zeta-hgi-ci.tenant external_network_id="bfd77d25-d230-436a-a85a-b28b3dbdb814"
+[openstack-volumes-consul-zeta]
+os.zeta-hgi.volume.consul01 managed_by=ansible
+os.zeta-hgi.volume.consul02 managed_by=ansible
+os.zeta-hgi.volume.consul03 managed_by=ansible
 
+[openstack-volumes-consul:children]
+openstack-volumes-consul-zeta
+
+[openstack-volumes:children]
+openstack-volumes-consul
 
 [openstack:children]
-openstack-tenants
+openstack-volumes
 
 [non-hosts:children]
-openstack-tenants
+openstack-volumes

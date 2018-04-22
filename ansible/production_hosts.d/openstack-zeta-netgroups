@@ -1,0 +1,127 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Authors:
+# * Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+
+[openstack-networks-hgi]
+os.zeta-hgi.network.hgi managed_by=ansible
+
+[openstack-subnets-hgi]
+os.zeta-hgi.subnet.hgi managed_by=ansible
+
+[openstack-routers-hgi]
+os.zeta-hgi.router.hgi managed_by=ansible
+
+[openstack-netgroups-hgi:children]
+openstack-networks-hgi
+openstack-subnets-hgi
+openstack-routers-hgi
+
+[openstack-netgroups-hgi:vars]
+netgroup=openstack-netgroups-hgi
+
+
+[openstack-networks-hgi-ci]
+os.zeta-hgi-ci.network.hgi-ci managed_by=ansible
+
+[openstack-subnets-hgi-ci]
+os.zeta-hgi-ci.subnet.hgi-ci managed_by=ansible
+
+[openstack-routers-hgi-ci]
+os.zeta-hgi-ci.router.hgi-ci managed_by=ansible
+
+[openstack-netgroups-hgi-ci:children]
+openstack-networks-hgi-ci
+openstack-subnets-hgi-ci
+openstack-routers-hgi-ci
+
+[openstack-netgroups-hgi-ci:vars]
+netgroup=openstack-netgroups-hgi-ci
+
+
+[openstack-networks-gitlab-runners]
+os.zeta-hgi-ci.network.gitlab-runners managed_by=ansible
+
+[openstack-subnets-gitlab-runners]
+os.zeta-hgi-ci.subnet.gitlab-runners managed_by=ansible
+
+[openstack-routers-gitlab-runners]
+os.zeta-hgi-ci.router.gitlab-runners managed_by=ansible
+
+[openstack-netgroups-gitlab-runners:children]
+openstack-networks-gitlab-runners
+openstack-subnets-gitlab-runners
+openstack-routers-gitlab-runners
+
+[openstack-netgroups-gitlab-runners:vars]
+netgroup=openstack-netgroups-gitlab-runners
+
+
+[openstack-networks-consul-servers]
+os.zeta-hgi.network.consul-servers managed_by=ansible
+
+[openstack-subnets-consul-servers]
+os.zeta-hgi.subnet.consul-servers managed_by=ansible
+
+[openstack-routers-consul-servers]
+os.zeta-hgi.router.consul-servers managed_by=ansible
+
+[openstack-netgroups-consul-servers:children]
+openstack-networks-consul-servers
+openstack-subnets-consul-servers
+openstack-routers-consul-servers
+
+[openstack-netgroups-consul-servers:vars]
+netgroup=openstack-netgroups-consul-servers
+
+
+# TODO put all this in dynamic groups
+[openstack-networks:children]
+openstack-networks-hgi-ci
+openstack-networks-gitlab-runners
+openstack-networks-consul-servers
+openstack-networks-hgi
+
+[openstack-subnets:children]
+openstack-subnets-hgi-ci
+openstack-subnets-gitlab-runners
+openstack-subnets-consul-servers
+openstack-subnets-hgi
+
+[openstack-routers:children]
+openstack-routers-hgi-ci
+openstack-routers-gitlab-runners
+openstack-routers-consul-servers
+openstack-routers-hgi
+
+
+[openstack-netgroups:children]
+openstack-networks
+openstack-subnets
+openstack-routers
+
+[openstack:children]
+openstack-networks
+openstack-subnets
+openstack-routers
+
+[non-hosts:children]
+openstack-networks
+openstack-subnets
+openstack-routers
+
