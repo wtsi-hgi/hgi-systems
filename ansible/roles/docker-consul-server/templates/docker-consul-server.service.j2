@@ -1,0 +1,14 @@
+[Unit]
+Description=Dockerized Consul Server
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill consul-server
+ExecStartPre=-/usr/bin/docker rm consul-server
+ExecStartPre=/usr/bin/docker pull consul
+ExecStart=/bin/bash -c '/usr/bin/docker run --name consul-server --net=host -v {{ docker_consul_server_config_dir }}:/consul/config -v {{ docker_consul_server_data_dir }}:/consul/data consul agent -server'
+
+[Install]
+WantedBy=multi-user.target
