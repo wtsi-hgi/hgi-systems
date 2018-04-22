@@ -1,0 +1,7 @@
+# vault.yml contains:
+#   consul_cluster_GROUP_encrypt
+
+consul_cluster_GROUP_name: consul-cluster-zeta-hgi
+consul_cluster_GROUP_datacenter: zeta-hgi
+consul_cluster_GROUP_dns_name: consul-zeta-hgi
+
