@@ -44,7 +44,7 @@
 [openstack-tenant-cleaners]
 [openstack-instance-consul-servers]
 [openstack-instance-docker-consul-servers]
-[openstance-instance-openstack-tenant-cleaners]
+[openstack-instance-openstack-tenant-cleaners]
 [sanger-networks]
 [s3-credentials]
 [openstack]
@@ -136,7 +136,7 @@ openstack-instance-docker-consul-servers
 gitlab-runners
 
 [openstack-tenant-cleaners:children]
-openstance-instance-openstack-tenant-cleaners
+openstack-instance-openstack-tenant-cleaners
 
 [sanger-networks:children]
 consul-commoners
