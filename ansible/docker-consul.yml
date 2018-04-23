@@ -116,6 +116,17 @@
         docker_consul_server_client_addr: 0.0.0.0
         docker_consul_server_bootstrap_expect: 3 # TODO this should be configured somewhere
 
+    - name: setup s3-backup
+      import_role:
+        name: s3-backup
+      vars:
+        s3_backup_source_dir: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
+        s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
+        s3_backup_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+        s3_backup_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+        s3_backup_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+        s3_backup_s3_bucket: consul-backup
+
 - hosts: docker-consul-agents
   vars:
     docker_consul_PLAYBOOK_agent_config_dir: /etc/docker-consul-agent-config.d
