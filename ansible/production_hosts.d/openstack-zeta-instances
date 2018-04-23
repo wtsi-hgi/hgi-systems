@@ -23,7 +23,7 @@ os.zeta-hgi.instance.consul-server-zeta-hgi-01 volume=os.zeta-hgi.volume.consul0
 os.zeta-hgi.instance.consul-server-zeta-hgi-02 volume=os.zeta-hgi.volume.consul02 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
 os.zeta-hgi.instance.consul-server-zeta-hgi-03 volume=os.zeta-hgi.volume.consul03 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-926b0ea4 keypair=os.zeta-hgi.keypair.ansible-mercury managed_by=ansible
 
-[consul-cluster-zeta-hgi:children]
+[docker-consul-cluster-zeta-hgi:children]
 openstack-instance-consul-servers-zeta-hgi
 
 [openstack-instance-docker-consul-servers:children]

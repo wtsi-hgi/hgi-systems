@@ -58,7 +58,7 @@
 [arvados-clusters]
 [consul-cluster-delta-hgi]
 [consul-cluster-delta-hgiarvados]
-[consul-cluster-zeta-hgi]
+[docker-consul-cluster-zeta-hgi]
 [spark-masters]
 [spark-computers]
 [sparkers]
