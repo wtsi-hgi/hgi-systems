@@ -590,6 +590,17 @@ def main():
             raise Exception()
 
     elif action == "add_a_record":
+        desired_a_record = _create_a_record_model(name, address, infoblox.dns_view, comment, ttl)
+        existing_a_records = infoblox.get_a_record(name)
+        for existing_a_record in existing_a_records:
+            existing_address = existing_a_record[_IPV4_ADDRESS_PROPERTY]
+            if existing_address == address:
+                if _are_records_equivalent(_create_a_record_model(name, address, infoblox.dns_view, comment, ttl), existing_a_record):
+                    # record exists and is already what we want
+                    module.exit_json(changed=False, result=existing_a_records)
+                else:
+                    # record exists for this name + address but is different, delete it so we can recreate
+                    infoblox.delete_object(existing_a_record[_ID_PROPERTY])
         result = infoblox.create_a_record(name, address, comment, ttl)
         if result:
             results = infoblox.get_a_record(name)
