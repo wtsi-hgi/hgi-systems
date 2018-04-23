@@ -40,6 +40,12 @@
     content: "alias consul='docker run --net=host consul'"
     dest: /etc/profile.d/consul-alias.sh
 
+- name: ensure server config directory exists
+  become: yes
+  file:
+    path: "{{ docker_consul_server_config_dir }}"
+    state: directory
+
 - name: configure docker-consul-server (when not image-building)
   become: yes
   template:
