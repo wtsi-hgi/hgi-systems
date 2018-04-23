@@ -79,7 +79,7 @@
         ansible_host: "{{ openstack_name }}.hgi.sanger.ac.uk"
 
     - name: creates additional DNS A records on infoblox
-      when: additional_a_records is defined and len(additional_a_records) > 0
+      when: additional_a_records is defined and (additional_a_records | length > 0)
       delegate_to: "{{ openstack_instance_infoblox_delegate }}"
       infoblox:
         action: create_a_record
