@@ -85,7 +85,7 @@
         hgi_consul_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
         hgi_consul_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
         hgi_consul_volume_size_gb: "{{ consul_PLAYBOOK_attached_openstack_tf_volume_size if tf_id is defined else hostvars[openstack_instance_volumes[0].inventory_hostname]['openstack_volume_size_gb'] }}"
-        hgi_consul_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+        hgi_consul_encrypt: "{{ consul_credentials_GROUP_encrypt }}"
         hgi_consul_node_name: "{{ cloud_resource_name }}"
         hgi_consul_servers: "{{ consul_PLAYBOOK_server_advertise_addresses }}"
         hgi_consul_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"
@@ -132,7 +132,7 @@
         consul_cluster_acl_agent_token: "{{ consul_cluster_GROUP_acl_agent_token }}"
         consul_cluster_acl_ci_name: "{{ consul_cluster_GROUP_acl_ci_name }}"
         consul_cluster_acl_ci_token: "{{ consul_cluster_GROUP_acl_ci_token }}"
-        consul_cluster_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+        consul_cluster_encrypt: "{{ consul_credentials_GROUP_encrypt }}"
       when: inventory_hostname not in groups['consul-servers']
 
 - hosts: consul-agents,consul-servers
@@ -158,7 +158,7 @@
         hgi_consul_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
         hgi_consul_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
         hgi_consul_datacenter: "{{ consul_cluster_GROUP_datacenter }}"
-        hgi_consul_encrypt: "{{ consul_cluster_GROUP_encrypt }}"
+        hgi_consul_encrypt: "{{ consul_credentials_GROUP_encrypt }}"
         hgi_consul_node_name: "{{ cloud_resource_name }}"
         hgi_consul_servers: "{{ consul_PLAYBOOK_server_advertise_addresses }}"
         hgi_consul_recursors: "{{ all_GROUP_sanger_network_dns_servers }}"

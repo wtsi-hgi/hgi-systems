@@ -1,4 +1,5 @@
 # Vault contains:
+#  consul_credentials_GROUP_encrypt: XXXXXXXXXXXX
 #  consul_credentials_GROUP_creds:
 #    agent-master:
 #      token: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXX

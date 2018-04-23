@@ -48,6 +48,7 @@
           - "{{ item }} is defined"
         msg: "{{ item }} must be defined in group consul-credentials"
       with_items:
+        - consul_credentials_GROUP_encrypt
         - "consul_credentials_GROUP_creds['default'].token"
         - "consul_credentials_GROUP_creds['master'].token"
         - "consul_credentials_GROUP_creds['agent-master'].token"
@@ -71,20 +72,19 @@
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
-          - "docker_consul_cluster_id is defined"
-        msg: "docker-consul-servers must all be members of a docker-consul-cluster, which should define docker_consul_cluster_id, but docker_consul_cluster_id was not defined"
+          - "docker_consul_cluster_SPECIFIC_GROUP_id is defined"
+        msg: "docker-consul-servers must all be members of a docker-consul-cluster, which should define docker_consul_cluster_SPECIFIC_GROUP_id, but docker_consul_cluster_SPECIFIC_GROUP_id was not defined"
 
-    - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_id>
+    - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_SPECIFIC_GROUP_id>
       assert:
         that: 
           - "{{ item }} is defined"
-        msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_id }}"
+        msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_SPECIFIC_GROUP_id }}"
       with_items:
-        - docker_consul_cluster_GROUP_retry_join
-        - docker_consul_cluster_GROUP_recursors
-        - docker_consul_cluster_GROUP_acl_datacenter
-        - docker_consul_cluster_GROUP_datacenter
-        - docker_consul_cluster_GROUP_encrypt
+        - docker_consul_cluster_SPECIFIC_GROUP_retry_join
+        - docker_consul_cluster_SPECIFIC_GROUP_recursors
+        - docker_consul_cluster_SPECIFIC_GROUP_acl_datacenter
+        - docker_consul_cluster_SPECIFIC_GROUP_datacenter
 
     - name: configure attached-openstack-volume for docker-consul-servers
       import_role:
@@ -118,15 +118,15 @@
         ###############################################################################
         # Variables that have no defaults and must be set
         ###############################################################################
-        docker_consul_server_retry_join: "{{ docker_consul_cluster_GROUP_retry_join }}" 
-        docker_consul_server_retry_join_wan: "{{ docker_consul_cluster_GROUP_retry_join_wan }}"
-        docker_consul_server_recursors:  "{{ docker_consul_cluster_GROUP_recursors }}"
-        docker_consul_server_acl_datacenter:  "{{ docker_consul_cluster_GROUP_acl_datacenter }}"
-        docker_consul_server_datacenter:  "{{ docker_consul_cluster_GROUP_datacenter }}"
+        docker_consul_server_retry_join: "{{ docker_consul_cluster_SPECIFIC_GROUP_retry_join }}" 
+        docker_consul_server_retry_join_wan: "{{ docker_consul_cluster_SPECIFIC_GROUP_retry_join_wan }}"
+        docker_consul_server_recursors:  "{{ docker_consul_cluster_SPECIFIC_GROUP_recursors }}"
+        docker_consul_server_acl_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_acl_datacenter }}"
+        docker_consul_server_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}"
         docker_consul_server_acl_token: "{{ consul_credentials_GROUP_creds['default'].token }}"
         docker_consul_server_acl_master_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
         docker_consul_server_acl_agent_master_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
-        docker_consul_server_encrypt:  "{{ docker_consul_cluster_GROUP_encrypt }}"
+        docker_consul_server_encrypt:  "{{ consul_credentials_GROUP_encrypt }}"
         ###############################################################################
         # Directories
         ###############################################################################
@@ -139,7 +139,7 @@
         docker_consul_server_advertise_addr: "{{ cloud_resource_private_ip }}"
         docker_consul_server_advertise_addr_wan: "{{ cloud_resource_public_ip }}"
         docker_consul_server_client_addr: 0.0.0.0
-        docker_consul_server_bootstrap_expect: 3 # TODO this should be configured somewhere
+        docker_consul_server_bootstrap_expect: "{{ docker_consul_cluster_SPECIFIC_GROUP_server_count }}"
         ###############################################################################
         # Generic defaults
         ###############################################################################
@@ -167,34 +167,34 @@
         msg: "{{ item }} must be defined in group consul-credentials"
       with_items:
         - "consul_credentials_GROUP_creds['agent'].token"
+        - consul_credentials_GROUP_encrypt
 
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
-          - "docker_consul_cluster_id is defined"
-        msg: "docker-consul-agents must all be members of a docker-consul-cluster, which should define docker_consul_cluster_id, but docker_consul_cluster_id was not defined"
+          - "docker_consul_cluster_SPECIFIC_GROUP_id is defined"
+        msg: "docker-consul-agents must all be members of a docker-consul-cluster, which should define docker_consul_cluster_SPECIFIC_GROUP_id, but docker_consul_cluster_SPECIFIC_GROUP_id was not defined"
 
-    - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_id>
+    - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_SPECIFIC_GROUP_id>
       assert:
         that: 
           - "{{ item }} is defined"
-        msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_id }}"
+        msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_SPECIFIC_GROUP_id }}"
       with_items:
-        - docker_consul_cluster_GROUP_retry_join
-        - docker_consul_cluster_GROUP_recursors
-        - docker_consul_cluster_GROUP_datacenter
-        - docker_consul_cluster_GROUP_encrypt
+        - docker_consul_cluster_SPECIFIC_GROUP_retry_join
+        - docker_consul_cluster_SPECIFIC_GROUP_recursors
+        - docker_consul_cluster_SPECIFIC_GROUP_datacenter
 
     - name: import docker-consul-agent role
       import_role:
         name: docker-consul-agent
       vars:
-        docker_consul_agent_retry_join: "{{ docker_consul_cluster_GROUP_retry_join }}" 
-        docker_consul_agent_recursors:  "{{ docker_consul_cluster_GROUP_recursors }}"
-        docker_consul_agent_acl_datacenter:  "{{ docker_consul_cluster_GROUP_acl_datacenter }}"
-        docker_consul_agent_datacenter:  "{{ docker_consul_cluster_GROUP_datacenter }}"
+        docker_consul_agent_retry_join: "{{ docker_consul_cluster_SPECIFIC_GROUP_retry_join }}" 
+        docker_consul_agent_recursors:  "{{ docker_consul_cluster_SPECIFIC_GROUP_recursors }}"
+        docker_consul_agent_acl_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_acl_datacenter }}"
+        docker_consul_agent_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}"
         docker_consul_agent_acl_token:  "{{ consul_credentials_GROUP_creds['agent'].token }}"
-        docker_consul_agent_encrypt:  "{{ docker_consul_cluster_GROUP_encrypt }}"
+        docker_consul_agent_encrypt:  "{{ consul_credentials_GROUP_encrypt }}"
         docker_consul_agent_config_dir: /etc/docker-consul-agent-config.d
 
 - hosts: docker-consul-servers, docker-consul-agents

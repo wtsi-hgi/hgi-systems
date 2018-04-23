@@ -1,0 +1,152 @@
+# Copyright (c) 2018 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: docker-consul-bootstrap.yml
+
+- import_playbook: docker-consul.yml
+
+# configure consul cluster
+- hosts: docker-consul-clusters
+  gather_facts: no
+  vars:
+    docker_consul_bootstrap_PLAYBOOK_server_ips: "{{ lookup('dig', docker_consul_cluster_SPECIFIC_GROUP_address, wantlist=True) }}"
+    docker_consul_bootstrap_PLAYBOOK_consul_bin: docker run --net=host consul
+  tasks:
+    - name: assert that we have the expected number of server ips
+      assert:
+        that: 
+          - "docker_consul_bootstrap_PLAYBOOK_server_ips | length == docker_consul_cluster_SPECIFIC_GROUP_server_count"
+        msg: "expecting {{ docker_consul_cluster_SPECIFIC_GROUP_server_count }} consul servers in cluster but we have {{ docker_consul_bootstrap_PLAYBOOK_server_ips | length }} entries in DNS: {{ docker_consul_bootstrap_PLAYBOOK_server_ips | join(',') }}"
+
+    - name: assert we are a member of a docker-consul-cluster
+      assert:
+        that:
+          - "docker_consul_cluster_SPECIFIC_GROUP_id is defined"
+        msg: "docker-consul-clusters must all be members of a specific docker-consul-cluster, which should define docker_consul_cluster_SPECIFIC_GROUP_id, but docker_consul_cluster_SPECIFIC_GROUP_id was not defined"
+
+    - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_SPECIFIC_GROUP_id>
+      assert:
+        that: 
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined (probably in group docker-consul-cluster-{{ docker_consul_cluster_SPECIFIC_GROUP_id }}"
+      with_items:
+        - docker_consul_cluster_SPECIFIC_GROUP_address
+
+    - name: assert we are in the consul_credentials group
+      assert:
+        that:
+          - "inventory_hostname in groups['consul-credentials']"
+        msg: "docker-consul-clusters must also be in group consul-credentials"
+
+    - name: assert required vars defined in consul-credentials group
+      assert:
+        that: 
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined in group consul-credentials"
+      with_items:
+        - "consul_credentials_GROUP_creds['agent-master'].token"
+        - "consul_credentials_GROUP_creds['default'].token"
+        - "consul_credentials_GROUP_creds['master'].token"
+        - "consul_credentials_GROUP_creds['acl-management'].token"
+
+    - name: ensure consul cluster has a leader
+      delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts:
+        consul_bin: "{{ docker_consul_bootstrap_PLAYBOOK_consul_bin }}"
+        mgmt_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
+      ignore_errors: yes
+      register: consul_cluster_info_leader
+      until: "consul_cluster_info_leader.results | map(attribute='consul_info') | map(attribute='consul') | map(attribute='leader_addr') != ''"
+      retries: 12
+      delay: 10
+
+    - name: create ACL token required for the server to communicate fully with the rest of the cluster
+      delegate_to: "{{ item }}"
+      consul_acl:
+        # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
+        host: localhost
+        name: "server_token"
+        token: "{{ consul_credentials_GROUP_creds['default'].token }}"
+        mgmt_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+        token_type: client
+        rules:
+          - agent: ""
+            policy: write
+          - node: ""
+            policy: write
+          - service: "consul"
+            policy: write
+      with_items: "{{ docker_consul_bootstrap_PLAYBOOK_server_ips }}"
+
+    - name: gather consul cluster info again
+      delegate_to: "{{ item }}"
+      vars:
+        ansible_python_interpreter: python3
+      consul_info_facts: 
+        consul_bin: "{{ docker_consul_bootstrap_PLAYBOOK_consul_bin }}"
+        mgmt_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
+      with_items: "{{ docker_consul_bootstrap_PLAYBOOK_server_ips }}"
+      register: consul_cluster_info
+
+    - name: create a management ACL token
+      delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      consul_acl:
+        name: mercury
+        token: "{{ consul_credentials_GROUP_creds['acl-management'].token }}"
+        mgmt_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+        token_type: management
+        rules:
+          - agent: ""
+            policy: write
+          - event: ""
+            policy: write
+          - key: ""
+            policy: write
+          - keyring: write
+          - node: ""
+            policy: write
+          - operator: write
+          - query: ""
+            policy: write
+          - service: ""
+            policy: write
+          - session: ""
+            policy: write
+
+    - name: create a client ACL token for terraform
+      delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      consul_acl:
+        name: mercury_terraform
+        token: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
+        mgmt_token: "{{ consul_credentials_GROUP_creds['master'].token }}"
+        token_type: client
+        rules:
+          - key: "" 
+            policy: read
+          - session: ""
+            policy: write
+          - key: "terraform" 
+            policy: write
+          - node: ""
+            policy: write
+          - service: ""
+            policy: write

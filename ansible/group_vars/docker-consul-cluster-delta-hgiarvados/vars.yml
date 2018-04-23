@@ -1,9 +1,0 @@
-# vault.yml contains:
-#   docker_consul_cluster_GROUP_encrypt
-
-docker_consul_cluster_id: delta-hgiarvados
-
-docker_consul_cluster_GROUP_datacenter: delta-hgiarvados
-docker_consul_cluster_GROUP_retry_join: ""
-docker_consul_cluster_GROUP_recursors: ""
-docker_consul_cluster_GROUP_acl_token: ""
