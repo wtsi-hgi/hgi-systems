@@ -436,7 +436,7 @@ def main():
             password=dict(required=True, no_log=True),
             action=dict(required=True, choices=[
                 "get_aliases", "get_cname", "get_a_record", "get_host", "get_network", "get_next_available_ip",
-                "get_fixedaddress", "reserve_next_available_ip", "add_alias", "add_cname", "set_a_record", "add_host",
+                "get_fixedaddress", "reserve_next_available_ip", "add_alias", "add_cname", "add_a_record", "set_a_record", "add_host",
                 "delete_alias", "delete_fixedaddress", "delete_host", "delete_cname", "delete_a_record", "set_name",
                 "set_extattr"
             ]),
@@ -586,6 +586,14 @@ def main():
         if result:
             result = infoblox.get_cname(cname)
             module.exit_json(changed=True, result=result)
+        else:
+            raise Exception()
+
+    elif action == "add_a_record":
+        result = infoblox.create_a_record(name, address, comment, ttl)
+        if result:
+            results = infoblox.get_a_record(name)
+            module.exit_json(changed=True, result=results)
         else:
             raise Exception()
 

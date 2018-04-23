@@ -82,7 +82,7 @@
       when: additional_a_records is defined and (additional_a_records | length > 0)
       delegate_to: "{{ openstack_instance_infoblox_delegate }}"
       infoblox:
-        action: create_a_record
+        action: add_a_record
         server: "{{ openstack_instance_infoblox_api_server }}"
         dns_view: "{{ openstack_instance_infoblox_dns_view }}"
         api_version: "{{ openstack_instance_infoblox_api_version }}"
