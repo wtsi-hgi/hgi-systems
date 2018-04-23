@@ -25,7 +25,7 @@
   when: os_id is not defined
   delegate_to: "{{ openstack_delegate }}"
   stat: 
-    path: "{{ lookup('env', 'TMPDIR') | default(openstack_image_tmp_dir) }}/{{ openstack_name }}"
+    path: "{{ openstack_image_dest_path }}"
   register: cached_image
 
 - name: fetch image from s3
@@ -41,7 +41,7 @@
     aws_access_key: "{{ openstack_image_s3_access_key }}"    
     aws_secret_key: "{{ openstack_image_s3_secret_key }}"    
     object: "{{ openstack_name }}"
-    dest: "{{ openstack_image_tmp_dir }}/{{ openstack_name }}"
+    dest: "{{ openstack_image_dest_path }}"
 
 - name: ensure image is present in glance
   when: os_id is not defined
@@ -53,5 +53,5 @@
     container_format: bare
     disk_format: qcow2
     name: "{{ openstack_name }}"
-    filename: "{{ openstack_image_tmp_dir }}/{{ openstack_name }}"
+    filename: "{{ openstack_image_dest_path }}"
 

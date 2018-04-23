@@ -57,6 +57,8 @@
       when: os_id is not defined
       set_fact:
         os_accessIPv4: "{{ openstack_servers[0].accessIPv4 }}"
+        os_private_v4: "{{ openstack_servers[0].private_v4 }}"
+        os_public_v4: "{{ openstack_servers[0].public_v4 }}"
 
     - name: sets DNS A record for the instance in the hgi.sanger.ac.uk zone
       delegate_to: "{{ openstack_instance_infoblox_delegate }}"

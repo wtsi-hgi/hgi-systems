@@ -22,7 +22,7 @@
 # file: group_vars/sanger-gitlab/vars
 
 # Vault contains:
-# gitlab_token: xxx
+#   gitlab_token: xxx
 
 gitlab_username: mercury
 gitlab_url: https://gitlab.internal.sanger.ac.uk

@@ -23,7 +23,14 @@ openstackinfo_bin=$(which openstackinfo)
 >&2 echo "openstack-inventory: retrieving openstackinfo for ${tenant} using ${openstackinfo_bin}, writing to ${tmp_openstackinfo}"
 ${openstackinfo_bin} -i id > "${tmp_openstackinfo}"
 
-export OSI_ANSIBLE_INVENTORY_NAME_TEMPLATE="os.${tenant}.{{ resource.type }}.{{ resource.name }}"
+export OSI_ANSIBLE_INVENTORY_NAME_TEMPLATE=$(cat <<EOF
+{%- if resource.type == "keypair" -%}
+os.zeta.{{ resource.type }}.{{ resource.name }}
+{%- else -%}
+os.${tenant}.{{ resource.type }}.{{ resource.name }}
+{%- endif -%}
+EOF
+)
 
 export OSI_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ resource.type in ["network", "security_group", "volume", "keypair"] or ( resource.type == "image" and resource.visibility == "private" ) or ( resource.type == "instance" and resource.metadata is defined and resource.metadata.managed_by is defined and resource.metadata.managed_by == "ansible" ) }}'
 

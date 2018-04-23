@@ -21,10 +21,10 @@
 # file: roles/openstack-network/tasks/main.yml
 
 - name: create an openstack network
-  when: managed_by is defined and managed_by == "ansible" and os_id is not defined
   delegate_to: "{{ openstack_delegate }}"
   os_network:
     state: present
     auth: "{{ openstack_auth }}"
     name: "{{ openstack_name }}"
+  when: managed_by is defined and managed_by == "ansible" and os_id is not defined
 

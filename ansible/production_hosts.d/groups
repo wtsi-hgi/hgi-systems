@@ -154,6 +154,7 @@ arvados-ssos
 [openstack-instances:children]
 openstack-instance-gitlab-runners
 openstack-instance-consul-servers
+openstack-instance-docker-consul-servers
 openstack-instance-openstack-tenant-cleaners
 
 [openstack:children]
