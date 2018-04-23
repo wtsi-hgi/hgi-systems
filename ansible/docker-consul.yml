@@ -86,6 +86,17 @@
           - device: "{{ docker_consul_PLAYBOOK_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ docker_consul_PLAYBOOK_created_restore_indicator_file }}"
 
+    - name: setup s3-backup
+      import_role:
+        name: s3-backup
+      vars:
+        s3_backup_source_dir: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
+        s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
+        s3_backup_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
+        s3_backup_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
+        s3_backup_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
+        s3_backup_s3_bucket: consul-backup
+
     - name: import docker-consul-server role
       import_role:
         name: docker-consul-server
@@ -106,7 +117,7 @@
         # Directories
         ###############################################################################
         docker_consul_server_config_dir: "{{ docker_consul_PLAYBOOK_server_config_dir }}"
-        docker_consul_server_data_dir: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
+        docker_consul_server_data_dir: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}/data"
         ###############################################################################
         # Defaults for consul agent config
         ###############################################################################
@@ -115,17 +126,10 @@
         docker_consul_server_advertise_addr_wan: "{{ cloud_resource_public_ip }}"
         docker_consul_server_client_addr: 0.0.0.0
         docker_consul_server_bootstrap_expect: 3 # TODO this should be configured somewhere
-
-    - name: setup s3-backup
-      import_role:
-        name: s3-backup
-      vars:
-        s3_backup_source_dir: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
-        s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
-        s3_backup_s3_host: "{{ s3_credentials['sanger-ceph-mercury']['s3_host'] }}"
-        s3_backup_s3_access_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_access_key'] }}"
-        s3_backup_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercury']['s3_secret_key'] }}"
-        s3_backup_s3_bucket: consul-backup
+        ###############################################################################
+        # Generic defaults
+        ###############################################################################
+        docker_consul_server_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}"
 
 - hosts: docker-consul-agents
   vars:

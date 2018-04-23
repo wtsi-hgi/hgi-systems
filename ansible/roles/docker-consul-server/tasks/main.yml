@@ -20,12 +20,12 @@
 ---
 # file: roles/docker-consul-server/tasks/main.yml
 
-- name: ensure data directory exists
+- name: setup data directory exists
   become: yes
   file:
     path: "{{ docker_consul_server_data_dir }}"
     state: directory
-    mode: 700
+    mode: 0700
 
 - name: configure docker-consul-server systemd service
   become: yes
@@ -40,7 +40,7 @@
     content: "alias consul='docker run --net=host consul'"
     dest: /etc/profile.d/consul-alias.sh
 
-- name: ensure server config directory exists
+- name: create server config directory
   become: yes
   file:
     path: "{{ docker_consul_server_config_dir }}"
@@ -53,6 +53,27 @@
     dest: "{{ docker_consul_server_config_dir }}/00-docker-consul-server.json"
   when: "not 'image-building' in group_names"
   notify: systemd restart docker-consul-server
+
+- name: install apt prerequisites for pip
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: "{{ docker_consul_server_apt_cache_valid_time }}"
+  with_items:
+    - python-pip
+    - python-requests
+
+- name: install Python prerequisites for consul_acl module
+  become: yes
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - python-consul
+    - pyhcl
+
+- name: flush handlers to restart Consul container if required
+  meta: flush_handlers
 
 - name: create ACL token required for the server to communicate fully with the rest of the cluster
   consul_acl:

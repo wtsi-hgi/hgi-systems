@@ -12,6 +12,7 @@
     - python
     - python-boto
     - python-boto3
+    - python-botocore
     - cron
 
 - name: install duplicity-backup.sh
@@ -92,11 +93,13 @@
         prefix: "{{ s3_backup_dest_url | urlsplit('path') | regex_replace('^[/].*?[/](.*)$', '\\1') }}"
         max_keys: 1
       register: s3_backup_REGISTER_s3_backup_path
+
     - name: delete restore indicator
       become: yes
       file:
         path: "{{ s3_backup_source_dir }}/{{ s3_backup_restore_indicator_file }}"
         state: absent
+
     - name: restore data from s3
       become: yes
       command: "{{ s3_backup_restore_mountpoint_script }}"

@@ -63,3 +63,7 @@ docker_consul_server_retry_join_wan_json: "{{ docker_consul_server_retry_join_wa
 docker_consul_server_recursors_json: "{{ docker_consul_server_recursors | to_json }}"
 docker_consul_server_bootstrap_expect: 3
 
+###############################################################################
+# Generic defaults
+###############################################################################
+docker_consul_server_apt_cache_valid_time: 3600
