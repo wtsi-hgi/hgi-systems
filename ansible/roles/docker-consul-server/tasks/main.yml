@@ -81,7 +81,7 @@
     host: localhost
     name: "server_token"
     token: "{{ docker_consul_server_acl_token }}"
-    mgmt_token: "{{ docker_consul_server_acl_agent_master_token }}"
+    mgmt_token: "{{ docker_consul_server_acl_master_token }}"
     token_type: client
     rules:
       - agent: ""
