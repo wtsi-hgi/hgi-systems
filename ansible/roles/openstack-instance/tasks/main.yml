@@ -78,6 +78,21 @@
       set_fact:
         ansible_host: "{{ openstack_name }}.hgi.sanger.ac.uk"
 
+    - name: creates additional DNS A records on infoblox
+      when: additional_a_records is defined and len(additional_a_records) > 0
+      delegate_to: "{{ openstack_instance_infoblox_delegate }}"
+      infoblox:
+        action: create_a_record
+        server: "{{ openstack_instance_infoblox_api_server }}"
+        dns_view: "{{ openstack_instance_infoblox_dns_view }}"
+        api_version: "{{ openstack_instance_infoblox_api_version }}"
+        username: "{{ openstack_instance_infoblox_username }}"
+        password: "{{ openstack_instance_infoblox_password }}"
+        name: "{{ item }}"
+        address: "{{ os_accessIPv4 }}"
+        ttl: "{{ openstack_instance_dns_ttl }}"
+      with_items: "{{ additional_a_records }}"
+
     - name: wait for instance to come up
       when: create_instance|changed
       local_action: wait_for port={{ ansible_port }} host={{ ansible_host }} timeout=240 connect_timeout=15 state=started
