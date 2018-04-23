@@ -49,6 +49,7 @@
 # Directories
 ###############################################################################
 docker_consul_server_config_dir: "/etc/docker-consul-server-config.d"
+docker_consul_server_data_dir: /var/lib/consul
 
 ###############################################################################
 # Defaults for consul agent config

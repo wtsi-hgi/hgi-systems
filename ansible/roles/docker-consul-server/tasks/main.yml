@@ -20,6 +20,13 @@
 ---
 # file: roles/docker-consul-server/tasks/main.yml
 
+- name: ensure data directory exists
+  become: yes
+  file:
+    path: "{{ docker_consul_server_data_dir }}"
+    state: directory
+    mode: 700
+
 - name: configure docker-consul-server systemd service
   become: yes
   template:

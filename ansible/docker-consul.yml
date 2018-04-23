@@ -26,6 +26,10 @@
   vars:
     docker_consul_PLAYBOOK_server_config_dir: /etc/docker-consul-server-config.d
     docker_consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
+    docker_consul_PLAYBOOK_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
+    docker_consul_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
+    docker_consul_PLAYBOOK_server_data_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
+    docker_consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
   tasks:
     - name: assert docker-consul-servers cannot also be consul-servers or consul-servers
       assert:
@@ -33,11 +37,13 @@
           - "(not inventory_hostname in groups['consul-agents']) and 
              (not inventory_hostname in groups['consul-servers'])"
         msg: "docker-consul-servers must not also be consul-agents or consul-servers"
+
     - name: assert we are in the consul_credentials group
       assert:
         that:
           - "inventory_hostname in groups['consul-credentials']"
         msg: "docker-consul-servers must also be in group consul-credentials"
+
     - name: assert required vars defined in consul-credentials group
       assert:
         that: 
@@ -47,11 +53,13 @@
         - "consul_credentials_GROUP_creds['default'].token"
         - "consul_credentials_GROUP_creds['master'].token"
         - "consul_credentials_GROUP_creds['agent-master'].token"
+
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
           - "docker_consul_cluster_id is defined"
         msg: "docker-consul-servers must all be members of a docker-consul-cluster, which should define docker_consul_cluster_id, but docker_consul_cluster_id was not defined"
+
     - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_id>
       assert:
         that: 
@@ -63,6 +71,21 @@
         - docker_consul_cluster_GROUP_acl_datacenter
         - docker_consul_cluster_GROUP_datacenter
         - docker_consul_cluster_GROUP_encrypt
+
+    - name: configure attached-openstack-volume for docker-consul-servers
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: consul-vg
+        attached_openstack_volume_vols:
+          - name: consul-data
+            size: "{{ ((docker_consul_PLAYBOOK_attached_volume_size_gb | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ docker_consul_PLAYBOOK_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ docker_consul_PLAYBOOK_created_restore_indicator_file }}"
+
     - name: import docker-consul-server role
       import_role:
         name: docker-consul-server
@@ -83,6 +106,7 @@
         # Directories
         ###############################################################################
         docker_consul_server_config_dir: "{{ docker_consul_PLAYBOOK_server_config_dir }}"
+        docker_consul_server_data_dir: "{{ docker_consul_PLAYBOOK_server_data_mountpoint }}"
         ###############################################################################
         # Defaults for consul agent config
         ###############################################################################
@@ -103,11 +127,13 @@
           - "(not inventory_hostname in groups['consul-agents']) and 
              (not inventory_hostname in groups['consul-servers'])"
         msg: "docker-consul-agents must not also be consul-agents or consul-servers"
+
     - name: assert we are in the consul_credentials group
       assert:
         that:
           - "inventory_hostname in groups['consul-credentials']"
         msg: "docker-consul-agents must also be in group consul-credentials"
+
     - name: assert required vars defined in consul_credentials group
       assert:
         that: 
@@ -115,11 +141,13 @@
         msg: "{{ item }} must be defined in group consul-credentials"
       with_items:
         - "consul_credentials_GROUP_creds['agent'].token"
+
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
           - "docker_consul_cluster_id is defined"
         msg: "docker-consul-agents must all be members of a docker-consul-cluster, which should define docker_consul_cluster_id, but docker_consul_cluster_id was not defined"
+
     - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_id>
       assert:
         that: 
@@ -130,6 +158,7 @@
         - docker_consul_cluster_GROUP_recursors
         - docker_consul_cluster_GROUP_datacenter
         - docker_consul_cluster_GROUP_encrypt
+
     - name: import docker-consul-agent role
       import_role:
         name: docker-consul-agent
@@ -152,6 +181,7 @@
         dest: "{{ docker_consul_PLAYBOOK_consul_template_token_file }}"
         content: "{{ docker_consul_credentials_GROUP_creds['consul-template'].token }}"
         mode: 0600
+
     - name: apply consul-template role
       import_role:
         name: consul-template
