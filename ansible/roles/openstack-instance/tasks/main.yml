@@ -73,10 +73,11 @@
         address: "{{ os_accessIPv4 }}"
         ttl: "{{ openstack_instance_dns_ttl }}"
 
-    - name: set ansible_host to dns hostname
+    - name: set ansible_host and ansible_user facts
       when: os_id is not defined
       set_fact:
         ansible_host: "{{ openstack_name }}.hgi.sanger.ac.uk"
+        ansible_user: "{{ ansible_user }}"
 
     - name: creates additional DNS A records on infoblox
       when: additional_a_records is defined and (additional_a_records | length > 0)
