@@ -36,13 +36,13 @@
     - name: assert we are in the consul_credentials group
       assert:
         that:
-          - "inventory_hostname in groups['consul_credentials']"
-        msg: "docker-consul-servers must also be in group consul_credentials"
-    - name: assert required vars defined in consul_credentials group
+          - "inventory_hostname in groups['consul-credentials']"
+        msg: "docker-consul-servers must also be in group consul-credentials"
+    - name: assert required vars defined in consul-credentials group
       assert:
         that: 
           - "{{ item }} is defined"
-        msg: "{{ item }} must be defined (probably in group consul_credentials"
+        msg: "{{ item }} must be defined in group consul-credentials"
       with_items:
         - "consul_credentials_GROUP_creds['default'].token"
         - "consul_credentials_GROUP_creds['master'].token"
@@ -106,13 +106,13 @@
     - name: assert we are in the consul_credentials group
       assert:
         that:
-          - "inventory_hostname in groups['consul_credentials']"
-        msg: "docker-consul-agents must also be in group consul_credentials"
+          - "inventory_hostname in groups['consul-credentials']"
+        msg: "docker-consul-agents must also be in group consul-credentials"
     - name: assert required vars defined in consul_credentials group
       assert:
         that: 
           - "{{ item }} is defined"
-        msg: "{{ item }} must be defined (probably in group consul_credentials"
+        msg: "{{ item }} must be defined in group consul-credentials"
       with_items:
         - "consul_credentials_GROUP_creds['agent'].token"
     - name: assert we are a member of a docker-consul-cluster

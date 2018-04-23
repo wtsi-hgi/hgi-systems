@@ -130,7 +130,6 @@ openstack-instance-docker-consul-servers
 
 [core-consul-servers:children]
 openstack-instance-consul-servers
-openstack-instance-docker-consul-servers
 
 [sanger-gitlab:children]
 gitlab-runners
