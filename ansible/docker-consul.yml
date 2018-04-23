@@ -54,6 +54,22 @@
         - "consul_credentials_GROUP_creds['master'].token"
         - "consul_credentials_GROUP_creds['agent-master'].token"
 
+    - name: assert we are in the s3_credentials group
+      assert:
+        that:
+          - "inventory_hostname in groups['s3-credentials']"
+        msg: "docker-consul-servers must also be in group s3-credentials"
+
+    - name: assert required vars defined in s3-credentials group
+      assert:
+        that: 
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined in group s3-credentials"
+      with_items:
+        - "s3_credentials['sanger-ceph-mercury']['s3_host']"
+        - "s3_credentials['sanger-ceph-mercury']['s3_access_key']"
+        - "s3_credentials['sanger-ceph-mercury']['s3_secret_key']"
+
     - name: assert we are a member of a docker-consul-cluster
       assert:
         that:
