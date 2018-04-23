@@ -98,10 +98,10 @@ def main():
 
     changed = False
 
-    connector = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
+    gitlab_client = Gitlab(module.params["gitlab_url"], module.params["gitlab_token"])
     try:
-        runners = connector.runners.list(all=True)
-        runners_tokens = {runner: connector.runners.get(runner.id).token for runner in runners}
+        runners = gitlab_client.runners.list(all=True)
+        runners_tokens = {runner: gitlab_client.runners.get(runner.id).token for runner in runners}
     except GitlabGetError as e:
         module.fail_json(
             msg="Failed to get runners from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
@@ -175,7 +175,8 @@ def main():
     if module.params["enfore_unique_description"]:
         registered_runner_token = get_runner_token(config["output_toml_path"])
         try:
-            projects = connector.projects.list(all=True)
+            # FIXME: HGI specific hack
+            projects = gitlab_client.groups.get("hgi").projects.list(all=True)
         except GitlabGetError as e:
             module.fail_json(
                 msg="Failed to get runners/projects from gitlab API endpoint %s: %s" % (module.params["gitlab_url"], e))
@@ -198,7 +199,8 @@ def delete_runner(runner, projects):
     project = None
     try:
         for project in projects:
-            if runner.id in {runner.id for runner in project.runners.list(all=True)}:
+            project_runner_ids = {runner.id for runner in project.runners.list(all=True)}
+            if runner.id in project_runner_ids:
                 try:
                     project.runners.delete(runner.id)
                 except GitlabDeleteError as e:

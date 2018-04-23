@@ -76,7 +76,7 @@
   tags: gitlab-runner
   become: yes
   pip:
-    name: python-gitlab
+    name: python-gitlab==1.1.0
 
 - name: create docker-machine CA cert directory
   tags:

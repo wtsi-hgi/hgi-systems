@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from typing import Tuple
 
-from gitlab import Gitlab, GitlabDeleteError
+from gitlab import Gitlab, GitlabDeleteError, GitlabListError
 import argparse
 import sys
 
@@ -24,15 +24,21 @@ def delete_all_runners(gitlab_url: str, token: str):
     :param gitlab_url: the location of GitLab
     :param token: the token used to access GitLab
     """
-    connector = Gitlab(gitlab_url, token)
+    gitlab_client = Gitlab(gitlab_url, token)
 
-    runners = connector.runners.list(all=True)
-    projects = connector.projects.list(all=True)
+    runners = gitlab_client.runners.list(all=True)
+    # projects = gitlab_client.groups.get("hgi").projects.list(all=True)
+    projects = gitlab_client.projects.list(all=True)
 
     for runner in runners:
         # GitLab won't let us remove a runner until it's no longer associated to a project
         for project in projects:
-            if runner.id in {runner.id for runner in project.runners.list(all=True)}:
+            try:
+                project_runner_ids = {runner.id for runner in project.runners.list(all=True)}
+            except GitlabListError as e:
+                raise RuntimeError("Cannot access runners for project \"%s\"" % project.name_with_namespace) from e
+
+            if runner.id in project_runner_ids:
                 try:
                     project.runners.delete(runner.id)
                 except GitlabDeleteError as e:
