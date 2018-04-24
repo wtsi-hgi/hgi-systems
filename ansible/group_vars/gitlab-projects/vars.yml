@@ -21,7 +21,7 @@
 #
 ---
 
-_gitlab_project_hgi_ci_project: delta-mercury
+_gitlab_project_hgi_ci_project: zeta-mercury
 gitlab_project_settings_hgi_ci_openstack:
   OS_AUTH_URL: "{{ openstack_logins[_gitlab_project_hgi_ci_project]['auth_url'] }}"
   OS_USERNAME: "{{ openstack_logins[_gitlab_project_hgi_ci_project]['username'] }}"
