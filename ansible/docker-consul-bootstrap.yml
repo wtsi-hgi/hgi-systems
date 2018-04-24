@@ -30,18 +30,21 @@
     docker_consul_bootstrap_PLAYBOOK_consul_bin: docker run --net=host consul
   tasks:
     - name: assert that we have the expected number of server ips
+      delegate_to: localhost
       assert:
         that: 
           - "docker_consul_bootstrap_PLAYBOOK_server_ips | length == docker_consul_cluster_SPECIFIC_GROUP_server_count"
         msg: "expecting {{ docker_consul_cluster_SPECIFIC_GROUP_server_count }} consul servers in cluster but we have {{ docker_consul_bootstrap_PLAYBOOK_server_ips | length }} entries in DNS: {{ docker_consul_bootstrap_PLAYBOOK_server_ips | join(',') }}"
 
     - name: assert we are a member of a docker-consul-cluster
+      delegate_to: localhost
       assert:
         that:
           - "docker_consul_cluster_SPECIFIC_GROUP_id is defined"
         msg: "docker-consul-clusters must all be members of a specific docker-consul-cluster, which should define docker_consul_cluster_SPECIFIC_GROUP_id, but docker_consul_cluster_SPECIFIC_GROUP_id was not defined"
 
     - name: assert required vars defined in docker-consul-cluster-<docker_consul_cluster_SPECIFIC_GROUP_id>
+      delegate_to: localhost
       assert:
         that: 
           - "{{ item }} is defined"
@@ -50,12 +53,14 @@
         - docker_consul_cluster_SPECIFIC_GROUP_address
 
     - name: assert we are in the consul_credentials group
+      delegate_to: localhost
       assert:
         that:
           - "inventory_hostname in groups['consul-credentials']"
         msg: "docker-consul-clusters must also be in group consul-credentials"
 
     - name: assert required vars defined in consul-credentials group
+      delegate_to: localhost
       assert:
         that: 
           - "{{ item }} is defined"
