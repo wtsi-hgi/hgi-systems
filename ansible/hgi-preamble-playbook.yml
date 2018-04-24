@@ -24,24 +24,6 @@
         private: true
       when: hgi_preamble_run_common
 
-# Run Docker role
-- hosts: dockerers
-  tasks:
-    - block:
-      - include_role:
-          name: docker
-          private: true
-
-      - name: add mercury to docker group
-        become: yes
-        user:
-          append: yes
-          groups:
-            - docker
-          name: mercury
-
-      when: hgi_preamble_run_common
-
 # Set fact that hgi-preamble has been ran
 - hosts: all:!non-hosts
   tasks:

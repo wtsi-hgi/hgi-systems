@@ -49,6 +49,7 @@
 - import_playbook: arvados.yml
 - import_playbook: cookie-jars.yml
 - import_playbook: cookie-monsters.yml
+- import_playbook: dockerers.yml
 - import_playbook: gitlab-runners.yml
 - import_playbook: hailers.yml
 - import_playbook: openstack-tenant-cleaners.yml

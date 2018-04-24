@@ -1,0 +1,16 @@
+---
+
+- import_playbook: hgi-preamble-playbook.yml
+
+- hosts: dockerers
+  tasks:
+    - include_role:
+        name: docker
+
+    - name: add mercury to docker group
+      become: yes
+      user:
+        append: yes
+        groups:
+          - docker
+        name: mercury
