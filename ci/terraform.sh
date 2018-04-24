@@ -21,18 +21,18 @@ cd terraform/${REGION}
 echo "Calling terraform init"
 terraform init
 
-echo "Switching to ${ENV} environment"
+echo "Switching to ${ENV} workspace"
 set +e
-terraform env select ${ENV}
-env_exit_status=$?
+terraform workspace select ${ENV}
+workspace_exit_status=$?
 set -e
-if [[ ${env_exit_status} -ne 0 ]]; then
-    echo "Could not switch to ${ENV} environment, attempting to create a new one"
-    terraform env new ${ENV}
-    env_new_exit_status=$?
-    if [[ ${env_new_exit_status} -ne 0 ]]; then
-	>&2 echo "Could not create new environment ${ENV} - if error is Permission Denied, check if CONSUL_HTTP_TOKEN is set correctly"
-	exit ${env_new_exit_status}
+if [[ ${workspace_exit_status} -ne 0 ]]; then
+    echo "Could not switch to ${ENV} workspace, attempting to create a new one"
+    terraform workspace new ${ENV}
+    workspace_new_exit_status=$?
+    if [[ ${workspace_new_exit_status} -ne 0 ]]; then
+	>&2 echo "Could not create new workspace ${ENV} - if error is Permission Denied, check if CONSUL_HTTP_TOKEN is set correctly"
+	exit ${workspace_new_exit_status}
     fi
 fi
 
