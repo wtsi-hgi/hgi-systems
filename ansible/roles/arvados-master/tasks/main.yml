@@ -435,7 +435,7 @@
   become: yes
   group:
     name: crunch
-    gid: 1001
+    gid: 2782
     state: present
 
 - name: create crunch user
@@ -443,7 +443,7 @@
   user:
     name: crunch
     group: crunch
-    uid: 1001
+    uid: 2782
     state: present
     
 - name: install SDKs required for crunch-dispatch
