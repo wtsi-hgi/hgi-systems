@@ -145,7 +145,7 @@
   become: yes
   group:
     name: crunch
-    gid: 1001
+    gid: 2782
     state: present
 
 - name: create crunch user
@@ -157,7 +157,7 @@
       - crunch
       - fuse
       - docker
-    uid: 1001
+    uid: 2782
     state: present
 
 - name: ensure /dev/fuse permissions are correct
