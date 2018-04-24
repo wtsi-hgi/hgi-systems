@@ -28,7 +28,6 @@
       import_role:
         name: docker
 
-    # When bootstrapping
     - name: add mercury to docker group
       become: yes
       user:

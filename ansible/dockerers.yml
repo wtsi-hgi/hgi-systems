@@ -14,3 +14,14 @@
         groups:
           - docker
         name: mercury
+
+    # configure host DNS
+    # FIXME: hard to decide where this really belongs, and somewhat unsettling to configure the upstream servers here as well.
+    # would be better if upstream servers could be derived from whatever was configured by cloud config
+    - name: set up dnsmasq
+      import_role:
+        name: dnsmasq
+      vars:
+        dnsmasq_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}"
+        dnsmasq_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
+
