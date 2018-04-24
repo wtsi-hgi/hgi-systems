@@ -19,9 +19,9 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 [openstack-instance-consul-servers-zeta-hgi]
-os.zeta-hgi.instance.consul-server-zeta-hgi-01 volume=os.zeta-hgi.volume.consul01 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-9eab280e keypair=os.zeta.keypair.ansible-mercury managed_by=ansible
-os.zeta-hgi.instance.consul-server-zeta-hgi-02 volume=os.zeta-hgi.volume.consul02 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-9eab280e keypair=os.zeta.keypair.ansible-mercury managed_by=ansible
-os.zeta-hgi.instance.consul-server-zeta-hgi-03 volume=os.zeta-hgi.volume.consul03 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-9eab280e keypair=os.zeta.keypair.ansible-mercury managed_by=ansible
+os.zeta-hgi.instance.consul-server-zeta-hgi-01 volume=os.zeta-hgi.volume.consul01 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-133a2a63 keypair=os.zeta.keypair.ansible-mercury managed_by=ansible
+os.zeta-hgi.instance.consul-server-zeta-hgi-02 volume=os.zeta-hgi.volume.consul02 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-133a2a63 keypair=os.zeta.keypair.ansible-mercury managed_by=ansible
+os.zeta-hgi.instance.consul-server-zeta-hgi-03 volume=os.zeta-hgi.volume.consul03 netgroup=openstack-netgroups-consul-servers image=os.zeta-hgi.image.hgi-docker-xenial-133a2a63 keypair=os.zeta.keypair.ansible-mercury managed_by=ansible
 
 [docker-consul-cluster-zeta-hgi:children]
 openstack-instance-consul-servers-zeta-hgi
