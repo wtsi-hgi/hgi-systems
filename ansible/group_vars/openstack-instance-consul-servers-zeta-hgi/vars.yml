@@ -1,3 +1,4 @@
 
 additional_a_records:
-  - "bootstrap-consul-zeta-hgi.hgi.sanger.ac.uk"
+  - "consul.zeta-hgi.hgi.sanger.ac.uk"
+  - "consul.hgi.sanger.ac.uk"
