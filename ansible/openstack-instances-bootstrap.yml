@@ -26,19 +26,11 @@
       assert:
         that: 
           - "{{ item }} is defined"
-        msg: "{{ item }} must be defined in openstack-instance hostvars"
+        msg: "{{ item }} must be defined for openstack-instance"
       with_items:
-        - volume
         - netgroup
         - image
         - keypair
-      when: managed_by is defined and managed_by == "ansible"
-
-    - name: assert required openstack-instance parameters are in inventory
-      assert:
-        that: 
-          - "hostvars[volume] is defined"
-        msg: "{{ volume }} must be in inventory"
       when: managed_by is defined and managed_by == "ansible"
 
     - name: assert required openstack-instance parameters are in inventory
@@ -61,6 +53,13 @@
           - "hostvars[keypair] is defined"
         msg: "{{ keypair }} must be in inventory"
       when: managed_by is defined and managed_by == "ansible"
+
+    - name: assert if volume is defined it must be in inventory
+      assert:
+        that: 
+          - "hostvars[volume] is defined"
+        msg: "{{ volume }} must be in inventory"
+      when: managed_by is defined and managed_by == "ansible" and volume is defined
 
     - name: apply openstack-instance role
       import_role:
