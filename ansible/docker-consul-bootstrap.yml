@@ -74,6 +74,7 @@
     - name: ensure consul cluster has a leader
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
       vars:
+        ansible_user: mercury
         ansible_python_interpreter: python3
       consul_info_facts:
         consul_bin: "{{ docker_consul_bootstrap_PLAYBOOK_consul_bin }}"
@@ -86,6 +87,8 @@
 
     - name: create ACL token required for the server to communicate fully with the rest of the cluster
       delegate_to: "{{ item }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         # Note: This HAS to be done on localhost as the host is not externally accessible accessible until this ACL is set
         host: localhost
@@ -105,6 +108,7 @@
     - name: gather consul cluster info again
       delegate_to: "{{ item }}"
       vars:
+        ansible_user: mercury
         ansible_python_interpreter: python3
       consul_info_facts: 
         consul_bin: "{{ docker_consul_bootstrap_PLAYBOOK_consul_bin }}"
@@ -114,6 +118,8 @@
 
     - name: create a management ACL token
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         name: mercury
         token: "{{ consul_credentials_GROUP_creds['acl-management'].token }}"
@@ -139,6 +145,8 @@
 
     - name: create a client ACL token for terraform
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         name: mercury_terraform
         token: "{{ consul_credentials_GROUP_creds['terraform'].token }}"

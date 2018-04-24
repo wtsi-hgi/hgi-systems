@@ -22,6 +22,21 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+- hosts: docker-consul-servers, docker-consul-agents
+  tasks:
+    - name: apply docker role
+      import_role:
+        name: docker
+
+    # When bootstrapping
+    - name: add mercury to docker group
+      become: yes
+      user:
+        name: mercury
+        append: yes
+        groups:
+          - docker
+
 - hosts: docker-consul-servers
   vars:
     docker_consul_PLAYBOOK_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
