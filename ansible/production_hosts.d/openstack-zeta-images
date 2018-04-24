@@ -22,6 +22,7 @@
 os.zeta-hgi.image.hgi-docker-xenial-926b0ea4 managed_by=ansible openstack_image_user=ubuntu
 os.zeta-hgi-ci.image.hgi-docker-xenial-926b0ea4 managed_by=ansible openstack_image_user=ubuntu
 os.zeta-hgi.image.hgi-docker-xenial-6912cc07 managed_by=ansible openstack_image_user=ubuntu
+os.zeta-hgi.image.hgi-docker-xenial-3d62699f managed_by=ansible openstack_image_user=ubuntu
 
 [openstack:children]
 openstack-images
