@@ -22,14 +22,6 @@
 
 - import_playbook: docker-consul.yml
 
-# configure host DNS
-- name: set up dnsmasq
-  import_role:
-    name: dnsmasq
-  vars:
-    dnsmasq_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}"
-    dnsmasq_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
-
 # configure consul cluster
 - hosts: docker-consul-clusters
   gather_facts: no
