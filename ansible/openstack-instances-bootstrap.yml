@@ -33,21 +33,21 @@
         - keypair
       when: managed_by is defined and managed_by == "ansible"
 
-    - name: assert required openstack-instance parameters are in inventory
+    - name: assert openstack-instance netgroup is a group present in inventory
       assert:
         that: 
-          - "hostvars['{{ netgroup }}'] is defined"
-        msg: "{{ netgroup }} must be in inventory"
+          - "groups['{{ netgroup }}'] is defined"
+        msg: "{{ netgroup }} must be a group in inventory"
       when: managed_by is defined and managed_by == "ansible"
 
-    - name: assert required openstack-instance parameters are in inventory
+    - name: assert openstack-instance image is in inventory
       assert:
         that: 
           - "hostvars['{{ image }}'] is defined"
         msg: "{{ image }} must be in inventory"
       when: managed_by is defined and managed_by == "ansible"
 
-    - name: assert required openstack-instance parameters are in inventory
+    - name: assert openstack-instance keypair is in inventory
       assert:
         that: 
           - "hostvars['{{ keypair }}'] is defined"
