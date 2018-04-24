@@ -1,0 +1,10 @@
+---
+
+- name: add wrapper script for Docker consul
+  become: yes
+  copy:
+    content: |
+      #!/bin/sh
+      docker run --net=host consul "$@"
+    dest: /usr/bin/consul
+    mode: 0755

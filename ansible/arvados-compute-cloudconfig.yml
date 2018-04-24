@@ -32,10 +32,25 @@
       import_role:
         name: dnsmasq
       vars:
-        dnsmasq_search_domains:
-          - "node.{{ cc_consul_datacenter }}.consul"
         dnsmasq_apt_cache_valid_time: 3600
         dnsmasq_upstream_dns_servers: "{{ cc_upstream_dns_servers.split(',') }}"
+
+    - name: add consul search domains to resolvconf base
+      become: yes
+      lineinfile:
+        path: /etc/resolvconf/resolv.conf.d/base
+        state: present
+        regexp: "^search {{ item }}$"
+        line: "search {{ item }}"
+      with_items:
+        - "node.{{ cc_consul_datacenter }}.consul"
+      register: arvados_compute_cloudconfig_PLAYBOOK_resolveconf
+
+    - name: update resolvconf
+      become: yes
+      command: resolvconf -u
+      when: arvados_compute_cloudconfig_PLAYBOOK_resolveconf|changed
+
     - name: import docker-consul-agent role
       import_role:
         name: docker-consul-agent

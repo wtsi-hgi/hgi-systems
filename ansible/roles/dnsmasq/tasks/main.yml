@@ -55,13 +55,3 @@
   notify:
    - restart dnsmasq
 
-- name: add consul dns search to resolvconf base
-  become: yes
-  lineinfile:
-    path: /etc/resolvconf/resolv.conf.d/base
-    state: present
-    regexp: "^search {{ item }}$"
-    line: "search {{ item }}"
-  with_items: "{{ dnsmasq_search_domains }}"
-  notify:
-    - update resolvconf

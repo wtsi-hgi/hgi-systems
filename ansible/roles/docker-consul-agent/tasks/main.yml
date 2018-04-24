@@ -27,12 +27,6 @@
     dest: "/etc/systemd/system/docker-consul-agent.service"
   notify: systemd restart docker-consul-agent
 
-- name: add bash alias to run consul in docker
-  become: yes
-  copy:
-    content: "alias consul='docker run --net=host consul'"
-    dest: /etc/profile.d/consul-alias.sh
-
 - name: configure docker-consul-agent (when not image-building)
   become: yes
   template:

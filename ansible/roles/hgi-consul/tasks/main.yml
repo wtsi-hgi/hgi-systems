@@ -84,7 +84,22 @@
   import_role:
     name: dnsmasq
   vars:
-    dnsmasq_search_domains:
-      - "node.{{ hgi_consul_datacenter }}.consul"
     dnsmasq_apt_cache_valid_time: "{{ hgi_consul_apt_cache_valid_time }}"
     dnsmasq_upstream_dns_servers: "{{ hgi_consul_upstream_dns_servers }}"
+
+- name: add consul search domains to resolvconf base
+  become: yes
+  lineinfile:
+    path: /etc/resolvconf/resolv.conf.d/base
+    state: present
+    regexp: "^search {{ item }}$"
+    line: "search {{ item }}"
+  with_items:
+    - "node.{{ hgi_consul_datacenter }}.consul"
+  register: hgi_consul_resolveconf
+
+- name: update resolvconf
+  become: yes
+  command: resolvconf -u
+  when: hgi_consul_resolveconf|changed
+

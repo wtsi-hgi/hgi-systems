@@ -34,12 +34,6 @@
     dest: "/etc/systemd/system/docker-consul-server.service"
   notify: systemd restart docker-consul-server
 
-- name: add bash alias to run consul in docker
-  become: yes
-  copy:
-    content: "alias consul='docker run --net=host consul'"
-    dest: /etc/profile.d/consul-alias.sh
-
 - name: create server config directory
   become: yes
   file:

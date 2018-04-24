@@ -22,12 +22,19 @@
 
 - import_playbook: docker-consul.yml
 
+# configure host DNS
+- name: set up dnsmasq
+  import_role:
+    name: dnsmasq
+  vars:
+    dnsmasq_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}"
+    dnsmasq_upstream_dns_servers: "{{ all_GROUP_sanger_network_dns_servers }}"
+
 # configure consul cluster
 - hosts: docker-consul-clusters
   gather_facts: no
   vars:
     docker_consul_bootstrap_PLAYBOOK_server_ips: "{{ lookup('dig', docker_consul_cluster_SPECIFIC_GROUP_address, wantlist=True) }}"
-    docker_consul_bootstrap_PLAYBOOK_consul_bin: docker run --net=host consul
   tasks:
     - name: assert that we have the expected number of server ips
       delegate_to: localhost
@@ -77,7 +84,6 @@
         ansible_user: mercury
         ansible_python_interpreter: python3
       consul_info_facts:
-        consul_bin: "{{ docker_consul_bootstrap_PLAYBOOK_consul_bin }}"
         mgmt_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
       ignore_errors: yes
       register: consul_cluster_info_leader
@@ -111,7 +117,6 @@
         ansible_user: mercury
         ansible_python_interpreter: python3
       consul_info_facts: 
-        consul_bin: "{{ docker_consul_bootstrap_PLAYBOOK_consul_bin }}"
         mgmt_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
       with_items: "{{ docker_consul_bootstrap_PLAYBOOK_server_ips }}"
       register: consul_cluster_info

@@ -230,6 +230,22 @@
       with_items:
         - "consul_credentials_GROUP_creds['consul-template'].token"
 
+    - name: add consul search domains to resolvconf base
+      become: yes
+      lineinfile:
+        path: /etc/resolvconf/resolv.conf.d/base
+        state: present
+        regexp: "^search {{ item }}$"
+        line: "search {{ item }}"
+      with_items:
+        - "node.{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}.consul"
+      register: hgi_consul_resolveconf
+
+    - name: update resolvconf
+      become: yes
+      command: resolvconf -u
+      when: hgi_consul_resolveconf|changed
+
     - name: install consul token into consul_template_consul_token_file
       become: yes
       copy:
