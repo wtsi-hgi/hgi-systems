@@ -25,7 +25,7 @@ variable "extra_ansible_groups" {
 variable "floatingip_pool_name" {
   default = "nova"
 }
-  
+
 locals {
   ansible_groups = [
     "ssh-gateways",
