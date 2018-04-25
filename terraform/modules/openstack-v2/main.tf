@@ -1,9 +1,13 @@
 variable "env" {}
 variable "region" {}
 variable "mercury_keypair" {}
-variable "jr17_keypair" {}
 variable "subnet" {}
 variable "gateway_ip" {}
+variable "external_gateway" {}
+
+variable "router_count" {
+  default = 1
+}
 
 variable "dns_nameservers" {
   type    = "list"
@@ -15,6 +19,7 @@ variable "host_routes" {
   default = []
 }
 
+
 ###############################################################################
 # Key Pairs
 ###############################################################################
@@ -24,19 +29,10 @@ resource "openstack_compute_keypair_v2" "mercury" {
   public_key = "${var.mercury_keypair}"
 }
 
-resource "openstack_compute_keypair_v2" "jr17" {
-  provider   = "openstack"
-  name       = "jr17_${var.region}_${var.env}"
-  public_key = "${var.jr17_keypair}"
-}
-
 output "key_pair_ids" {
   value = {
     mercury = "${openstack_compute_keypair_v2.mercury.id}"
-    jr17    = "${openstack_compute_keypair_v2.jr17.id}"
   }
-
-  depends_on = ["${openstack_compute_keypair_v2.jr17}", "${openstack_compute_keypair_v2.mercury}"]
 }
 
 ###############################################################################
@@ -383,14 +379,15 @@ resource "openstack_networking_subnet_v2" "main" {
   gateway_ip      = "${var.gateway_ip}"
 }
 
-resource "openstack_networking_router_v2" "main_nova" {
+resource "openstack_networking_router_v2" "main_ext" {
+  count            = "${var.router_count}"
   provider         = "openstack"
-  name             = "main_nova_${var.region}_${var.env}"
-  external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
+  name             = "main_ext_${var.region}_${var.env}"
+  external_gateway = "${var.external_gateway}"
 }
 
-resource "openstack_networking_router_interface_v2" "main_nova" {
+resource "openstack_networking_router_interface_v2" "main_ext" {
   provider  = "openstack"
-  router_id = "${openstack_networking_router_v2.main_nova.id}"
+  router_id = "${openstack_networking_router_v2.main_ext.id}"
   subnet_id = "${openstack_networking_subnet_v2.main.id}"
 }

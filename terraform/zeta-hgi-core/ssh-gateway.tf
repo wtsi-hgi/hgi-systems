@@ -2,8 +2,8 @@ module "ssh-gateway" {
   source = "../modules/ssh-gateway"
 
   image = {
-    name = "${var.freebsd_base_image_name}"
-    user = "${var.freebsd_base_image_user}"
+    name = "hgi-base-freebsd11-575611a5"
+    user = "beastie"
   }
 
   flavour            = "m1.small"
@@ -13,4 +13,12 @@ module "ssh-gateway" {
   network_id         = "${module.openstack.network_id}"
 
   extra_ansible_groups = ["consul-cluster-zeta-hgi"]
+}
+
+output "ssh_gateway_host" {
+  value = "${module.ssh-gateway.host}"
+}
+
+output "ssh_gateway_user" {
+  value = "${module.ssh-gateway.user}"
 }

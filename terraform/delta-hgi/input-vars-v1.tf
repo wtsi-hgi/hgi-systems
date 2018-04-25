@@ -1,0 +1,1 @@
+../common/input-vars-v1.tf
