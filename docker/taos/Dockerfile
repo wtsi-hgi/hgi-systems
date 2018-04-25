@@ -30,6 +30,10 @@ ENV PATH /usr/local/go/bin:$PATH
 COPY scripts/get-terraform.sh /tmp/get-terraform.sh
 RUN /tmp/get-terraform.sh && rm /tmp/get-terraform.sh
 
+# Install openstack client
+COPY scripts/get-openstackclient.sh /tmp/get-openstackclient.sh
+RUN /tmp/get-openstackclient.sh && rm /tmp/get-openstackclient.sh
+
 # Set workdir and entrypoint
 WORKDIR /tmp
 ENTRYPOINT []
