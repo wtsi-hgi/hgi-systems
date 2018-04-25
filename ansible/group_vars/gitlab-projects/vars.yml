@@ -52,10 +52,6 @@ gitlab_project_settings_terraform_openstack:
   ZETA_OS_AUTH_URL: "{{ openstack_logins['zeta-mercury']['auth_url'] }}"
   ZETA_OS_USERNAME: "{{ openstack_logins['zeta-mercury']['username'] }}"
   ZETA_OS_PASSWORD: "{{ openstack_logins['zeta-mercury']['password'] }}"
-  EMEDLAB_OS_AUTH_URL: "{{ openstack_logins['emedlab-jrandall']['auth_url'] }}"
-  EMEDLAB_OS_USERNAME: "{{ openstack_logins['emedlab-jrandall']['username'] }}"
-  EMEDLAB_OS_PASSWORD: "{{ openstack_logins['emedlab-jrandall']['password'] }}"
-  EMEDLAB_HTTP_PROXY: "{{ hgi_username }}:{{ hgi_password }}@hgs4a.internal.sanger.ac.uk:3306/"
 
 gitlab_project_settings_ansible_credentials:
   ANSIBLE_VAULT_PASSWORD: "{{ ansible_vault_password }}"

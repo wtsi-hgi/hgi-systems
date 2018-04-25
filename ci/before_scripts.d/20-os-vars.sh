@@ -1,57 +1,51 @@
 REGION=${REGION:-}
-# TODO: Reduce code duplication here
+
 if [[ -z "$REGION" ]]; then
     echo "REGION unset or empty"
-elif [[ "$REGION" == "delta-hgi" ]]; then
-    export OS_USERNAME=${DELTA_OS_USERNAME}
-    export OS_PASSWORD=${DELTA_OS_PASSWORD}
-    export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
-    export OS_TENANT_NAME="hgi"
-    echo "OS vars for delta-hgi set"
-elif [[ "$REGION" == "delta-hgiarvados" ]]; then
-    export OS_USERNAME=${DELTA_OS_USERNAME}
-    export OS_PASSWORD=${DELTA_OS_PASSWORD}
-    export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
-    export OS_TENANT_NAME="hgiarvados"
-    echo "OS vars for delta-hgiarvados set"
-elif [[ "$REGION" == "zeta-hgi" ]]; then
-    export OS_USERNAME=${ZETA_OS_USERNAME}
-    export OS_PASSWORD=${ZETA_OS_PASSWORD}
-    export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-    if [[ "${CI_JOB_STAGE}" == "terraform" ]]; then
-	echo "Using OS auth version 3 for terraform"
-	export OS_PROJECT_NAME="hgi"
-	export OS_USER_DOMAIN_NAME="Default"
-    else
-	export OS_TENANT_NAME="hgi"
-    fi
-    echo "OS vars for zeta-hgi set"
-elif [[ "$REGION" == "zeta-hgiarvados" ]]; then
-    export OS_USERNAME=${ZETA_OS_USERNAME}
-    export OS_PASSWORD=${ZETA_OS_PASSWORD}
-    export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-    if [[ "${CI_JOB_STAGE}" == "terraform" ]]; then
-	echo "Using OS auth version 3 for terraform"
-	export OS_PROJECT_NAME="hgiarvados"
-	export OS_USER_DOMAIN_NAME="Default"
-    else
-	export OS_TENANT_NAME="hgiarvados"
-    fi
-    echo "OS vars for zeta-hgiarvados set"
-elif [[ "$REGION" == "delta-hgi-dev" ]]; then
-    export OS_USERNAME=${DELTA_OS_USERNAME}
-    export OS_PASSWORD=${DELTA_OS_PASSWORD}
-    export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
-    export OS_TENANT_NAME="hgi-dev"
-    echo "OS vars for delta-hgi-dev set"
-elif [[ "$REGION" == "emedlab-arvados" ]]; then 
-    export OS_USERNAME=${EMEDLAB_OS_USERNAME}
-    export OS_PASSWORD=${EMEDLAB_OS_PASSWORD}
-    export OS_AUTH_URL=${EMEDLAB_OS_AUTH_URL}
-    export OS_TENANT_NAME="arvados"
-    export HTTP_PROXY=${EMEDLAB_HTTP_PROXY}
-    export HTTPS_PROXY=${EMEDLAB_HTTP_PROXY}
-    echo "OS vars for emedlab-arvados set"
-else
-    >&2 echo "REGION ${REGION} not recognized in 20-os-vars.sh, not setting OS_ vars"
 fi
+
+case $REGION in
+    delta)
+	export OS_USERNAME=${DELTA_OS_USERNAME}
+	export OS_PASSWORD=${DELTA_OS_PASSWORD}
+	export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
+	>&2 echo "OS credentials for delta set"
+	;;
+    zeta)
+	export OS_USERNAME=${ZETA_OS_USERNAME}
+	export OS_PASSWORD=${ZETA_OS_PASSWORD}
+	export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
+	;;
+    *)
+	>&2 echo "REGION ${REGION} not recognized in 20-os-vars.sh, not setting OS_ vars"
+	>&2 echo "refusing to continue without recognized REGION"
+	exit 1
+	;;
+esac
+
+function export_tenant_or_project {
+    tenant_or_project=$1
+    if [[ "${CI_JOB_STAGE}" == "terraform" ]]; then
+	export OS_PROJECT_NAME="${tenant_or_project}"
+	export OS_USER_DOMAIN_NAME="Default"
+	>&2 echo "OS_PROJECT_NAME set to ${tenant_or_project} (using v3+ auth)"
+    else
+	export OS_TENANT_NAME="${tenant_or_project}"
+	>&2 echo "OS_TENANT_NAME set to ${tenant_or_project} (using v2 auth)"
+    fi
+}
+
+case $SETUP in
+    hgi-ci|hgi-ci-*)
+	export_tenant_or_project hgi-ci
+	;;
+    hgi-dev|hgi-dev-*)
+	export_tenant_or_project hgi-dev
+	;;
+    hgi|hgi-*)
+	export_tenant_or_project hgi
+	;;
+    hgiarvados|hgiarvados-*)
+	export_tenant_or_project hgiarvados
+	;;
+esac

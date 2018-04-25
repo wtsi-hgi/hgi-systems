@@ -7,10 +7,6 @@
 #  DELTA_OS_AUTH_URL
 #  DELTA_OS_USERNAME
 #  DELTA_OS_PASSWORD
-#  EMEDLAB_OS_AUTH_URL
-#  EMEDLAB_OS_USERNAME
-#  EMEDLAB_OS_PASSWORD
-#  EMEDLAB_HTTP_PROXY
 #  S3_ACCESS_KEY
 #  S3_HOST
 #  S3_SECRET_KEY
@@ -131,23 +127,6 @@ stages:
     - develop
     - staging-zeta-hgiarvados
 
-# .production-emedlab-arvados: &production-emedlab-arvados-def
-#   variables:
-#     ENV: "production"
-#     REGION: "emedlab-arvados"
-#   only:
-#     - master
-#     - production-emedlab-arvados
-  
-# .staging-emedlab-arvados: &staging-emedlab-arvados-def
-#   variables:
-#     ENV: "staging"
-#     REGION: "emedlab-arvados"
-#   only:
-#     - develop
-#     - staging-emedlab-arvados
-
-
 ###############################################################################
 # Stage: ci-setup
 ###############################################################################
@@ -229,15 +208,6 @@ openstack-vars-validate-production-zeta-hgiarvados:
 openstack-vars-validate-staging-zeta-hgiarvados:
   <<: *openstack-vars-validate-def
   <<: *staging-zeta-hgiarvados-def
-
-# openstack-vars-validate-production-emedlab-arvados:
-#   <<: *openstack-vars-validate-def
-#   <<: *production-emedlab-arvados-def
-    
-# openstack-vars-validate-staging-emedlab-arvados:
-#   <<: *openstack-vars-validate-def
-#   <<: *staging-emedlab-arvados-def
-    
 
 ###############################################################################
 # Stage: bootstrap
@@ -341,14 +311,6 @@ terraform-validate-staging-zeta-hgiarvados:
   <<: *terraform-validate-def
   <<: *staging-zeta-hgiarvados-def
 
-# terraform-validate-production-emedlab-arvados:
-#   <<: *terraform-validate-def
-#   <<: *production-emedlab-arvados-def
-    
-# terraform-validate-staging-emedlab-arvados:
-#   <<: *terraform-validate-def
-#   <<: *staging-emedlab-arvados-def
-
 terraform-validate-modules:
   stage: validate
   tags:
@@ -414,15 +376,6 @@ terraform-staging-zeta-hgiarvados:
   <<: *terraform-def
   <<: *staging-zeta-hgiarvados-def
 
-# terraform-production-emedlab-arvados:
-#   <<: *terraform-def
-#   <<: *production-emedlab-arvados-def
-
-# terraform-staging-emedlab-arvados:
-#   <<: *terraform-def
-#   <<: *staging-emedlab-arvados-def
-
-
 ###############################################################################
 # Stage: ansible
 ###############################################################################
@@ -477,15 +430,6 @@ ansible-production-zeta-hgiarvados:
 ansible-staging-zeta-hgiarvados:
   <<: *ansible-def
   <<: *staging-zeta-hgiarvados-def
-
-# ansible-production-emedlab-arvados:
-#   <<: *ansible-def
-#   <<: *production-emedlab-arvados-def
-
-# ansible-staging-emedlab-arvados:
-#   <<: *ansible-def
-#   <<: *staging-emedlab-arvados-def
-
 
 ###############################################################################
 # Stage: sync
