@@ -19,6 +19,9 @@ region_setup="${REGION}-${SETUP}"
 echo "Changing to terraform/${region_setup} directory"
 cd terraform/${region_setup}
 
+echo "Calling terraform get"
+terraform get
+
 echo "Calling terraform init"
 terraform init
 
@@ -36,9 +39,6 @@ if [[ ${workspace_exit_status} -ne 0 ]]; then
 	exit ${workspace_new_exit_status}
     fi
 fi
-
-echo "Calling terraform get"
-terraform get
 
 echo "Calling terraform plan"
 # FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
