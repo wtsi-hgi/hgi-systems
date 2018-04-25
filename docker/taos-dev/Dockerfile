@@ -1,3 +1,4 @@
+# doop dee doo
 FROM mercury/taos
 
 RUN apt-get update \
