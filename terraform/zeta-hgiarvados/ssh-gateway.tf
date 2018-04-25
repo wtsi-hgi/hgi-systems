@@ -2,8 +2,8 @@ module "ssh-gateway" {
   source = "../modules/ssh-gateway"
 
   image = {
-    name = "${var.freebsd_base_image_name}"
-    user = "${var.freebsd_base_image_user}"
+    name = "hgi-base-freebsd11-575611a5"
+    user = "beastie"
   }
 
   flavour            = "m1.small"

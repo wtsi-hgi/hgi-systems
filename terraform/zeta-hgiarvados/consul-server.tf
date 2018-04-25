@@ -3,8 +3,8 @@ module "consul-server" {
   count  = 3
 
   image = {
-    name = "${var.base_image_name}"
-    user = "${var.base_image_user}"
+    name = "hgi-base-xenial-d806d486"
+    user = "ubuntu"
   }
 
   flavour            = "m1.small"
