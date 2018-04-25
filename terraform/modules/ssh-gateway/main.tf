@@ -22,6 +22,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+  
 locals {
   ansible_groups = [
     "ssh-gateways",
@@ -30,7 +34,7 @@ locals {
 
 resource "openstack_networking_floatingip_v2" "ssh-gateway" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
 }
 
 resource "openstack_compute_instance_v2" "ssh-gateway" {

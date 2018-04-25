@@ -9,9 +9,11 @@ if [[ -n "${REGION:-}" ]]; then
     case $REGION in
 	delta)
 	    export TF_VAR_openstack_external_network_name=nova
+	    export TF_VAR_openstack_floatingip_pool_name=nova
 	    ;;
 	zeta)
 	    export TF_VAR_openstack_external_network_name=public
+	    export TF_VAR_openstack_floatingip_pool_name=public
 	    ;;
 	*)
 	    >&2 echo "REGION '${REGION}' not supported in 10-tf-vars.sh for external_network_name"

@@ -6,11 +6,12 @@ module "ssh-gateway" {
     user = "beastie"
   }
 
-  flavour            = "m1.small"
-  domain             = "zeta-hgi.hgi.sanger.ac.uk"
-  security_group_ids = "${module.openstack.security_group_ids}"
-  key_pair_ids       = "${module.openstack.key_pair_ids}"
-  network_id         = "${module.openstack.network_id}"
+  flavour              = "m1.small"
+  domain               = "zeta-hgi.hgi.sanger.ac.uk"
+  security_group_ids   = "${module.openstack.security_group_ids}"
+  key_pair_ids         = "${module.openstack.key_pair_ids}"
+  network_id           = "${module.openstack.network_id}"
+  floatingip_pool_name = "${var.openstack_floatingip_pool_name}"
 
   extra_ansible_groups = ["consul-cluster-zeta-hgi"]
 }
