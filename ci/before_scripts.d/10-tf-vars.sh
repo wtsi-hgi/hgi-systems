@@ -10,6 +10,12 @@ else
     >&2 echo "REGION unset or empty"
 fi
 
+if [[ -n "${SETUP:-}" ]]; then
+    export TF_VAR_setup=${SETUP}
+else
+    >&2 echo "SETUP unset or empty"
+fi
+
 if [[ -n "${CONSUL_TEMPLATE_TOKEN:-}" ]]; then
     export TF_VAR_consul_template_token=${CONSUL_TEMPLATE_TOKEN}
 else

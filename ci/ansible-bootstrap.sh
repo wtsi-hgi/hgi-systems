@@ -5,13 +5,14 @@ set -euf -o pipefail
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet CI_PROJECT_DIR REGION ANSIBLE_VAULT_PASSWORD_FILE TERRAFORM_CONSUL_TOKEN
+ensureSet CI_PROJECT_DIR REGION SETUP ANSIBLE_VAULT_PASSWORD_FILE TERRAFORM_CONSUL_TOKEN
 
 # ansible bootstrapping only necessary for gitlab runner and consul (terraform remote state)
 # if we've made it this far, gitlab runner must be working
 # check to see if terraform remote state is working
-echo "Testing terraform remote state for ${REGION}"
-tstate=$(cd terraform/${REGION} && (terraform init > /dev/null) && echo "ok" || echo "failed")
+region_setup="${REGION}-${SETUP}"
+echo "Testing terraform remote state for ${region_setup}"
+tstate=$(cd terraform/${region_setup} && (terraform init > /dev/null) && echo "ok" || echo "failed")
 if [[ "${tstate}" == "ok" ]]; then
     echo "Terraform remote state is ok, no need to bootstrap with ansible"
     exit 0
@@ -28,9 +29,8 @@ mkdir -p "${TMPDIR}"
 echo "Changing to ansible directory"
 cd ansible
 
-tenant=$(echo "${REGION}" | cut -f1 -d-)
 export ANSIBLE_CONFIG="${CI_PROJECT_DIR}/ansible/ansible.cfg"
-inventory=${tenant}-bootstrap_hosts.d
+inventory=${REGION}-bootstrap_hosts.d
 echo "Calling ansible-playbook bootstrap.yml on inventory ${inventory}"
 ansible-playbook -i ${inventory} --vault-password-file "${ANSIBLE_VAULT_PASSWORD_FILE}" bootstrap.yml
 playbook_exit_status=$?

@@ -50,7 +50,8 @@ stages:
 .production-delta-hgi: &production-delta-hgi-def
   variables:
     ENV: "production"
-    REGION: "delta-hgi"
+    REGION: "delta"
+    SETUP: "hgi"
   only:
     - master
     - production-delta-hgi
@@ -58,7 +59,8 @@ stages:
 .staging-delta-hgi: &staging-delta-hgi-def
   variables:
     ENV: "staging"
-    REGION: "delta-hgi"
+    REGION: "delta"
+    SETUP: "hgi"
   only:
     - develop
     - staging-delta-hgi
@@ -66,7 +68,8 @@ stages:
 .production-delta-hgiarvados: &production-delta-hgiarvados-def
   variables:
     ENV: "production"
-    REGION: "delta-hgiarvados"
+    REGION: "delta"
+    SETUP: "hgiarvados"
   only:
     - master
     - production-delta-hgiarvados
@@ -74,7 +77,8 @@ stages:
 .staging-delta-hgiarvados: &staging-delta-hgiarvados-def
   variables:
     ENV: "staging"
-    REGION: "delta-hgiarvados"
+    REGION: "delta"
+    SETUP: "hgiarvados"
   only:
     - develop
     - staging-delta-hgiarvados
@@ -82,7 +86,8 @@ stages:
 .production-zeta-hgi-core: &production-zeta-hgi-core-def
   variables:
     ENV: "production"
-    REGION: "zeta-hgi-core"
+    REGION: "zeta"
+    SETUP: "hgi-core"
   only:
     - master
     - production-zeta-hgi-core
@@ -90,7 +95,8 @@ stages:
 .staging-zeta-hgi-core: &staging-zeta-hgi-core-def
   variables:
     ENV: "staging"
-    REGION: "zeta-hgi-core"
+    REGION: "zeta"
+    SETUP: "hgi-core"
   only:
     - develop
     - staging-zeta-hgi-core
@@ -98,7 +104,8 @@ stages:
 .production-zeta-hgi: &production-zeta-hgi-def
   variables:
     ENV: "production"
-    REGION: "zeta-hgi"
+    REGION: "zeta"
+    SETUP: "hgi"
   only:
     - master
     - production-zeta-hgi
@@ -106,7 +113,8 @@ stages:
 .staging-zeta-hgi: &staging-zeta-hgi-def
   variables:
     ENV: "staging"
-    REGION: "zeta-hgi"
+    REGION: "zeta"
+    SETUP: "hgi"
   only:
     - develop
     - staging-zeta-hgi
@@ -114,7 +122,8 @@ stages:
 .production-zeta-hgiarvados: &production-zeta-hgiarvados-def
   variables:
     ENV: "production"
-    REGION: "zeta-hgiarvados"
+    REGION: "zeta"
+    SETUP: "hgiarvados"
   only:
     - master
     - production-zeta-hgiarvados
@@ -122,7 +131,8 @@ stages:
 .staging-zeta-hgiarvados: &staging-zeta-hgiarvados-def
   variables:
     ENV: "staging"
-    REGION: "zeta-hgiarvados"
+    REGION: "zeta"
+    SETUP: "hgiarvados"
   only:
     - develop
     - staging-zeta-hgiarvados

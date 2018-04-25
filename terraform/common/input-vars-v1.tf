@@ -6,6 +6,10 @@ variable "region" {
   type = "string"
 }
 
+variable "setup" {
+  type = "string"
+}
+
 variable "base_image_name" {
   type = "string"
 }

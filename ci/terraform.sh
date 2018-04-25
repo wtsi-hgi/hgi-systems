@@ -6,7 +6,7 @@ PARALLELISM=20
 SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source "${SCRIPT_DIRECTORY}/common.sh"
 
-ensureSet CI_PROJECT_DIR REGION ENV ANSIBLE_VAULT_PASSWORD TERRAFORM_CONSUL_TOKEN
+ensureSet CI_PROJECT_DIR REGION SETUP ENV ANSIBLE_VAULT_PASSWORD TERRAFORM_CONSUL_TOKEN
 
 export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
 
@@ -15,8 +15,9 @@ mkdir -p "${artifacts_dir}"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
 
-echo "Changing to terraform/${REGION} directory"
-cd terraform/${REGION}
+region_setup="${REGION}-${SETUP}"
+echo "Changing to terraform/${region_setup} directory"
+cd terraform/${region_setup}
 
 echo "Calling terraform init"
 terraform init
