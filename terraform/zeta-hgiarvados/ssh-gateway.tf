@@ -14,3 +14,11 @@ module "ssh-gateway" {
 
   extra_ansible_groups = ["consul-cluster-zeta-hgiarvados"]
 }
+
+output "ssh_gateway_host" {
+  value = "${module.ssh-gateway.host}"
+}
+
+output "ssh_gateway_user" {
+  value = "${module.ssh-gateway.user}"
+}
