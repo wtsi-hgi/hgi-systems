@@ -6,8 +6,8 @@ SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 >&2 echo "Updating apt cache in the background"
 nohup apt update  > /dev/null 2>&1 &
 
->&2 echo "Remove old Terraform working directories"
-rm -rf /mnt/host/hgi-systems/terraform/delta-hgi/.terraformrm -rf /mnt/host/hgi-systems/terraform/delta-hgi/.terraform
+>&2 echo "Removing old Terraform working directories"
+rm -rf /mnt/host/hgi-systems/terraform/delta-hgi/.terraform
 rm -rf /mnt/host/hgi-systems/terraform/delta-hgiarvados/.terraform
 
 >&2 echo "Setting up copy of the host user"
