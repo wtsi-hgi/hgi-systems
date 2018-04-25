@@ -8,7 +8,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill consul-agent
 ExecStartPre=-/usr/bin/docker rm consul-agent
 ExecStartPre=/usr/bin/docker pull consul
-ExecStart=/bin/bash -c '/usr/bin/docker run --name consul-agent --net=host -v {{ docker_consul_agent_config_dir }}:/consul/config consul agent'
+ExecStart=/bin/bash -c '/usr/bin/docker run --name consul-agent --net=host -v {{ docker_consul_agent_config_dir }}:/consul/config {{ docker_consul_consul_docker_image }} agent'
 
 [Install]
 WantedBy=multi-user.target

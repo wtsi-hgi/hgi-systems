@@ -53,3 +53,7 @@ docker_consul_agent_client_addr: 0.0.0.0
 docker_consul_agent_retry_join_json: "{{ docker_consul_agent_retry_join | to_json }}"
 docker_consul_agent_recursors_json: "{{ docker_consul_agent_recursors | to_json }}"
 
+###############################################################################
+# Defaults for consul docker
+###############################################################################
+docker_consul_consul_docker_image: consul:1.0.7

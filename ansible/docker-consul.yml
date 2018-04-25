@@ -155,6 +155,10 @@
         docker_consul_server_client_addr: 0.0.0.0
         docker_consul_server_bootstrap_expect: "{{ docker_consul_cluster_SPECIFIC_GROUP_server_count }}"
         ###############################################################################
+        # Defaults for consul docker
+        ###############################################################################
+        docker_consul_consul_docker_image: consul:1.0.7
+        ###############################################################################
         # Generic defaults
         ###############################################################################
         docker_consul_server_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}"
@@ -203,13 +207,14 @@
       import_role:
         name: docker-consul-agent
       vars:
-        docker_consul_agent_retry_join: "{{ docker_consul_cluster_SPECIFIC_GROUP_retry_join }}" 
+        docker_consul_agent_retry_join: "{{ docker_consul_cluster_SPECIFIC_GROUP_retry_join }}"
         docker_consul_agent_recursors:  "{{ docker_consul_cluster_SPECIFIC_GROUP_recursors }}"
         docker_consul_agent_acl_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_acl_datacenter }}"
         docker_consul_agent_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}"
         docker_consul_agent_acl_token:  "{{ consul_credentials_GROUP_creds['agent'].token }}"
         docker_consul_agent_encrypt:  "{{ consul_credentials_GROUP_encrypt }}"
         docker_consul_agent_config_dir: /etc/docker-consul-agent-config.d
+        docker_consul_consul_docker_image: consul:1.0.7
 
 - hosts: docker-consul-servers, docker-consul-agents
   vars:

@@ -64,6 +64,11 @@ docker_consul_server_recursors_json: "{{ docker_consul_server_recursors | to_jso
 docker_consul_server_bootstrap_expect: 3
 
 ###############################################################################
+# Defaults for consul docker
+###############################################################################
+docker_consul_consul_docker_image: consul:1.0.7
+
+###############################################################################
 # Generic defaults
 ###############################################################################
 docker_consul_server_apt_cache_valid_time: 3600
