@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -eu -o pipefail
 
+>&2 echo "Removing old Terraform working directories"
+rm -rf /mnt/host/hgi-systems/terraform/delta-hgi/.terraform
+rm -rf /mnt/host/hgi-systems/terraform/delta-hgiarvados/.terraform
+
 >&2 echo "Setting Ansible Vault password"
 echo "${ANSIBLE_VAULT_PASSWORD}" > ~/.ansible-vault.pw
 export ANSIBLE_VAULT_PASSWORD_FILE=~/.ansible-vault.pw
