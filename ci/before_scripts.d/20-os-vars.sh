@@ -20,6 +20,7 @@ elif [[ "$REGION" == "zeta-hgi" ]]; then
     export OS_PASSWORD=${ZETA_OS_PASSWORD}
     export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
     if [[ "${OS_AUTH_VERSION}" == "3" ]]; then
+	echo "Using OS auth version 3"
 	export OS_PROJECT_NAME="hgi"
 	export OS_USER_DOMAIN_NAME="Default"
     else
@@ -31,6 +32,7 @@ elif [[ "$REGION" == "zeta-hgiarvados" ]]; then
     export OS_PASSWORD=${ZETA_OS_PASSWORD}
     export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
     if [[ "${OS_AUTH_VERSION}" == "3" ]]; then
+	echo "Using OS auth version 3"
 	export OS_PROJECT_NAME="hgiarvados"
 	export OS_USER_DOMAIN_NAME="Default"
     else
