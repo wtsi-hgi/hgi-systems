@@ -1,7 +1,8 @@
 REGION=${REGION:-}
 
 if [[ -z "$REGION" ]]; then
-    echo "REGION unset or empty"
+    echo "REGION unset or empty, not setting any OS vars"
+    exit 0
 fi
 
 case $REGION in
@@ -15,10 +16,11 @@ case $REGION in
 	export OS_USERNAME=${ZETA_OS_USERNAME}
 	export OS_PASSWORD=${ZETA_OS_PASSWORD}
 	export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
+	>&2 echo "OS credentials for zeta set"
 	;;
     *)
-	>&2 echo "REGION ${REGION} not recognized in 20-os-vars.sh, not setting OS_ vars"
-	>&2 echo "refusing to continue without recognized REGION"
+	>&2 echo "REGION '${REGION}' not recognized in 20-os-vars.sh, not setting OS_ vars"
+	>&2 echo "Refusing to continue without recognized REGION"
 	exit 1
 	;;
 esac
@@ -35,6 +37,11 @@ function export_tenant_or_project {
     fi
 }
 
+if [[ -z "$SETUP" ]]; then
+    echo "SETUP unset or empty, not setting tenant/project vars"
+    exit 0
+fi
+
 case $SETUP in
     hgi-ci|hgi-ci-*)
 	export_tenant_or_project hgi-ci
@@ -47,5 +54,10 @@ case $SETUP in
 	;;
     hgiarvados|hgiarvados-*)
 	export_tenant_or_project hgiarvados
+	;;
+    *)
+	>&2 echo "SETUP '${SETUP}' not recognized in 20-os-vars.sh, not setting tenant/project vars"
+	>&2 echo "Refusing to continue without recognized SETUP"
+	exit 1
 	;;
 esac
