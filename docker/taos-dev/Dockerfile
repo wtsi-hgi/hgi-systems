@@ -1,5 +1,4 @@
-# doop dee doo
-FROM mercury/taos
+FROM mercury/taos:2a258aa4e235
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
