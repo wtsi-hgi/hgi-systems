@@ -1,4 +1,4 @@
-FROM mercury/taos:2a258aa4e235
+FROM mercury/taos
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -14,3 +14,5 @@ RUN git clone --depth=1 https://github.com/ingydotnet/git-subrepo /usr/local/src
     && echo "source /usr/local/src/git-subrepo/.rc" >> ~/.bashrc
 
 CMD ["bash"]
+
+RUN echo "FIXME: I am a comment to get this to rebuild"
