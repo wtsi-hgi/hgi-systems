@@ -1,4 +1,5 @@
 REGION=${REGION:-}
+OS_AUTH_VERSION=${OS_AUTH_VERSION:-2}
 # TODO: Reduce code duplication here
 if [[ -z "$REGION" ]]; then
     echo "REGION unset or empty"
