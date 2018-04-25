@@ -2,7 +2,7 @@ REGION=${REGION:-}
 
 if [[ -z "$REGION" ]]; then
     echo "REGION unset or empty, not setting any OS vars"
-    exit 0
+    return
 fi
 
 case $REGION in
@@ -39,7 +39,7 @@ function export_tenant_or_project {
 
 if [[ -z "$SETUP" ]]; then
     echo "SETUP unset or empty, not setting tenant/project vars"
-    exit 0
+    return
 fi
 
 case $SETUP in
