@@ -6,6 +6,17 @@ fi
 
 if [[ -n "${REGION:-}" ]]; then
     export TF_VAR_region=${REGION}
+    case $REGION in
+	delta)
+	    export TF_VAR_openstack_external_network_name=nova
+	    ;;
+	zeta)
+	    export TF_VAR_openstack_external_network_name=public
+	    ;;
+	*)
+	    >&2 echo "REGION '${REGION}' not supported in 10-tf-vars.sh for external_network_name"
+	    ;;
+	esac
 else
     >&2 echo "REGION unset or empty"
 fi
