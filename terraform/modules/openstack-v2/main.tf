@@ -389,7 +389,7 @@ resource "openstack_networking_router_v2" "main_ext" {
   count            = "${var.router_count}"
   provider         = "openstack"
   name             = "main_ext_${var.region}_${var.env}"
-  external_gateway = "${openstack_networking_network_v2.external_network.id}"
+  external_gateway = "${data.openstack_networking_network_v2.external_network.id}"
 }
 
 resource "openstack_networking_router_interface_v2" "main_ext" {
