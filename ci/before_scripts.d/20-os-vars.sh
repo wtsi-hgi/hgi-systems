@@ -1,5 +1,4 @@
 REGION=${REGION:-}
-OS_AUTH_VERSION=${OS_AUTH_VERSION:-2}
 # TODO: Reduce code duplication here
 if [[ -z "$REGION" ]]; then
     echo "REGION unset or empty"
@@ -19,8 +18,8 @@ elif [[ "$REGION" == "zeta-hgi" ]]; then
     export OS_USERNAME=${ZETA_OS_USERNAME}
     export OS_PASSWORD=${ZETA_OS_PASSWORD}
     export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-    if [[ "${OS_AUTH_VERSION}" == "3" ]]; then
-	echo "Using OS auth version 3"
+    if [[ "${CI_JOB_STAGE}" == "terraform" ]]; then
+	echo "Using OS auth version 3 for terraform"
 	export OS_PROJECT_NAME="hgi"
 	export OS_USER_DOMAIN_NAME="Default"
     else
@@ -31,8 +30,8 @@ elif [[ "$REGION" == "zeta-hgiarvados" ]]; then
     export OS_USERNAME=${ZETA_OS_USERNAME}
     export OS_PASSWORD=${ZETA_OS_PASSWORD}
     export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-    if [[ "${OS_AUTH_VERSION}" == "3" ]]; then
-	echo "Using OS auth version 3"
+    if [[ "${CI_JOB_STAGE}" == "terraform" ]]; then
+	echo "Using OS auth version 3 for terraform"
 	export OS_PROJECT_NAME="hgiarvados"
 	export OS_USER_DOMAIN_NAME="Default"
     else

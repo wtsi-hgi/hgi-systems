@@ -351,10 +351,8 @@ terraform-validate-modules:
   tags:
     - docker
   image: mercury/taos
-  variables:
-    OS_AUTH_VERSION: 3
   script:
-    - ci/terraform.sh
+    - OS_AUTH_VERSION=3 ci/terraform.sh
   artifacts:
     paths:
       - artifacts
