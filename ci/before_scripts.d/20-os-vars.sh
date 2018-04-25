@@ -18,17 +18,23 @@ elif [[ "$REGION" == "zeta-hgi" ]]; then
     export OS_USERNAME=${ZETA_OS_USERNAME}
     export OS_PASSWORD=${ZETA_OS_PASSWORD}
     export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-    export OS_TENANT_NAME="hgi"
-    export OS_PROJECT_NAME="hgi"
-    export OS_USER_DOMAIN_NAME="Default"
+    if [[ "${OS_AUTH_VERSION}" == "3" ]]; then
+	export OS_PROJECT_NAME="hgi"
+	export OS_USER_DOMAIN_NAME="Default"
+    else
+	export OS_TENANT_NAME="hgi"
+    fi
     echo "OS vars for zeta-hgi set"
 elif [[ "$REGION" == "zeta-hgiarvados" ]]; then
     export OS_USERNAME=${ZETA_OS_USERNAME}
     export OS_PASSWORD=${ZETA_OS_PASSWORD}
     export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-    export OS_TENANT_NAME="hgiarvados"
-    export OS_PROJECT_NAME="hgiarvados"
-    export OS_USER_DOMAIN_NAME="Default"
+    if [[ "${OS_AUTH_VERSION}" == "3" ]]; then
+	export OS_PROJECT_NAME="hgiarvados"
+	export OS_USER_DOMAIN_NAME="Default"
+    else
+	export OS_TENANT_NAME="hgiarvados"
+    fi
     echo "OS vars for zeta-hgiarvados set"
 elif [[ "$REGION" == "delta-hgi-dev" ]]; then
     export OS_USERNAME=${DELTA_OS_USERNAME}
