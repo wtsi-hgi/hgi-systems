@@ -10,6 +10,6 @@ variable consul_template_token {
   type = "string"
 }
 
-variable openstack_external_gateway {
+variable openstack_external_network_name {
   type = "string"
 }

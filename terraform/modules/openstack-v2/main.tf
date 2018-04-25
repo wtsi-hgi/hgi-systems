@@ -3,7 +3,7 @@ variable "region" {}
 variable "mercury_keypair" {}
 variable "subnet" {}
 variable "gateway_ip" {}
-variable "external_gateway" {}
+variable "external_network_name" {}
 
 variable "router_count" {
   default = 1
@@ -354,7 +354,14 @@ output "security_group_ids" {
 }
 
 ###############################################################################
-# Networks, Subnets, Routers
+# Look up external network id from name
+###############################################################################
+data "openstack_networking_network_v2" "external_network" {
+  name = "${var.external_network_name}"
+}
+
+###############################################################################
+# Configure Networks, Subnets, & Routers
 ###############################################################################
 resource "openstack_networking_network_v2" "main" {
   provider       = "openstack"
@@ -382,7 +389,7 @@ resource "openstack_networking_router_v2" "main_ext" {
   count            = "${var.router_count}"
   provider         = "openstack"
   name             = "main_ext_${var.region}_${var.env}"
-  external_gateway = "${var.external_gateway}"
+  external_gateway = "${openstack_networking_network_v2.external_network.id}"
 }
 
 resource "openstack_networking_router_interface_v2" "main_ext" {
