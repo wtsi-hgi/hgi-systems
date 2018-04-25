@@ -83,6 +83,22 @@ stages:
     - develop
     - staging-delta-hgiarvados
 
+.production-zeta-hgi-core: &production-zeta-hgi-core-def
+  variables:
+    ENV: "production"
+    REGION: "zeta-hgi-core"
+  only:
+    - master
+    - production-zeta-hgi-core
+  
+.staging-zeta-hgi-core: &staging-zeta-hgi-core-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta-hgi-core"
+  only:
+    - develop
+    - staging-zeta-hgi-core
+  
 .production-zeta-hgi: &production-zeta-hgi-def
   variables:
     ENV: "production"
@@ -190,6 +206,14 @@ openstack-vars-validate-staging-delta-hgiarvados:
   <<: *openstack-vars-validate-def
   <<: *staging-delta-hgiarvados-def
 
+openstack-vars-validate-production-zeta-hgi-core:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgi-core-def
+    
+openstack-vars-validate-staging-zeta-hgi:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgi-def
+    
 openstack-vars-validate-production-zeta-hgi:
   <<: *openstack-vars-validate-def
   <<: *production-zeta-hgi-def
@@ -269,22 +293,6 @@ os-images-validate-staging-delta-hgiarvados:
   <<: *os-images-validate-def
   <<: *staging-delta-hgiarvados-def
 
-os-images-validate-production-zeta-hgi:
-  <<: *os-images-validate-def
-  <<: *production-zeta-hgi-def
-
-os-images-validate-staging-zeta-hgi:
-  <<: *os-images-validate-def
-  <<: *staging-zeta-hgi-def
-
-os-images-validate-production-zeta-hgiarvados:
-  <<: *os-images-validate-def
-  <<: *production-zeta-hgiarvados-def
-
-os-images-validate-staging-zeta-hgiarvados:
-  <<: *os-images-validate-def
-  <<: *staging-zeta-hgiarvados-def
-
 .terraform-validate: &terraform-validate-def
   stage: validate
   tags:
@@ -309,6 +317,14 @@ terraform-validate-staging-delta-hgiarvados:
   <<: *terraform-validate-def
   <<: *staging-delta-hgiarvados-def
 
+terraform-validate-production-zeta-hgi-core:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgi-core-def
+    
+terraform-validate-staging-zeta-hgi-core:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgi-core-def
+    
 terraform-validate-production-zeta-hgi:
   <<: *terraform-validate-def
   <<: *production-zeta-hgi-def
@@ -374,6 +390,14 @@ terraform-staging-delta-hgiarvados:
   <<: *terraform-def
   <<: *staging-delta-hgiarvados-def
 
+terraform-production-zeta-hgi-core:
+  <<: *terraform-def
+  <<: *production-zeta-hgi-core-def
+
+terraform-staging-zeta-hgi-core:
+  <<: *terraform-def
+  <<: *staging-zeta-hgi-core-def
+
 terraform-production-zeta-hgi:
   <<: *terraform-def
   <<: *production-zeta-hgi-def
@@ -429,6 +453,14 @@ ansible-production-delta-hgiarvados:
 ansible-staging-delta-hgiarvados:
   <<: *ansible-def
   <<: *staging-delta-hgiarvados-def
+
+ansible-production-zeta-hgi-core:
+  <<: *ansible-def
+  <<: *production-zeta-hgi-core-def
+
+ansible-staging-zeta-hgi-core:
+  <<: *ansible-def
+  <<: *staging-zeta-hgi-core-def
 
 ansible-production-zeta-hgi:
   <<: *ansible-def
