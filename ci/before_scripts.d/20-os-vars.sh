@@ -27,13 +27,13 @@ esac
 
 function export_tenant_or_project {
     tenant_or_project=$1
-    if [[ "${CI_JOB_STAGE}" == "terraform" ]]; then
-	export OS_PROJECT_NAME="${tenant_or_project}"
-	export OS_USER_DOMAIN_NAME="Default"
-	>&2 echo "OS_PROJECT_NAME set to ${tenant_or_project} (using v3+ auth)"
+    if [[ "${CI_JOB_STAGE}" == "terraform*" ]]; then
+        export OS_PROJECT_NAME="${tenant_or_project}"
+        export OS_USER_DOMAIN_NAME="Default"
+        >&2 echo "OS_PROJECT_NAME set to ${tenant_or_project} (using v3+ auth)"
     else
-	export OS_TENANT_NAME="${tenant_or_project}"
-	>&2 echo "OS_TENANT_NAME set to ${tenant_or_project} (using v2 auth)"
+        export OS_TENANT_NAME="${tenant_or_project}"
+        >&2 echo "OS_TENANT_NAME set to ${tenant_or_project} (using v2 auth)"
     fi
 }
 
