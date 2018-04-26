@@ -12,7 +12,7 @@ ensureSet CI_PROJECT_DIR REGION SETUP ANSIBLE_VAULT_PASSWORD_FILE TERRAFORM_CONS
 # check to see if terraform remote state is working
 region_setup="${REGION}-${SETUP}"
 echo "Testing terraform remote state for ${region_setup}"
-tstate=$(cd terraform/${region_setup} && (terraform init > /dev/null) && echo "ok" || echo "failed")
+tstate=$(cd terraform/${region_setup} && (CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}" terraform init > /dev/null) && echo "ok" || echo "failed")
 if [[ "${tstate}" == "ok" ]]; then
     echo "Terraform remote state is ok, no need to bootstrap with ansible"
     exit 0
