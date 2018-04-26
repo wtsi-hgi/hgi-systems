@@ -15,4 +15,4 @@ RUN git clone --depth=1 https://github.com/ingydotnet/git-subrepo /usr/local/src
 
 CMD ["bash"]
 
-RUN echo "FIXME: I am a comment to get this to rebuild"
+RUN echo "FIXME: I'm a comment to get this to rebuild"

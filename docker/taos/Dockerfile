@@ -13,6 +13,7 @@ RUN apt-get update \
          s3cmd \
          libssl-dev \
          libffi-dev \
+         ruby \
     && rm -rf /var/lib/apt/lists/*
 
 # Install ansible
