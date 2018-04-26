@@ -28,6 +28,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+
 locals {
   ansible_groups = [
     "arvados-workbenches",
@@ -39,7 +43,7 @@ locals {
 
 resource "openstack_networking_floatingip_v2" "arvados-workbench" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
 }
 
 resource "openstack_compute_instance_v2" "arvados-workbench" {

@@ -23,9 +23,13 @@ variable "bastion" {
   default = {}
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+
 resource "openstack_networking_floatingip_v2" "studentportal" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
   count    = "${var.count}"
 }
 

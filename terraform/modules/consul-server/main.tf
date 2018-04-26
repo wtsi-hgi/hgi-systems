@@ -24,13 +24,17 @@ variable "bastion" {
   default = {}
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+
 locals {
   hostname_format = "${format("consul-server-%s", var.consul_datacenter)}-%02d"
 }
 
 resource "openstack_networking_floatingip_v2" "consul-server" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
   count    = "${var.count}"
 }
 

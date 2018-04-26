@@ -398,12 +398,14 @@ resource "openstack_networking_subnet_v2" "main" {
   dns_nameservers = ["172.18.255.1", "172.18.255.2", "172.18.255.3"]
 }
 
+# TODO: ties to legacy public network name ("nova")
 resource "openstack_networking_router_v2" "main_nova" {
   provider         = "openstack"
   name             = "main_nova_${var.region}_${var.env}"
   external_gateway = "9f50f282-2a4c-47da-88f8-c77b6655c7db"
 }
 
+# TODO: ties to legacy public network name ("nova")
 resource "openstack_networking_router_interface_v2" "main_nova" {
   provider  = "openstack"
   router_id = "${openstack_networking_router_v2.main_nova.id}"

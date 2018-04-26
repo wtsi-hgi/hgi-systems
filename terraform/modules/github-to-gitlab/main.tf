@@ -27,6 +27,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+
 locals {
   ansible_groups = [
     "github-to-gitlabs",
@@ -35,7 +39,7 @@ locals {
 
 resource "openstack_networking_floatingip_v2" "github-to-gitlab" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
 }
 
 resource "openstack_compute_instance_v2" "github-to-gitlab" {

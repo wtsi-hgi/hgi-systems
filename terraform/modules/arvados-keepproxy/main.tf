@@ -29,6 +29,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+
 locals {
   ansible_groups = [
     "arvados-keepproxies",
@@ -42,7 +46,7 @@ locals {
 
 resource "openstack_networking_floatingip_v2" "arvados-keepproxy" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
   count    = "${var.count}"
 }
 

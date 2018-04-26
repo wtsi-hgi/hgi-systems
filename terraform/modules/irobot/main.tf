@@ -33,6 +33,10 @@ variable "volume_size_gb" {
   default = 250
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+
 locals {
   ansible_groups = [
     "irobots",
@@ -41,7 +45,7 @@ locals {
 
 resource "openstack_networking_floatingip_v2" "irobot" {
   provider = "openstack"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
 }
 
 resource "openstack_compute_instance_v2" "irobot" {
