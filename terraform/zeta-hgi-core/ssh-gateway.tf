@@ -13,7 +13,7 @@ module "ssh-gateway" {
   network_id           = "${module.openstack.network_id}"
   floatingip_pool_name = "${var.openstack_floatingip_pool_name}"
 
-  extra_ansible_groups = ["consul-cluster-zeta-hgi"]
+  extra_ansible_groups = ["docker-consul-cluster-zeta-hgi"]
 }
 
 output "ssh_gateway_host" {
