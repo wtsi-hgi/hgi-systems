@@ -334,7 +334,7 @@ terraform-validate-modules:
 ###############################################################################
 # Common Terraform setup
 ###############################################################################
-.terraform: &terraform-common-def
+.terraform-common: &terraform-common-def
   tags:
     - docker
   image: mercury/taos
@@ -348,7 +348,7 @@ terraform-validate-modules:
 ###############################################################################
 # Stage: terraform-core
 ###############################################################################
-.terraform: &terraform-core-def
+.terraform-core: &terraform-core-def
   <<: *terraform-common-def
   stage: terraform-core
 
