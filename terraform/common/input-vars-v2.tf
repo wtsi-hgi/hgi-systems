@@ -6,6 +6,10 @@ variable "region" {
   type = "string"
 }
 
+variable "setup" {
+  type = "string"
+}
+
 variable consul_template_token {
   type = "string"
 }
