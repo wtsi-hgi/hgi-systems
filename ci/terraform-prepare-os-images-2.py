@@ -34,6 +34,7 @@ def run(configuration: RunConfiguration):
     :param configuration: the run configuration
     """
     image_names = get_image_names_referenced_in_terraform_plan(configuration.terraform_plan_location)
+    print("Referenced images: %s" % (image_names, ), file=sys.stderr)
 
     named_futures = {}  # type: Dict[str, Future]
     with ThreadPoolExecutor(max_workers=_MAX_CONCURRENT_DOWNLOADS) as executor:
@@ -42,7 +43,7 @@ def run(configuration: RunConfiguration):
 
     # Prints IDs nice and together at the end
     for name, future in named_futures.items():
-        print("%s in OpenStack with ID: %s" % (name, future.result()))
+        print("%s in OpenStack with ID: %s" % (name, future.result()), file=sys.stderr)
 
 
 def prepare_os_image(image_name: str, image_bucket: str) -> _OpenStackId:
