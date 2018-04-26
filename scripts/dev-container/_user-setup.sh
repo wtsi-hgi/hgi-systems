@@ -32,10 +32,6 @@ eval $(ssh-agent) > /dev/null 2>&1
 ssh-add ~/.ssh/*.key > /dev/null 2>&1
 
 >&2 echo "Sourcing before scripts"
-(/mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d &> /tmp/sourcing.log) \
-    || (echo "Before scripts failed with exit code $0" && cat /tmp/sourcing.log && echo "(Failure above)" && exit 1)
-rm /tmp/sourcing.log
-## XXX: There's inevitably a much better way of coping with errors whilst sourcing than doing it twice!
 . /mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d 2>&1 | sed 's/^/    /g'
 
 >&2 echo "Starting shell..."
