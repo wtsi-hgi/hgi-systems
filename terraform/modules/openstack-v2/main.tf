@@ -1,5 +1,6 @@
 variable "env" {}
 variable "region" {}
+variable "setup" {}
 variable "mercury_keypair" {}
 variable "subnet" {}
 variable "gateway_ip" {}
@@ -24,7 +25,7 @@ variable "host_routes" {
 ###############################################################################
 resource "openstack_compute_keypair_v2" "mercury" {
   provider   = "openstack"
-  name       = "mercury_${var.region}_${var.env}"
+  name       = "mercury_${var.region}_${var.setup}_${var.env}"
   public_key = "${var.mercury_keypair}"
 }
 
@@ -46,7 +47,7 @@ data "openstack_networking_network_v2" "external_network" {
 ###############################################################################
 resource "openstack_networking_network_v2" "main" {
   provider       = "openstack"
-  name           = "main_${var.region}_${var.env}"
+  name           = "main_${var.region}_${var.setup}_${var.env}"
   admin_state_up = "true"
 }
 
@@ -57,7 +58,7 @@ output "network_id" {
 
 resource "openstack_networking_subnet_v2" "main" {
   provider        = "openstack"
-  name            = "main_${var.region}_${var.env}"
+  name            = "main_${var.region}_${var.setup}_${var.env}"
   network_id      = "${openstack_networking_network_v2.main.id}"
   cidr            = "${var.subnet}"
   ip_version      = 4
@@ -69,7 +70,7 @@ resource "openstack_networking_subnet_v2" "main" {
 resource "openstack_networking_router_v2" "main_ext" {
   count               = "${var.router_count}"
   provider            = "openstack"
-  name                = "main_ext_${var.region}_${var.env}"
+  name                = "main_ext_${var.region}_${var.setup}_${var.env}"
   external_network_id = "${data.openstack_networking_network_v2.external_network.id}"
 }
 

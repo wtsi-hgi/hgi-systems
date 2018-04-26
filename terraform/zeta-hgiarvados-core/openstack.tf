@@ -2,6 +2,7 @@ module "openstack" {
   source                = "../modules/openstack-v2"
   env                   = "${var.env}"
   region                = "${var.region}"
+  setup                 = "${var.setup}"
   mercury_keypair       = "${var.mercury_keypair}"
   subnet                = "10.101.0.0/24"
   gateway_ip            = "10.101.0.1"
