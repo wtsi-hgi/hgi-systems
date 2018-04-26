@@ -68,6 +68,9 @@ fi
 echo "Preparing required OpenStack images (S3 -> OS if not in OS)"
 "${SCRIPT_DIRECTORY}/terraform-prepare-os-images-2.py plan ${S3_IMAGE_BUCKET}"
 
+echo "Bailing out for now to check that this is not going to destroy the world..."
+exit 1
+
 echo "Generating /tmp/ansible_vault.pw"
 (echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
