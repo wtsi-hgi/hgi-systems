@@ -33,6 +33,10 @@ variable "volume_size_gb" {
   default = 20
 }
 
+variable "floatingip_pool_name" {
+  default = "nova"
+}
+  
 locals {
   ansible_groups = [
     "hail-masters",
@@ -45,7 +49,7 @@ locals {
 resource "openstack_networking_floatingip_v2" "hail-master" {
   provider = "openstack"
   count    = "${var.count}"
-  pool     = "nova"
+  pool     = "${var.floatingip_pool_name}"
 }
 
 resource "openstack_compute_instance_v2" "hail-master" {
