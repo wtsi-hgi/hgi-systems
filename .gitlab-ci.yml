@@ -40,6 +40,7 @@ stages:
   - bootstrap-validate
   - bootstrap
   - validate
+  - terraform-core
   - terraform
   - ansible
   - sync
@@ -330,12 +331,10 @@ terraform-validate-modules:
     - ci/terraform-fmt.sh "terraform/modules"
   dependencies: []
 
-
 ###############################################################################
-# Stage: terraform
+# Common Terraform setup
 ###############################################################################
-.terraform: &terraform-def
-  stage: terraform
+.terraform: &terraform-common-def
   tags:
     - docker
   image: mercury/taos
@@ -345,6 +344,28 @@ terraform-validate-modules:
     paths:
       - artifacts
     when: always
+
+###############################################################################
+# Stage: terraform-core
+###############################################################################
+.terraform: &terraform-core-def
+  <<: *terraform--common-def
+  stage: terraform-core
+
+terraform-production-zeta-hgi-core:
+  <<: *terraform-core-def
+  <<: *production-zeta-hgi-core-def
+
+terraform-staging-zeta-hgi-core:
+  <<: *terraform-core-def
+  <<: *staging-zeta-hgi-core-def
+
+###############################################################################
+# Stage: terraform
+###############################################################################
+.terraform: &terraform-def
+  <<: *terraform--common-def
+  stage: terraform
 
 terraform-production-delta-hgi:
   <<: *terraform-def
@@ -361,14 +382,6 @@ terraform-production-delta-hgiarvados:
 terraform-staging-delta-hgiarvados:
   <<: *terraform-def
   <<: *staging-delta-hgiarvados-def
-
-terraform-production-zeta-hgi-core:
-  <<: *terraform-def
-  <<: *production-zeta-hgi-core-def
-
-terraform-staging-zeta-hgi-core:
-  <<: *terraform-def
-  <<: *staging-zeta-hgi-core-def
 
 terraform-production-zeta-hgi:
   <<: *terraform-def
