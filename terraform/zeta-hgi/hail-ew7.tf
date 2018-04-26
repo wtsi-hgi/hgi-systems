@@ -7,11 +7,12 @@ module "hail-master-ew7" {
     user = "ubuntu"
   }
 
-  flavour            = "m1.large"
-  domain             = "hgi.sanger.ac.uk"
-  security_group_ids = "${data.terraform_remote_state.hgi-core.openstack_security_group_ids}"
-  key_pair_ids       = "${data.terraform_remote_state.hgi-core.openstack_key_pair_ids}"
-  network_id         = "${data.terraform_remote_state.hgi-core.openstack_network_id}"
+  flavour              = "m1.large"
+  domain               = "hgi.sanger.ac.uk"
+  security_group_ids   = "${data.terraform_remote_state.hgi-core.openstack_security_group_ids}"
+  key_pair_ids         = "${data.terraform_remote_state.hgi-core.openstack_key_pair_ids}"
+  network_id           = "${data.terraform_remote_state.hgi-core.openstack_network_id}"
+  floatingip_pool_name = "${var.openstack_floatingip_pool_name}"
 
   bastion = {
     host = "${data.terraform_remote_state.hgi-core.ssh_gateway_host}"
