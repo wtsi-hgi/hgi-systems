@@ -26,8 +26,15 @@ os.zeta-hgi.volume.consul03 managed_by=ansible
 [openstack-volumes-consul:children]
 openstack-volumes-consul-zeta
 
+[openstack-volumes-gitlab-runner-zeta]
+os.zeta-hgi.volume.gitlab-runner-zeta-hgi-ci-01 managed_by=ansible
+
+[openstack-volumes-gitlab-runner:children]
+openstack-volumes-gitlab-runner-zeta
+
 [openstack-volumes:children]
 openstack-volumes-consul
+openstack-volumes-gitlab-runner
 
 [openstack:children]
 openstack-volumes
