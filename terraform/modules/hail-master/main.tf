@@ -36,7 +36,7 @@ variable "volume_size_gb" {
 variable "floatingip_pool_name" {
   default = "nova"
 }
-  
+
 locals {
   ansible_groups = [
     "hail-masters",
