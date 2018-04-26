@@ -66,7 +66,7 @@ else
 fi
 
 echo "Preparing required OpenStack images (S3 -> OS if not in OS)"
-"${SCRIPT_DIRECTORY}/terraform-prepare-os-images-2.py" plan "${S3_IMAGE_BUCKET}"
+"${SCRIPT_DIRECTORY}/terraform-prepare-os-images-2.py" plan.txt "${S3_IMAGE_BUCKET}"
 
 echo "Bailing out for now to check that this is not going to destroy the world..."
 exit 1
