@@ -34,7 +34,7 @@ def run(configuration: RunConfiguration):
     :param configuration: the run configuration
     """
     image_names = get_image_names_referenced_in_terraform_plan(configuration.terraform_plan_location)
-    print("Referenced images: %s" % (image_names, ), file=sys.stderr)
+    print("Referenced images: %s" % (image_names, ), file=sys.stderr, flush=True)
 
     named_futures = {}  # type: Dict[str, Future]
     with ThreadPoolExecutor(max_workers=_MAX_CONCURRENT_DOWNLOADS) as executor:
