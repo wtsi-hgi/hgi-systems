@@ -3,12 +3,10 @@ module "ssh-gateway" {
 
   image = "${module.hgi-openstack-image-hgi-base-freebsd11-4cb02ffa.image}"
 
-  flavour              = "m1.small"
-  domain               = "zeta-hgiarvados.hgi.sanger.ac.uk"
-  security_group_ids   = "${module.openstack.security_group_ids}"
-  key_pair_ids         = "${module.openstack.key_pair_ids}"
-  network_id           = "${module.openstack.network_id}"
-  floatingip_pool_name = "${var.openstack_floatingip_pool_name}"
+  flavour                = "m1.small"
+  domain                 = "zeta-hgiarvados.hgi.sanger.ac.uk"
+  openstack_core_context = "${module.openstack.context}"
+  floatingip_pool_name   = "${var.openstack_floatingip_pool_name}"
 
   extra_ansible_groups = ["docker-consul-cluster-zeta-hgiarvados"]
 }

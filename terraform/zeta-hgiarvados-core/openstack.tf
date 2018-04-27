@@ -12,14 +12,6 @@ module "openstack" {
   external_network_name = "${var.openstack_external_network_name}"
 }
 
-output "openstack_security_group_ids" {
-  value = "${module.openstack.security_group_ids}"
-}
-
-output "openstack_key_pair_ids" {
-  value = "${module.openstack.key_pair_ids}"
-}
-
-output "openstack_network_id" {
-  value = "${module.openstack.network_id}"
+output "core_context" {
+  value = "${module.openstack.context}"
 }

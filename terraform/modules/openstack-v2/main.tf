@@ -29,8 +29,8 @@ resource "openstack_compute_keypair_v2" "mercury" {
   public_key = "${var.mercury_keypair}"
 }
 
-output "key_pair_ids" {
-  value = {
+locals {
+  keypairs = {
     mercury = "${openstack_compute_keypair_v2.mercury.id}"
   }
 }
@@ -51,9 +51,10 @@ resource "openstack_networking_network_v2" "main" {
   admin_state_up = "true"
 }
 
-output "network_id" {
-  value      = "${openstack_networking_network_v2.main.id}"
-  depends_on = ["${openstack_networking_network_v2.main}"]
+locals {
+  networks = {
+    main = "${openstack_networking_network_v2.main.id}"
+  }
 }
 
 resource "openstack_networking_subnet_v2" "main" {

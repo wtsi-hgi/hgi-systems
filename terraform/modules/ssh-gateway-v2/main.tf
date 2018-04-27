@@ -1,13 +1,15 @@
 variable "flavour" {}
 variable "domain" {}
-variable "network_id" {}
 
-variable "security_group_ids" {
-  type    = "map"
-  default = {}
+variable "keypair_name" {
+  default = "mercury"
 }
 
-variable "key_pair_ids" {
+variable "network_name" {
+  default = "main"
+}
+
+variable "openstack_core_context" {
   type    = "map"
   default = {}
 }
@@ -30,6 +32,10 @@ locals {
   ansible_groups = [
     "ssh-gateways",
   ]
+
+  keypairs        = "${var.openstack_core_context["keypairs"]}"
+  security_groups = "${var.openstack_core_context["security_groups"]}"
+  networks        = "${var.openstack_core_context["networks"]}"
 }
 
 resource "openstack_networking_floatingip_v2" "ssh-gateway" {
@@ -43,16 +49,16 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   name        = "ssh-gateway"
   image_id    = "${var.image["id"]}"
   flavor_name = "${var.flavour}"
-  key_pair    = "${var.key_pair_ids["mercury"]}"
+  key_pair    = "${lookup(local.keypairs, var.keypair_name)}"
 
   security_groups = [
-    "${var.security_group_ids["ping"]}",
-    "${var.security_group_ids["ssh"]}",
-    "${var.security_group_ids["consul-client"]}",
+    "${local.security_groups["ping"]}",
+    "${local.security_groups["ssh"]}",
+    "${local.security_groups["consul-client"]}",
   ]
 
   network {
-    uuid           = "${var.network_id}"
+    uuid           = "${lookup(local.networks, var.network_name)}"
     access_network = true
   }
 
