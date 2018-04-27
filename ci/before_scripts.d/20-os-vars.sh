@@ -7,22 +7,22 @@ fi
 
 case $REGION in
     delta)
-	export OS_USERNAME=${DELTA_OS_USERNAME}
-	export OS_PASSWORD=${DELTA_OS_PASSWORD}
-	export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
-	>&2 echo "OS credentials for delta set"
-	;;
+        export OS_USERNAME=${DELTA_OS_USERNAME}
+        export OS_PASSWORD=${DELTA_OS_PASSWORD}
+        export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
+        >&2 echo "OS credentials for delta set"
+        ;;
     zeta)
-	export OS_USERNAME=${ZETA_OS_USERNAME}
-	export OS_PASSWORD=${ZETA_OS_PASSWORD}
-	export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
-	>&2 echo "OS credentials for zeta set"
-	;;
+        export OS_USERNAME=${ZETA_OS_USERNAME}
+        export OS_PASSWORD=${ZETA_OS_PASSWORD}
+        export OS_AUTH_URL=${ZETA_OS_AUTH_URL}
+        >&2 echo "OS credentials for zeta set"
+	    ;;
     *)
-	>&2 echo "REGION '${REGION}' not recognized in 20-os-vars.sh, not setting OS_ vars"
-	>&2 echo "Refusing to continue without recognized REGION"
-	exit 1
-	;;
+        >&2 echo "REGION '${REGION}' not recognized in 20-os-vars.sh, not setting OS_ vars"
+        >&2 echo "Refusing to continue without recognized REGION"
+        exit 1
+        ;;
 esac
 
 function export_tenant_or_project {
@@ -38,26 +38,26 @@ function export_tenant_or_project {
 }
 
 if [[ -z "$SETUP" ]]; then
-    echo "SETUP unset or empty, not setting tenant/project vars"
+    >&2 echo "SETUP unset or empty, not setting tenant/project vars"
     return
 fi
 
 case $SETUP in
     hgi-ci|hgi-ci-*)
-	export_tenant_or_project hgi-ci
-	;;
+        export_tenant_or_project hgi-ci
+        ;;
     hgi-dev|hgi-dev-*)
-	export_tenant_or_project hgi-dev
-	;;
+        export_tenant_or_project hgi-dev
+        ;;
     hgi|hgi-*)
-	export_tenant_or_project hgi
-	;;
+        export_tenant_or_project hgi
+        ;;
     hgiarvados|hgiarvados-*)
-	export_tenant_or_project hgiarvados
-	;;
+        export_tenant_or_project hgiarvados
+        ;;
     *)
-	>&2 echo "SETUP '${SETUP}' not recognized in 20-os-vars.sh, not setting tenant/project vars"
-	>&2 echo "Refusing to continue without recognized SETUP"
-	exit 1
-	;;
+        >&2 echo "SETUP '${SETUP}' not recognized in 20-os-vars.sh, not setting tenant/project vars"
+        >&2 echo "Refusing to continue without recognized SETUP"
+        exit 1
+	    ;;
 esac

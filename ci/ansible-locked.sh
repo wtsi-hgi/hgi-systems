@@ -8,8 +8,6 @@ ANSIBLE_SCRIPT="${SCRIPT_DIRECTORY}/ansible.sh"
 source "${SCRIPT_DIRECTORY}/common.sh"
 read -a unsetVariables <<< $(getUnset CI_CONSUL_HTTP_TOKEN CI_CONSUL_HTTP_ADDR CI_JOB_ID ANSIBLE_LOCK_PREFIX CI_JOB_NAME)
 if [[ -z ${unsetVariables+x} ]]; then
-    trap cleanupLock INT TERM
-
     >&2 echo "Getting Consul lock..."
     CONSUL_HTTP_TOKEN=${CI_CONSUL_HTTP_TOKEN} CONSUL_HTTP_ADDR=${CI_CONSUL_HTTP_ADDR} consul-lock -v execute \
          -i=10 \

@@ -10,12 +10,12 @@ if [[ -n "${REGION:-}" ]]; then
 	delta)
 	    export TF_VAR_openstack_external_network_name=nova
 	    export TF_VAR_openstack_floatingip_pool_name=nova
-	    >&2 echo "Set `openstack_external_network_name` and `openstack_floatingip_pool_name` to 'nova'"
+	    >&2 echo "Set 'openstack_external_network_name' and 'openstack_floatingip_pool_name' to 'nova'"
 	    ;;
 	zeta)
 	    export TF_VAR_openstack_external_network_name=public
 	    export TF_VAR_openstack_floatingip_pool_name=public
-	    >&2 echo "Set `openstack_external_network_name` and `openstack_floatingip_pool_name` to 'public'"
+	    >&2 echo "Set 'openstack_external_network_name' and 'openstack_floatingip_pool_name' to 'public'"
 	    ;;
 	*)
 	    >&2 echo "REGION '${REGION}' not supported in 10-tf-vars.sh for external_network_name"
