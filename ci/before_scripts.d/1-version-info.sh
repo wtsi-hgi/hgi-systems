@@ -10,9 +10,9 @@ function printVersion {
     echo "${result}"
 }
 
-printVersion "python" "python --version"
-printVersion "pip" "pip --version"
-printVersion "terraform" "terraform --version | head -n 1"
-printVersion "ansible" "ansible --version | head -n 1"
-printVersion "s3cmd" "s3cmd --version"
-printVersion "go" "go version"
+printVersion "python" 'python --version'
+printVersion "pip" 'pip --version'
+printVersion "terraform" 'echo -e "$(terraform --version)" | head -n 1'
+printVersion "ansible" 'ansible --version | head -n 1'
+printVersion "s3cmd" 's3cmd --version'
+printVersion "go" 'go version'
