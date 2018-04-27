@@ -25,7 +25,7 @@
   vars:
     gitlab_runners_PLAYBOOK_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
     gitlab_runners_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
-    gitlab_runners_PLAYBOOK_attached_volume_mountpoint: "/var/lib/docker"
+    gitlab_runners_PLAYBOOK_attached_volume_mountpoint: "/mnt/gitlab-runner-docker"
   tasks:
     - name: configure attached-openstack-volume for gitlab-runner
       import_role:
@@ -40,6 +40,29 @@
         attached_openstack_volumes:
           - device: "{{ gitlab_runners_PLAYBOOK_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: .created
+
+    - name: setup systemd drop-in directory for docker service
+      become: yes
+      file:
+        path: /etc/systemd/system/docker.service.d
+        state: directory
+
+    - name: configure docker to use mountpoint for graph data
+      become: yes
+      copy:
+        dest: /etc/systemd/system/docker.service.d/10-execstart.conf
+        content: |
+          [Service]
+          ExecStart=
+          ExecStart=/usr/bin/dockerd -H fd:// -g {{ gitlab_runners_PLAYBOOK_attached_volume_mountpoint }}
+      register: systemd_docker
+
+    - name: restart docker.service
+      become: yes
+      systemd:
+        name: docker
+        daemon_reload: yes
+        state: restarted
 
     - name: import docker-machine role
       import_role:

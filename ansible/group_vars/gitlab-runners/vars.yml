@@ -72,8 +72,6 @@ gitlab_runner_GROUP_descriptions: "{{ _gitlab_runner_GROUP_descriptions_string.s
 gitlab_runner_GROUP_projects:
   - hgi/hgi-systems
   - hgi/hgi-base-image-builder
-  - hgi/hgi-docker-image-builder
-  - hgi/hgi-arvados-compute-image-builder
 
 gitlab_runner_GROUP_docker_registry_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
 gitlab_runner_GROUP_docker_registry_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
