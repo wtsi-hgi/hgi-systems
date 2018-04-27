@@ -163,7 +163,7 @@ module "arvados-shell" {
 }
 
 module "arvados-debugshell" {
-  source = "../modules/arvados-shell-new"
+  source = "../modules/arvados-shell-v2"
 
   image = {
     name = "${var.base_image_name}"

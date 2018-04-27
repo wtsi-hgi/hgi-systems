@@ -73,8 +73,8 @@ gitlab_runner_GROUP_projects:
   - hgi/hgi-systems
   - hgi/hgi-base-image-builder
 
-gitlab_runner_GROUP_docker_registry_cert: "{{ pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
-gitlab_runner_GROUP_docker_registry_key: "{{ pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+gitlab_runner_GROUP_docker_registry_cert: "{{ pem_wildcard_hgi_sanger_ac_uk_cert }}"
+gitlab_runner_GROUP_docker_registry_key: "{{ pem_wildcard_hgi_sanger_ac_uk_key }}"
 
 gitlab_runner_GROUP_gitlab_url: "{{ gitlab_url }}"
 gitlab_runner_GROUP_gitlab_token: "{{ gitlab_token }}"
