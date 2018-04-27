@@ -73,7 +73,8 @@ def get_image_names_referenced_in_terraform_plan(terraform_plan_location: str) -
         for line in file.readlines():
             line = line.strip()
             if line.startswith(f"{_TERRAFORM_PLAN_IMAGE_NAME_KEY}{_TERRAFORM_PLAN_KEY_VALUE_SEPARATOR}"):
-                value = "".join(line.split(_TERRAFORM_PLAN_KEY_VALUE_SEPARATOR)[1:]).strip().strip("\"")
+                value = "".join(line.split(_TERRAFORM_PLAN_KEY_VALUE_SEPARATOR)[1:]).split("=>")[-1].strip() \
+                    .strip("\"").strip("(forces new resource)")
                 image_names.add(value)
     return image_names
 
