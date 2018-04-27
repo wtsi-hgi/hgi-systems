@@ -1,5 +1,9 @@
 FROM ubuntu:16.04
 
+# Install qemu-img
+COPY scripts/get-qemu-img.sh /tmp/get-qemu-img.sh
+RUN /tmp/get-qemu-img.sh && rm /tmp/get-qemu-img.sh
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          apt-utils \
@@ -32,10 +36,6 @@ RUN /tmp/get-openstackclient.sh && rm /tmp/get-openstackclient.sh
 # Install glance-proxy
 COPY scripts/get-glance-proxy.sh /tmp/get-glance-proxy.sh
 RUN /tmp/get-glance-proxy.sh && rm /tmp/get-glance-proxy.sh
-
-# Install qemu-img
-COPY scripts/get-qemu-img.sh /tmp/get-qemu-img.sh
-RUN /tmp/get-qemu-img.sh && rm /tmp/get-qemu-img.sh
 
 # Set workdir and entrypoint
 WORKDIR /tmp
