@@ -55,9 +55,9 @@
     - name: assert required vars defined in hgi-credentials
       assert:
         that: 
-          - "hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert is defined"
-          - "hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key is defined"
-        msg: "'hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert' and 'hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key' must all be defined (probably in group hgi-credentials)"
+          - "hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert is defined"
+          - "hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key is defined"
+        msg: "'hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert' and 'hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key' must all be defined (probably in group hgi-credentials)"
     - name: assert required vars defined in hgi
       assert:
         that: 
@@ -137,8 +137,8 @@
         ###############################################################################
         hail_jupyter_token: "{{ hail_cluster_jupyter_token }}"
         hail_ssh_key: "{{ hail_cluster_ssh_key }}"
-        hail_ssl_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
-        hail_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+        hail_ssl_cert: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert }}"
+        hail_ssl_key: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key }}"
         hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_master_data_dir: "{{ hailers_PLAYBOOK_data_dir }}"

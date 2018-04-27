@@ -57,11 +57,11 @@
   tags: supervisord
 
 - name: install *.hgi.internal.sanger.ac.uk TLS certificate
-  copy: content="{{ pem_WILDCARD_hgi_internal_sanger_ac_uk_cert }}" dest="{{ hgi_certs_dir }}/WILDCARD_hgi_internal_sanger_ac_uk-cert.pem"
+  copy: content="{{ pem_wildcard_hgi_internal_sanger_ac_uk_cert }}" dest="{{ hgi_certs_dir }}/wildcard_hgi_internal_sanger_ac_uk-cert.pem"
   tags: security
 
 - name: install *.hgi.internal.sanger.ac.uk TLS key
-  copy: content="{{ pem_WILDCARD_hgi_internal_sanger_ac_uk_key }}" dest="{{ hgi_certs_dir }}/WILDCARD_hgi_internal_sanger_ac_uk-key.pem" mode=0600
+  copy: content="{{ pem_wildcard_hgi_internal_sanger_ac_uk_key }}" dest="{{ hgi_certs_dir }}/wildcard_hgi_internal_sanger_ac_uk-key.pem" mode=0600
   tags: security
 
 - name: generate hgi htpasswd file

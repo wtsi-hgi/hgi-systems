@@ -29,8 +29,8 @@
       import_role:
         name: arvados-monitor
       vars:
-        arvados_monitor_ssl_cert: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_cert }}"
-        arvados_monitor_ssl_key: "{{ hgi_credentials_pem_WILDCARD_hgi_sanger_ac_uk_key }}"
+        arvados_monitor_ssl_cert: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert }}"
+        arvados_monitor_ssl_key: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key }}"
         arvados_monitor_server_name: "{{ cloud_resource_fqdn }}"
 
 - hosts: arvados-ssos
