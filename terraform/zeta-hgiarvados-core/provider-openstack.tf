@@ -1,4 +1,4 @@
 provider "openstack" {
-  version     = "~> 1.2"
+  version     = "~> 1.3"
   tenant_name = "hgiarvados"
 }
