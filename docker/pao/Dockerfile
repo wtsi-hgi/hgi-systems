@@ -26,6 +26,7 @@ RUN apt-get update \
          openssh-client \
          pkg-config \
          python3-pip \
+         s3cmd \
     && rm -rf /var/lib/apt/lists/*
 
 # Install go
