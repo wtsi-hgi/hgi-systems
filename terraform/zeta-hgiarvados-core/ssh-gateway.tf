@@ -6,7 +6,6 @@ module "ssh-gateway" {
   flavour                = "m1.small"
   domain                 = "zeta-hgiarvados.hgi.sanger.ac.uk"
   openstack_core_context = "${module.openstack.context}"
-  floatingip_pool_name   = "${var.openstack_floatingip_pool_name}"
 
   extra_ansible_groups = ["docker-consul-cluster-zeta-hgiarvados"]
 }

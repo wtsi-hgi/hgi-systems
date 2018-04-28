@@ -24,23 +24,20 @@ variable "extra_ansible_groups" {
   default = []
 }
 
-variable "floatingip_pool_name" {
-  default = "nova"
-}
-
 locals {
   ansible_groups = [
     "ssh-gateways",
   ]
 
-  keypairs        = "${var.openstack_core_context["keypairs"]}"
-  security_groups = "${var.openstack_core_context["security_groups"]}"
-  networks        = "${var.openstack_core_context["networks"]}"
+  openstack_keypairs        = "${var.openstack_core_context["keypairs"]}"
+  openstack_security_groups = "${var.openstack_core_context["security_groups"]}"
+  openstack_networks        = "${var.openstack_core_context["networks"]}"
+  openstack_parameters      = "${var.openstack_core_context["parameters"]}"
 }
 
 resource "openstack_networking_floatingip_v2" "ssh-gateway" {
   provider = "openstack"
-  pool     = "${var.floatingip_pool_name}"
+  pool     = "${local.openstack_parameters["floatingip_pool_name"]}"
 }
 
 resource "openstack_compute_instance_v2" "ssh-gateway" {
@@ -49,16 +46,16 @@ resource "openstack_compute_instance_v2" "ssh-gateway" {
   name        = "ssh-gateway"
   image_id    = "${var.image["id"]}"
   flavor_name = "${var.flavour}"
-  key_pair    = "${lookup(local.keypairs, var.keypair_name)}"
+  key_pair    = "${lookup(local.openstack_keypairs, var.keypair_name)}"
 
   security_groups = [
-    "${local.security_groups["ping"]}",
-    "${local.security_groups["ssh"]}",
-    "${local.security_groups["consul-client"]}",
+    "${local.openstack_security_groups["ping"]}",
+    "${local.openstack_security_groups["ssh"]}",
+    "${local.openstack_security_groups["consul-client"]}",
   ]
 
   network {
-    uuid           = "${lookup(local.networks, var.network_name)}"
+    uuid           = "${lookup(local.openstack_networks, var.network_name)}"
     access_network = true
   }
 

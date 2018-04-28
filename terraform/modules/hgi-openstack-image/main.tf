@@ -22,15 +22,15 @@ resource "openstack_images_image_v2" "hgi-image" {
   container_format = "${var.image_container_format}"
   disk_format      = "${var.image_disk_format}"
 
-  properties {
-    user = "${var.image_user}"
-  }
+  #  properties {
+  #    user = "${var.image_user}"
+  #  }
 }
 
 output "image" {
   value = {
     id   = "${openstack_images_image_v2.hgi-image.id}"
     name = "${openstack_images_image_v2.hgi-image.name}"
-    user = "${openstack_images_image_v2.hgi-image.properties.user}"
+    user = "${var.image_user}"
   }
 }

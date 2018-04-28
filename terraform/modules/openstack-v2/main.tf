@@ -5,6 +5,7 @@ variable "mercury_keypair" {}
 variable "subnet" {}
 variable "gateway_ip" {}
 variable "external_network_name" {}
+variable "floatingip_pool_name" {}
 
 variable "router_count" {
   default = 1

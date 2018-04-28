@@ -10,6 +10,7 @@ module "openstack" {
   host_routes           = []
   router_count          = 1
   external_network_name = "${var.openstack_external_network_name}"
+  floatingip_pool_name  = "${var.openstack_floatingip_pool_name}"
 }
 
 output "core_context" {
