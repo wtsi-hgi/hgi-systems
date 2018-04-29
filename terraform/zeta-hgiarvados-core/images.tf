@@ -6,3 +6,7 @@ module "hgi-openstack-image-hgi-base-freebsd11-4cb02ffa" {
   image_name = "hgi-base-freebsd11-4cb02ffa"
   image_user = "beastie"
 }
+
+output "hgi-openstack-image-hgi-base-freebsd11-4cb02ffa" {
+  value = "${module.hgi-openstack-image-hgi-base-freebsd11-4cb02ffa.image}"
+}
