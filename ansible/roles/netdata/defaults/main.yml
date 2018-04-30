@@ -1,1 +1,9 @@
+
+---
+
 netdata_consul_config_dir: "/etc/consul.d"
+
+netdata_alarm_slack_webhook_url: ""
+netdata_alarm_slack_recipients: []
+
+netdata_apt_cache_valid_time: 3600
