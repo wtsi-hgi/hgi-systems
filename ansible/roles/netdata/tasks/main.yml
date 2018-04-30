@@ -26,7 +26,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
-    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+    cache_valid_time: "{{ netdata_apt_cache_valid_time }}"
   with_items:
     - zlib1g-dev
     - uuid-dev
@@ -68,6 +68,12 @@
   args:
     chdir: /usr/local/src/netdata
   when: netdata_git_source.changed
+
+- name: setup health alarms
+  become: yes
+  template:
+    src:  health_alarm_notify.conf.j2
+    dest: /etc/netdata/health_alarm_notify.conf
 
 - name: ensure consul config dir exists
   become: yes
