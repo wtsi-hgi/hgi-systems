@@ -1,7 +1,10 @@
 module "ssh-gateway" {
-  source = "../modules/ssh-gateway-v2"
+  source = "../modules/ssh-gateway"
 
-  image = "${module.hgi-openstack-image-hgi-base-freebsd11-4cb02ffa.image}"
+  image = {
+    name = "hgi-base-freebsd11-575611a5"
+    user = "beastie"
+  }
 
   flavour              = "m1.small"
   domain               = "zeta-hgiarvados.hgi.sanger.ac.uk"
