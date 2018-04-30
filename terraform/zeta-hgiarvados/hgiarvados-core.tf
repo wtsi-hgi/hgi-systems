@@ -9,10 +9,6 @@ data "terraform_remote_state" "hgiarvados-core" {
   }
 }
 
-output "ssh_gateway_host" {
-  value = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway_host}"
-}
-
-output "ssh_gateway_user" {
-  value = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway_user}"
+output "ssh_gateway" {
+  value = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
 }

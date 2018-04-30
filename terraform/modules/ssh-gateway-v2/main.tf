@@ -1,3 +1,12 @@
+variable "env" {}
+variable "region" {}
+variable "setup" {}
+
+variable "core_context" {
+  type    = "map"
+  default = {}
+}
+
 variable "flavour" {}
 variable "domain" {}
 
@@ -7,11 +16,6 @@ variable "keypair_name" {
 
 variable "network_name" {
   default = "main"
-}
-
-variable "openstack_core_context" {
-  type    = "map"
-  default = {}
 }
 
 variable "image" {
@@ -28,35 +32,48 @@ locals {
   ansible_groups = [
     "ssh-gateways",
   ]
+}
 
-  openstack_keypairs        = "${var.openstack_core_context["keypairs"]}"
-  openstack_security_groups = "${var.openstack_core_context["security_groups"]}"
-  openstack_networks        = "${var.openstack_core_context["networks"]}"
-  openstack_parameters      = "${var.openstack_core_context["parameters"]}"
+locals {
+  core_context_maps    = "${var.core_context["maps"]}"
+  core_context_lists   = "${var.core_context["lists"]}"
+  core_context_strings = "${var.core_context["strings"]}"
+}
+
+locals {
+  openstack_keypairs        = "${local.core_context_maps["keypairs"]}"
+  openstack_security_groups = "${local.core_context_maps["security_groups"]}"
+  openstack_networks        = "${local.core_context_maps["networks"]}"
+}
+
+resource "openstack_networking_port_v2" "ssh-gateway" {
+  count          = 1
+  name           = "${var.env}-${var.region}-${var.setup}-ssh-gateway-port"
+  admin_state_up = "true"
+  network_id     = "${lookup(local.openstack_networks, var.network_name)}"
+
+  security_group_ids = [
+    "${local.openstack_security_groups["ping"]}",
+    "${local.openstack_security_groups["ssh"]}",
+    "${local.openstack_security_groups["consul-client"]}",
+  ]
 }
 
 resource "openstack_networking_floatingip_v2" "ssh-gateway" {
   provider = "openstack"
-  pool     = "${local.openstack_parameters["floatingip_pool_name"]}"
+  pool     = "${local.core_context_strings["floatingip_pool_name"]}"
 }
 
 resource "openstack_compute_instance_v2" "ssh-gateway" {
   provider    = "openstack"
   count       = 1
-  name        = "ssh-gateway"
+  name        = "${var.env}-${var.region}-${var.setup}-ssh-gateway"
   image_id    = "${var.image["id"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${lookup(local.openstack_keypairs, var.keypair_name)}"
 
-  security_groups = [
-    "${local.openstack_security_groups["ping"]}",
-    "${local.openstack_security_groups["ssh"]}",
-    "${local.openstack_security_groups["consul-client"]}",
-  ]
-
   network {
-    uuid           = "${lookup(local.openstack_networks, var.network_name)}"
-    access_network = true
+    port = "${openstack_networking_port_v2.ssh-gateway.*.id[count.index]}"
   }
 
   user_data = "#cloud-config\nhostname: ssh\nfqdn: ssh.${var.domain}"

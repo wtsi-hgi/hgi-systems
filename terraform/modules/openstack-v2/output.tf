@@ -1,11 +1,17 @@
 output "context" {
   value = {
-    security_groups = "${local.security_groups}"
-    keypairs        = "${local.keypairs}"
-    networks        = "${local.networks}"
+    maps = {
+      security_groups = "${local.security_groups}"
+      keypairs        = "${local.keypairs}"
+      networks        = "${local.networks}"
+    }
 
-    parameters = {
+    strings = {
       floatingip_pool_name = "${var.floatingip_pool_name}"
+    }
+
+    lists = {
+      dns_nameservers = "${var.dns_nameservers}"
     }
   }
 }
