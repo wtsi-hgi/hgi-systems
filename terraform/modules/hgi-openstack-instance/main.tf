@@ -66,20 +66,22 @@ variable "ansible_groups" {
 }
 
 locals {
-  core_context_maps    = "${var.core_context["maps"]}"
-  core_context_lists   = "${var.core_context["lists"]}"
-  core_context_strings = "${var.core_context["strings"]}"
-}
-
-locals {
-  hostname_format           = "${var.hostname_format == "" ? var.name_format : var.hostname_format}"
+  core_context_maps         = "${var.core_context["maps"]}"
+  core_context_lists        = "${var.core_context["lists"]}"
+  core_context_strings      = "${var.core_context["strings"]}"
   openstack_keypairs        = "${local.core_context_maps["keypairs"]}"
   openstack_security_groups = "${local.core_context_maps["security_groups"]}"
   openstack_networks        = "${local.core_context_maps["networks"]}"
+  security_groups           = "${matchkeys(values(local.openstack_security_groups), keys(local.openstack_security_groups), var.security_group_names)}"
 }
 
 locals {
-  security_groups            = "${matchkeys(values(local.openstack_security_groups), keys(local.openstack_security_groups), var.security_group_names)}"
+  name_formatted_p     = "${replace(var.name_format, "/.*[^%]?%[^%].*/", "formatted") == "formatted"}"
+  hostname_format      = "${var.hostname_format == "" ? var.name_format : var.hostname_format}"
+  hostname_formatted_p = "${replace(local.hostname_format, "/.*[^%]?%[^%].*/", "formatted") == "formatted"}"
+}
+
+locals {
   additional_dns_names_count = "${length(var.additional_dns_names)}"
 }
 
@@ -91,7 +93,7 @@ resource "openstack_networking_floatingip_v2" "floatingip" {
 
 resource "openstack_networking_port_v2" "port" {
   count          = "${var.count}"
-  name           = "${var.env}-${var.region}-${var.setup}-${format(var.name_format, count.index + 1)}-port"
+  name           = "${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, count.index + 1) : var.name_format}-port"
   admin_state_up = "true"
   network_id     = "${lookup(local.openstack_networks, var.network_name)}"
 
@@ -101,7 +103,7 @@ resource "openstack_networking_port_v2" "port" {
 resource "openstack_compute_instance_v2" "instance" {
   provider    = "openstack"
   count       = "${var.count}"
-  name        = "${var.env}-${var.region}-${var.setup}-${format(var.name_format, count.index + 1)}"
+  name        = "${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, count.index + 1) : var.name_format}"
   image_id    = "${var.image["id"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${lookup(local.openstack_keypairs, var.keypair_name)}"
@@ -110,7 +112,7 @@ resource "openstack_compute_instance_v2" "instance" {
     port = "${openstack_networking_port_v2.port.*.id[count.index]}"
   }
 
-  user_data = "#cloud-config\nhostname: ${format(local.hostname_format, count.index + 1)}\nfqdn: ${format(local.hostname_format, count.index + 1)}.${var.domain}"
+  user_data = "#cloud-config\nhostname: ${local.hostname_formatted_p ? format(local.hostname_format, count.index + 1) : local.hostname_format}\nfqdn: ${local.hostname_formatted_p ? format(local.hostname_format, count.index + 1) : local.hostname_format}.${var.domain}"
 
   metadata = {
     ansible_groups = "${join(" ", var.ansible_groups)}"
@@ -135,37 +137,40 @@ resource "openstack_compute_instance_v2" "instance" {
       host         = "${openstack_networking_port_v2.port.*.all_fixed_ips.0[count.index]}"
     }
   }
+
+  timeouts {
+    create = "20m"
+    delete = "20m"
+  }
 }
 
 resource "openstack_compute_floatingip_associate_v2" "floatingip-instance-associate" {
   count       = "${var.floating_ip_p ? var.count : 0}"
-  floating_ip = "${openstack_networking_floatingip_v2.floatingip.0.address}"
+  floating_ip = "${openstack_networking_floatingip_v2.floatingip.*.address[count.index]}"
   instance_id = "${openstack_compute_instance_v2.instance.*.id[count.index]}"
 }
 
-resource "infoblox_record" "floatingip-dns" {
-  count  = "${var.floating_ip_p ? var.count : 0}"
-  value  = "${openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip[count.index]}"
-  name   = "${format(local.hostname_format, count.index + 1)}"
-  domain = "${var.domain}"
-  type   = "A"
-  ttl    = 600
-  view   = "internal"
+resource "infoblox_record_a" "floatingip-dns" {
+  count   = "${var.floating_ip_p ? var.count : 0}"
+  address = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, count.index)}"
+  name    = "${local.hostname_formatted_p ? format(local.hostname_format, count.index + 1) : local.hostname_format}.${var.domain}"
+  ttl     = 600
+  view    = "internal"
+  comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, count.index + 1) : var.name_format}"
 }
 
-resource "infoblox_record" "floatingip-additional-dns" {
-  count  = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
-  value  = "${openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip[count.index/local.additional_dns_names_count]}"
-  name   = "${element(var.additional_dns_names, count.index%local.additional_dns_names_count)}"
-  domain = "${var.domain}"
-  type   = "A"
-  ttl    = 600
-  view   = "internal"
+resource "infoblox_record_a" "floatingip-additional-dns" {
+  count   = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
+  address = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_names_count))}"
+  name    = "${replace(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)+1), (count.index/local.additional_dns_names_count)) : element(var.additional_dns_names, (count.index%local.additional_dns_names_count))}.${var.domain}"
+  ttl     = 600
+  view    = "internal"
+  comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, (count.index/local.additional_dns_names_count) + 1) : var.name_format} additional_dns ${(count.index%local.additional_dns_names_count) + 1}"
 }
 
 resource "openstack_blockstorage_volume_v2" "volume" {
   count = "${var.volume_p ? var.count : 0}"
-  name  = "${var.env}-${var.region}-${var.setup}-${format(var.name_format, count.index + 1)}-volume"
+  name  = "${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, count.index + 1) : var.name_format}-volume"
   size  = "${var.volume_size_gb}"
 }
 
@@ -175,10 +180,18 @@ resource "openstack_compute_volume_attach_v2" "volume-attach" {
   instance_id = "${openstack_compute_instance_v2.instance.*.id[count.index]}"
 }
 
-output "user" {
-  value = "${var.image["user"]}"
-}
+output "hgi_instance" {
+  value = {
+    maps = {
+      hostnames = "${zipmap(openstack_compute_instance_v2.instance.*.name, infoblox_record_a.floatingip-dns.*.name)}"
+    }
 
-output "security_groups" {
-  value = "${local.security_groups}"
+    strings = {
+      user = "${var.image["user"]}"
+    }
+
+    lists = {
+      security_groups = "${local.security_groups}"
+    }
+  }
 }

@@ -44,7 +44,7 @@ locals {
     "hgi-credentials",
   ]
 
-  hostname_format = "arvados-master-${var.arvados_cluster_id}"
+  hostname_format = "arvados-api-db-${var.arvados_cluster_id}"
 }
 
 module "hgi-openstack-instance" {
@@ -79,6 +79,6 @@ module "hgi-openstack-instance" {
   additional_dns_names = []
 }
 
-output "security_groups" {
-  value = "${module.hgi-openstack-instance.security_groups}"
+output "hgi_instance" {
+  value = "${module.hgi-openstack-instance.hgi_instance}"
 }

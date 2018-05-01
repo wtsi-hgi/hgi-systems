@@ -281,6 +281,8 @@ module "arvados-keep" {
 #   consul_template_token = "${var.consul_template_token}"
 # }
 
-output "security_groups" {
-  value = "${module.arvados-master.security_groups}"
+output "hgi_instances" {
+  value = {
+    arvados-master = "${module.arvados-master.hgi_instance}"
+  }
 }

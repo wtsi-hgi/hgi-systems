@@ -46,6 +46,16 @@ locals {
     "consul-cluster-${var.consul_datacenter}",
   ]
 
+  security_group_names = [
+    "ping",
+    "ssh",
+    "https",
+    "consul-client",
+    "slurm-master",
+    "tcp-local",
+    "udp-local",
+  ]
+
   hostname_format = "arvados-master-${var.arvados_cluster_id}"
 }
 
@@ -68,15 +78,7 @@ module "hgi-openstack-instance" {
   network_name    = "${var.network_name}"
   image           = "${var.image}"
 
-  security_group_names = [
-    "ping",
-    "ssh",
-    "https",
-    "consul-client",
-    "slurm-master",
-    "tcp-local",
-    "udp-local",
-  ]
+  security_group_names = "${local.security_group_names}"
 
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
 
@@ -87,6 +89,6 @@ module "hgi-openstack-instance" {
   ]
 }
 
-output "security_groups" {
-  value = "${module.hgi-openstack-instance.security_groups}"
+output "hgi_instance" {
+  value = "${module.hgi-openstack-instance.hgi_instance}"
 }

@@ -85,3 +85,7 @@ module "hgi-openstack-instance" {
     "arvados-collections-${var.arvados_cluster_id}",
   ]
 }
+
+output "hgi_instance" {
+  value = "${module.hgi-openstack-instance.hgi_instance}"
+}

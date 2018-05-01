@@ -57,7 +57,7 @@ module "hgi-openstack-instance" {
   setup           = "${var.setup}"
   core_context    = "${var.core_context}"
   count           = "${var.count}"
-  floating_ip_p   = true
+  floating_ip_p   = false
   volume_p        = true
   volume_size_gb  = "${var.volume_size_gb}"
   name_format     = "${local.hostname_format}"
@@ -80,4 +80,8 @@ module "hgi-openstack-instance" {
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
 
   additional_dns_names = []
+}
+
+output "hgi_instance" {
+  value = "${module.hgi-openstack-instance.hgi_instance}"
 }

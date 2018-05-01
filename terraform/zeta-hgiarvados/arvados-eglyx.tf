@@ -28,6 +28,6 @@ module "arvados-cluster" {
   api_db_volume_size_gb      = 1000
 }
 
-output "security_groups" {
-  value = "${module.arvados-cluster.security_groups}"
+output "hgi_instances" {
+  value = "${module.arvados-cluster.hgi_instances}"
 }
