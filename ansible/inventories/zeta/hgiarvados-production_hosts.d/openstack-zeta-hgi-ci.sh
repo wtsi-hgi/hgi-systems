@@ -1,0 +1,1 @@
+../production_hosts.d/openstack-zeta-hgi-ci.sh
