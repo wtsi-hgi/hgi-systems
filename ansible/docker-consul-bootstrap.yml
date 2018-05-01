@@ -185,9 +185,9 @@
         token: "{{ consul_cluster_acl_terraform_token }}"
       with_items:
         - key: terraform/consul_encrypt
-	  value: "{{ consul_cluster_encrypt }}"
-	- key: terraform/consul_cluster_acl_agent_token
-	  value: "{{ consul_cluster_acl_agent_token }}"
-	- key: terraform/consul_template_token
-	  value: "{{ }}"
+          value: "{{ consul_cluster_encrypt }}"
+        - key: terraform/consul_cluster_acl_agent_token
+          value: "{{ consul_cluster_acl_agent_token }}"
+        - key: terraform/consul_template_token
+          value: "{{ }}"
 
