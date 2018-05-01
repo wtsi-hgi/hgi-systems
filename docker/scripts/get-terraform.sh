@@ -59,6 +59,13 @@ cd $GOPATH/src/github.com/prudhvitella
 git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
 git checkout 9cec6f57
+go get github.com/mitchellh/gox
+go get github.com/tcnksm/ghr
+go get github.com/davecgh/go-spew/spew
+go get github.com/hashicorp/logutils
+go get -u github.com/fanatic/go-infoblox
+go get -u github.com/kardianos/govendor
+govendor sync
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
