@@ -151,13 +151,14 @@ resource "openstack_compute_floatingip_associate_v2" "floatingip-instance-associ
 }
 
 resource "infoblox_record" "floatingip-dns" {
-  count   = "${var.floating_ip_p ? var.count : 0}"
-  type = "A"
-  value = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, count.index)}"
-  name    = "${local.hostname_formatted_p ? format(local.hostname_format, count.index + 1) : local.hostname_format}"
+  count  = "${var.floating_ip_p ? var.count : 0}"
+  type   = "A"
+  value  = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, count.index)}"
+  name   = "${local.hostname_formatted_p ? format(local.hostname_format, count.index + 1) : local.hostname_format}"
   domain = "${var.domain}"
-  ttl     = 600
-  view    = "internal"
+  ttl    = 600
+  view   = "internal"
+
   # comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, count.index + 1) : var.name_format}"
 }
 
@@ -171,13 +172,14 @@ resource "infoblox_record" "floatingip-dns" {
 # }
 
 resource "infoblox_record" "floatingip-additional-dns" {
-  count   = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
-  type = "A"
-  value = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_names_count))}"
-  name    = "${replace(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)+1), (count.index/local.additional_dns_names_count)) : element(var.additional_dns_names, (count.index%local.additional_dns_names_count))}"
+  count  = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
+  type   = "A"
+  value  = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_names_count))}"
+  name   = "${replace(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)+1), (count.index/local.additional_dns_names_count)) : element(var.additional_dns_names, (count.index%local.additional_dns_names_count))}"
   domain = "${var.domain}"
-  ttl     = 600
-  view    = "internal"
+  ttl    = 600
+  view   = "internal"
+
   # comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? format(var.name_format, (count.index/local.additional_dns_names_count) + 1) : var.name_format} additional_dns ${(count.index%local.additional_dns_names_count) + 1}"
 }
 
