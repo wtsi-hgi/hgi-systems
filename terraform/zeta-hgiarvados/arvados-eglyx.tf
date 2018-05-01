@@ -11,7 +11,6 @@ module "arvados-cluster" {
   arvados_compute_node_image = "${data.terraform_remote_state.hgiarvados-core.hgi-openstack-image-hgi-arvados_compute-xenial-4cb02ffa}"
   keepproxy_count            = 2
   keep_count                 = 1
-  shell_count                = 1
   monitor_count              = 1
   compute_node_count         = 1
   network_name               = "main"
@@ -25,9 +24,10 @@ module "arvados-cluster" {
   shell_flavour              = "m1.medium"
   monitor_flavour            = "m1.medium"
   compute_node_flavour       = "m1.xlarge"
+  shell_names                = ["shell", "debugshell"]
   api_db_volume_size_gb      = 1000
 }
 
 output "hgi_instances" {
-  value = "${module.arvados-cluster.hgi_instances}"
+  value = "${jsonencode(module.arvados-cluster.hgi_instances)}"
 }

@@ -22,8 +22,9 @@ variable "keep_count" {
   default = 1
 }
 
-variable "shell_count" {
-  default = 1
+variable "shell_names" {
+  type    = "list"
+  default = ["shell"]
 }
 
 variable "monitor_count" {
@@ -219,43 +220,44 @@ module "arvados-keep" {
   image   = "${var.base_image}"
 }
 
-# module "arvados-shell" {
-#   source                 = "../arvados-shell-v2"
-#   env = "${var.env}"
-#   region = "${var.region}"
-#   setup = "${var.setup}"
-#   core_context = "${var.core_context}"
+module "arvados-shell" {
+  source = "../arvados-shell-v2"
 
-#   image = "${var.base_image}"
+  env          = "${var.env}"
+  region       = "${var.region}"
+  setup        = "${var.setup}"
+  core_context = "${var.core_context}"
+  ssh_gateway  = "${var.ssh_gateway}"
 
-#   count   = "${var.shell_count}"
-#   flavour = "${var.shell_flavour}"
-#   domain  = "${var.domain}"
+  arvados_cluster_id   = "${var.arvados_cluster_id}"
+  consul_datacenter    = "${var.consul_datacenter}"
+  extra_ansible_groups = "${var.extra_ansible_groups}"
 
-#   ssh_gateway = "${var.ssh_gateway}"
+  count       = "${length(var.shell_names)}"
+  shell_names = "${var.shell_names}"
+  flavour     = "${var.shell_flavour}"
+  domain      = "${var.domain}"
+  image       = "${var.base_image}"
+}
 
-#   arvados_cluster_id   = "${var.arvados_cluster_id}"
-#   extra_ansible_groups = "${var.extra_ansible_groups}"
-# }
+module "arvados-monitor" {
+  source = "../arvados-monitor-v2"
 
-# module "arvados-monitor" {
-#   source                 = "../arvados-monitor-v2"
-#   env = "${var.env}"
-#   region = "${var.region}"
-#   setup = "${var.setup}"
-#   core_context = "${var.core_context}"
+  env          = "${var.env}"
+  region       = "${var.region}"
+  setup        = "${var.setup}"
+  core_context = "${var.core_context}"
+  ssh_gateway  = "${var.ssh_gateway}"
 
-#   image = "${var.base_image}"
+  arvados_cluster_id   = "${var.arvados_cluster_id}"
+  consul_datacenter    = "${var.consul_datacenter}"
+  extra_ansible_groups = "${var.extra_ansible_groups}"
 
-#   count   = "${var.monitor_count}"
-#   flavour = "${var.monitor_flavour}"
-#   domain  = "${var.domain}"
-
-#   ssh_gateway = "${var.ssh_gateway}"
-
-#   arvados_cluster_id   = "${var.arvados_cluster_id}"
-#   extra_ansible_groups = "${var.extra_ansible_groups}"
-# }
+  count   = "${var.monitor_count}"
+  flavour = "${var.monitor_flavour}"
+  domain  = "${var.domain}"
+  image   = "${var.base_image}"
+}
 
 # module "arvados-compute-node-noconf" {
 #   source                 = "../arvados-compute-node-noconf-v2"
@@ -283,6 +285,23 @@ module "arvados-keep" {
 
 output "hgi_instances" {
   value = {
-    arvados-master = "${module.arvados-master.hgi_instance}"
+    external_dns    = "${merge(module.arvados-master.hgi_instance["external_dns"], module.arvados-api-db.hgi_instance["external_dns"], module.arvados-sso.hgi_instance["external_dns"], module.arvados-workbench.hgi_instance["external_dns"], module.arvados-keepproxy.hgi_instance["external_dns"], module.arvados-keep.hgi_instance["external_dns"], module.arvados-shell.hgi_instance["external_dns"], module.arvados-monitor.hgi_instance["external_dns"])}"
+    floating_ip     = "${merge(module.arvados-master.hgi_instance["floating_ip"], module.arvados-api-db.hgi_instance["floating_ip"], module.arvados-sso.hgi_instance["floating_ip"], module.arvados-workbench.hgi_instance["floating_ip"], module.arvados-keepproxy.hgi_instance["floating_ip"], module.arvados-keep.hgi_instance["floating_ip"], module.arvados-shell.hgi_instance["floating_ip"], module.arvados-monitor.hgi_instance["floating_ip"])}"
+    internal_ip     = "${merge(module.arvados-master.hgi_instance["internal_ip"], module.arvados-api-db.hgi_instance["internal_ip"], module.arvados-sso.hgi_instance["internal_ip"], module.arvados-workbench.hgi_instance["internal_ip"], module.arvados-keepproxy.hgi_instance["internal_ip"], module.arvados-keep.hgi_instance["internal_ip"], module.arvados-shell.hgi_instance["internal_ip"], module.arvados-monitor.hgi_instance["internal_ip"])}"
+    user            = "${merge(module.arvados-master.hgi_instance["user"], module.arvados-api-db.hgi_instance["user"], module.arvados-sso.hgi_instance["user"], module.arvados-workbench.hgi_instance["user"], module.arvados-keepproxy.hgi_instance["user"], module.arvados-keep.hgi_instance["user"], module.arvados-shell.hgi_instance["user"], module.arvados-monitor.hgi_instance["user"])}"
+    security_groups = "${merge(module.arvados-master.hgi_instance["security_groups"], module.arvados-api-db.hgi_instance["security_groups"], module.arvados-sso.hgi_instance["security_groups"], module.arvados-workbench.hgi_instance["security_groups"], module.arvados-keepproxy.hgi_instance["security_groups"], module.arvados-keep.hgi_instance["security_groups"], module.arvados-shell.hgi_instance["security_groups"], module.arvados-monitor.hgi_instance["security_groups"])}"
+  }
+}
+
+output "hgi_instances_by_type" {
+  value = {
+    arvados-master    = "${module.arvados-master.hgi_instance}"
+    arvados-api-db    = "${module.arvados-api-db.hgi_instance}"
+    arvados-sso       = "${module.arvados-sso.hgi_instance}"
+    arvados-workbench = "${module.arvados-workbench.hgi_instance}"
+    arvados-keepproxy = "${module.arvados-keepproxy.hgi_instance}"
+    arvados-keep      = "${module.arvados-keep.hgi_instance}"
+    arvados-shell     = "${module.arvados-shell.hgi_instance}"
+    arvados-monitor   = "${module.arvados-monitor.hgi_instance}"
   }
 }
