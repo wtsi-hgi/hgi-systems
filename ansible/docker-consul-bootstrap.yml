@@ -160,3 +160,34 @@
             policy: write
           - service: ""
             policy: write
+
+    - name: store essential values in consul kv for reading by terraform
+      delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
+      consul_kv:
+        key: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        token: "{{ consul_cluster_acl_terraform_token }}"
+     with_items:
+       - key: terraform/upstream_dns_servers
+         value: "{{ all_GROUP_sanger_network_dns_servers | join(',') }}"
+
+    - name: store consul credentials in consul kv for reading by terraform (TODO migrate to vault)
+      delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
+      consul_kv:
+        key: "{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        token: "{{ consul_cluster_acl_terraform_token }}"
+      with_items:
+        - key: terraform/consul_encrypt
+	  value: "{{ consul_cluster_encrypt }}"
+	- key: terraform/consul_cluster_acl_agent_token
+	  value: "{{ consul_cluster_acl_agent_token }}"
+	- key: terraform/consul_template_token
+	  value: "{{ }}"
+
