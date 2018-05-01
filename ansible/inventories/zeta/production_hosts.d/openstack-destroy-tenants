@@ -19,7 +19,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
 [openstack-destroy-tenants]
-delta-hgi-ci-tenant tenant=delta-hgi-ci-tenant openstack_tenant_id=e95a9c47113a4a1499e6c51c04d4d15e
+zeta-hgi-ci-tenant tenant=zeta-hgi-ci-tenant openstack_tenant_id=e95a9c47113a4a1499e6c51c04d4d15e
 
 [openstack:children]
 openstack-destroy-tenants
