@@ -1,0 +1,1 @@
+../delta/production_hosts.d/terraform-delta-hgiarvados-production.sh

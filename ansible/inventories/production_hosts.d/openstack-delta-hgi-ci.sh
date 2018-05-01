@@ -1,0 +1,1 @@
+../delta/production_hosts.d/openstack-delta-hgi-ci.sh
