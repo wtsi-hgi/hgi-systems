@@ -56,9 +56,9 @@ cp ${GOPATH}/bin/terraform /usr/local/bin/
 echo "building terraform-provider-infoblox"
 mkdir -p $GOPATH/src/github.com/prudhvitella
 cd $GOPATH/src/github.com/prudhvitella
-git clone https://github.com/wtsi-hgi/terraform-provider-infoblox.git
+git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
-git checkout hgi-integration
+git checkout 9cec6f57
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
