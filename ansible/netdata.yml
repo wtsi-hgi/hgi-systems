@@ -21,16 +21,14 @@
 # file: netdata.yml
 
 - hosts: netdata
-  vars:
-    netdata_PLAYBOOK_foo: ""
   tasks:
     - name: import role netdata
       import_role:
         name: netdata
       vars:
-        ###############################################################################
-        # Variables that have no defaults and must be set
-        ###############################################################################
         netdata_consul_config_dir: "{{ netdata_GROUP_consul_config_dir }}"
+        netdata_alarm_slack_webhook_url: "{{ netdata_GROUP_mattermost_webhook_url }}"
+        netdata_alarm_slack_recipients: "{{ netdata_GROUP_mattermost_recipients }}"
+        netdata_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
       tags:
         - netdata
