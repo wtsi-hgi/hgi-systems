@@ -169,7 +169,7 @@
         key: "{{ item.key }}"
         value: "{{ item.value }}"
         state: present
-        token: "{{ consul_cluster_acl_terraform_token }}"
+        token: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
       with_items:
         - key: terraform/upstream_dns_servers
           value: "{{ all_GROUP_sanger_network_dns_servers | join(',') }}"
@@ -182,12 +182,12 @@
         key: "{{ item.key }}"
         value: "{{ item.value }}"
         state: present
-        token: "{{ consul_cluster_acl_terraform_token }}"
+        token: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
       with_items:
         - key: terraform/consul_encrypt
-          value: "{{ consul_cluster_encrypt }}"
+          value: "{{ consul_credentials_GROUP_encrypt }}"
         - key: terraform/consul_cluster_acl_agent_token
-          value: "{{ consul_cluster_acl_agent_token }}"
+          value: "{{ consul_credentials_GROUP_creds['agent'].token }}"
         - key: terraform/consul_template_token
-          value: "{{ }}"
+          value: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
 
