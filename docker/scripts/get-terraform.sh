@@ -53,12 +53,13 @@ export XC_OS="linux"
 /bin/bash scripts/build.sh || (echo "failed to build terraform"; exit 1)
 cp ${GOPATH}/bin/terraform /usr/local/bin/
 
-echo "building terraform-provider-infoblox"
+echo "preparing to build terraform-provider-infoblox"
 mkdir -p $GOPATH/src/github.com/prudhvitella
 cd $GOPATH/src/github.com/prudhvitella
 git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
 git checkout 9cec6f57
+echo "getting terraform-provider-infoblox prerequisites"
 go get github.com/mitchellh/gox
 go get github.com/tcnksm/ghr
 go get github.com/davecgh/go-spew/spew
@@ -66,6 +67,7 @@ go get github.com/hashicorp/logutils
 go get -u github.com/fanatic/go-infoblox
 go get -u github.com/kardianos/govendor
 govendor sync
+echo "building terraform-provider-infoblox"
 make bin
 cp ${GOPATH}/bin/terraform-provider-infoblox /usr/local/bin/
 
