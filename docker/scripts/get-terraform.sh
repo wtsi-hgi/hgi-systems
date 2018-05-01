@@ -60,12 +60,13 @@ git clone https://github.com/prudhvitella/terraform-provider-infoblox.git
 cd terraform-provider-infoblox
 git checkout 9cec6f57
 echo "getting terraform-provider-infoblox prerequisites"
-go get github.com/mitchellh/gox
-go get github.com/tcnksm/ghr
-go get github.com/davecgh/go-spew/spew
-go get github.com/hashicorp/logutils
-go get -u github.com/fanatic/go-infoblox
-go get -u github.com/kardianos/govendor
+go get github.com/mitchellh/gox && echo "gox"
+go get github.com/tcnksm/ghr && echo "ghr" 
+go get github.com/davecgh/go-spew/spew && echo "spew"
+go get github.com/hashicorp/logutils && echo "logutils"
+go get -u github.com/fanatic/go-infoblox && echo "go-infoblox"
+go get -u github.com/kardianos/govendor && echo "govendor"
+echo "calling govendor sync"
 govendor sync
 echo "building terraform-provider-infoblox"
 make bin
