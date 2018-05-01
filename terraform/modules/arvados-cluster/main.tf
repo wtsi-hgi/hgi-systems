@@ -10,7 +10,7 @@ variable "base_image" {
   type = "map"
 }
 
-variable "arvados_compute_node_image" {
+variable "compute_node_image" {
   type = "map"
 }
 
@@ -259,29 +259,24 @@ module "arvados-monitor" {
   image   = "${var.base_image}"
 }
 
-# module "arvados-compute-node-noconf" {
-#   source                 = "../arvados-compute-node-noconf-v2"
-#   env = "${var.env}"
-#   region = "${var.region}"
-#   setup = "${var.setup}"
-#   core_context = "${var.core_context}"
+module "arvados-compute-node-noconf" {
+  source = "../arvados-compute-node-noconf-v2"
 
-#   image = "${var.arvados_compute_node_image}"
+  env          = "${var.env}"
+  region       = "${var.region}"
+  setup        = "${var.setup}"
+  core_context = "${var.core_context}"
+  ssh_gateway  = "${var.ssh_gateway}"
 
-#   count   = "${var.arvados_compute_node_count}"
-#   flavour = "${var.compute_node_flavour}"
-#   domain  = "${local.consul_domain}"
+  arvados_cluster_id   = "${var.arvados_cluster_id}"
+  consul_datacenter    = "${var.consul_datacenter}"
+  extra_ansible_groups = "${var.extra_ansible_groups}"
 
-#   ssh_gateway = "${var.ssh_gateway}"
-
-#   arvados_cluster_id   = "${var.arvados_cluster_id}"
-#   extra_ansible_groups = []
-
-#   consul_datacenter     = "delta-hgiarvados"
-#   consul_retry_join     = "${module.consul-server.retry_join}"
-#   upstream_dns_servers  = ["172.18.255.1", "172.18.255.2", "172.18.255.3"] # FIXME this should be defined elsewhere
-#   consul_template_token = "${var.consul_template_token}"
-# }
+  count   = "${var.compute_node_count}"
+  flavour = "${var.compute_node_flavour}"
+  domain  = "${local.consul_domain}"
+  image   = "${var.compute_node_image}"
+}
 
 output "hgi_instances" {
   value = {

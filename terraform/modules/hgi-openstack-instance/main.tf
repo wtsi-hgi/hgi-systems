@@ -26,6 +26,13 @@ variable "additional_dns_names" {
   default = []
 }
 
+variable "cloud_config_shell_script" {
+  default = <<EOF
+#!/bin/sh
+echo "Default cloud_config_shell_script"
+EOF
+}
+
 variable "security_group_names" {
   type = "list"
 
@@ -118,6 +125,33 @@ resource "openstack_networking_port_v2" "port" {
   security_group_ids = ["${local.security_groups}"]
 }
 
+data "template_file" "cloud-config-init-script" {
+  count    = "${var.count}"
+  template = "${file("${path.module}/scripts/init.cfg.tpl")}"
+
+  vars {
+    CLOUDINIT_HOSTNAME = "${local.hostname_formatted_p ? (local.hostname_format_list_p ? format(local.hostname_format, element(local.hostname_format_list_never_empty, count.index)) : format(local.hostname_format, count.index + 1)) : local.hostname_format}"
+    CLOUDINIT_DOMAIN   = "${var.domain}"
+  }
+}
+
+data "template_cloudinit_config" "cloudinit" {
+  count         = "${var.count}"
+  gzip          = false
+  base64_encode = false
+
+  part {
+    filename     = "init.cfg"
+    content_type = "text/cloud-config"
+    content      = "${data.template_file.cloud-config-init-script.*.rendered[count.index]}"
+  }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = "${var.cloud_config_shell_script}"
+  }
+}
+
 resource "openstack_compute_instance_v2" "instance" {
   provider    = "openstack"
   count       = "${var.count}"
@@ -130,7 +164,7 @@ resource "openstack_compute_instance_v2" "instance" {
     port = "${openstack_networking_port_v2.port.*.id[count.index]}"
   }
 
-  user_data = "#cloud-config\nhostname: ${local.hostname_formatted_p ? (local.hostname_format_list_p ? format(local.hostname_format, element(local.hostname_format_list_never_empty, count.index)) : format(local.hostname_format, count.index + 1)) : local.hostname_format}\nfqdn: ${local.hostname_formatted_p ? (local.hostname_format_list_p ? format(local.hostname_format, element(local.hostname_format_list_never_empty, count.index)) : format(local.hostname_format, count.index + 1)) : local.hostname_format}.${var.domain}"
+  user_data = "${data.template_cloudinit_config.cloudinit.*.rendered[count.index]}"
 
   metadata = {
     ansible_groups = "${join(" ", var.ansible_groups)}"
