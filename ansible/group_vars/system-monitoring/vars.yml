@@ -1,0 +1,7 @@
+# Vault contains:
+#   system_monitoring_GROUP_mattermost_webhook_url
+
+---
+
+system_monitoring_GROUP_mattermost_recipients:
+  - monitoring

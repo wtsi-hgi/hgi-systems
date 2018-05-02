@@ -16,3 +16,6 @@ arvados-clusters
 
 [non-hosts:children]
 arvados-clusters
+
+[system-monitoring:children]
+netdata
