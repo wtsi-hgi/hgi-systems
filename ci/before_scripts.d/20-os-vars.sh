@@ -29,6 +29,7 @@ function export_tenant_or_project {
     tenant_or_project=$1
     if [[ "${CI_JOB_STAGE}" == terraform* ]]; then
         export OS_PROJECT_NAME="${tenant_or_project}"
+        export OS_PROJECT_DOMAIN_NAME="Default"
         export OS_USER_DOMAIN_NAME="Default"
         >&2 echo "OS_PROJECT_NAME set to ${tenant_or_project} (using v3+ auth) (stage=${CI_JOB_STAGE})"
     else
