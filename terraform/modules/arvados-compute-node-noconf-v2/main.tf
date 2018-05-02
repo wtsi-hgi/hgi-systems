@@ -11,6 +11,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "arvados_cluster_id" {}
 variable "consul_datacenter" {}
+variable "consul_keys_datacenter" {}
 
 variable "volume_size_gb" {
   default = 10
@@ -49,7 +50,7 @@ locals {
 }
 
 data "consul_keys" "consul-agent" {
-  # datacenter = "${var.consul_datacenter}" # FIXME leaving this unset as these keys are currently in the hgi consul datacenter
+  datacenter = "${var.consul_keys_datacenter}"
 
   key {
     name = "consul_encrypt"
@@ -84,7 +85,7 @@ data "template_file" "ansible-cc-script" {
       ansible_user=ubuntu
       cc_arvados_cluster_id='${var.arvados_cluster_id}'
       cc_consul_datacenter='${var.consul_datacenter}'
-      cc_upstream_dns_servers='${join(",", data.consul_keys.consul-agent.var.upstream_dns_servers)}'
+      cc_upstream_dns_servers='${data.consul_keys.consul-agent.var.upstream_dns_servers}'
       cc_consul_template_token='${data.consul_keys.consul-agent.var.consul_template_token}'
       cc_consul_agent_token='${data.consul_keys.consul-agent.var.consul_acl_token}'
       cc_consul_encrypt='${data.consul_keys.consul-agent.var.consul_encrypt}'

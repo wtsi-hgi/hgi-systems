@@ -258,7 +258,7 @@ resource "openstack_compute_volume_attach_v2" "volume-attach" {
 
 locals {
   instance_names          = "${openstack_compute_instance_v2.instance.*.name}"
-  first_fixed_ips         = "${openstack_networking_port_v2.port.*.all_fixed_ips.0}"
+  fixed_ips               = "${openstack_networking_port_v2.port.*.all_fixed_ips}"
   users_list              = "${formatlist("%.0s%s", local.instance_names, var.image["user"])}"                                                                          # this is a hacky way to repeat user n times where n = length(local.instance_names)
   security_groups_list    = "${formatlist("%.0s%s", local.instance_names, join(",", local.security_groups))}"
   internal_instance_names = "${slice(openstack_compute_instance_v2.instance.*.name, 0, var.floating_ip_p ? 0 : length(openstack_compute_instance_v2.instance.*.name))}"
@@ -270,7 +270,7 @@ locals {
 locals {
   external_dns_by_instance_name    = "${zipmap(local.external_instance_names, local.external_dns_names)}"
   floating_ip_by_instance_name     = "${zipmap(local.external_instance_names, local.external_ips)}"
-  internal_ip_by_instance_name     = "${zipmap(local.instance_names, local.first_fixed_ips)}"
+  internal_ip_by_instance_name     = "${zipmap(local.instance_names, local.fixed_ips)}"
   user_by_instance_name            = "${zipmap(local.instance_names, local.users_list)}"
   security_groups_by_instance_name = "${zipmap(local.instance_names, local.security_groups_list)}"
 }

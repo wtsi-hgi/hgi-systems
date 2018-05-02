@@ -5,6 +5,7 @@ variable "setup" {}
 variable "domain" {}
 variable "arvados_cluster_id" {}
 variable "consul_datacenter" {}
+variable "consul_keys_datacenter" {}
 
 variable "base_image" {
   type = "map"
@@ -268,9 +269,10 @@ module "arvados-compute-node-noconf" {
   core_context = "${var.core_context}"
   ssh_gateway  = "${var.ssh_gateway}"
 
-  arvados_cluster_id   = "${var.arvados_cluster_id}"
-  consul_datacenter    = "${var.consul_datacenter}"
-  extra_ansible_groups = "${var.extra_ansible_groups}"
+  arvados_cluster_id     = "${var.arvados_cluster_id}"
+  consul_datacenter      = "${var.consul_datacenter}"
+  consul_keys_datacenter = "${var.consul_keys_datacenter}"
+  extra_ansible_groups   = "${var.extra_ansible_groups}"
 
   count   = "${var.compute_node_count}"
   flavour = "${var.compute_node_flavour}"
