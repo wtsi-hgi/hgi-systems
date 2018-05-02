@@ -65,9 +65,6 @@ else
     exit ${plan_exit_status}
 fi
 
-echo "Preparing required OpenStack images (S3 -> OS if not in OS)"
-"${SCRIPT_DIRECTORY}/terraform-prepare-os-images-2.py" plan.txt "${S3_IMAGE_BUCKET}"
-
 echo "Generating /tmp/ansible_vault.pw"
 (echo "${ANSIBLE_VAULT_PASSWORD}" > /tmp/ansible_vault.pw)
 
