@@ -1,3 +1,5 @@
+[netdata]
+
 [arvados-cluster-ncucu]
 arvados-cluster-ncucu-arvados-cluster
 
