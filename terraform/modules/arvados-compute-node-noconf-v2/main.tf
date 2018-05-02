@@ -49,7 +49,7 @@ locals {
 }
 
 data "consul_keys" "consul-agent" {
-  datacenter = "${var.consul_datacenter}"
+  # datacenter = "${var.consul_datacenter}" # FIXME leaving this unset as these keys are currently in the hgi consul datacenter
 
   key {
     name = "consul_encrypt"
