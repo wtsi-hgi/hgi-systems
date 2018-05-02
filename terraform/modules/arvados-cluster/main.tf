@@ -221,7 +221,7 @@ module "arvados-keep" {
 }
 
 module "arvados-shell" {
-  source = "../arvados-shell-v2"
+  source = "../arvados-shell-v3"
 
   env          = "${var.env}"
   region       = "${var.region}"
