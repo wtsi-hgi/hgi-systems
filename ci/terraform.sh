@@ -10,6 +10,8 @@ ensureSet CI_PROJECT_DIR REGION SETUP ENV ANSIBLE_VAULT_PASSWORD TERRAFORM_CONSU
 
 export CONSUL_HTTP_TOKEN="${TERRAFORM_CONSUL_TOKEN}"
 
+>&2 echo "Run information: REGION=${REGION} SETUP=${SETUP} ENV=${ENV}"
+
 artifacts_dir="${CI_PROJECT_DIR}/artifacts"
 mkdir -p "${artifacts_dir}"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
