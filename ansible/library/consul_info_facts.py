@@ -53,7 +53,7 @@ import re
 def main():
     module = AnsibleModule(
         argument_spec={
-            "consul_bin": {"required": False, "default": "/usr/bin/consul", type: "bytes"},
+            "consul_bin": {"required": False, "default": "/usr/bin/consul", type: "bytes"}, # FIXME I think unquoted "type" is not correct and none of this is working properly
             "mgmt_token": {"required": False, "default": "", type: "bytes"},
         },
         supports_check_mode=True
