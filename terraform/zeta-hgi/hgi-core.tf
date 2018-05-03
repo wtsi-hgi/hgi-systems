@@ -9,10 +9,6 @@ data "terraform_remote_state" "hgi-core" {
   }
 }
 
-output "ssh_gateway_host" {
-  value = "${data.terraform_remote_state.hgi-core.ssh_gateway_host}"
-}
-
-output "ssh_gateway_user" {
-  value = "${data.terraform_remote_state.hgi-core.ssh_gateway_user}"
+output "ssh_gateway" {
+  value = "${data.terraform_remote_state.hgi-core.ssh_gateway}"
 }
