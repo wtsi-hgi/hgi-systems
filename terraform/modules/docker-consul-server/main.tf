@@ -75,9 +75,9 @@ module "hgi-openstack-instance" {
 
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
 
-  additional_dns_names = [
-    "consul",
-    "consul.${var.consul_datacenter}",
+  additional_dns_fqdns = [
+    "consul.${var.domain}",
+    "consul.${var.consul_datacenter}.${var.domain}",
   ]
 }
 

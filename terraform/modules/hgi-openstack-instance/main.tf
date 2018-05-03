@@ -26,6 +26,11 @@ variable "additional_dns_names" {
   default = []
 }
 
+variable "additional_dns_fqdns" {
+  type    = "list"
+  default = []
+}
+
 variable "cloud_config_shell_script" {
   default = <<EOF
 #!/bin/sh
@@ -107,7 +112,8 @@ locals {
 }
 
 locals {
-  additional_dns_names_count = "${length(var.additional_dns_names)}"
+  additional_dns_fqdns       = "${concat(var.additional_dns_fqdns, formatlist("%s.%s", var.additional_dns_names, var.domain))}"
+  additional_dns_fqdns_count = "${length(local.additional_dns_fqdns)}"
 }
 
 resource "openstack_networking_floatingip_v2" "floatingip" {
@@ -224,25 +230,16 @@ resource "infoblox_record" "floatingip-dns" {
 # }
 
 resource "infoblox_record" "floatingip-additional-dns-multi" {
-  count  = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
+  count  = "${var.floating_ip_p ? (local.additional_dns_fqdns_count*var.count) : 0}"
   type   = "A"
-  value  = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_names_count))}"
-  name   = "${replace(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)+1), (count.index/local.additional_dns_names_count)) : element(var.additional_dns_names, (count.index%local.additional_dns_names_count))}"
-  domain = "${var.domain}"
+  value  = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_fqdns_count))}"
+  name   = "${element(split(".", replace(element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count)+1), (count.index/local.additional_dns_fqdns_count)) : element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count))), 0)}"
+  domain = "${join(".", slice(split(".", replace(element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count)+1), (count.index/local.additional_dns_fqdns_count)) : element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count))), 1, length(split(".", replace(element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count)+1), (count.index/local.additional_dns_fqdns_count)) : element(local.additional_dns_fqdns, (count.index%local.additional_dns_fqdns_count))))))}"
   ttl    = 600
   view   = "internal"
 
-  # comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, (count.index/local.additional_dns_names_count)) : format(var.name_format, (count.index/local.additional_dns_names_count) + 1)) : var.name_format} additional_dns ${(count.index%local.additional_dns_names_count) + 1}"
+  # comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, (count.index/local.additional_dns_fqdns_count)) : format(var.name_format, (count.index/local.additional_dns_fqdns_count) + 1)) : var.name_format} additional_dns ${(count.index%local.additional_dns_fqdns_count) + 1}"
 }
-
-# resource "infoblox_record_a" "floatingip-additional-dns" {
-#   count   = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
-#   address = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_names_count))}"
-#   name    = "${replace(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)), "/.*[^%]?%[^%].*/", "formatted") == "formatted" ? format(element(var.additional_dns_names, (count.index%local.additional_dns_names_count)+1), (count.index/local.additional_dns_names_count)) : element(var.additional_dns_names, (count.index%local.additional_dns_names_count))}.${var.domain}"
-#   ttl     = 600
-#   view    = "internal"
-#   comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, (count.index/local.additional_dns_names_count)) : format(var.name_format, (count.index/local.additional_dns_names_count) + 1)) : var.name_format} additional_dns ${(count.index%local.additional_dns_names_count) + 1}"
-# }
 
 resource "openstack_blockstorage_volume_v2" "volume" {
   count = "${var.volume_p ? var.count : 0}"
