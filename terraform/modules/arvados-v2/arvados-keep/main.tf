@@ -6,6 +6,7 @@ variable "core_context" {
   type = "map"
 }
 
+variable "count" {}
 variable "flavour" {}
 variable "domain" {}
 variable "arvados_cluster_id" {}
@@ -39,14 +40,14 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "arvados-workbenches",
+    "arvados-keeps",
     "arvados-cluster-${var.arvados_cluster_id}",
-    "consul-agents",
-    "consul-cluster-${var.consul_datacenter}",
+    "docker-consul-agents",
+    "docker-consul-cluster-${var.consul_datacenter}",
     "hgi-credentials",
   ]
 
-  hostname_format = "arvados-workbench-${var.arvados_cluster_id}"
+  hostname_format = "arvados-keep%02d-${var.arvados_cluster_id}"
 }
 
 module "hgi-openstack-instance" {
@@ -55,14 +56,14 @@ module "hgi-openstack-instance" {
   region          = "${var.region}"
   setup           = "${var.setup}"
   core_context    = "${var.core_context}"
-  floating_ip_p   = true
+  count           = "${var.count}"
+  floating_ip_p   = false
   volume_p        = true
   volume_size_gb  = "${var.volume_size_gb}"
-  count           = 1
   name_format     = "${local.hostname_format}"
-  hostname_format = "${local.hostname_format}"
   domain          = "${var.domain}"
   flavour         = "${var.flavour}"
+  hostname_format = "${local.hostname_format}"
   ssh_gateway     = "${var.ssh_gateway}"
   keypair_name    = "${var.keypair_name}"
   network_name    = "${var.network_name}"
@@ -71,8 +72,8 @@ module "hgi-openstack-instance" {
   security_group_names = [
     "ping",
     "ssh",
-    "https",
     "consul-client",
+    "keep-service",
     "netdata",
   ]
 

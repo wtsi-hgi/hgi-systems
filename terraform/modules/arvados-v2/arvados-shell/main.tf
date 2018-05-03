@@ -42,7 +42,8 @@ locals {
   ansible_groups = [
     "arvados-shells",
     "arvados-cluster-${var.arvados_cluster_id}",
-    "consul-agents",
+    "docker-consul-agents",
+    "docker-consul-cluster-${var.consul_datacenter}",
     "hgi-credentials",
   ]
 

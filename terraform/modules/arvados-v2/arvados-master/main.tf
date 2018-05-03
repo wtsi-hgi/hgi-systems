@@ -6,14 +6,14 @@ variable "core_context" {
   type = "map"
 }
 
+variable "volume_size_gb" {
+  default = 100
+}
+
 variable "flavour" {}
 variable "domain" {}
 variable "arvados_cluster_id" {}
 variable "consul_datacenter" {}
-
-variable "volume_size_gb" {
-  default = 10
-}
 
 variable "image" {
   type = "map"
@@ -39,14 +39,24 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "arvados-ssos",
-    "arvados-cluster-${var.arvados_cluster_id}",
-    "consul-agents",
-    "consul-cluster-${var.consul_datacenter}",
+    "arvados-masters",
+    "docker-consul-agents",
     "hgi-credentials",
+    "arvados-cluster-${var.arvados_cluster_id}",
+    "docker-consul-cluster-${var.consul_datacenter}",
   ]
 
-  hostname_format = "arvados-sso-${var.arvados_cluster_id}"
+  security_group_names = [
+    "ping",
+    "ssh",
+    "https",
+    "consul-client",
+    "slurm-master",
+    "tcp-local",
+    "udp-local",
+  ]
+
+  hostname_format = "arvados-master-${var.arvados_cluster_id}"
 }
 
 module "hgi-openstack-instance" {
@@ -68,17 +78,15 @@ module "hgi-openstack-instance" {
   network_name    = "${var.network_name}"
   image           = "${var.image}"
 
-  security_group_names = [
-    "ping",
-    "ssh",
-    "https",
-    "consul-client",
-    "netdata",
-  ]
+  security_group_names = "${local.security_group_names}"
 
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
 
-  additional_dns_names = []
+  additional_dns_names = [
+    "arvados-api-${var.arvados_cluster_id}",
+    "arvados-ws-${var.arvados_cluster_id}",
+    "arvados-git-${var.arvados_cluster_id}",
+  ]
 }
 
 output "hgi_instance" {

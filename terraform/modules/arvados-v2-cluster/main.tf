@@ -106,7 +106,7 @@ locals {
 }
 
 module "arvados-master" {
-  source = "../arvados-master-v2"
+  source = "../arvados-v2/arvados-master"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -126,7 +126,7 @@ module "arvados-master" {
 }
 
 module "arvados-api-db" {
-  source = "../arvados-api-db-v2"
+  source = "../arvados-v2/arvados-api-db"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -146,7 +146,7 @@ module "arvados-api-db" {
 }
 
 module "arvados-sso" {
-  source = "../arvados-sso-v2"
+  source = "../arvados-v2/arvados-sso"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -166,7 +166,7 @@ module "arvados-sso" {
 }
 
 module "arvados-workbench" {
-  source = "../arvados-workbench-v2"
+  source = "../arvados-v2/arvados-workbench"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -184,7 +184,7 @@ module "arvados-workbench" {
 }
 
 module "arvados-keepproxy" {
-  source = "../arvados-keepproxy-v2"
+  source = "../arvados-v2/arvados-keepproxy"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -203,7 +203,7 @@ module "arvados-keepproxy" {
 }
 
 module "arvados-keep" {
-  source = "../arvados-keep-v2"
+  source = "../arvados-v2/arvados-keep"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -222,7 +222,7 @@ module "arvados-keep" {
 }
 
 module "arvados-shell" {
-  source = "../arvados-shell-v3"
+  source = "../arvados-v2/arvados-shell"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -242,7 +242,7 @@ module "arvados-shell" {
 }
 
 module "arvados-monitor" {
-  source = "../arvados-monitor-v2"
+  source = "../arvados-v2/arvados-monitor"
 
   env          = "${var.env}"
   region       = "${var.region}"
@@ -261,7 +261,7 @@ module "arvados-monitor" {
 }
 
 module "arvados-compute-node-noconf" {
-  source = "../arvados-compute-node-noconf-v2"
+  source = "../arvados-v2/arvados-compute-node-noconf"
 
   env          = "${var.env}"
   region       = "${var.region}"
