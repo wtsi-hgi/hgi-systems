@@ -25,8 +25,6 @@
   gather_facts: no
   vars:
     docker_consul_bootstrap_PLAYBOOK_server_ips: "{{ lookup('dig', docker_consul_cluster_SPECIFIC_GROUP_address, wantlist=True) }}"
-    # FIXME: violation of the limits don't matter rule - must be ran with all Consul servers
-    docker_consul_cluster_PLAYBOOK_servers: "{{ groups['consul-servers'] | intersect(groups[docker_consul_cluster_SPECIFIC_GROUP_id]) | default([]) | sort | map('extract', hostvars) | list() }}"
   tasks:
     - name: assert that we have the expected number of server ips
       delegate_to: localhost
@@ -103,15 +101,20 @@
             policy: write
       with_items: "{{ docker_consul_bootstrap_PLAYBOOK_server_ips }}"
 
-    - name: gather consul cluster info again
+    - name: gather consul cluster members
       delegate_to: "{{ item }}"
       vars:
         ansible_user: mercury
         ansible_python_interpreter: python3
-      consul_info_facts: 
+      consul_members_facts: 
         mgmt_token: "{{ consul_credentials_GROUP_creds['agent-master'].token }}"
       with_items: "{{ docker_consul_bootstrap_PLAYBOOK_server_ips }}"
-      register: consul_cluster_info
+      register: consul_cluster_members
+
+    - debug:
+        var: consul_cluster_members
+
+    - fail:
 
     - name: create a management ACL token
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
@@ -265,7 +268,7 @@
       delegate_to: "{{ consul_cluster_leader }}"
       consul_kv:
         key: "ansible/{{ consul_cluster_datacenter }}/consul_cluster_server_wan_ips"
-        value: "{{ docker_consul_cluster_PLAYBOOK_servers | map(attribute='cloud_resource_public_ip') | list | to_json }}"
+        value: "{{ docker_consul_bootstrap_PLAYBOOK_server_ips }}"
         state: present
         token: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
 
