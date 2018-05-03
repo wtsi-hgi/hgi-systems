@@ -1,30 +1,39 @@
+variable "env" {}
+variable "region" {}
+variable "setup" {}
+
+variable "core_context" {
+  type = "map"
+}
+
+variable "shell_names" {
+  type    = "list"
+  default = ["shell"]
+}
+
 variable "count" {}
 variable "flavour" {}
 variable "domain" {}
-variable "network_id" {}
 variable "arvados_cluster_id" {}
+variable "consul_datacenter" {}
 
-variable "shell_name" {
-  type    = "string"
-  default = "shell"
-}
-
-variable "security_group_ids" {
-  type    = "map"
-  default = {}
-}
-
-variable "key_pair_ids" {
-  type    = "map"
-  default = {}
+variable "volume_size_gb" {
+  default = 10
 }
 
 variable "image" {
-  type    = "map"
-  default = {}
+  type = "map"
 }
 
-variable "bastion" {
+variable "network_name" {
+  default = "main"
+}
+
+variable "keypair_name" {
+  default = "mercury"
+}
+
+variable "ssh_gateway" {
   type    = "map"
   default = {}
 }
@@ -32,10 +41,6 @@ variable "bastion" {
 variable "extra_ansible_groups" {
   type    = "list"
   default = []
-}
-
-variable "floatingip_pool_name" {
-  default = "nova"
 }
 
 locals {
@@ -47,77 +52,45 @@ locals {
     "hgi-credentials",
   ]
 
-  hostname_format = "${format("arvados-%s-%s", var.shell_name, var.arvados_cluster_id)}-%02d"
+  hostname_format = "arvados-%s-${var.arvados_cluster_id}" # parameterized on shell_names rather than count
 }
 
-resource "openstack_networking_floatingip_v2" "arvados-shell" {
-  provider = "openstack"
-  pool     = "${var.floatingip_pool_name}"
-  count    = "${var.count}"
-}
+module "hgi-openstack-instance" {
+  source               = "../../hgi-openstack-instance"
+  env                  = "${var.env}"
+  region               = "${var.region}"
+  setup                = "${var.setup}"
+  core_context         = "${var.core_context}"
+  count                = "${var.count}"
+  floating_ip_p        = true
+  volume_p             = true
+  volume_size_gb       = "${var.volume_size_gb}"
+  name_format          = "${local.hostname_format}"
+  name_format_list     = "${var.shell_names}"
+  domain               = "${var.domain}"
+  flavour              = "${var.flavour}"
+  hostname_format      = "${local.hostname_format}"
+  hostname_format_list = "${var.shell_names}"
+  ssh_gateway          = "${var.ssh_gateway}"
+  keypair_name         = "${var.keypair_name}"
+  network_name         = "${var.network_name}"
+  image                = "${var.image}"
 
-resource "openstack_compute_instance_v2" "arvados-shell" {
-  provider    = "openstack"
-  count       = "${var.count}"
-  name        = "${format(local.hostname_format, count.index + 1)}"
-  image_name  = "${var.image["name"]}"
-  flavor_name = "${var.flavour}"
-  key_pair    = "${var.key_pair_ids["mercury"]}"
-
-  security_groups = [
-    "${var.security_group_ids["ping"]}",
-    "${var.security_group_ids["ssh"]}",
-    "${var.security_group_ids["https"]}",
-    "${var.security_group_ids["consul-client"]}",
-    "${var.security_group_ids["slurm-master"]}",
-    "${var.security_group_ids["tcp-local"]}",
-    "${var.security_group_ids["udp-local"]}",
+  security_group_names = [
+    "ping",
+    "ssh",
+    "https",
+    "consul-client",
+    "netdata",
+    "tcp-local",
+    "udp-local",
   ]
 
-  network {
-    uuid           = "${var.network_id}"
-    access_network = true
-  }
+  ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
 
-  user_data = "#cloud-config\nhostname: ${format(local.hostname_format, count.index + 1)}\nfqdn: ${format(local.hostname_format, count.index + 1)}.${var.domain}"
-
-  metadata = {
-    ansible_groups = "${join(" ", distinct(concat(local.ansible_groups, var.extra_ansible_groups)))}"
-    user           = "${var.image["user"]}"
-    bastion_host   = "${var.bastion["host"]}"
-    bastion_user   = "${var.bastion["user"]}"
-  }
-
-  # wait for host to be available via ssh
-  provisioner "remote-exec" {
-    inline = [
-      "hostname",
-    ]
-
-    connection {
-      type         = "ssh"
-      user         = "${var.image["user"]}"
-      agent        = "true"
-      timeout      = "2m"
-      bastion_host = "${var.bastion["host"]}"
-      bastion_user = "${var.bastion["user"]}"
-    }
-  }
+  additional_dns_names = []
 }
 
-resource "openstack_compute_floatingip_associate_v2" "arvados-shell" {
-  provider    = "openstack"
-  count       = "${var.count}"
-  floating_ip = "${openstack_networking_floatingip_v2.arvados-shell.*.address[count.index]}"
-  instance_id = "${openstack_compute_instance_v2.arvados-shell.*.id[count.index]}"
-}
-
-resource "infoblox_record" "arvados-shell" {
-  count  = "${var.count}"
-  value  = "${openstack_networking_floatingip_v2.arvados-shell.*.address[count.index]}"
-  name   = "${format(local.hostname_format, count.index + 1)}"
-  domain = "${var.domain}"
-  type   = "A"
-  ttl    = 600
-  view   = "internal"
+output "hgi_instance" {
+  value = "${module.hgi-openstack-instance.hgi_instance}"
 }
