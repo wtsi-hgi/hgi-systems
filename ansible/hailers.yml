@@ -71,17 +71,6 @@
           - "'s3_access_key' in hgi_software_s3_credentials"
           - "'s3_secret_key' in hgi_software_s3_credentials"
         msg: "'s3_host', 's3_access_key', and 's3_secret_key' must all be set in hgi_software_s3_credentials (is host a member of s3-credentials group?)"
-    - name: assert infoblox record is available
-      assert:
-        that:
-          - "'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id in hostvars"
-        msg: "infoblox (non-host) inventory entry not found for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id }}"
-    - name: assert that infoblox record has tf_name and tf_domain hostvars
-      assert:
-        that:
-          - "'tf_name' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]"
-          - "'tf_domain' in hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]"
-        msg: "'tf_name' and 'tf_domain' are both required hostvars for {{ 'tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id }}"
     - name: assert terraform volume variables are set for hail master
       assert:
         that:
@@ -142,8 +131,8 @@
         hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
         hail_master_data_dir: "{{ hailers_PLAYBOOK_data_dir }}"
-        hail_master_external_hostname: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_name'] }}"
-        hail_master_external_domain: "{{ hostvars['tf.'+terraform_tenant+'.infoblox_record.hail-'+hail_cluster_id]['tf_domain'] }}"
+        hail_master_external_hostname: "hail-{{ hail_cluster_id }}"
+        hail_master_external_domain: "hgi.sanger.ac.uk"
         hail_backup_s3_host: "{{ hailers_PLAYBOOK_s3_host }}"
         hail_backup_s3_access_key: "{{ hailers_PLAYBOOK_s3_access_key }}"
         hail_backup_s3_secret_key: "{{ hailers_PLAYBOOK_s3_secret_key }}"
