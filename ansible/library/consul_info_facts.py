@@ -46,6 +46,7 @@ EXAMPLES = """
 """
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_bytes
 import subprocess
 import re
 
@@ -53,8 +54,8 @@ import re
 def main():
     module = AnsibleModule(
         argument_spec={
-            "consul_bin": {"required": False, "default": "/usr/bin/consul", type: "bytes"}, # FIXME I think unquoted "type" is not correct and none of this is working properly
-            "mgmt_token": {"required": False, "default": "", type: "bytes"},
+            "consul_bin": {"required": False, "default": "/usr/bin/consul", "type": "str"},
+            "mgmt_token": {"required": False, "default": "", "type": "str"},
         },
         supports_check_mode=True
     )
