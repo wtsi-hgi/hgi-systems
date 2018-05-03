@@ -29,5 +29,6 @@
 
 # Playbooks that only support root hosts
 - import_playbook: gitlab-runners.yml
-- import_playbook: docker-consul-bootstrap.yml
+- import_playbook: docker-consul.yml
+- import_playbook: docker-consul-clusters.yml
 - import_playbook: consul.yml # FIXME after delta is retired, remove this

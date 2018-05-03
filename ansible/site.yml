@@ -46,6 +46,7 @@
 # come before (I'm looking at you SLURM)
 - import_playbook: consul.yml # FIXME after delta is retired, remove this
 - import_playbook: docker-consul.yml
+- import_playbook: docker-consul-clusters.yml
 
 # Playbooks that only support root hosts with no order dependencies
 - import_playbook: arvados.yml
