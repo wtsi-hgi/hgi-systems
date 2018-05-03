@@ -1,8 +1,12 @@
 [docker-consul-cluster-zeta-hgi]
 docker-consul-cluster-zeta-hgi-docker-consul-cluster
 
+[docker-consul-cluster-zeta-hgiarvados]
+docker-consul-cluster-zeta-hgiarvados-docker-consul-cluster
+
 [docker-consul-clusters]
 docker-consul-cluster-zeta-hgi-docker-consul-cluster
+docker-consul-cluster-zeta-hgiarvados-docker-consul-cluster
 
 [infoblox-credentials:children]
 docker-consul-clusters
