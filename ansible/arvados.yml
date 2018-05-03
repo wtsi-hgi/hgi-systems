@@ -85,7 +85,7 @@
         postgres_s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
         postgres_s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
         postgres_s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
-        postgres_s3_backup_s3_directory_in_bucket: "arvados/{{ arvados_cluster_id }}/sso/db"
+        postgres_s3_backup_s3_directory_in_bucket: "/arvados/{{ arvados_cluster_id }}/sso/db"
         # TODO: download S3 copy of minio (postgres_s3_backup_mc_download_source)
         postgres_s3_backup_run_hour: 3,15
         postgres_s3_backup_number_to_keep: 28
@@ -147,7 +147,7 @@
         postgres_s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
         postgres_s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
         postgres_s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
-        postgres_s3_backup_s3_directory_in_bucket: "arvados/{{ arvados_cluster_id }}/api/db"
+        postgres_s3_backup_s3_directory_in_bucket: "/arvados/{{ arvados_cluster_id }}/api/db"
         # TODO: download S3 copy of minio (postgres_s3_backup_mc_download_source)
         postgres_s3_backup_run_hour: 3,15
         postgres_s3_backup_number_to_keep: 28
