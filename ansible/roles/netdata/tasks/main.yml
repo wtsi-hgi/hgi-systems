@@ -69,19 +69,17 @@
     chdir: /usr/local/src/netdata
   when: netdata_git_source.changed
 
-- name: setup health alarms
-  become: yes
-  template:
-    src:  health_alarm_notify.conf.j2
-    dest: /etc/netdata/health_alarm_notify.conf
-
-- name: ensure consul config dir exists
+- name: create config directories
   become: yes
   file:
-    path: "{{ netdata_consul_config_dir }}"
+    path: "{{ item }}"
     state: directory
+  with_items:
+    - "{{ netdata_consul_config_dir }}"
+    - "{{ netdata_consul_template_directory }}"
+    - "{{ netdata_consul_health_alarm_notify_template_template | dirname }}"
 
-- name: configure netdata consul service
+- name: create netdata consul service configuration
   become: yes
   template:
     src: consul-netdata.json.j2
@@ -89,3 +87,21 @@
     owner: root
   notify:
     - reload consul
+
+- name: setup health alarm notifications
+  block:
+    - name: add consul template for health alarm script
+      become: yes
+      template:
+        src: health-alarm-notify.hcl.j2
+        dest: "{{ netdata_consul_template_directory }}/100-health-alarm-notify.hcl"
+      notify:
+       - restart consul-template
+
+    - name: create health alarm notify template template
+      become: yes
+      template:
+        src: health-alarm-notify.conf.ctmpl.j2
+        dest: "{{ netdata_consul_health_alarm_notify_template_template }}"
+
+  when: netdata_alarm_slack_webhook_url_consul_key is defined and netdata_alarm_slack_recipients_consul_key is defined

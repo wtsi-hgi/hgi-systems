@@ -21,15 +21,37 @@
 # file: netdata.yml
 
 - hosts: netdata
+  vars:
+    netdata_PLAYBOOK_alarm_slack_webhook_url_consul_key: consul-template/netdata/alerts/webhook-url
+    netdata_PLAYBOOK_alarm_slack_recipients_consul_key: consul-template/netdata/alerts/recipients
   tasks:
+     # FIXME: determine where/who should do this
+#    - name: set Consul kv values for Netdata health alarms
+#      delegate_to: localhost
+#      run_once: true
+#      no_log: true
+#      consul_kv:
+#        host: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+#        token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+#        key: "{{ item.key }}"
+#        value: "{{ item.value }}"
+#        state: present
+#      with_items:
+#        - key: "{{ netdata_PLAYBOOK_alarm_slack_webhook_url_consul_key }}"
+#          value: "{{ system_monitoring_GROUP_mattermost_webhook_url }}"
+#        - key: "{{ netdata_PLAYBOOK_alarm_slack_recipients_consul_key }}"
+#          value: "{{ system_monitoring_GROUP_mattermost_recipients | join(' ') }}"
+#      when: "not 'image-building' in group_names"
+
     - name: import role netdata
       import_role:
         name: netdata
       vars:
         netdata_consul_config_dir: "{{ netdata_GROUP_consul_config_dir }}"
         netdata_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_service_name }}"
-        netdata_alarm_slack_webhook_url: "{{ system_monitoring_GROUP_mattermost_webhook_url | default('') }}"
-        netdata_alarm_slack_recipients: "{{ system_monitoring_GROUP_mattermost_recipients | default([]) }}"
+         # TODO: Enable
+#        netdata_alarm_slack_webhook_url_consul_key: "{{ netdata_PLAYBOOK_alarm_slack_webhook_url_consul_key }}"
+#        netdata_alarm_slack_recipients_consul_key: "{{ netdata_PLAYBOOK_alarm_slack_recipients_consul_key }}"
         netdata_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
       tags:
         - netdata

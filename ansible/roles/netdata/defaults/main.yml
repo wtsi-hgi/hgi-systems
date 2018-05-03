@@ -1,10 +1,16 @@
+# Optional:
+#   netdata_alarm_slack_webhook_url_consul_key:
+#     (str) URL of Slack (or Mattermost) webhook
+#   netdata_alarm_slack_recipients_consul_key:
+#     (List[str]) recipients of health notifications
 
 ---
 
 netdata_consul_config_dir: "/etc/consul.d"
 netdata_consul_service_name: consul
+netdata_consul_template_directory: /etc/consul-template.d
+netdata_consul_health_alarm_notify_template_template: /etc/netdata/health-alarm-notify.conf.ctmpl
 
-netdata_alarm_slack_webhook_url: ""
-netdata_alarm_slack_recipients: []
+netdata_health_alarm_notify_conf_location: /etc/netdata/health_alarm_notify.conf
 
 netdata_apt_cache_valid_time: 3600
