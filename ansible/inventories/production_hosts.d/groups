@@ -38,6 +38,7 @@
 [consul-agents]
 [consul-servers]
 [core-consul-servers]
+[dockerers]
 [docker-consul-agents]
 [docker-consul-servers]
 [sanger-gitlab]
@@ -221,4 +222,7 @@ hail-computers
 hailers
 
 [netdata:children]
+arvados
+
+[dockerers:children]
 arvados
