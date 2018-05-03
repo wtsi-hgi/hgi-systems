@@ -53,11 +53,15 @@
 [terraform]
 [terraform-ci-delta-hgi]
 [terraform-ci-delta-hgiarvados]
+[terraform-ci-zeta-hgi]
+[terraform-ci-zeta-hgiarvados]
 [tf_type_openstack_compute_instance_v2]
 [consul-clusters]
 [arvados-clusters]
 [consul-cluster-delta-hgi]
 [consul-cluster-delta-hgiarvados]
+[consul-cluster-zeta-hgi]
+[consul-cluster-zeta-hgiarvados]
 [docker-consul-clusters]
 [docker-consul-cluster-zeta-hgi]
 [spark-masters]
@@ -183,6 +187,18 @@ canaries
 terraform
 arvados-clusters
 consul-cluster-delta-hgiarvados
+
+[terraform-ci-zeta-hgi:children]
+canaries
+terraform
+arvados-clusters
+consul-cluster-zeta-hgi
+
+[terraform-ci-zeta-hgiarvados:children]
+canaries
+terraform
+arvados-clusters
+consul-cluster-zeta-hgiarvados
 
 [arvados:children]
 arvados-compute-nodes
