@@ -44,7 +44,7 @@ locals {
     "hgi-credentials",
   ]
 
-  hostname_format = "${format("consul-server-%s", var.consul_datacenter)}-%02d"
+  hostname_format = "${format("docker-consul-server-%s", var.consul_datacenter)}-%02d"
 }
 
 module "hgi-openstack-instance" {
