@@ -13,7 +13,7 @@ function terraform_inventory {
    tenant="$(basename ${terraform_dir})"
    export TF_ANSIBLE_INVENTORY_NAME_TEMPLATE="tf.${tenant}.{{ type }}.{{ primary.expanded_attributes.name | default(primary.id) }}"
    
-   export TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ ( type in ["openstack_compute_instance_v2", "openstack_blockstorage_volume_v2", "openstack_compute_volume_attach_v2", "openstack_networking_floatingip_v2", "openstack_compute_floatingip_associate_v2", "infoblox_record"] ) and (type != "infoblox_record" or ("multi" not in name)) }}'
+   export TF_ANSIBLE_RESOURCE_FILTER_TEMPLATE='{{ ( type in ["openstack_compute_instance_v2", "openstack_blockstorage_volume_v2", "openstack_compute_volume_attach_v2", "openstack_networking_floatingip_v2", "openstack_compute_floatingip_associate_v2", "infoblox_record", "null_resource"] ) and (type != "infoblox_record" or ("multi" not in name)) }}'
 
    export TF_ANSIBLE_GROUPS_TEMPLATE=$(cat <<EOF
 {{ ["all","terraform",
