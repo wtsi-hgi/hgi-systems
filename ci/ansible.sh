@@ -14,7 +14,7 @@ echo "Changing to ansible directory"
 cd ansible
 
 export ANSIBLE_CONFIG="${CI_PROJECT_DIR}/ansible/ansible.cfg"
-inventory=inventories/${REGION}/terraform-${SETUP}-${ENV}_hosts.d
+inventory="inventories/${REGION}/terraform-${SETUP}-${ENV}_hosts.d"
 echo "Calling ansible-playbook site.yml on inventory ${inventory}"
 ansible-playbook -i ${inventory} --vault-password-file "${ANSIBLE_VAULT_PASSWORD_FILE}" -l terraform-ci-${REGION}-${SETUP} site.yml
 playbook_exit_status=$?

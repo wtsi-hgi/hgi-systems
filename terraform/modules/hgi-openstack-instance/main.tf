@@ -223,7 +223,7 @@ resource "infoblox_record" "floatingip-dns" {
 #   comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}"
 # }
 
-resource "infoblox_record" "floatingip-additional-dns" {
+resource "infoblox_record" "floatingip-additional-dns-multi" {
   count  = "${var.floating_ip_p ? (local.additional_dns_names_count*var.count) : 0}"
   type   = "A"
   value  = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, (count.index/local.additional_dns_names_count))}"
