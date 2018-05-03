@@ -3,7 +3,7 @@ FROM mercury/taos
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
          vim \
-         emacs \
+         emacs24-nox \
          less \
          man \
          jq \
