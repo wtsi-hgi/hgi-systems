@@ -27,6 +27,12 @@
     dest: "/etc/systemd/system/docker-consul-agent.service"
   notify: systemd restart docker-consul-agent
 
+- name: ensure docker consul agent config dir exists
+  become: yes
+  file:
+    state: directory
+    path: "{{ docker_consul_agent_config_dir }}"
+    
 - name: configure docker-consul-agent (when not image-building)
   become: yes
   template:
