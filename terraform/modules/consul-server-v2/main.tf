@@ -84,4 +84,3 @@ module "hgi-openstack-instance" {
 output "hgi_instances" {
   value = "${module.hgi-openstack-instance.hgi_instance}"
 }
-
