@@ -112,7 +112,7 @@ locals {
 }
 
 locals {
-  additional_dns_fqdns       = "${concat(var.additional_dns_fqdns, formatlist("%s.%s", var.additional_dns_names, var.domain))}"
+  additional_dns_fqdns       = "${concat(var.additional_dns_fqdns, formatlist("%s.%s", var.additional_dns_names, var.domain), formatlist("%s.%s.%s", var.additional_dns_names, var.env, var.domain))}"
   additional_dns_fqdns_count = "${length(local.additional_dns_fqdns)}"
 }
 
@@ -124,7 +124,7 @@ resource "openstack_networking_floatingip_v2" "floatingip" {
 
 resource "openstack_networking_port_v2" "port" {
   count          = "${var.count}"
-  name           = "${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}-port"
+  name           = "${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}-port.${var.env}"
   admin_state_up = "true"
   network_id     = "${lookup(local.openstack_networks, var.network_name)}"
 
@@ -161,7 +161,7 @@ data "template_cloudinit_config" "cloudinit" {
 resource "openstack_compute_instance_v2" "instance" {
   provider    = "openstack"
   count       = "${var.count}"
-  name        = "${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}"
+  name        = "${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}.${var.env}"
   image_id    = "${var.image["id"]}"
   flavor_name = "${var.flavour}"
   key_pair    = "${lookup(local.openstack_keypairs, var.keypair_name)}"
@@ -217,17 +217,20 @@ resource "infoblox_record" "floatingip-dns" {
   ttl    = 600
   view   = "internal"
 
-  # comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}"
+  # comment = "Terraform ${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}.${var.env}"
 }
 
-# resource "infoblox_record_a" "floatingip-dns" {
-#   count   = "${var.floating_ip_p ? var.count : 0}"
-#   address = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, count.index)}"
-#   name    = "${local.hostname_formatted_p ? (local.hostname_format_list_p ? format(local.hostname_format, element(local.hostname_format_list_never_empty, count.index)) : format(local.hostname_format, count.index + 1)) : local.hostname_format}.${var.domain}"
-#   ttl     = 600
-#   view    = "internal"
-#   comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}"
-# }
+resource "infoblox_record" "floatingip-dns-by-env" {
+  count  = "${var.floating_ip_p ? var.count : 0}"
+  type   = "A"
+  value  = "${element(openstack_compute_floatingip_associate_v2.floatingip-instance-associate.*.floating_ip, count.index)}"
+  name   = "${local.hostname_formatted_p ? (local.hostname_format_list_p ? format(local.hostname_format, element(local.hostname_format_list_never_empty, count.index)) : format(local.hostname_format, count.index + 1)) : local.hostname_format}"
+  domain = "${var.env}.${var.domain}"
+  ttl    = 600
+  view   = "internal"
+
+  # comment = "Terraform ${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}.${var.env}"
+}
 
 resource "infoblox_record" "floatingip-additional-dns-multi" {
   count  = "${var.floating_ip_p ? (local.additional_dns_fqdns_count*var.count) : 0}"
@@ -238,12 +241,12 @@ resource "infoblox_record" "floatingip-additional-dns-multi" {
   ttl    = 600
   view   = "internal"
 
-  # comment = "Terraform ${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, (count.index/local.additional_dns_fqdns_count)) : format(var.name_format, (count.index/local.additional_dns_fqdns_count) + 1)) : var.name_format} additional_dns ${(count.index%local.additional_dns_fqdns_count) + 1}"
+  # comment = "Terraform ${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, (count.index/local.additional_dns_fqdns_count)) : format(var.name_format, (count.index/local.additional_dns_fqdns_count) + 1)) : var.name_format}.${var.env} additional_dns ${(count.index%local.additional_dns_fqdns_count) + 1}"
 }
 
 resource "openstack_blockstorage_volume_v2" "volume" {
   count = "${var.volume_p ? var.count : 0}"
-  name  = "${var.env}-${var.region}-${var.setup}-${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}-volume"
+  name  = "${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}-volume.${var.env}"
   size  = "${var.volume_size_gb}"
 }
 
