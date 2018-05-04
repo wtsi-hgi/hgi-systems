@@ -31,6 +31,8 @@
           - "inventory_hostname in groups['dockerers']"
         msg: "arvados hosts must also be in group dockerers"
 
+- hosts: arvados!noconf
+  tasks:
     - name: ensure arvados host is in a cluster
       assert:
         that:
