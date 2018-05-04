@@ -264,6 +264,7 @@ openstack-vars-validate-staging-zeta-hgiarvados:
     paths:
       - artifacts
     when: always
+  dependencies: []
 
 ansible-bootstrap-production-zeta-hgi:
   <<: *ansible-bootstrap-def
@@ -280,6 +281,7 @@ ansible-bootstrap-production-zeta-hgi:
   image: mercury/os3
   script:
     - ci/terraform-prepare-os-images.py ${S3_IMAGE_BUCKET}
+  dependencies: []
 
 os-images-validate-production-delta-hgi:
   <<: *os-images-validate-def
@@ -304,6 +306,7 @@ os-images-validate-staging-delta-hgiarvados:
   image: mercury/taos
   script:
     - ci/terraform-validate.sh
+  dependencies: []
 
 terraform-validate-production-delta-hgi:
   <<: *terraform-validate-def
@@ -384,6 +387,7 @@ terraform-validate-modules:
   stage: terraform-core
   tags:
     - docker-privileged
+  dependencies: []
 
 terraform-production-zeta-hgi-core:
   <<: *terraform-core-def
@@ -407,6 +411,7 @@ terraform-staging-zeta-hgiarvados-core:
 .terraform: &terraform-def
   <<: *terraform-common-def
   stage: terraform
+  dependencies: []
 
 terraform-production-delta-hgi:
   <<: *terraform-def
@@ -461,6 +466,7 @@ terraform-staging-zeta-hgiarvados:
 .ansible-core: &ansible-core-def
   <<: *ansible-common-def
   stage: ansible-core
+  dependencies: []
 
 ansible-production-zeta-hgi-core:
   <<: *ansible-core-def
@@ -484,6 +490,7 @@ ansible-staging-zeta-hgiarvados-core:
 .ansible: &ansible-def
   <<: *ansible-common-def
   stage: ansible
+  dependencies: []
 
 ansible-production-delta-hgi:
   <<: *ansible-def
