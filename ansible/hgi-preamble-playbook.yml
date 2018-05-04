@@ -5,23 +5,23 @@
 - import_playbook: set-facts.yml
 
 # Contact all ssh bastion hosts before attempting to access (e.g. gather facts) from any other host
-- hosts: 127.0.0.1
-  connection: local
+- hosts: all
   gather_facts: no
   tasks:
     - name: contact bastion hosts just to say hello (N.B THIS IS CRITICAL TO PROPER FUNCTION LATER IN THE ANSIBLE INVOCATION)
       delegate_to: "{{ item | regex_replace('.*[@]') }}"
+      run_once: true
       vars:
         ansible_user: "{{ item | regex_replace('[@].*') }}"
       command: hostname
       with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | list() | json_query('[?bastion_user] | [?bastion_host].join(`@`,[bastion_user,bastion_host]') | default([]) | list | unique }}"
       when: "hgi_preamble_playbook_bastion_connections_established is not defined"
 
-- hosts: 127.0.0.1
-  connection: local
+- hosts: all
   gather_facts: no
   tasks:
-    - set_fact:
+    - run_once: true
+      set_fact:
         hgi_preamble_playbook_bastion_connections_established: yes
 
 - hosts: all:!non-hosts
