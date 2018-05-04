@@ -184,6 +184,8 @@
     # The rest of the tasks are not needed for bootstrapping
     - name: create a client ACL token for ansible
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         name: mercury_ansible
         token: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
@@ -203,6 +205,8 @@
 
     - name: create a client ACL token for consul-template
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         name: mercury_consul_template
         token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
@@ -224,6 +228,8 @@
 
     - name: create a client ACL token for agents
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         name: agent_token
         token: "{{ consul_credentials_GROUP_creds['agent'].token }}"
@@ -239,6 +245,8 @@
 
     - name: create a client ACL token for use in the CI
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_acl:
         name: ci
         token: "{{ consul_credentials_GROUP_creds['ci'].token }}"
@@ -263,6 +271,8 @@
       
     - name: store consul server ips in consul kv
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_kv:
         key: "ansible/{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}/consul_cluster_server_ips"
         value: "{{ docker_consul_cluster_members | json_query('consul_members.by_Type.server[*].Address') | map('regex_replace', ':.*') | list | to_json }}"
@@ -282,6 +292,8 @@
 
     - name: store consul cluster server wan ips in consul kv
       delegate_to: "{{ docker_consul_cluster_SPECIFIC_GROUP_address }}"
+      vars:
+        ansible_user: mercury
       consul_kv:
         key: "ansible/{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}/consul_cluster_server_wan_ips"
         value: "{{ docker_consul_cluster_wan_members | json_query('consul_members.by_Type.server[*].Address') | map('regex_replace', ':.*') | list | to_json }}"
