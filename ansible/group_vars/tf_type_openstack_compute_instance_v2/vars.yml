@@ -8,7 +8,7 @@ tf_type_openstack_compute_instance_v2_GROUP_volume_size: "{{ tf_type_openstack_c
 tf_type_openstack_compute_instance_v2_GROUP_volume_attach_id: "{{ (groups['tf_type_openstack_compute_volume_attach_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_instance_id', 'equalto', tf_id | default('')) | list()) | json_query('[0].tf_id') }}"
 tf_type_openstack_compute_instance_v2_GROUP_volume_attach: "{{ (groups['tf_type_openstack_compute_volume_attach_v2'] | default([]) | map('extract', hostvars) | selectattr('tf_id', 'equalto', tf_type_openstack_compute_instance_v2_GROUP_volume_attach_id) | list()) | json_query('[0]') }}"
 
-tf_type_openstack_compute_instance_v2_GROUP_volume_device: "{% if (tf_type_openstack_compute_instance_v2_GROUP_volume_hostvars | json_query('tf_attachment') | count) == 1 %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_hostvars | json_query('tf_attachment[0].device') }}{% else %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_attach | json_query('tf_device') }}{% endif %}"
+tf_type_openstack_compute_instance_v2_GROUP_volume_device: "{% if (tf_type_openstack_compute_instance_v2_GROUP_volume_hostvars | map(attribute='tf_attachment') | list | count) == 1 %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_hostvars | json_query('tf_attachment[0].device') }}{% else %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_attach | json_query('tf_device') }}{% endif %}"
 
 tf_type_openstack_compute_instance_v2_GROUP_volume: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_hostvars['inventory_hostname'] }}"
 
