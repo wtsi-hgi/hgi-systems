@@ -5,7 +5,7 @@
 - import_playbook: set-facts.yml
 
 # Contact all ssh bastion hosts before attempting to access (e.g. gather facts) from any other host
-- hosts: localhost
+- hosts: 127.0.0.1
   connection: local
   gather_facts: no
   tasks:
@@ -17,7 +17,7 @@
       with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | list() | json_query('[?bastion_user] | [?bastion_host].join(`@`,[bastion_user,bastion_host]') | default([]) | list | unique }}"
       when: "hgi_preamble_playbook_bastion_connections_established is not defined"
 
-- hosts: localhost
+- hosts: 127.0.0.1
   connection: local
   gather_facts: no
   tasks:
