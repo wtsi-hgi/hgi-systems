@@ -25,14 +25,11 @@
 
 - hosts: arvados
   tasks:
-    - name: ensure arvados host are in the required groups
+    - name: ensure arvados host are in the dockerers group
       assert:
         that:
-          - "inventory_hostname in groups['{{ item }}']"
-        msg: "arvados hosts must also be in group {{ item }}"
-      with_items:
-        - dockerers
-        - hgi-credentials
+          - "inventory_hostname in groups['dockerers']"
+        msg: "arvados hosts must also be in group dockerers"
 
     - name: ensure arvados host is in a cluster
       assert:
@@ -42,6 +39,12 @@
 
 - hosts: arvados-monitors
   tasks:
+    - name: ensure arvados hosts are in the hgi-credentials group
+      assert:
+        that:
+          - "inventory_hostname in groups['hgi-credentials']"
+        msg: "arvados hosts must also be in group hgi-credentials"
+
     - name: configure arvados-monitor
       import_role:
         name: arvados-monitor
