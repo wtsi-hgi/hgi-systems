@@ -462,13 +462,21 @@ terraform-staging-zeta-hgiarvados:
   <<: *ansible-common-def
   stage: ansible-core
 
-ansible-core-production-delta-hgi:
+ansible-production-zeta-hgi-core:
   <<: *ansible-core-def
-  <<: *production-delta-hgi-def
+  <<: *production-zeta-hgi-core-def
 
-ansible-core-staging-delta-hgi:
+ansible-staging-zeta-hgi-core:
   <<: *ansible-core-def
-  <<: *staging-delta-hgi-def
+  <<: *staging-zeta-hgi-core-def
+
+ansible-production-zeta-hgiarvados-core:
+  <<: *ansible-core-def
+  <<: *production-zeta-hgiarvados-core-def
+
+ansible-staging-zeta-hgiarvados-core:
+  <<: *ansible-core-def
+  <<: *staging-zeta-hgiarvados-core-def
 
 ###############################################################################
 # Stage: ansible
@@ -493,14 +501,6 @@ ansible-staging-delta-hgiarvados:
   <<: *ansible-def
   <<: *staging-delta-hgiarvados-def
 
-ansible-production-zeta-hgi-core:
-  <<: *ansible-def
-  <<: *production-zeta-hgi-core-def
-
-ansible-staging-zeta-hgi-core:
-  <<: *ansible-def
-  <<: *staging-zeta-hgi-core-def
-
 ansible-production-zeta-hgi:
   <<: *ansible-def
   <<: *production-zeta-hgi-def
@@ -508,14 +508,6 @@ ansible-production-zeta-hgi:
 ansible-staging-zeta-hgi:
   <<: *ansible-def
   <<: *staging-zeta-hgi-def
-
-ansible-production-zeta-hgiarvados-core:
-  <<: *ansible-def
-  <<: *production-zeta-hgiarvados-core-def
-
-ansible-staging-zeta-hgiarvados-core:
-  <<: *ansible-def
-  <<: *staging-zeta-hgiarvados-core-def
 
 ansible-production-zeta-hgiarvados:
   <<: *ansible-def
