@@ -269,7 +269,7 @@
     - restart crunch-dispatch-pipelines
     - restart crunch-dispatch-jobs
 
-- name: dpkg-reconfigure arvados-api-server
+- name: dpkg-reconfigure arvados-api-server (this also initially creates the database)
   become: yes
   command: dpkg-reconfigure arvados-api-server
   environment:
@@ -301,7 +301,7 @@
     owner: www-data
     mode: 0755
 
-- name: create api tokens from files
+- name: create api tokens from files (requires functional DB)
   become: yes
   become_user: www-data
   # FIXME: change back to ./script/create_superuser_token.rb once bux 12671 is resolved
