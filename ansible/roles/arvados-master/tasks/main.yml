@@ -73,6 +73,7 @@
     - libssl-dev
     - libxslt1.1
     - postgresql-client-common
+    - "postgresql-client-{{ arvados_master_postgresql_client_package_version }}"
     - python-psycopg2
     - zlib1g-dev
 
