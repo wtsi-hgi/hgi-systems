@@ -193,13 +193,13 @@ consul-cluster-delta-hgiarvados
 canaries
 terraform
 arvados-clusters
-consul-cluster-zeta-hgi
+docker-consul-cluster-zeta-hgi
 
 [terraform-ci-zeta-hgiarvados:children]
 canaries
 terraform
 arvados-clusters
-consul-cluster-zeta-hgiarvados
+docker-consul-cluster-zeta-hgiarvados
 
 [arvados:children]
 arvados-compute-nodes
