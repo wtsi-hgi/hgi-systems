@@ -9,6 +9,7 @@ RUN apt-get update \
          jq \
          sudo \
          curl \
+         dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -L https://github.com/AdrianSchneider/jsonfui/releases/download/1.2.6/jsonfui-linux-1.2.6 > /usr/bin/jsonfui \
