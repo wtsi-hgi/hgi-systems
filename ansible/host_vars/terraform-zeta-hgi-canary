@@ -1,3 +1,2 @@
 canary_groups:
   - canary-terraform-zeta-hgi
-  - canary-openstack-zeta-hgi
