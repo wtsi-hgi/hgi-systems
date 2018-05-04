@@ -65,6 +65,7 @@
 [consul-cluster-zeta-hgiarvados]
 [docker-consul-clusters]
 [docker-consul-cluster-zeta-hgi]
+[docker-consul-cluster-zeta-hgiarvados]
 [spark-masters]
 [spark-computers]
 [sparkers]
