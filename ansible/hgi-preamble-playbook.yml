@@ -7,13 +7,14 @@
 # Contact all ssh bastion hosts before attempting to access (e.g. gather facts) from any other host
 - hosts: localhost
   gather_facts: no
-  delegate_to: "{{ item | regex_replace('.*[@]') }}"
-  vars:
-    ansible_user: "{{ item | regex_replace('[@].*') }}"
   tasks:
-    - command: hostname
-  with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | list() | json_query('[?bastion_user] | [?bastion_host].join(`@`,[bastion_user,bastion_host]') | default([]) | list | unique }}"
-  when: "hgi_preamble_playbook_bastion_connections_established is not defined"
+    - name: contact bastion hosts just to say hello (N.B THIS IS CRITICAL TO PROPER FUNCTION LATER IN THE ANSIBLE INVOCATION)
+      delegate_to: "{{ item | regex_replace('.*[@]') }}"
+      vars:
+        ansible_user: "{{ item | regex_replace('[@].*') }}"
+      command: hostname
+      with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | list() | json_query('[?bastion_user] | [?bastion_host].join(`@`,[bastion_user,bastion_host]') | default([]) | list | unique }}"
+      when: "hgi_preamble_playbook_bastion_connections_established is not defined"
 
 - hosts: localhost
   gather_facts: no
