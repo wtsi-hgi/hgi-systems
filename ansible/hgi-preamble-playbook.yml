@@ -13,7 +13,7 @@
       vars:
         ansible_user: "{{ item | regex_replace('[@].*') }}"
       command: hostname
-      with_items: "{{ ['bastion_user','bastion_host'] | map('extract', (all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | selectattr('bastion_user', 'defined') | selectattr('bastion_host', 'defined') | list())) | json_query('[].join(`@`,[bastion_user,bastion_host]') | default([]) | list | unique }}"
+      with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | selectattr('bastion_user', 'defined') | selectattr('bastion_host', 'defined') | list | json_query('[].join(`@`,[bastion_user,bastion_host])') | default([]) | unique | list }}"
       when: "hgi_preamble_playbook_bastion_connections_established is not defined"
 
     - set_fact:
