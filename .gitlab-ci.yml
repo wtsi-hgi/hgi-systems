@@ -42,6 +42,7 @@ stages:
   - validate
   - terraform-core
   - terraform
+  - ansible-core
   - ansible
   - sync
 
@@ -439,11 +440,11 @@ terraform-staging-zeta-hgiarvados:
   <<: *terraform-def
   <<: *staging-zeta-hgiarvados-def
 
+
 ###############################################################################
-# Stage: ansible
+# Common Ansible setup
 ###############################################################################
-.ansible: &ansible-def
-  stage: ansible
+.ansible-common: &ansible-common-def
   tags:
     - docker
   image: mercury/taos
@@ -453,6 +454,28 @@ terraform-staging-zeta-hgiarvados:
     paths:
       - artifacts
     when: always
+
+###############################################################################
+# Stage: ansible-core
+###############################################################################
+.ansible-core: &ansible-core-def
+  <<: *ansible-common-def
+  stage: ansible-core
+
+ansible-core-production-delta-hgi:
+  <<: *ansible-core-def
+  <<: *production-delta-hgi-def
+
+ansible-core-staging-delta-hgi:
+  <<: *ansible-core-def
+  <<: *staging-delta-hgi-def
+
+###############################################################################
+# Stage: ansible
+###############################################################################
+.ansible: &ansible-def
+  <<: *ansible-common-def
+  stage: ansible
 
 ansible-production-delta-hgi:
   <<: *ansible-def
