@@ -32,9 +32,20 @@
 ###############################################################################
 
 all_GROUP_apt_cache_valid_time: 86400
-all_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}" # FIXME remove this after refactor
+
+all_GROUP_inventory_hostnames: "{{ groups['all'] | default([]) | list }}"
+all_GROUP_hosts_inventory_hostnames: "{{ all_GROUP_inventory_hostnames | difference(groups['non-hosts']) | default([]) | list }}"
+all_GROUP_non_hosts_inventory_hostnames: "{{ all_GROUP_inventory_hostnames | intersect(groups['non-hosts']) | default([]) | list }}"
+
+all_GROUP_sanger_network_dns_servers:
+  - 172.18.255.1
+  - 172.18.255.2
+  - 172.18.255.3
+
+all_GROUP_env_ANSIBLE_CONSUL_TOKEN: "{{ lookup('env', 'ANSIBLE_CONSUL_TOKEN') }}"
 
 # FIXME: everything below should be namespaced into `all_` (or moved elsewhere)
+all_apt_cache_valid_time: "{{ all_GROUP_apt_cache_valid_time }}" # FIXME remove this after refactor
 
 hgi_conf_dir: "{{ hgi_dir }}/etc"
 hgi_log_dir: "{{ hgi_dir }}/log"
@@ -74,9 +85,3 @@ control_path: "{% if bastion_host is defined and bastion_host != '' and bastion_
 
 pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
-all_GROUP_sanger_network_dns_servers:
-  - 172.18.255.1
-  - 172.18.255.2
-  - 172.18.255.3
-
-all_GROUP_env_ANSIBLE_CONSUL_TOKEN: "{{ lookup('env', 'ANSIBLE_CONSUL_TOKEN') }}"

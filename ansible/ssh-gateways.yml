@@ -19,6 +19,7 @@
 #
 ---
 # file: ssh-gateways.yml
+
 - hosts: ssh-gateways
   roles:
     - ssh-gateway

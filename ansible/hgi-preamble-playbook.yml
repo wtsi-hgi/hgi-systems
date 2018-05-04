@@ -4,8 +4,15 @@
 - import_playbook: dynamic-inventory-sanity-check.yml
 - import_playbook: set-facts.yml
 
-# Configure critical ssh bastion host infrastructure before gathering facts
-- import_playbook: ssh-gateways.yml
+# Contact all ssh bastion hosts before attempting to access (e.g. gather facts) from any other host
+- hosts: localhost
+  gather_facts: no
+  delegate_to: "{{ item | regex_replace('.*[@]') }}"
+  vars:
+    ansible_user: "{{ item | regex_replace('[@].*') }}"
+  tasks:
+    - command: hostname
+  with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | list() | json_query('[?bastion_user] | [?bastion_host].join(`@`,[bastion_user,bastion_host]') | default([]) | list | unique }}"
 
 - hosts: all:!non-hosts
   gather_facts: no
