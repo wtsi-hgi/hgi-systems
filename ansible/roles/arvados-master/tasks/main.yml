@@ -270,6 +270,8 @@
 - name: dpkg-reconfigure arvados-api-server
   become: yes
   command: dpkg-reconfigure arvados-api-server
+  environment:
+    DEBIAN_FRONTEND: noninteractive
   when: >-
     arvados_master_REGISTER_install_api_server.changed or
     arvados_master_REGISTER_create_dirs.changed or
