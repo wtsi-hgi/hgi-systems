@@ -6,6 +6,8 @@
 
 - hosts: all:!non-hosts
   gather_facts: no
+  vars:
+    hgi_preamble_playbook_PLAYBOOK_all_bastion_hosts: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | selectattr('bastion_user', 'defined') | selectattr('bastion_host', 'defined') | list | json_query('[].join(`@`,[bastion_user,bastion_host])') | default([]) | unique | list }}"
   tasks:
     - name: contact bastion hosts just to say hello (N.B THIS IS CRITICAL TO PROPER FUNCTION LATER IN THE ANSIBLE INVOCATION)
       delegate_to: "{{ item | regex_replace('.*[@]') }}"
@@ -13,8 +15,8 @@
       vars:
         ansible_user: "{{ item | regex_replace('[@].*') }}"
       command: hostname
-      with_items: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | selectattr('bastion_user', 'defined') | selectattr('bastion_host', 'defined') | list | json_query('[].join(`@`,[bastion_user,bastion_host])') | default([]) | unique | list }}"
-      when: "hgi_preamble_playbook_bastion_connections_established is not defined"
+      with_items: "{{ hgi_preamble_playbook_PLAYBOOK_all_bastion_hosts }}"
+      when: "(hgi_preamble_playbook_bastion_connections_established is not defined) and (hgi_preamble_playbook_PLAYBOOK_all_bastion_hosts | count > 0)"
 
     - set_fact:
         hgi_preamble_playbook_bastion_connections_established: yes
