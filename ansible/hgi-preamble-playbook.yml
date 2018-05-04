@@ -6,6 +6,7 @@
 
 # Contact all ssh bastion hosts before attempting to access (e.g. gather facts) from any other host
 - hosts: localhost
+  connection: local
   gather_facts: no
   tasks:
     - name: contact bastion hosts just to say hello (N.B THIS IS CRITICAL TO PROPER FUNCTION LATER IN THE ANSIBLE INVOCATION)
@@ -17,6 +18,7 @@
       when: "hgi_preamble_playbook_bastion_connections_established is not defined"
 
 - hosts: localhost
+  connection: local
   gather_facts: no
   tasks:
     - set_fact:
