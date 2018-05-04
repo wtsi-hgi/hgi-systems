@@ -4,7 +4,7 @@
 - import_playbook: dynamic-inventory-sanity-check.yml
 - import_playbook: set-facts.yml
 
-- hosts: all!non-hosts
+- hosts: all:!non-hosts
   gather_facts: no
   tasks:
     - name: contact bastion hosts just to say hello (N.B THIS IS CRITICAL TO PROPER FUNCTION LATER IN THE ANSIBLE INVOCATION)
