@@ -20,8 +20,7 @@
 - hosts: all
   gather_facts: no
   tasks:
-    - run_once: true
-      set_fact:
+    - set_fact:
         hgi_preamble_playbook_bastion_connections_established: yes
 
 - hosts: all:!non-hosts
