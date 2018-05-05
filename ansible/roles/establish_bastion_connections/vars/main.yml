@@ -20,5 +20,5 @@
 ---
 # file: roles/establish_bastion_connections/vars/main.yml
 
-establish_bastion_connections_bastion_users_at_hosts: "{{ establish_bastion_connections_hostnames | map('extract', hostvars) | selectattr('bastion_user', 'defined') | selectattr('bastion_host', 'defined') | list | json_query('[].join(`@`,[bastion_user,bastion_host])') | default([]) | unique | list }}"
+establish_bastion_connections_bastion_connect_strings: "{{ establish_bastion_connections_hostnames | map('extract', hostvars, 'establish_bastion_connections_ROLE_FACT_connect_string') | default([]) | unique | list }}"
 

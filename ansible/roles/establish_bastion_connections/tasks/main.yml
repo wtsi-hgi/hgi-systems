@@ -20,19 +20,25 @@
 ---
 # file: roles/establish_bastion_connections/tasks/main.yml
 
+ - name: set establish_bastion_connections_ROLE_FACT_connect_string on all hosts
+   set_fact:
+     establish_bastion_connections_ROLE_FACT_connect_string: "{{ bastion_user }}@{{ bastion_host }}"
+   when: bastion_user is defined and bastion_host is defined
+
  - name: contact all bastion hosts once at the beginning of an ansible invocation
    run_once: true
    block:
      - debug:
-         msg: "Establishing bastion connections to: {{ establish_bastion_connections_bastion_users_at_hosts | join(',') }}"
+         verbosity: 1
+         msg: "Establishing bastion connections to: {{ establish_bastion_connections_bastion_connect_strings | join(',') }}"
 
      - name: contact bastion hosts just to say hello (and establish ControlMaster connections)
        delegate_to: "{{ item | regex_replace('.*[@]') }}"
        vars:
          ansible_user: "{{ item | regex_replace('[@].*') }}"
        command: hostname
-       with_items: "{{ establish_bastion_connections_bastion_users_at_hosts }}"
-       when: "establish_bastion_connections_bastion_users_at_hosts | count > 0"
+       with_items: "{{ establish_bastion_connections_bastion_connect_strings }}"
+       when: "establish_bastion_connections_bastion_connect_strings | count > 0"
 
  - set_fact:
      establish_bastion_connections_ROLE_FACT_ran: yes
