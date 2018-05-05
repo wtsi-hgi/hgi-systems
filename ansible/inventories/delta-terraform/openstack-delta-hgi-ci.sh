@@ -1,0 +1,1 @@
+../production/openstack-delta-hgi-ci.sh
