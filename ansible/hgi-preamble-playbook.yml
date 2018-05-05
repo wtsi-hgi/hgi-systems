@@ -37,15 +37,10 @@
 # Run common role
 - hosts: all:!non-hosts:!noconf
   vars:
-    hgi_preamble_run_common: "{{ not ((hgi_preamble_playbook_PLAYBOOK_FACT_ran is defined) or (skip_common | default(false))) }}"
+    hgi_preamble_playbook_PLAYBOOK_run_common: "{{ not (skip_common | default(false)) }}"
   tasks:
     - import_role:
         name: common
         private: true
-      when: hgi_preamble_run_common
+      when: hgi_preamble_playbook_PLAYBOOK_run_common
 
-# Set fact that hgi-preamble has been ran
-- hosts: all:!non-hosts
-  tasks:
-    - set_fact:
-        hgi_preamble_playbook_PLAYBOOK_FACT_ran: yes

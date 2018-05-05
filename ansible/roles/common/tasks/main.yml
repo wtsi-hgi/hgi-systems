@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2018 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -20,14 +20,7 @@
 ---
 # file: roles/common/tasks/main.yml
 
-- name: common configuration for nonroot hosts
-  import_tasks: nonroot.yml
-  when: "'nonroot' in group_names"
+- name: only run common tasks once
+  include_tasks: main-once.yml
+  when: not common_ROLE_FACT_ran is defined
 
-- name: common configuration for root hosts
-  import_tasks: root.yml
-  when: "not 'nonroot' in group_names"
-
-- name: make root host compatible with roles designed for non-root hosts
-  import_tasks: non-root-on-root-compatibility.yml
-  when: "non_root_compatibility and not 'nonroot' in group_names"
