@@ -232,7 +232,8 @@
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
-
+        arvados_master_remote_check_delegate: "{{ arvados_cluster_delegate }}"
+	
 - hosts: arvados-keeps
   tasks:
     - name: include arvados playbook vars
