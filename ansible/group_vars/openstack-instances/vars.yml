@@ -1,6 +1,6 @@
-openstack_instances_GROUP_volume_device: "{{ openstack_instance_volumes[0] | json_query('os_attachments[0].device') }}"
-openstack_instances_GROUP_volume_name: "{{ openstack_instance_volumes[0] | json_query('os_name') }}"
-openstack_instances_GROUP_volume_size: "{{ openstack_instance_volumes[0] | json_query('openstack_volume_size_gb') }}"
+openstack_instances_GROUP_volume_device: "{% if (openstack_instance_volumes | list | length > 0) %}{{ openstack_instance_volumes[0] | json_query('os_attachments[0].device') }}{% endif %}"
+openstack_instances_GROUP_volume_name: "{% if (openstack_instance_volumes | list | length > 0) %}{{ openstack_instance_volumes[0] | json_query('os_name') }}{% endif %}"
+openstack_instances_GROUP_volume_size: "{% if (openstack_instance_volumes | list | length > 0) %}{{ openstack_instance_volumes[0] | json_query('openstack_volume_size_gb') }}{% endif %}"
 
 # FIXME refactor everything to _GROUP_
 openstack_instance_image: "{{ hostvars[image] }}"
