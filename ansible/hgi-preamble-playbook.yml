@@ -7,8 +7,7 @@
 - hosts: all:!non-hosts
   gather_facts: no
   vars:
-    hgi_preamble_playbook_PLAYBOOK_all_bastion_hosts: "{{ all_GROUP_hosts_inventory_hostnames | map('extract', hostvars) | selectattr('bastion_user', 'defined') | selectattr('bastion_host', 'defined') | default([]) | list | json_query('[].join(`@`,[bastion_user,bastion_host])') | default([]) | unique | list }}"
-    # hgi_preamble_playbook_PLAYBOOK_all_bastion_hosts: "{{ all_GROUP_hosts_inventory_hostnames | sort | map('extract', hostvars) | map(attribute='bastion_user') | zip(all_GROUP_hosts_inventory_hostnames | sort | map('extract', hostvars) | map(attribute='bastion_host')) | map('join', '@') | list | default([]) | unique | list }}"
+    hgi_preamble_playbook_PLAYBOOK_all_bastion_hosts: "{{ all_GROUP_hosts_inventory_hostnames | sort | map('extract', hostvars) | map(attribute='bastion_user') | zip(all_GROUP_hosts_inventory_hostnames | sort | map('extract', hostvars) | map(attribute='bastion_host')) | map('join', '@') | list | default([]) | unique | list }}"
   tasks:
     - name: contact bastion hosts just to say hello (N.B THIS IS CRITICAL TO PROPER FUNCTION LATER IN THE ANSIBLE INVOCATION)
       delegate_to: "{{ item | regex_replace('.*[@]') }}"
