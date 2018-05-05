@@ -83,7 +83,7 @@ EOF
    >&2 echo "Pulling terraform remote state to ${tmp_dir}/${environment}.tfstate"
    terraform state pull > "${tmp_dir}/${environment}.tfstate"
    
-   yatadis --state "${tmp_dir}/${environment}.tfstate" "$@"
+   ${YATADIS_BIN} --state "${tmp_dir}/${environment}.tfstate" "$@"
 
    rm -rf "${tmp_dir}"
 }
