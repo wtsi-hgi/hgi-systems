@@ -266,8 +266,12 @@
     - arvados-keepproxy
 
 - hosts: arvados-workbenches
-  roles:
-    - arvados-workbench
+  tasks:
+    - name: configure arvados-workbench
+      import_role:
+        name: arvados-workbench
+      vars:
+        arvados_workbench_remote_check_delegate: "{{ arvados_cluster_delegate }}"
 
 - hosts: arvados-shells
   vars:
