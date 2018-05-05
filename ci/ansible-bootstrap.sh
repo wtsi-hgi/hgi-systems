@@ -37,7 +37,7 @@ echo "Changing to ansible directory"
 cd ansible
 
 export ANSIBLE_CONFIG="${CI_PROJECT_DIR}/ansible/ansible.cfg"
-inventory=inventories/${REGION}/bootstrap_hosts.d
+inventory=inventories/${REGION}-bootstrap
 echo "Calling ansible-playbook bootstrap.yml on inventory ${inventory}"
 ansible-playbook -i ${inventory} --vault-password-file "${ANSIBLE_VAULT_PASSWORD_FILE}" bootstrap.yml
 playbook_exit_status=$?
