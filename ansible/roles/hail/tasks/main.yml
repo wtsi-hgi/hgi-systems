@@ -209,7 +209,8 @@
 
 - name: set hail_data_dir as a fact on all nodes
   set_fact:
-    hail_data_dir: "{% if hail_master_p %}{{ hail_master_data_dir }}{% else %}{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}{% endif %}"
+    hail_data_dir: "{{ hail_master_data_dir }}"
+#   hail_data_dir: "{% if hail_master_p %}{{ hail_master_data_dir }}{% else %}{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}{% endif %}"
 
 - name: create hail data directory
   become: yes
