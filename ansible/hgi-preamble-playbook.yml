@@ -30,6 +30,8 @@
   tasks:
     - include_role:
         name: establish_bastion_connections
+      vars:
+        establish_bastion_connections_hostnames: "{{ all_GROUP_hosts_inventory_hostnames }}"
       when: establish_bastion_connections_ROLE_FACT_ran is not defined
 
 # Run common role
