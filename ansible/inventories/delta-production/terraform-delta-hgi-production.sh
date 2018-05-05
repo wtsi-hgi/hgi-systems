@@ -1,0 +1,1 @@
+../production/terraform-delta-hgi-production.sh
