@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2018 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -18,5 +18,21 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
-# file: roles/ssh-gateway/meta/main.yml
+# file: roles/ssh-gateway/tasks/main.yml
 
+- name: configure sshd
+  become: yes
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    user: root
+    group: wheel
+    mode: 0644
+  register: ssh_gateway_sshd_config
+
+- name: restart sshd
+  become: yes
+  service:
+    name: sshd
+    state: restarted
+  when: ssh_gateway_sshd_config|changed
