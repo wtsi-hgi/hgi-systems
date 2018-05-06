@@ -25,14 +25,14 @@
 - import_playbook: set-facts.yml
 
 # Make initial contact with bastion hosts
-- hosts: all:!non-hosts
-  gather_facts: no
-  tasks:
-    - import_role:
-        name: establish_bastion_connections
-      vars:
-        establish_bastion_connections_hostnames: "{{ all_GROUP_hosts_inventory_hostnames }}"
-      when: establish_bastion_connections_ROLE_FACT_ran is not defined
+# - hosts: all:!non-hosts
+#   gather_facts: no
+#   tasks:
+#     - import_role:
+#         name: establish_bastion_connections
+#       vars:
+#         establish_bastion_connections_hostnames: "{{ all_GROUP_hosts_inventory_hostnames }}"
+#       when: establish_bastion_connections_ROLE_FACT_ran is not defined
 
 # Run common role
 - hosts: all:!non-hosts:!noconf
