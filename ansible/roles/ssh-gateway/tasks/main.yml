@@ -25,7 +25,7 @@
   template:
     src: sshd_config.j2
     dest: /etc/ssh/sshd_config
-    user: root
+    owner: root
     group: wheel
     mode: 0644
   register: ssh_gateway_sshd_config
