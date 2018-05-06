@@ -24,6 +24,9 @@
 - import_playbook: dynamic-inventory-sanity-check.yml
 - import_playbook: set-facts.yml
 
+# Configure ssh gateways
+- import_playbook: ssh-gateways.yml
+
 # Make initial contact with bastion hosts
 # - hosts: all:!non-hosts
 #   gather_facts: no
