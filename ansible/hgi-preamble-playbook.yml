@@ -24,10 +24,6 @@
 - import_playbook: dynamic-inventory-sanity-check.yml
 - import_playbook: set-facts.yml
 
-- name: paused for debugging...
-  pause:
-    minutes: 256
-
 # Configure ssh gateways
 - import_playbook: ssh-gateways.yml
 
