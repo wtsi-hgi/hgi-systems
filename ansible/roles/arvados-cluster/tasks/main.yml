@@ -83,15 +83,15 @@
     client_token: "{{ arvados_cluster_root_key | pbkdf2_hmac(item, 32) | b36encode }}"
   with_items: "{{ arvados_cluster_shell_hosts }}"
 
-- name: create api_client_authorization for data manager (keep-balance)
-  delegate_to: "{{ arvados_cluster_delegate }}"
-  arvados_api_client_authorization:
-    api_host: "{{ arvados_cluster_api_host }}"
-    api_token: "{{ arvados_cluster_superuser_api_token }}"
-    uuid: "{{ arvados_cluster_id }}-gj3su-{{ 'data_manager_api_token' | hash('md5') | truncate(15, True, '') }}"
-    scopes:
-      - "all"
-    client_token: "{{ arvados_cluster_data_manager_api_token }}"
+# - name: create api_client_authorization for data manager (keep-balance)
+#   delegate_to: "{{ arvados_cluster_delegate }}"
+#   arvados_api_client_authorization:
+#     api_host: "{{ arvados_cluster_api_host }}"
+#     api_token: "{{ arvados_cluster_superuser_api_token }}"
+#     uuid: "{{ arvados_cluster_id }}-gj3su-{{ 'data_manager_api_token' | hash('md5') | truncate(15, True, '') }}"
+#     scopes:
+#       - "all"
+#     client_token: "{{ arvados_cluster_data_manager_api_token }}"
 
 - name: set consul-template keys for cluster in consul kv
   delegate_to: localhost
