@@ -24,13 +24,9 @@
 - import_playbook: dynamic-inventory-sanity-check.yml
 - import_playbook: set-facts.yml
 
-- hosts: all
-  gather_facts: no
-  tasks:
-    - name: paused for debugging...
-      pause:
-        minutes: 256
-      when: lookup('env', 'CI_JOB_STAGE') == "ansible"
+- name: paused for debugging...
+  pause:
+    minutes: 256
 
 # Configure ssh gateways
 - import_playbook: ssh-gateways.yml
