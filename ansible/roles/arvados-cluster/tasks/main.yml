@@ -219,6 +219,19 @@
     link_class: permission
     name: can_read
 
+- name: ensure arvados keep s3 bucket exists
+  tags:
+    - s3
+  delegate_to: localhost
+  aws_s3:
+    rgw: true
+    s3_url: "{{ arvados_cluster_keep_s3_endpoint }}"
+    aws_access_key: "{{ arvados_cluster_keep_s3_access_key }}"
+    aws_secret_key: "{{ arvados_cluster_keep_s3_secret_key }}"
+    bucket: "{{ arvados_cluster_keep_s3_bucket }}"
+    permission: private
+    mode: create
+
 # this requires keep to be functional
 - name: download and tag the latest arvados/jobs docker image
   become: yes
@@ -240,19 +253,3 @@
     key_type: "SSH"
     authorized_user_uuid: mercury
     public_key: "{{ arvados_cluster_mercury_shell_ssh_public_key }}"
-
-- name: ensure arvados keep s3 bucket exists
-  tags:
-    - s3
-  delegate_to: localhost
-  aws_s3:
-    rgw: true
-    s3_url: "{{ arvados_cluster_keep_s3_endpoint }}"
-    aws_access_key: "{{ arvados_cluster_keep_s3_access_key }}"
-    aws_secret_key: "{{ arvados_cluster_keep_s3_secret_key }}"
-    bucket: "{{ arvados_cluster_keep_s3_bucket }}"
-    permission: private
-    mode: create
-
-
-
