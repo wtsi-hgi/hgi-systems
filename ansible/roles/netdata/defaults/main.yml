@@ -2,6 +2,7 @@
 ---
 
 netdata_consul_config_dir: "/etc/consul.d"
+netdata_consul_service_name: consul
 
 netdata_alarm_slack_webhook_url: ""
 netdata_alarm_slack_recipients: []

@@ -215,6 +215,7 @@
         docker_consul_agent_encrypt:  "{{ consul_credentials_GROUP_encrypt }}"
         docker_consul_agent_config_dir: /etc/docker-consul-agent-config.d
         docker_consul_consul_docker_image: consul:1.0.7
+        docker_consul_agent_service_name: "{{ docker_consul_agent_GROUP_service_name }}"
 
 - hosts: docker-consul-servers, docker-consul-agents
   vars:
