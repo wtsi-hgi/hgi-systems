@@ -52,6 +52,7 @@ docker_consul_agent_advertise_addr: "{{ ansible_default_ipv4.address }}"
 docker_consul_agent_client_addr: 0.0.0.0
 docker_consul_agent_retry_join_json: "{{ docker_consul_agent_retry_join | to_json }}"
 docker_consul_agent_recursors_json: "{{ docker_consul_agent_recursors | to_json }}"
+docker_consul_agent_service_name: docker-consul-agent
 
 ###############################################################################
 # Defaults for consul docker

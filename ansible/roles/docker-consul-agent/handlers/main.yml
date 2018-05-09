@@ -25,6 +25,6 @@
   systemd: 
     state: restarted
     daemon_reload: yes
-    name: docker-consul-agent
+    name: "{{ docker_consul_agent_service_name }}"
   when: "not 'image-building' in group_names"
 

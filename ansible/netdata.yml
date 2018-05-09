@@ -27,6 +27,7 @@
         name: netdata
       vars:
         netdata_consul_config_dir: "{{ netdata_GROUP_consul_config_dir }}"
+        netdata_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_service_name }}"
         netdata_alarm_slack_webhook_url: "{{ system_monitoring_GROUP_mattermost_webhook_url | default('') }}"
         netdata_alarm_slack_recipients: "{{ system_monitoring_GROUP_mattermost_recipients | default([]) }}"
         netdata_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
