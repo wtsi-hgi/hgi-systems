@@ -344,7 +344,7 @@
         name: arvados-cluster
       vars:
         arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
-        arvados_cluster_consul_template_host: "consul-server-delta-hgiarvados-01.hgi.sanger.ac.uk"
+        arvados_cluster_consul_template_host: "{{ arvados_cluster_GROUP_consul_template_host }}"
         arvados_cluster_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_cluster_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
         arvados_cluster_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
