@@ -188,9 +188,10 @@
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - emacs24-nox
-    - python-pyyaml
+    - jq
     - nodejs
     - npm
+    - python-pyyaml
 
 - name: install extra npm packages for shell
   become: yes
