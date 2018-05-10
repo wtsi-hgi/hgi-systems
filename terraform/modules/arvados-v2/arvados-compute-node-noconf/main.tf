@@ -11,6 +11,7 @@ variable "flavour" {}
 variable "domain" {}
 variable "arvados_cluster_id" {}
 variable "consul_datacenter" {}
+variable "consul_acl_datacenter" {}
 variable "consul_keys_datacenter" {}
 
 variable "volume_size_gb" {
@@ -85,6 +86,7 @@ data "template_file" "ansible-cc-script" {
       ansible_user=ubuntu
       cc_arvados_cluster_id='${var.arvados_cluster_id}'
       cc_consul_datacenter='${var.consul_datacenter}'
+      cc_consul_acl_datacenter='${var.consul_acl_datacenter}'
       cc_upstream_dns_servers='${data.consul_keys.consul-agent.var.upstream_dns_servers}'
       cc_consul_template_token='${data.consul_keys.consul-agent.var.consul_template_token}'
       cc_consul_agent_token='${data.consul_keys.consul-agent.var.consul_acl_token}'

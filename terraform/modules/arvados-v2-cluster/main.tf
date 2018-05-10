@@ -5,6 +5,7 @@ variable "setup" {}
 variable "domain" {}
 variable "arvados_cluster_id" {}
 variable "consul_datacenter" {}
+variable "consul_acl_datacenter" {}
 variable "consul_keys_datacenter" {}
 
 variable "base_image" {
@@ -271,6 +272,7 @@ module "arvados-compute-node-noconf" {
 
   arvados_cluster_id     = "${var.arvados_cluster_id}"
   consul_datacenter      = "${var.consul_datacenter}"
+  consul_acl_datacenter  = "${var.consul_acl_datacenter}"
   consul_keys_datacenter = "${var.consul_keys_datacenter}"
   extra_ansible_groups   = "${var.extra_ansible_groups}"
 
