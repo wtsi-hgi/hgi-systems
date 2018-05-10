@@ -45,7 +45,7 @@
     - git
     - curl
     - cron
-
+    
 - name: ensure /usr/local/src directory exists
   become: yes
   file:
@@ -104,7 +104,6 @@
     - python-arvados-fuse
     - crunchrunner
     - python-arvados-cwl-runner
-    - emacs24-nox
 
 - name: install bash profile for mercury user (including arvados admin credentials)
   become: yes
@@ -180,3 +179,25 @@
       - docker
     name: mercury
 
+- name: install extra apt packages for shell
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - emacs24-nox
+    - python-pyyaml
+    - nodejs
+    - npm
+
+- name: install extra npm packages for shell
+  become: yes
+  npm:
+    name: "{{ item }}"
+    global: yes
+    production: yes
+    state: present
+  with_items:
+    - jsonfui
