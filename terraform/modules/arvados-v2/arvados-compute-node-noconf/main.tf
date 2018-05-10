@@ -103,7 +103,7 @@ module "hgi-openstack-instance" {
   core_context    = "${var.core_context}"
   count           = "${var.count}"
   floating_ip_p   = false
-  volume_p        = true
+  volume_p        = false
   volume_size_gb  = "${var.volume_size_gb}"
   name_format     = "${local.hostname_format}"
   domain          = "${var.domain}"
