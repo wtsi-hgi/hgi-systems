@@ -238,7 +238,7 @@ SEND_SLACK="YES"
 # your netdata servers (or you can have one for each of your netdata).
 # Without it, netdata cannot send slack notifications.
 # Get yours from: https://api.slack.com/incoming-webhooks
-SLACK_WEBHOOK_URL=key "{{ netdata_alarm_slack_recipients_consul_key }}"
+SLACK_WEBHOOK_URL={{ '{{ key \"%s\"' % netdata_alarm_slack_recipients_consul_key }}
 
 # if a role's recipients are not configured, a notification will be send to
 # this slack channel (empty = do not send a notification for unconfigured
