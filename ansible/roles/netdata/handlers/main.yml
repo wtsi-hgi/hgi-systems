@@ -6,3 +6,9 @@
     name: "{{ netdata_consul_service_name }}"
     state: reloaded
   when: "not 'image-building' in group_names"
+
+- name: restart consul-template
+  become: yes
+  systemd:
+    name: consul-template
+    state: restarted
