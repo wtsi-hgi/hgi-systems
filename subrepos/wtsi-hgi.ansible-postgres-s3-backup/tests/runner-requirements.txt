@@ -1,5 +1,0 @@
-ansible
-boto
-
-# Testing only
-boto3

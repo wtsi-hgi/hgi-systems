@@ -14,7 +14,7 @@
 - name: validate variable values
   assert:
     that:
-      - postgres_s3_backup_s3_directory_in_bucket.startswith("/")
+      - not postgres_s3_backup_s3_location.endswith('/')
       - "'/' not in postgres_s3_backup_s3_bucket"
       - "'://' in postgres_s3_backup_s3_url"
       - "' ' not in postgres_s3_backup_name_suffix"

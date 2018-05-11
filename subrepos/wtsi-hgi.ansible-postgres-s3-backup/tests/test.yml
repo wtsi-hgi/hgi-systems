@@ -1,5 +1,0 @@
----
-
-- hosts: targets
-  roles:
-    - name: test-postgres-s3-backup

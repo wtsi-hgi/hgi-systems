@@ -9,22 +9,26 @@ BACKUP_INFO_SCRIPT="{{ postgres_s3_backup_info_script_location }}"
 BACKUP_LOCATION="{{ postgres_s3_backup_s3_location }}"
 BACKUPS_TO_KEEP={{ postgres_s3_backup_number_to_keep }}
 BACKUP_SUFFIX="{{ postgres_s3_backup_name_suffix }}"
+POSTGRES_USER="{{ postgres_s3_backup_pg_dumpall_user }}"
 
 function getBackupInformation()
 {
-    echo "$("${PYTHON}" "${BACKUP_INFO_SCRIPT}" \
-                    --backups ${BACKUPS_TO_KEEP}  \
-                    --suffix "${BACKUP_SUFFIX}" \
-                    --mc "${MC}" \
-                    --mc-config "${MC_CONFIG}" \
-                    --mc-s3-location "${BACKUP_LOCATION}")"
+    backupInformation="$("${PYTHON}" "${BACKUP_INFO_SCRIPT}" \
+                    --backups=${BACKUPS_TO_KEEP}  \
+                    --suffix="${BACKUP_SUFFIX}" \
+                    --mc="${MC}" \
+                    --mc-config="${MC_CONFIG}" \
+                    --mc-s3-location="${BACKUP_LOCATION}")"
+    returnCode=$?
+    echo "${backupInformation}"
+    return ${returnCode}
 }
 
 # Create new backup
 backupName="$(getBackupInformation | jq -r '.new' )"
-uploadLocation="${BACKUP_LOCATION}${backupName}"
+uploadLocation="${BACKUP_LOCATION}/${backupName}"
 >&2 echo "Uploading backup to: ${uploadLocation}"
-sudo -u {{ postgres_s3_backup_pg_dumpall_user }} pg_dumpall \
+sudo -u "${POSTGRES_USER}" pg_dumpall \
     | gzip \
     | "${MC}" -C "${MC_CONFIG}" pipe "${uploadLocation}"
 
@@ -32,5 +36,8 @@ sudo -u {{ postgres_s3_backup_pg_dumpall_user }} pg_dumpall \
 backupsToDelete="$(getBackupInformation | jq -r '.delete[]' | tr '\n' ' ' )"
 for backupToDelete in ${backupsToDelete}; do
     toDelete="${BACKUP_LOCATION}${backupToDelete}"
+    >&2 echo "Deleting old backup: ${toDelete}"
     "${MC}" -C "${MC_CONFIG}" rm "${toDelete}"
 done
+
+>&2 echo "Backup complete"
