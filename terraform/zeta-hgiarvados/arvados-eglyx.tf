@@ -17,10 +17,10 @@ module "arvados-cluster" {
   compute_node_count     = 64
   network_name           = "main"
   ssh_gateway            = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
-  master_flavour         = "m1.xlarge"
+  master_flavour         = "o1.4xlarge"
   api_db_flavour         = "m1.2xlarge"
-  sso_flavour            = "m1.2xlarge"
-  workbench_flavour      = "m1.medium"
+  sso_flavour            = "o1.large"
+  workbench_flavour      = "o1.large"
   keepproxy_flavour      = "m1.medium"
   keep_flavour           = "m1.medium"
   shell_flavour          = "m1.medium"
