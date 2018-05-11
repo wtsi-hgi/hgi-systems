@@ -177,8 +177,11 @@ def _read_backup_names_from_s3(configuration):
     process = subprocess.Popen(arguments, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
     if process.returncode != 0:
+        parsed_stdout = json.loads(stdout.decode("utf-8"))
+        if "Object does not exist" in parsed_stdout["error"]["cause"]["message"]:
+            return []
         raise RuntimeError(json.dumps(dict(
-            stderr=stderr.decode("utf-8"), stdout=json.loads(stdout.decode("utf-8")), arguments=arguments)))
+            stderr=stderr.decode("utf-8"), stdout=parsed_stdout, arguments=arguments)))
 
     backup_names = []
     for line in stdout.decode("utf-8").split("\n"):

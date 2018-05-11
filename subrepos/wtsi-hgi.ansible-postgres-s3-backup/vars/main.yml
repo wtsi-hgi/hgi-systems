@@ -1,4 +1,4 @@
 ---
 
 postgres_s3_backup_mc_host_alias: backup-server
-postgres_s3_backup_s3_location: "{{ postgres_s3_backup_mc_host_alias }}/{{ postgres_s3_backup_s3_bucket }}{{ postgres_s3_backup_s3_directory_in_bucket }}"
+postgres_s3_backup_s3_location: "{{ postgres_s3_backup_mc_host_alias }}/{{ postgres_s3_backup_s3_bucket }}{{ '' if postgres_s3_backup_s3_directory_in_bucket.strip('/') == '' else '/' }}{{ postgres_s3_backup_s3_directory_in_bucket.strip('/') }}"
