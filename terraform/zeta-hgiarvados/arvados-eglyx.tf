@@ -14,7 +14,7 @@ module "arvados-cluster" {
   keepproxy_count        = 2
   keep_count             = 1
   monitor_count          = 1
-  compute_node_count     = 64
+  compute_node_count     = 1
   network_name           = "main"
   ssh_gateway            = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
   master_flavour         = "o1.4xlarge"
@@ -23,8 +23,8 @@ module "arvados-cluster" {
   workbench_flavour      = "o1.large"
   keepproxy_flavour      = "m1.medium"
   keep_flavour           = "m1.medium"
-  shell_flavour          = "m1.medium"
-  monitor_flavour        = "m1.medium"
+  shell_flavour          = "o1.large"
+  monitor_flavour        = "o1.medium"
   compute_node_flavour   = "m1.xlarge"
   shell_names            = ["shell", "debugshell"]
   api_db_volume_size_gb  = 1000
