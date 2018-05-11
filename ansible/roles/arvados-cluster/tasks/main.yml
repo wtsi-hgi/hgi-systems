@@ -183,6 +183,13 @@
   check_mode: no
   changed_when: false
 
+- name: ensure /tmp/arvados.git does not exist when arvados repo is empty
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  file:
+    path: /tmp/arvados.git
+    state: absent
+  when: arvados_cluster_git_ls_remote_arvados.stdout == ""
+
 - name: populate arvados repository when empty (clone from github)
   delegate_to: "{{ arvados_cluster_delegate }}"
   command: git clone --bare https://github.com/curoverse/arvados.git
