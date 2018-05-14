@@ -156,6 +156,20 @@
   notify:
     - restart nginx
 
+- name: create systemd nginx service directory
+  become: yes
+  file:
+    path: /etc/systemd/system/nginx.service.d
+    state: directory
+
+- name: configure systemd nginx service override (number of files limit, etc)
+  become: yes
+  template: 
+    src: systemd-nginx-override.conf.j2
+    dest: /etc/systemd/system/nginx.service.d/override.conf
+  notify:
+    - restart nginx
+
 - name: make /var/www owned by www-data
   become: yes
   file: 
