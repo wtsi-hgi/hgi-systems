@@ -24,3 +24,5 @@ arvados_master_git_httpd_backend_port: 9001
 
 arvados_master_api_data_dir: /var/arvados-api
 arvados_master_blob_signature_ttl_s: 1209600
+
+arvados_master_nginx_worker_connections: 8192
