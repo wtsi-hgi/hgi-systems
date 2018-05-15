@@ -3,7 +3,7 @@ upstream arvados-ws {
 }
 
 server {
-  listen       0.0.0.0:443 ssl;
+  listen       0.0.0.0:443 ssl backlog={{ arvados_master_sysctl_somaxconn }};
   server_name  {{ arvados_cluster_ws_host }};
 
   proxy_connect_timeout 90s;

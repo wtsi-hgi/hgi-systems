@@ -1,5 +1,5 @@
 server {
-  listen 127.0.0.1:{{ arvados_master_api_backend_port }};
+  listen 127.0.0.1:{{ arvados_master_api_backend_port }} backlog={{ arvados_master_sysctl_somaxconn }};
   server_name localhost-api;
 
   root /var/www/arvados-api/current/public;
@@ -40,7 +40,7 @@ geo $external_client {
 }
 
 server {
-  listen       0.0.0.0:443 ssl;
+  listen       0.0.0.0:443 ssl backlog={{ arvados_master_sysctl_somaxconn }};
   server_name  {{ arvados_cluster_api_host }};
 
   ssl on;
