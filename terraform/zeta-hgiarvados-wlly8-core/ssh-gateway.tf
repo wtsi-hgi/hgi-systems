@@ -10,7 +10,7 @@ module "ssh-gateway" {
   domain       = "zeta-hgiarvados-wlly8.hgi.sanger.ac.uk"
   core_context = "${module.openstack.context}"
 
-  extra_ansible_groups = ["docker-consul-cluster-zeta-hgiarvados"]
+  extra_ansible_groups = ["docker-consul-cluster-zeta-hgiarvados-wlly8"]
 }
 
 output "ssh_gateway" {
