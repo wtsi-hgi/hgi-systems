@@ -10,5 +10,5 @@ data "terraform_remote_state" "hgiarvados-wlly8-core" {
 }
 
 output "ssh_gateway" {
-  value = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
+  value = "${data.terraform_remote_state.hgiarvados-wlly8-core.ssh_gateway}"
 }
