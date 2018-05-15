@@ -157,6 +157,42 @@ stages:
     - develop
     - staging-zeta-hgiarvados
 
+.production-zeta-hgiarvados-wlly8-core: &production-zeta-hgiarvados-wlly8-core-def
+  variables:
+    ENV: "production"
+    REGION: "zeta"
+    SETUP: "hgiarvados-wlly8-core"
+  only:
+    - master
+    - production-zeta-hgiarvados-wlly8-core
+  
+.staging-zeta-hgiarvados-wlly8-core: &staging-zeta-hgiarvados-wlly8-core-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta"
+    SETUP: "hgiarvados-wlly8-core"
+  only:
+    - develop
+    - staging-zeta-hgiarvados-wlly8-core
+
+.production-zeta-hgiarvados-wlly8: &production-zeta-hgiarvados-wlly8-def
+  variables:
+    ENV: "production"
+    REGION: "zeta"
+    SETUP: "hgiarvados-wlly8"
+  only:
+    - master
+    - production-zeta-hgiarvados-wlly8
+  
+.staging-zeta-hgiarvados-wlly8: &staging-zeta-hgiarvados-wlly8-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta"
+    SETUP: "hgiarvados-wlly8"
+  only:
+    - develop
+    - staging-zeta-hgiarvados-wlly8
+
 ###############################################################################
 # Stage: ci-setup
 ###############################################################################
@@ -246,6 +282,22 @@ openstack-vars-validate-production-zeta-hgiarvados:
 openstack-vars-validate-staging-zeta-hgiarvados:
   <<: *openstack-vars-validate-def
   <<: *staging-zeta-hgiarvados-def
+
+openstack-vars-validate-production-zeta-hgiarvados-wlly8-core:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgiarvados-wlly8-core-def
+    
+openstack-vars-validate-staging-zeta-hgiarvados-wlly8-core:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgiarvados-wlly8-core-def
+
+openstack-vars-validate-production-zeta-hgiarvados-wlly8:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgiarvados-wlly8-def
+    
+openstack-vars-validate-staging-zeta-hgiarvados-wlly8:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgiarvados-wlly8-def
 
 ###############################################################################
 # Stage: bootstrap
@@ -356,6 +408,22 @@ terraform-validate-staging-zeta-hgiarvados:
   <<: *terraform-validate-def
   <<: *staging-zeta-hgiarvados-def
 
+terraform-validate-production-zeta-hgiarvados-wlly8-core:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgiarvados-wlly8-core-def
+    
+terraform-validate-staging-zeta-hgiarvados-wlly8-core:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgiarvados-wlly8-core-def
+
+terraform-validate-production-zeta-hgiarvados-wlly8:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgiarvados-wlly8-def
+    
+terraform-validate-staging-zeta-hgiarvados-wlly8:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgiarvados-wlly8-def
+
 terraform-validate-modules:
   stage: validate
   tags:
@@ -405,6 +473,14 @@ terraform-staging-zeta-hgiarvados-core:
   <<: *terraform-core-def
   <<: *staging-zeta-hgiarvados-core-def
 
+terraform-production-zeta-hgiarvados-wlly8-core:
+  <<: *terraform-core-def
+  <<: *production-zeta-hgiarvados-wlly8-core-def
+
+terraform-staging-zeta-hgiarvados-wlly8-core:
+  <<: *terraform-core-def
+  <<: *staging-zeta-hgiarvados-wlly8-core-def
+
 ###############################################################################
 # Stage: terraform
 ###############################################################################
@@ -445,6 +521,14 @@ terraform-staging-zeta-hgiarvados:
   <<: *terraform-def
   <<: *staging-zeta-hgiarvados-def
 
+terraform-production-zeta-hgiarvados-wlly8:
+  <<: *terraform-def
+  <<: *production-zeta-hgiarvados-wlly8-def
+
+terraform-staging-zeta-hgiarvados-wlly8:
+  <<: *terraform-def
+  <<: *staging-zeta-hgiarvados-wlly8-def
+
 
 ###############################################################################
 # Common Ansible setup
@@ -483,6 +567,14 @@ ansible-production-zeta-hgiarvados-core:
 ansible-staging-zeta-hgiarvados-core:
   <<: *ansible-core-def
   <<: *staging-zeta-hgiarvados-core-def
+
+ansible-production-zeta-hgiarvados-wlly8-core:
+  <<: *ansible-core-def
+  <<: *production-zeta-hgiarvados-wlly8-core-def
+
+ansible-staging-zeta-hgiarvados-wlly8-core:
+  <<: *ansible-core-def
+  <<: *staging-zeta-hgiarvados-wlly8-core-def
 
 ###############################################################################
 # Stage: ansible
@@ -523,6 +615,14 @@ ansible-production-zeta-hgiarvados:
 ansible-staging-zeta-hgiarvados:
   <<: *ansible-def
   <<: *staging-zeta-hgiarvados-def
+
+ansible-production-zeta-hgiarvados-wlly8:
+  <<: *ansible-def
+  <<: *production-zeta-hgiarvados-wlly8-def
+
+ansible-staging-zeta-hgiarvados-wlly8:
+  <<: *ansible-def
+  <<: *staging-zeta-hgiarvados-wlly8-def
 
 ###############################################################################
 # Stage: sync
