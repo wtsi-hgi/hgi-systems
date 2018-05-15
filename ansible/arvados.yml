@@ -54,7 +54,8 @@
         arvados_monitor_ssl_cert: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert }}"
         arvados_monitor_ssl_key: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key }}"
         arvados_monitor_server_name: "{{ cloud_resource_fqdn }}"
-
+	arvados_monitor_cluster_id: "{{ arvados_cluster_id }}"
+	
 - hosts: arvados-ssos
   vars:
     arvados_PLAYBOOK_sso_data_mountpoint: /mnt/arvados-sso-db

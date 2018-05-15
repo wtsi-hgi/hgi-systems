@@ -33,6 +33,9 @@
 # arvados_monitor_server_name:
 #   the host name of the server
 #
+# arvados_monitor_cluster_id:
+#   the id of the arvados cluster to monitor
+#
 ###############################################################################
 
 ###############################################################################
@@ -43,3 +46,5 @@ arvados_monitor_ssl_cert_file: /etc/ssl.cert
 arvados_monitor_nginx_conf_ctmpl_file: /etc/nginx/arvados_monitor.conf.ctmpl
 arvados_monitor_netdata_html_ctmpl_file: /etc/nginx/netdata.html.ctmpl
 arvados_monitor_dash_html_ctmpl_file: /etc/nginx/dash.html.ctmpl
+
+arvados_monitor_dashboard_js_url: "https://arvados-monitor-{{ arvados_monitor_cluster_id }}-01.hgi.sanger.ac.uk/netdata/arvados-compute-node-{{ arvados_monitor_cluster_id }}-001/dashboard.js"
