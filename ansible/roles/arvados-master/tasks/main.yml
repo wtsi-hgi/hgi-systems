@@ -479,14 +479,25 @@
           - missingok
           - size 1G
 
+- name: create arvados db maintenance scripts for cron to run
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/var/www/arvados-api/current/script/{{ item }}"
+    mode: 0750
+    owner: www-data
+  with_items:
+    - delete_old_container_logs.sh
+    - delete_old_job_logs.sh
+
 - name: enable arvados db:delete_old_container_logs and db:deleta_old_job_logs cron jobs
   become: yes
   cron: 
     state: present
     name: "{{ item.name }}"
     cron_file: "/etc/cron.d/{{ item.name }}"
-    minute: "50"
-    hour: "*/3"
+    minute: "0"
+    hour: "*/2"
     day: "*"
     month: "*"
     weekday: "*"
@@ -494,9 +505,9 @@
     job: "{{ item.job }}"
   with_items:
     - name: arvados_db_delete_old_container_logs
-      job: "RAILS_ENV: production bundle exec rake db:delete_old_container_logs"
+      job: /var/www/arvados-api/current/script/delete_old_container_logs.sh
     - name: arvados_db_delete_old_job_logs
-      job: "RAILS_ENV: production bundle exec rake db:delete_old_job_logs"
+      job: /var/www/arvados-api/current/script/delete_old_job_logs.sh
 
 ##############################################################################
 # crunch-dispatch-slurm (crunch v2 slurm dispatcher)
