@@ -25,7 +25,7 @@ module "hail-master-as45" {
 
 module "hail-compute-as45" {
   source = "../modules/hail-compute"
-  count  = 10
+  count  = 5
 
   image = {
     name = "${var.base_image_name}"

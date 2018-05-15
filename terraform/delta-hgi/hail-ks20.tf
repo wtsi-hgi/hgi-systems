@@ -24,7 +24,7 @@ module "hail-master-ks20" {
 
 module "hail-compute-ks20" {
   source = "../modules/hail-compute"
-  count  = 2
+  count  = 0
 
   image = {
     name = "${var.base_image_name}"
