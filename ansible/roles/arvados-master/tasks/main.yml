@@ -479,6 +479,25 @@
           - missingok
           - size 1G
 
+- name: enable arvados db:delete_old_container_logs and db:deleta_old_job_logs cron jobs
+  become: yes
+  cron: 
+    state: present
+    name: "{{ item.name }}"
+    cron_file: "/etc/cron.d/{{ item.name }}"
+    minute: "50"
+    hour: "*/3"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    user: www-data
+    job: "{{ item.job }}"
+  with_items:
+    - name: arvados_db_delete_old_container_logs
+      job: "RAILS_ENV: production bundle exec rake db:delete_old_container_logs"
+    - name: arvados_db_delete_old_job_logs
+      job: "RAILS_ENV: production bundle exec rake db:delete_old_job_logs"
+
 ##############################################################################
 # crunch-dispatch-slurm (crunch v2 slurm dispatcher)
 ##############################################################################
