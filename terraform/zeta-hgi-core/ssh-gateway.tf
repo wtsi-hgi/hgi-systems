@@ -6,7 +6,7 @@ module "ssh-gateway" {
 
   image = "${module.hgi-openstack-image-hgi-base-freebsd11-4cb02ffa.image}"
 
-  flavour      = "m1.small"
+  flavour      = "o1.medium"
   domain       = "zeta-hgi.hgi.sanger.ac.uk"
   core_context = "${module.openstack.context}"
 
