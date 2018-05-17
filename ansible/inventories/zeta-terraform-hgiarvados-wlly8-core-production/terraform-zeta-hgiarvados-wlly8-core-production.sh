@@ -1,0 +1,1 @@
+../production/terraform-zeta-hgiarvados-wlly8-core-production.sh
