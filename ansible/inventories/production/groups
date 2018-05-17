@@ -220,7 +220,7 @@ terraform
 arvados-clusters
 docker-consul-cluster-zeta-hgiarvados-wlly8
 
-[terraform-ci-zeta-hgiarvados-core-wlly8:children]
+[terraform-ci-zeta-hgiarvados-wlly8-core:children]
 canaries
 terraform
 
