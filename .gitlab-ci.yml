@@ -67,24 +67,6 @@ stages:
     - develop
     - staging-delta-hgi
   
-.production-delta-hgiarvados: &production-delta-hgiarvados-def
-  variables:
-    ENV: "production"
-    REGION: "delta"
-    SETUP: "hgiarvados"
-  only:
-    - master
-    - production-delta-hgiarvados
-  
-.staging-delta-hgiarvados: &staging-delta-hgiarvados-def
-  variables:
-    ENV: "staging"
-    REGION: "delta"
-    SETUP: "hgiarvados"
-  only:
-    - develop
-    - staging-delta-hgiarvados
-
 .production-zeta-hgi-core: &production-zeta-hgi-core-def
   variables:
     ENV: "production"
@@ -243,14 +225,6 @@ openstack-vars-validate-staging-delta-hgi:
   <<: *openstack-vars-validate-def
   <<: *staging-delta-hgi-def
     
-openstack-vars-validate-production-delta-hgiarvados:
-  <<: *openstack-vars-validate-def
-  <<: *production-delta-hgiarvados-def
-    
-openstack-vars-validate-staging-delta-hgiarvados:
-  <<: *openstack-vars-validate-def
-  <<: *staging-delta-hgiarvados-def
-
 openstack-vars-validate-production-zeta-hgi-core:
   <<: *openstack-vars-validate-def
   <<: *production-zeta-hgi-core-def
@@ -343,14 +317,6 @@ os-images-validate-staging-delta-hgi:
   <<: *os-images-validate-def
   <<: *staging-delta-hgi-def
 
-os-images-validate-production-delta-hgiarvados:
-  <<: *os-images-validate-def
-  <<: *production-delta-hgiarvados-def
-
-os-images-validate-staging-delta-hgiarvados:
-  <<: *os-images-validate-def
-  <<: *staging-delta-hgiarvados-def
-
 .terraform-validate: &terraform-validate-def
   stage: validate
   tags:
@@ -368,14 +334,6 @@ terraform-validate-staging-delta-hgi:
   <<: *terraform-validate-def
   <<: *staging-delta-hgi-def
     
-terraform-validate-production-delta-hgiarvados:
-  <<: *terraform-validate-def
-  <<: *production-delta-hgiarvados-def
-    
-terraform-validate-staging-delta-hgiarvados:
-  <<: *terraform-validate-def
-  <<: *staging-delta-hgiarvados-def
-
 terraform-validate-production-zeta-hgi-core:
   <<: *terraform-validate-def
   <<: *production-zeta-hgi-core-def
@@ -497,14 +455,6 @@ terraform-staging-delta-hgi:
   <<: *terraform-def
   <<: *staging-delta-hgi-def
 
-terraform-production-delta-hgiarvados:
-  <<: *terraform-def
-  <<: *production-delta-hgiarvados-def
-
-terraform-staging-delta-hgiarvados:
-  <<: *terraform-def
-  <<: *staging-delta-hgiarvados-def
-
 terraform-production-zeta-hgi:
   <<: *terraform-def
   <<: *production-zeta-hgi-def
@@ -591,14 +541,6 @@ ansible-production-delta-hgi:
 ansible-staging-delta-hgi:
   <<: *ansible-def
   <<: *staging-delta-hgi-def
-
-ansible-production-delta-hgiarvados:
-  <<: *ansible-def
-  <<: *production-delta-hgiarvados-def
-
-ansible-staging-delta-hgiarvados:
-  <<: *ansible-def
-  <<: *staging-delta-hgiarvados-def
 
 ansible-production-zeta-hgi:
   <<: *ansible-def
