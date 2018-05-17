@@ -92,6 +92,10 @@
         # Restore from s3 if this file is present (then delete it)
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        ###############################################################################
+        # Settings for how often a backup is made (could be a full or incremental backup)
+        ###############################################################################
+        s3_backup_hour: 9,21
 
     - name: configure arvados-sso
       import_role:
@@ -99,7 +103,6 @@
       vars:
         arvados_sso_data_dir: "{{ arvados_PLAYBOOK_sso_data_mountpoint }}"
 
-    # TODO: Handle restore of data backup to S3
     - name: setup SSO database backup to S3
       import_role:
         name: wtsi-hgi.ansible-postgres-s3-backup
@@ -151,6 +154,9 @@
         ###############################################################################
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
         ###############################################################################
+        # Settings for how often a backup is made (could be a full or incremental backup)
+        ###############################################################################
+        s3_backup_hour: 9,21
 
     - name: configure arvados-api-db
       import_role:
@@ -161,7 +167,6 @@
         arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
 
-    # TODO: Handle restore of data backup to S3
     - name: setup API database backup to S3
       import_role:
         name: wtsi-hgi.ansible-postgres-s3-backup
