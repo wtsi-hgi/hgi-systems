@@ -3,12 +3,8 @@
 [arvados-cluster-eglyx]
 arvados-cluster-eglyx-arvados-cluster
 
-[arvados-cluster-wlly8]
-arvados-cluster-wlly8-arvados-cluster
-
 [arvados-clusters]
 arvados-cluster-eglyx-arvados-cluster
-arvados-cluster-wlly8-arvados-cluster
 
 [hgi-credentials:children]
 arvados-clusters
