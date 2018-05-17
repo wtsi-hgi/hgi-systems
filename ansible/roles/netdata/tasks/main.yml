@@ -86,7 +86,7 @@
     dest: "{{ netdata_consul_config_dir }}/consul-netdata.json"
     owner: root
   notify:
-    - reload consul
+    - restart consul
 
 - name: setup health alarm notifications
   block:
