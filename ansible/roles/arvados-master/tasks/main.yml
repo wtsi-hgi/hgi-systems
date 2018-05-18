@@ -475,9 +475,10 @@
         options:
           - compress
           - copytruncate
-          - daily
+          - hourly
           - missingok
           - size 1G
+          - rotate 36
 
 - name: create arvados db maintenance scripts for cron to run
   become: yes
