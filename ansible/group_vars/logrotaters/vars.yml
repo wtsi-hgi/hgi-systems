@@ -1,6 +1,6 @@
 ---
 
-_common_options:
+_logrotate_GROUP_common_options:
   - daily
   - copytruncate
   - maxsize 1G
@@ -8,12 +8,12 @@ _common_options:
   - compress
   - rotate 1
 
-logrotaters_logrotate_scripts:
+logrotate_GROUP_scripts:
   - name: syslog
     path: /var/log/syslog
-    options: "{{ _common_options }}"
+    options: "{{ _logrotate_GROUP_common_options }}"
   - name: kern.log
     path: /var/log/kern.log
-    options: "{{ _common_options }}"
+    options: "{{ _logrotate_GROUP_common_options }}"
 
-logrotaters_logrotate_replace_old_configurations: true
+logrotate_GROUP_replace_old_configurations: true

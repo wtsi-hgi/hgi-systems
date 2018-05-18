@@ -1,5 +1,11 @@
 ---
 
 - hosts: logrotaters
-  roles:
-    - name: logrotate
+  tasks:
+    - name: import logrotate role
+      become: yes
+      import_role:
+        name: wtsi-hgi.ansible-logrotate
+      vars:
+        logrotate_scripts: "{{ logrotate_GROUP_scripts }}"
+        logrotate_replace_old_configurations: "{{ logrotate_GROUP_replace_old_configurations }}"
