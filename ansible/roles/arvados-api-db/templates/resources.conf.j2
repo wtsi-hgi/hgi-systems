@@ -1,6 +1,6 @@
 # - Memory -
 
-shared_buffers = 100GB                  # min 128kB
+shared_buffers = 10GB                   # min 128kB
                                         # (change requires restart)
 #huge_pages = try                       # on, off, or try
                                         # (change requires restart)
@@ -10,7 +10,7 @@ shared_buffers = 100GB                  # min 128kB
 # Caution: it is not advisable to set max_prepared_transactions nonzero unless
 # you actively intend to use prepared transactions.
 work_mem = 16MB                         # min 64kB
-maintenance_work_mem = 10GB             # min 1MB
+maintenance_work_mem = 5GB              # min 1MB
 #autovacuum_work_mem = -1               # min 1MB, or -1 to use maintenance_work_mem
 #max_stack_depth = 2MB                  # min 100kB
 dynamic_shared_memory_type = posix      # the default is the first option
