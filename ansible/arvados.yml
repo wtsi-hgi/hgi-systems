@@ -364,4 +364,5 @@
         arvados_cluster_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
         arvados_cluster_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
         arvados_cluster_keep_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
-        arvados_cluster_keep_max_buffers: 240 # 240 * 64 MiB = 15 GiB (FIXME this should directly relate to amount of RAM on machine?)
+	# arvados_cluster_keep_max_buffers: "{{ ((ansible_memtotal_mb-512) // 64) }}"
+	arvados_cluster_keep_max_buffers: 126 # o1.large: (8580 MiB - 512) // 64 = 126
