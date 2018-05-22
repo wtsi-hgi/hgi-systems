@@ -116,6 +116,8 @@
       value: "{{ arvados_cluster_api_host }}"
     - key: arvados_keep_config_yaml
       value: "{{ lookup('template', 'arvados-keep-config.yaml.j2') }}"
+    - key: arvados_keep_node_keep_config_yaml
+      value: "{{ lookup('template', 'keep-node-arvados-keep-config.yaml.j2') }}"
     - key: arvados_keep_blob_signing_key
       value: "{{ arvados_cluster_keep_blob_signing_key }}"
     - key: arvados_keep_data_manager_api_token

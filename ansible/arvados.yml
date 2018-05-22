@@ -365,4 +365,5 @@
         arvados_cluster_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
         arvados_cluster_keep_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
         # arvados_cluster_keep_max_buffers: "{{ ((ansible_memtotal_mb-512) // 64) }}"
-        arvados_cluster_keep_max_buffers: 100 # o1.large: (8580 MiB - 2100) // 64 = 100
+        arvados_cluster_compute_node_keep_max_buffers: 256 # m1.xlarge compute node can accomodate 16GiB of keep buffers?
+        arvados_cluster_keep_node_keep_max_buffers: 64 # o1.large keep nodes only have 8GB, limit keep buffers to 4GiB

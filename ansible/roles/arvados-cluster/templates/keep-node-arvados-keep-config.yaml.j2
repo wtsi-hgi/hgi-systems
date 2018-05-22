@@ -1,4 +1,4 @@
-# arvados-keep-config.yaml for arvados compute nodes on {{ arvados_cluster_id }}
+# arvados-keep-config.yaml for arvados keep nodes on {{ arvados_cluster_id }}
 BlobSignatureTTL: {{ arvados_cluster_keep_blob_signature_ttl_s }}s
 BlobSigningKeyFile: {{ arvados_cluster_keep_blob_signing_key_file }}
 Debug: false
@@ -6,7 +6,7 @@ EnableDelete: true
 Listen: :25107
 LogFormat: json
 ManagementToken: ""
-MaxBuffers: {{ arvados_cluster_compute_node_keep_max_buffers }}
+MaxBuffers: {{ arvados_cluster_keep_node_keep_max_buffers }}
 MaxRequests: 0
 PIDFile: ""
 RequireSignatures: false
