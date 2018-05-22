@@ -66,3 +66,13 @@
     - python-consul
     - pyhcl
 
+- name: flush all pending handlers
+  meta: flush_handlers
+
+- name: enable docker-consul-server (and ensure started)
+  become: yes
+  systemd:
+    name: docker-consul-server
+    state: started
+    enabled: yes
+  when: "not 'image-building' in group_names"
