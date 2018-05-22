@@ -40,3 +40,14 @@
     dest: "{{ docker_consul_agent_config_dir }}/00-docker-consul-agent.json"
   when: "not 'image-building' in group_names"
   notify: systemd restart docker-consul-agent
+
+- name: flush all pending handlers
+  meta: flush_handlers
+
+- name: enable docker-consul-agent (and ensure started)
+  become: yes
+  systemd:
+    name: "{{ docker_consul_agent_service_name }}"
+    state: started
+    enabled: yes
+  when: "not 'image-building' in group_names"
