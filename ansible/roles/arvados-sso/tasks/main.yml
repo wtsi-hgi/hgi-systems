@@ -229,7 +229,7 @@
     update_cache: yes
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
-    - arvados-sso-server
+    - arvados-sso-server=0.1.20171122141118.ba584a7-8
 
 - name: configure arvados
   become: yes
