@@ -288,33 +288,17 @@
       import_role:
         name: arvados-shell
 
-     # TODO: enable when Arvados shells are provisioned with a volume
-#    - name: configure attached-openstack-volume
-#      import_role:
-#        name: attached-openstack-volume
-#      vars:
-#        attached_openstack_volume_vg: arvados-shell-vg
-#        attached_openstack_volume_vols:
-#          - name: arvados-shell-data
-#            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
-#            fstype: xfs
-#            mountpoint: "{{ arvados_PLAYBOOK_data_mountpoint }}"
-#        attached_openstack_volumes:
-#          - device: "{{ arvados_PLAYBOOK_attached_volume_device }}"
-#        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
-#
-#    - name: setup backup of shell volume to S3
-#      import_role:
-#        name: s3-backup
-#      vars:
-#        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
-#        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
-#        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
-#        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
-#        s3_backup_source_dir: "{{ arvados_PLAYBOOK_data_mountpoint }}"
-#        # TODO: assumes 1 shell node per clus†er
-#        s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/shell"
-#        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+    - name: setup backup of shell volume to S3
+      import_role:
+        name: s3-backup
+      vars:
+        s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+        s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
+        s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+        s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+        s3_backup_source_dir: "{{ arvados_PLAYBOOK_data_mountpoint }}"
+        s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/shell/{{ ansible_hostname }}"
+        s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
 
 - hosts: arvados-compute-nodes:!noconf
   tasks:
