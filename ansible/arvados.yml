@@ -280,9 +280,6 @@
         arvados_workbench_remote_check_delegate: "{{ arvados_cluster_delegate }}"
 
 - hosts: arvados-shells
-  vars:
-    arvados_PLAYBOOK_data_mountpoint: /mnt/arvados-shell
-    arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
   tasks:
     - name: import arvados-shell role
       import_role:
@@ -296,7 +293,7 @@
         s3_backup_s3_host: "{{ arvados_GROUP_backup_s3_host }}"
         s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
         s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
-        s3_backup_source_dir: "{{ arvados_PLAYBOOK_data_mountpoint }}"
+        s3_backup_source_dir: "/home/mercury"
         s3_backup_dest_path: "arvados/{{ arvados_cluster_id }}/shell/{{ ansible_hostname }}"
         s3_backup_restore_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
 
