@@ -163,6 +163,7 @@ hailers
 arvados-masters
 arvados-api-dbs
 arvados-ssos
+arvados-shells
 
 # OpenStack instances to be created by Ansible
 [openstack-instances:children]
