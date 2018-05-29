@@ -53,7 +53,7 @@ arvados_cluster_domain: "hgi.sanger.ac.uk"
 arvados_cluster_consul_domain: "node.zeta-hgiarvados.consul"
 
 arvados_cluster_internal_nets:
-  - 10.101.0.0/24
+  - 10.102.0.0/24
 
 arvados_cluster_mercury_shell_ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGOhzKGlZVJONd5yYOejP+551myiz2ZiJClMsPZLTiW+pEeSvZZrlbx5qy6fO3cY+AEWOfnl2tTHId+m2wmya5WSqMGFtHfC7Hy7X0iGA2VgfOVfXgDEeYOvlWyjnqKKItT6Uy1tWKrRE7mV50ZPlJISW2Bp32tUk6prchdymRlbSVHzNLV/ieQc4FnQCOu59kC+5oxVpCn8fXJN/r6yHMKPGh14V+mvl4vXQfmgjs0ZL6qz+2EKbPakffcEXqSXp9XKt/DUDpU6YLqOmyctvwXVJGMacRjvcIkiHQG26enmyuOYLpHn0DVGih2JYf4osZr7WvHb78bQv4ptmL3wmx mercury@arvados-shell-wlly8"
 
