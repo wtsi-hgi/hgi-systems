@@ -45,7 +45,7 @@ locals {
     "hgi-credentials",
   ]
 
-  hostname_format = "${format("hail-%s-master", var.hail_cluster_id)}-%02d"
+  hostname_format = "${format("hail-%s-%s-master", var.env, var.hail_cluster_id)}-%02d"
 }
 
 module "hgi-openstack-instance" {
