@@ -79,7 +79,6 @@ output "hgi_instances" {
   value = "${module.hgi-openstack-instance.hgi_instance}"
 }
 
-
 //resource "openstack_compute_instance_v2" "hail-compute" {
 //  provider    = "openstack"
 //  count       = "${var.count}"
@@ -130,3 +129,4 @@ output "hgi_instances" {
 //output "ip" {
 //  value = "${openstack_compute_instance_v2.hail-compute.*.access_ip_v4}"
 //}
+

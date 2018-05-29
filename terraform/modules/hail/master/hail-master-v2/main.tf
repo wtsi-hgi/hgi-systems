@@ -172,3 +172,4 @@ output "hgi_instances" {
 //  volume_id   = "${openstack_blockstorage_volume_v2.hail-master-volume.id}"
 //  instance_id = "${openstack_compute_instance_v2.hail-master.*.id[count.index]}"
 //}
+
