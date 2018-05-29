@@ -85,6 +85,7 @@
 [arvados-api-dbs]
 [arvados-ssos]
 [arvados-workbenches]
+[arvados-shells]
 [netdata]
 [irobots]
 [github-to-gitlab]
@@ -233,6 +234,7 @@ arvados-masters
 arvados-api-dbs
 arvados-ssos
 arvados-workbenches
+arvados-shells
 
 [sparkers:children]
 spark-masters
