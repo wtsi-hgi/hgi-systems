@@ -45,7 +45,8 @@ locals {
     "hgi-credentials",
   ]
 
-  hostname_format = "${format("hail-%s-%s-master", var.env, var.hail_cluster_id)}-%02d"
+  name_format     = "${format("hail-%s-master", var.hail_cluster_id)}-%02d"
+  hostname_format = "${format("hail-%s-%s-master", var.region, var.hail_cluster_id)}-%02d"
 }
 
 module "hgi-openstack-instance" {
@@ -58,7 +59,7 @@ module "hgi-openstack-instance" {
   floating_ip_p   = true
   volume_p        = true
   volume_size_gb  = "${var.volume_size_gb}"
-  name_format     = "${local.hostname_format}"
+  name_format     = "${local.name_format}"
   domain          = "${var.domain}"
   flavour         = "${var.flavour}"
   hostname_format = "${local.hostname_format}"
