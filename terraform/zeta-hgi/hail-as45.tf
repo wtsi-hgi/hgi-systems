@@ -17,7 +17,7 @@ module "hail-master-as45" {
 module "hail-compute-as45" {
   source          = "../modules/hail/compute/hail-compute-v2"
   hail_cluster_id = "as45"
-  count           = 5
+  count           = 1
   env             = "${var.env}"
   region          = "${var.region}"
   setup           = "${var.setup}"
