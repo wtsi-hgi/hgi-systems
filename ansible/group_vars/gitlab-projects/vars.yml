@@ -80,6 +80,7 @@ gitlab_project_settings_infoblox:
 gitlab_project_settings_ci:
   CI_CONSUL_HTTP_ADDR: "{{ consul_credentials_GROUP_creds['ci'].address }}"
   CI_CONSUL_HTTP_TOKEN: "{{ consul_credentials_GROUP_creds['ci'].token }}"
+  CI_CONSUL_DC: "hgi"
   CI_DOCKER_REGISTRY_URL: docker.io
   CI_DOCKER_REGISTRY_USERNAME: "{{ hgi_credentials_mercury_dockerhub_username }}"
   CI_DOCKER_REGISTRY_PASSWORD: "{{ hgi_credentials_mercury_dockerhub_password }}"
