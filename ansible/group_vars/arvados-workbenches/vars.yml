@@ -3,5 +3,5 @@
 arvados_workbench_cert: "{{ pem_wildcard_hgi_sanger_ac_uk_cert }}"
 arvados_workbench_key: "{{ pem_wildcard_hgi_sanger_ac_uk_key }}"
 
-arvados_workbench_remote_check_delegate: tf.delta-hgiarvados.openstack_compute_instance_v2.ssh-gateway
+arvados_workbench_remote_check_delegate: tf.zeta-hgiarvados.openstack_compute_instance_v2.ssh-gateway
 

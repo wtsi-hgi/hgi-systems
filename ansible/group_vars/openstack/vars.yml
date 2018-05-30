@@ -5,10 +5,9 @@
 #       auth_url: xxx
 #       username: xxx
 #       password: xxx
+---
 
 openstack_tenant_auths:
-  delta-hgi: "{{ openstack_logins['delta-mercury'] | combine({'project_name': 'hgi'}) }}"
-  delta-hgi-ci: "{{ openstack_logins['delta-mercury'] | combine({'project_name': 'hgi-ci'}) }}"
   zeta: "{{ openstack_logins['zeta-mercury'] | combine({'project_name': 'hgi'}) }}"
   zeta-hgi: "{{ openstack_logins['zeta-mercury'] | combine({'project_name': 'hgi'}) }}"
   zeta-hgi-ci: "{{ openstack_logins['zeta-mercury'] | combine({'project_name': 'hgi-ci'}) }}"

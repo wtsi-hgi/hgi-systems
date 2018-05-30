@@ -32,7 +32,7 @@
     consul_PLAYBOOK_created_restore_indicator_file: ".created-restore"
     consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}"
     consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
-    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/zeta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
     consul_PLAYBOOK_s3_backup_dest_path: "consul/{{ cloud_resource_tenant }}/{{ cloud_resource_name }}{{ consul_PLAYBOOK_server_data_mountpoint }}"
   tasks:
     - name: ensure consul servers are active in this play (as otherwise consul_servers will not be available)
@@ -141,7 +141,7 @@
     consul_PLAYBOOK_server_advertise_addresses: "{{ consul_PLAYBOOK_server_inventory_hostnames | map('extract', hostvars, 'cloud_resource_private_ip') | list }}"
     consul_PLAYBOOK_server_inventory_hostnames_wan: "{{ groups['consul-servers'] | default([]) | sort }}" 
     consul_PLAYBOOK_servers_wan: "{{ consul_PLAYBOOK_server_inventory_hostnames_wan | map('extract', hostvars) | list() | json_query('[*].cloud_resource_public_ip') | sort }}"
-    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/delta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
+    consul_PLAYBOOK_servers_wan_all: "{% if 'core-consul-servers' in group_names %}{{ consul_PLAYBOOK_servers_wan }}{% else %}{{ consul_PLAYBOOK_servers_wan | intersect(lookup('consul_kv', 'ansible/zeta-hgi/consul_cluster_server_wan_ips', token=all_GROUP_env_ANSIBLE_CONSUL_TOKEN)) | list() | sort }}{% endif %}"
     consul_PLAYBOOK_consul_template_token_file: /etc/consul-template.token
   tasks:
     - name: ensure consul servers are active in hgi-consul play (as otherwise consul_servers will not be available)
