@@ -6,12 +6,6 @@ if [[ -z "$REGION" ]]; then
 fi
 
 case $REGION in
-    delta)
-        export OS_USERNAME=${DELTA_OS_USERNAME}
-        export OS_PASSWORD=${DELTA_OS_PASSWORD}
-        export OS_AUTH_URL=${DELTA_OS_AUTH_URL}
-        >&2 echo "OS credentials for delta set"
-        ;;
     zeta)
         export OS_USERNAME=${ZETA_OS_USERNAME}
         export OS_PASSWORD=${ZETA_OS_PASSWORD}
