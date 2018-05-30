@@ -7,11 +7,6 @@ fi
 if [[ -n "${REGION:-}" ]]; then
     export TF_VAR_region=${REGION}
     case $REGION in
-	delta)
-	    export TF_VAR_openstack_external_network_name=nova
-	    export TF_VAR_openstack_floatingip_pool_name=nova
-	    >&2 echo "Set 'openstack_external_network_name' and 'openstack_floatingip_pool_name' to 'nova'"
-	    ;;
 	zeta)
 	    export TF_VAR_openstack_external_network_name=public
 	    export TF_VAR_openstack_floatingip_pool_name=public

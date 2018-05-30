@@ -1,1 +1,0 @@
-../production/terraform-delta-hgiarvados-production.sh

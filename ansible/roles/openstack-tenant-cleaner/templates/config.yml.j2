@@ -10,14 +10,14 @@ general:
 
 cleanup:
 {% for cleanup in openstack_tenant_cleaner_cleanups %}
-  - openstack-auth-url: http://delta.internal.sanger.ac.uk:5000/v2.0/
+  - openstack-auth-url: http://zeta.internal.sanger.ac.uk:5000/v2.0/
     tenant: {{ cleanup.tenant }}
     credentials: {{ cleanup.credentials }}
 
     instances:
       remove-if-older-than: 12h
       exclude:
-        - "gitlab-runner-delta-hgi-ci-.*"
+        - "gitlab-runner-zeta-hgi-ci-.*"
         - "runner-.+-gitlab-runner-.+"
 
     images:

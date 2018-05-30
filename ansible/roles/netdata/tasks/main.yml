@@ -44,7 +44,9 @@
     - curl
     - iproute
     - python
-    - python-yaml
+    # Note: `arvados-shells` are installing a custom `python-pyyaml` deb, which is incompatible with `python-yaml`.
+    # Removing `python-yaml` dependency, which is required for monitoring `beanstalkd`, to avoid this problem
+#    - python-yaml
     - python-mysqldb
     - python-psycopg2
     - python-pymongo

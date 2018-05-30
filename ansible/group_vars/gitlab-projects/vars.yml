@@ -46,9 +46,6 @@ gitlab_project_settings_terragrunt_locks:
   TERRAGRUNT_LOCKS_AWS_SECRET_KEY: "{{ terragrunt_locks_aws_secret_key }}"
 
 gitlab_project_settings_terraform_openstack:
-  DELTA_OS_AUTH_URL: "{{ openstack_logins['delta-mercury']['auth_url'] }}"
-  DELTA_OS_USERNAME: "{{ openstack_logins['delta-mercury']['username'] }}"
-  DELTA_OS_PASSWORD: "{{ openstack_logins['delta-mercury']['password'] }}"
   ZETA_OS_AUTH_URL: "{{ openstack_logins['zeta-mercury']['auth_url'] }}"
   ZETA_OS_USERNAME: "{{ openstack_logins['zeta-mercury']['username'] }}"
   ZETA_OS_PASSWORD: "{{ openstack_logins['zeta-mercury']['password'] }}"
@@ -69,7 +66,7 @@ gitlab_project_settings_terraform_consul:
   TERRAFORM_CONSUL_TOKEN: "{{ consul_credentials_GROUP_creds['terraform'].token }}"
 
 gitlab_project_settings_ansible_consul:
-  ANSIBLE_CONSUL_URL: "http://consul-delta-hgi.hgi.sanger.ac.uk:8500"
+  ANSIBLE_CONSUL_URL: "http://consul.zeta-hgi.hgi.sanger.ac.uk:8500"
   ANSIBLE_CONSUL_TOKEN: "{{ consul_credentials_GROUP_creds['ansible'].token }}"
 
 gitlab_project_settings_consul_template:
@@ -83,6 +80,7 @@ gitlab_project_settings_infoblox:
 gitlab_project_settings_ci:
   CI_CONSUL_HTTP_ADDR: "{{ consul_credentials_GROUP_creds['ci'].address }}"
   CI_CONSUL_HTTP_TOKEN: "{{ consul_credentials_GROUP_creds['ci'].token }}"
+  CI_CONSUL_DC: "zeta-hgi"
   CI_DOCKER_REGISTRY_URL: docker.io
   CI_DOCKER_REGISTRY_USERNAME: "{{ hgi_credentials_mercury_dockerhub_username }}"
   CI_DOCKER_REGISTRY_PASSWORD: "{{ hgi_credentials_mercury_dockerhub_password }}"

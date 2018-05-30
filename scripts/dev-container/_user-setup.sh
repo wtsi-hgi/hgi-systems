@@ -2,17 +2,12 @@
 set -eu -o pipefail
 
 >&2 echo "Removing old Terraform working directories"
-rm -rf /mnt/host/hgi-systems/terraform/delta-hgi/.terraform
-rm -rf /mnt/host/hgi-systems/terraform/delta-hgiarvados/.terraform
+rm -rf /mnt/host/hgi-systems/terraform/zeta-hgi/.terraform
+rm -rf /mnt/host/hgi-systems/terraform/zeta-hgiarvados/.terraform
 
 >&2 echo "Setting Ansible Vault password"
 echo "${ANSIBLE_VAULT_PASSWORD}" > ~/.ansible-vault.pw
 export ANSIBLE_VAULT_PASSWORD_FILE=~/.ansible-vault.pw
-
->&2 echo "Setting OpenStack environment variables"
-export OS_PASSWORD="${DELTA_OS_PASSWORD}"
-export OS_USERNAME="${DELTA_OS_USERNAME}"
-export OS_AUTH_URL="${DELTA_OS_AUTH_URL}"
 
 >&2 echo "Setting GitLab specific variables"
 export CI_PROJECT_DIR=/mnt/host/hgi-systems/

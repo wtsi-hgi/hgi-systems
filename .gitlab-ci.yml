@@ -1,35 +1,20 @@
-# This script excepts the following Secret Variables to be defined in
-# Gitlab project settings:
-#  ANSIBLE_VAULT_PASSWORD
-#  SSH_PRIVATE_KEY (e.g. "-----BEGIN RSA PRIVATE KEY-----
-#                         ...
-#                         -----END RSA PRIVATE KEY-----)"
-#  DELTA_OS_AUTH_URL
-#  DELTA_OS_USERNAME
-#  DELTA_OS_PASSWORD
-#  S3_ACCESS_KEY
-#  S3_HOST
-#  S3_SECRET_KEY
-#  S3_IMAGE_BUCKET
-#  TERRAFORM_CONSUL_TOKEN
-#  INFOBLOX_USERNAME
-#  INFOBLOX_PASSWORD
-#  INFOBLOX_HOST
-#  INFOBLOX_SSLVERIFY
+# This script expects Secret Variables to be defined in the Gitlab project CI/CD settings. The required variables can
+# be found by examine the project setup: ansible/group_vars/hgi-systems-gitlab/vars.yml
+---
+
+# In general, additional variables should *not* be defined below unless they are
+# required to process .gitlab-ci.yml itself (i.e. they are used in this file outside
+# of the job scripts).
+#
+# To set or override a variable, create or edit a script in the before_scripts.d directory at
+# either the repo level or in the hgi image creation subrepo. The contents of those
+# two directories will be combined and the scripts sourced in "version" order (sort -V).
 variables:
   GITHUB_REPO: "git@github.com:wtsi-hgi/hgi-systems.git"
   GITLAB_REPO: "git@gitlab.internal.sanger.ac.uk:hgi/hgi-systems.git"
   TF_LOG: "" # anything other than "" to trace
   CI_LOCK_PREFIX: "ci/locks"
   ANSIBLE_LOCK_PREFIX: "${CI_LOCK_PREFIX}/ansible"
-
-# In general, additional variables should *not* be defined above unless they are 
-# required to process .gitlab-ci.yml itself (i.e. they are used in this file outside 
-# of the job scripts). 
-# 
-# To set or override a variable, create or edit a script in the before_scripts.d directory at 
-# either the repo level or in the hgi image creation subrepo. The contents of those 
-# two directories will be combined and the scripts sourced in "version" order (sort -V).
 
 .global-before-script: &global-before-script-def 'source "ci/source-before-scripts.sh" "ci/before_scripts.d"'
 before_script:
@@ -49,24 +34,6 @@ stages:
 ###############################################################################
 # Helper YAML definitions
 ###############################################################################
-.production-delta-hgi: &production-delta-hgi-def
-  variables:
-    ENV: "production"
-    REGION: "delta"
-    SETUP: "hgi"
-  only:
-    - master
-    - production-delta-hgi
-  
-.staging-delta-hgi: &staging-delta-hgi-def
-  variables:
-    ENV: "staging"
-    REGION: "delta"
-    SETUP: "hgi"
-  only:
-    - develop
-    - staging-delta-hgi
-  
 .production-zeta-hgi-core: &production-zeta-hgi-core-def
   variables:
     ENV: "production"
@@ -217,14 +184,6 @@ validate_s3:
     - '((echo "${OS_AUTH_URL}" | grep -q "v3") && (test -n "${OS_DOMAIN_NAME}" || test -n "${OS_DOMAIN_ID}" || echo "WARNING: OS_DOMAIN_ID or OS_DOMAIN_NAME not set")) || exit 0'
   dependencies: []
 
-openstack-vars-validate-production-delta-hgi:
-  <<: *openstack-vars-validate-def
-  <<: *production-delta-hgi-def
-    
-openstack-vars-validate-staging-delta-hgi:
-  <<: *openstack-vars-validate-def
-  <<: *staging-delta-hgi-def
-    
 openstack-vars-validate-production-zeta-hgi-core:
   <<: *openstack-vars-validate-def
   <<: *production-zeta-hgi-core-def
@@ -309,14 +268,6 @@ ansible-bootstrap-production-zeta-hgi:
     - ci/terraform-prepare-os-images.py ${S3_IMAGE_BUCKET}
   dependencies: []
 
-os-images-validate-production-delta-hgi:
-  <<: *os-images-validate-def
-  <<: *production-delta-hgi-def
-
-os-images-validate-staging-delta-hgi:
-  <<: *os-images-validate-def
-  <<: *staging-delta-hgi-def
-
 .terraform-validate: &terraform-validate-def
   stage: validate
   tags:
@@ -326,14 +277,6 @@ os-images-validate-staging-delta-hgi:
     - ci/terraform-validate.sh
   dependencies: []
 
-terraform-validate-production-delta-hgi:
-  <<: *terraform-validate-def
-  <<: *production-delta-hgi-def
-    
-terraform-validate-staging-delta-hgi:
-  <<: *terraform-validate-def
-  <<: *staging-delta-hgi-def
-    
 terraform-validate-production-zeta-hgi-core:
   <<: *terraform-validate-def
   <<: *production-zeta-hgi-core-def
@@ -447,14 +390,6 @@ terraform-staging-zeta-hgiarvados-wlly8-core:
   stage: terraform
   dependencies: []
 
-terraform-production-delta-hgi:
-  <<: *terraform-def
-  <<: *production-delta-hgi-def
-
-terraform-staging-delta-hgi:
-  <<: *terraform-def
-  <<: *staging-delta-hgi-def
-
 terraform-production-zeta-hgi:
   <<: *terraform-def
   <<: *production-zeta-hgi-def
@@ -533,14 +468,6 @@ ansible-staging-zeta-hgiarvados-wlly8-core:
   <<: *ansible-common-def
   stage: ansible
   dependencies: []
-
-ansible-production-delta-hgi:
-  <<: *ansible-def
-  <<: *production-delta-hgi-def
-
-ansible-staging-delta-hgi:
-  <<: *ansible-def
-  <<: *staging-delta-hgi-def
 
 ansible-production-zeta-hgi:
   <<: *ansible-def

@@ -52,8 +52,6 @@
 [openstack-instances]
 [root-secret]
 [terraform]
-[terraform-ci-delta-hgi]
-[terraform-ci-delta-hgiarvados]
 [terraform-ci-zeta-hgi]
 [terraform-ci-zeta-hgi-core]
 [terraform-ci-zeta-hgiarvados]
@@ -63,8 +61,6 @@
 [tf_type_openstack_compute_instance_v2]
 [consul-clusters]
 [arvados-clusters]
-[consul-cluster-delta-hgi]
-[consul-cluster-delta-hgiarvados]
 [consul-cluster-zeta-hgi]
 [consul-cluster-zeta-hgiarvados]
 [docker-consul-clusters]
@@ -184,18 +180,6 @@ canaries
 [cloud-resources:children]
 openstack-instances
 tf_type_openstack_compute_instance_v2
-
-[terraform-ci-delta-hgi:children]
-canaries
-terraform
-arvados-clusters
-consul-cluster-delta-hgi
-
-[terraform-ci-delta-hgiarvados:children]
-canaries
-terraform
-arvados-clusters
-consul-cluster-delta-hgiarvados
 
 [terraform-ci-zeta-hgi:children]
 canaries
