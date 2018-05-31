@@ -44,7 +44,7 @@ locals {
     "docker-consul-cluster-${var.consul_datacenter}",
   ]
 
-  hostname_format = "${format("arvados-irobot-%s", var.arvados_cluster_id)}-%02d",
+  hostname_format = "${format("arvados-irobot-%s", var.arvados_cluster_id)}-%02d"
 }
 
 module "hgi-openstack-instance" {

@@ -303,9 +303,9 @@ module "arvados-irobot" {
   core_context = "${var.core_context}"
   ssh_gateway  = "${var.ssh_gateway}"
 
-  arvados_cluster_id     = "${var.arvados_cluster_id}"
-  consul_datacenter      = "${var.consul_datacenter}"
-  extra_ansible_groups   = "${var.extra_ansible_groups}"
+  arvados_cluster_id   = "${var.arvados_cluster_id}"
+  consul_datacenter    = "${var.consul_datacenter}"
+  extra_ansible_groups = "${var.extra_ansible_groups}"
 
   count   = "${var.irobot_count}"
   flavour = "${var.irobot_flavour}"
