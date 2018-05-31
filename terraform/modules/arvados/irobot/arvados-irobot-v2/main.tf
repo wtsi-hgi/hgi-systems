@@ -4,7 +4,6 @@ variable "setup" {}
 
 variable "core_context" {
   type    = "map"
-  default = {}
 }
 
 variable "count" {}
@@ -44,7 +43,7 @@ locals {
     "docker-consul-cluster-${var.consul_datacenter}",
   ]
 
-  hostname_format = "${format("arvados-irobot-%s", var.arvados_cluster_id)}-%02d"
+  hostname_format = "arvados-irobot-${var.arvados_cluster_id}-%02d"
 }
 
 module "hgi-openstack-instance" {
@@ -54,7 +53,7 @@ module "hgi-openstack-instance" {
   setup           = "${var.setup}"
   core_context    = "${var.core_context}"
   count           = "${var.count}"
-  floating_ip_p   = true
+  floating_ip_p   = false
   volume_p        = true
   volume_size_gb  = "${var.volume_size_gb}"
   name_format     = "${local.hostname_format}"
