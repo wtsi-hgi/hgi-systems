@@ -3,7 +3,7 @@ variable "region" {}
 variable "setup" {}
 
 variable "core_context" {
-  type    = "map"
+  type = "map"
 }
 
 variable "count" {}
