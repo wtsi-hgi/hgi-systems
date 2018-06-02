@@ -48,6 +48,9 @@
 - import_playbook: docker-consul.yml
 - import_playbook: docker-consul-clusters.yml
 
+# Netdata has to be installed before anything that configures it (such as Arvados)
+- import_playbook: netdata.yml
+
 # Playbooks that only support root hosts with no order dependencies
 - import_playbook: arvados.yml
 - import_playbook: cookie-jars.yml
@@ -56,5 +59,4 @@
 - import_playbook: gitlab-runners.yml
 - import_playbook: irobots.yml
 - import_playbook: hailers.yml
-- import_playbook: netdata.yml
 - import_playbook: openstack-tenant-cleaners.yml
