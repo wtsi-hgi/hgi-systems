@@ -275,7 +275,7 @@
   notify:
     - restart nginx
 
-- name: activate passenger in nginx http configuration
+- name: add additional includes to nginx http configuration
   become: yes
   blockinfile:
     path: /etc/nginx/nginx.conf
@@ -283,6 +283,7 @@
     content: |
       include /etc/nginx/passenger.conf;
       include /etc/nginx/passenger_settings.conf;
+      include /etc/nginx/netdata_logging.conf;
   notify:
     - restart nginx
 
@@ -297,6 +298,7 @@
     - passenger_settings
     - events
     - worker_limits
+    - netdata_logging
 
 - name: add PASSENGER_INSTANCE_REGISTRY_DIR env var to root .bash_profile
   become: yes
