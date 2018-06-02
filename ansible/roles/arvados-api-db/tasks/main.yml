@@ -132,6 +132,16 @@
     - query_tuning
     - write_ahead_log
 
+- name: allow netdata user to connect to postgres locally for monitoring
+  become: yes
+  lineinfile:
+    path: "/etc/postgresql/{{ arvados_api_db_postgresql_version }}/arvados_api/pg_hba.conf"
+    state: present
+    insertafter: "^local"
+    line: "local   all             netdata                                 peer"
+  notify:
+    - restart postgresql
+
 - name: ensure postgresql has restarted before creating user and db
   meta: flush_handlers
 
@@ -152,4 +162,11 @@
     template: template0
     encoding: UTF8
     owner: "{{ arvados_cluster_db_user_api }}"
+
+- name: create postgresql superuser for netdata monitoring
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: netdata
+    role_attr_flags: SUPERUSER
 
