@@ -17,7 +17,7 @@ server {
   # * `max_request_size` in the API server's application.yml file
   client_max_body_size {{ arvados_cluster_max_body_size_m }}m;
 
-  access_log /var/log/nginx/arvados-api-backend-access.log;
+  access_log /var/log/nginx/arvados-api-backend-access.log netdata;
   error_log /var/log/nginx/arvados-api-backend-error.log;
 }
 
