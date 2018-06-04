@@ -5,6 +5,20 @@
     state: restarted
     daemon_reload: yes
     
+- name: restart haproxy
+  become: yes
+  systemd:
+    name: haproxy
+    state: restarted
+    daemon_reload: yes
+    
+- name: restart netdata
+  become: yes
+  systemd:
+    name: netdata
+    state: restarted
+    daemon_reload: yes
+    
 - name: restart arvados-ws
   become: yes
   systemd:
