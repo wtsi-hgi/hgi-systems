@@ -31,31 +31,37 @@ backend stats-back
   stats uri /haproxy/stats
 
 {% for queue in arvados_master_haproxy_queues %}
-frontend arvados_api_{{ queue.name }}
+frontend {{ queue.name }}_arvados_api
         bind 127.0.0.1:{{ queue.port }}
         mode http
         option  httplog
         option forwardfor
-        default_backend arvados_api_{{ queue.name }}
-
-backend arvados_api_{{ queue.name }}
-        mode http
-        fullconn {{ queue.fullconn }}
-        balance roundrobin
-        option httpchk
-        server final_queue_{{ queue.final_queue }}_{{ arvados_master_haproxy_final_queues[queue.final_queue].server_name }}      127.0.0.1:{{ arvados_master_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
+        default_backend {{ queue.name }}_arvados_api
 
 {% endfor %}
 
 {% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
-frontend final_queue_{{ final_queue_name }}
+frontend {{ final_queue_name }}_final_queue
         bind 127.0.0.1:{{ final_queue.port }}
         mode http
         option  httplog
         option forwardfor
-        default_backend final_queue_{{ final_queue_name }}
+        default_backend {{ final_queue_name }}_final_queue
 
-backend final_queue_{{ final_queue_name }}
+{% endfor %}
+
+{% for queue in arvados_master_haproxy_queues %}
+backend {{ queue.name }}_arvados_api
+        mode http
+        fullconn {{ queue.fullconn }}
+        balance roundrobin
+        option httpchk
+        server {{ queue.final_queue }}_{{ arvados_master_haproxy_final_queues[queue.final_queue].server_name }}_final_queue      127.0.0.1:{{ arvados_master_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
+
+{% endfor %}
+
+{% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
+backend {{ final_queue_name }}_final_queue
         mode http
         fullconn {{ final_queue.fullconn }}
         balance roundrobin
