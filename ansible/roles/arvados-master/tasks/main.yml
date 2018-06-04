@@ -205,7 +205,7 @@
   loop_control:
     label: "{{ item.name }}"
 
-- name: install nginx, passenger, and haproxy
+- name: install nginx and passenger
   become: yes
   apt:
     name: "{{ item }}"
@@ -215,9 +215,20 @@
   with_items:
     - nginx-extras
     - passenger
-    - haproxy
   notify:
     - restart nginx
+
+- name: install haproxy
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - haproxy
+  notify:
+    - restart haproxy
 
 - name: create systemd nginx service directory
   become: yes
