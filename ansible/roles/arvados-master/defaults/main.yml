@@ -138,9 +138,9 @@ arvados_master_haproxy_queues:
       - '"~*^/arvados/v1/containers"'
     port: 5014
     final_queue: long
-    minconn: 16
+    minconn: 32
     maxconn: 64
-    fullconn: 512
+    fullconn: 128
   - name: workflows
     patterns:
       - '"~*^/arvados/v1/workflows"'
