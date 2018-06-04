@@ -229,7 +229,8 @@
     - haproxy
   notify:
     - restart haproxy
-
+    - restart rsyslog
+    
 - name: create systemd nginx service directory
   become: yes
   file:
@@ -353,7 +354,8 @@
     dest: "/etc/haproxy/haproxy.cfg"
   notify:
    - restart haproxy
-
+   - restart rsyslog
+   
 - name: add haproxy logging to netdata haproxy.conf
   become: yes
   blockinfile:
