@@ -31,8 +31,8 @@ module "hail-cluster-mercury" {
   hail_cluster_id       = "mercury"
   master_count          = 1
   compute_count         = 1
-  master_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
-  compute_image         = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
+  master_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-3ddcb29b}"
+  compute_image         = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-3ddcb29b}"
   master_flavour        = "o1.small"
   compute_flavour       = "o1.small"
   master_volume_size_gb = 20
