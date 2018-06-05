@@ -50,23 +50,24 @@ locals {
 }
 
 module "hgi-openstack-instance" {
-  source          = "../../../hgi-openstack-instance"
-  env             = "${var.env}"
-  region          = "${var.region}"
-  setup           = "${var.setup}"
-  core_context    = "${var.core_context}"
-  count           = "${var.count}"
-  floating_ip_p   = true
-  volume_p        = true
-  volume_size_gb  = "${var.volume_size_gb}"
-  name_format     = "${local.name_format}"
-  domain          = "${var.domain}"
-  flavour         = "${var.flavour}"
-  hostname_format = "${local.hostname_format}"
-  ssh_gateway     = "${var.ssh_gateway}"
-  keypair_name    = "${var.keypair_name}"
-  network_name    = "${var.network_name}"
-  image           = "${var.image}"
+  source               = "../../../hgi-openstack-instance"
+  env                  = "${var.env}"
+  region               = "${var.region}"
+  setup                = "${var.setup}"
+  core_context         = "${var.core_context}"
+  count                = "${var.count}"
+  floating_ip_p        = true
+  volume_p             = true
+  volume_size_gb       = "${var.volume_size_gb}"
+  name_format          = "${local.name_format}"
+  additional_dns_fqdns = ["${format("hail-%s", var.hail_cluster_id)}"]
+  domain               = "${var.domain}"
+  flavour              = "${var.flavour}"
+  hostname_format      = "${local.hostname_format}"
+  ssh_gateway          = "${var.ssh_gateway}"
+  keypair_name         = "${var.keypair_name}"
+  network_name         = "${var.network_name}"
+  image                = "${var.image}"
 
   security_group_names = [
     "ping",
