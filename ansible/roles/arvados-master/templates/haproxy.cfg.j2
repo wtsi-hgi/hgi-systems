@@ -7,7 +7,8 @@ global
   user haproxy
   group haproxy
   daemon
-
+  maxconn 100000
+  
 defaults
   log global
   retries 3
@@ -56,7 +57,7 @@ backend {{ queue.name }}_arvados_api
         fullconn {{ queue.fullconn }}
         balance roundrobin
         option httpchk
-        server {{ queue.final_queue }}_{{ arvados_master_haproxy_final_queues[queue.final_queue].server_name }}_final_queue      127.0.0.1:{{ arvados_master_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
+        server {{ queue.final_queue }}_final_queue-{{ queue.name }}_arvados_api      127.0.0.1:{{ arvados_master_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
 
 {% endfor %}
 
@@ -66,7 +67,7 @@ backend {{ final_queue_name }}_final_queue
         fullconn {{ final_queue.fullconn }}
         balance roundrobin
         option httpchk
-        server {{ final_queue.server_name }}      127.0.0.1:{{ final_queue.server_port }} minconn {{ final_queue.minconn }} maxconn {{ final_queue.maxconn }}
+        server {{ final_queue.server_name }}-{{ final_queue_name }}_final_queue      127.0.0.1:{{ final_queue.server_port }} minconn {{ final_queue.minconn }} maxconn {{ final_queue.maxconn }}
 
 {% endfor %}
 
