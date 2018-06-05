@@ -90,7 +90,7 @@ arvados_master_haproxy_queues:
       - '"~*^/arvados/v1/logs"'
     port: 5008
     final_queue: long
-    minconn: 32
+    minconn: 8
     maxconn: 64
     fullconn: 2048
   - name: nodes
@@ -113,10 +113,10 @@ arvados_master_haproxy_queues:
     patterns:
       - '"~*^/arvados/v1/collections"'
     port: 5011
-    final_queue: normal
-    minconn: 8
-    maxconn: 64
-    fullconn: 512
+    final_queue: long
+    minconn: 16
+    maxconn: 96
+    fullconn: 192
   - name: repositories
     patterns:
       - '"~*^/arvados/v1/repositories"'
@@ -131,16 +131,16 @@ arvados_master_haproxy_queues:
     port: 5013
     final_queue: long
     minconn: 16
-    maxconn: 64
-    fullconn: 512
+    maxconn: 96
+    fullconn: 192
   - name: containers
     patterns:
       - '"~*^/arvados/v1/containers"'
     port: 5014
     final_queue: long
-    minconn: 32
-    maxconn: 64
-    fullconn: 128
+    minconn: 16
+    maxconn: 96
+    fullconn: 192
   - name: workflows
     patterns:
       - '"~*^/arvados/v1/workflows"'
@@ -170,13 +170,13 @@ arvados_master_haproxy_final_queues:
     port: 7001
     server_name: arvados_api_backend
     server_port: "{{ arvados_master_api_backend_port }}"
-    minconn: 96
-    maxconn: 96
-    fullconn: 96
+    minconn: 128
+    maxconn: 128
+    fullconn: 128
   normal:
     port: 7000
     server_name: arvados_api_backend
     server_port: "{{ arvados_master_api_backend_port }}"
-    minconn: 122
-    maxconn: 122
+    minconn: 90
+    maxconn: 90
     fullconn: 4096
