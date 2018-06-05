@@ -1,5 +1,7 @@
 ---
 
+- import_playbook: hgi-preamble-playbook.yml
+
 - hosts: irobots
   tasks:
     - name: configure attached-openstack-volume for arvados sso database
