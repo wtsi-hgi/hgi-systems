@@ -35,48 +35,48 @@ arvados_master_haproxy_queues:
     port: 5001
     final_queue: fast
     minconn: 4
-    maxconn: 32
-    fullconn: 512
+    maxconn: 24
+    fullconn: 128
   - name: api_client_authorizations
     patterns:
       - '"~*^/arvados/v1/api_client_authorizations"'
     port: 5002
     final_queue: fast
     minconn: 4
-    maxconn: 32
-    fullconn: 512
+    maxconn: 24
+    fullconn: 128
   - name: api_clients
     patterns:
       - '"~*^/arvados/v1/api_clients"'
     port: 5003
     final_queue: fast
     minconn: 4
-    maxconn: 32
-    fullconn: 512
+    maxconn: 24
+    fullconn: 128
   - name: groups
     patterns:
       - '"~*^/arvados/v1/groups"'
     port: 5004
     final_queue: fast
     minconn: 4
-    maxconn: 32
-    fullconn: 512
+    maxconn: 24
+    fullconn: 128
   - name: users
     patterns:
       - '"~*^/arvados/v1/users"'
     port: 5005
     final_queue: fast
     minconn: 4
-    maxconn: 32
-    fullconn: 512
+    maxconn: 24
+    fullconn: 128
   - name: keep_services
     patterns:
       - '"~*^/arvados/v1/keep_services"'
     port: 5006
     final_queue: fast
     minconn: 4
-    maxconn: 32
-    fullconn: 512
+    maxconn: 24
+    fullconn: 128
   - name: links
     patterns:
       - '"~*^/arvados/v1/links"'
@@ -163,9 +163,9 @@ arvados_master_haproxy_final_queues:
     port: 7001
     server_name: arvados_api_backend
     server_port: "{{ arvados_master_api_backend_port }}"
-    minconn: 2
-    maxconn: 32
-    fullconn: 512
+    minconn: 8
+    maxconn: 48
+    fullconn: 256
   long:
     port: 7002
     server_name: arvados_api_backend
