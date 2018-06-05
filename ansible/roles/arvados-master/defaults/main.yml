@@ -98,9 +98,9 @@ arvados_master_haproxy_queues:
       - '"~*^/arvados/v1/nodes"'
     port: 5009
     final_queue: normal
-    minconn: 8
-    maxconn: 64
-    fullconn: 512
+    minconn: 45
+    maxconn: 90
+    fullconn: 200
   - name: virtual_machines
     patterns:
       - '"~*^/arvados/v1/virtual_machines"'
