@@ -9,6 +9,11 @@
 
 {{ 'arvados_cluster_api_host="{{ key (printf "%s/arvados_cluster_api_host" (scratch.Get "template_path")) }}"' }}
 
+# sleep random amount of time between 0 and 60s so as not to overload API server all at once
+sleepytime=$(($RANDOM % 60))
+echo "sleeping for ${sleepytime} seconds before node ping"
+sleep ${sleepytime}
+
 # TODO could add additional post data to ping as in https://doc.arvados.org/install/install-compute-ping.html
 pong=$(/usr/bin/curl -s -S -k -d ping_secret="${ping_secret}" "https://${arvados_cluster_api_host}/arvados/v1/nodes/${uuid}/ping")
 
