@@ -628,6 +628,12 @@
   with_items:
     - crunch-dispatch-slurm
 
+- name: set crunch-dispatch-slum to start on boot
+  become: yes
+  systemd:
+    name: crunch-dispatch-slurm
+    enabled: yes
+
 - name: create crunch-dispatch-slurm conf dir
   become: yes
   file:
