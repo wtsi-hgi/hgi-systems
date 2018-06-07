@@ -218,17 +218,22 @@
   notify:
     - restart nginx
 
-- name: modify nginx service entry to created required passenger run directories
+- name: create systemd drop-in directory for nginx
+  file:
+    path: /etc/systemd/system/nginx.service.d/
+    state: directory
+
+- name: add systemd drop-in for nginx to create required passenger run directories
   become: yes
   copy:
-    src: files/nginx.service
-    dest: /lib/systemd/system/nginx.service
-  register: nginx_service_modified
+    src: passenger-run-directories.conf
+    dest: /etc/systemd/system/nginx.service.d/10-passenger-run-directories.conf
+  register: nginx_service_drop_in
 
 - name: reload systemd to apply nginx service changes
   systemd:
     daemon_reload: yes
-  when: nginx_service_modified.changed
+  when: nginx_service_drop_in
 
 - name: install haproxy
   become: yes
