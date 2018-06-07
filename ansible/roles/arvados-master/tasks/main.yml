@@ -218,6 +218,18 @@
   notify:
     - restart nginx
 
+- name: modify nginx service entry to created required passenger run directories
+  become: yes
+  copy:
+    src: files/nginx.service
+    dest: /lib/systemd/system/nginx.service
+  register: nginx_service_modified
+
+- name: reload systemd to apply nginx service changes
+  systemd:
+    daemon_reload: yes
+  when: nginx_service_modified.changed
+
 - name: install haproxy
   become: yes
   apt:
