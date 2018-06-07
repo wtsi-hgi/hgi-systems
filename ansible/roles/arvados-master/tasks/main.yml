@@ -219,6 +219,7 @@
     - restart nginx
 
 - name: create systemd drop-in directory for nginx
+  become: yes
   file:
     path: /etc/systemd/system/nginx.service.d/
     state: directory
@@ -231,9 +232,10 @@
   register: nginx_service_drop_in
 
 - name: reload systemd to apply nginx service changes
+  become: yes
   systemd:
     daemon_reload: yes
-  when: nginx_service_drop_in
+  when: nginx_service_drop_in.changed
 
 - name: install haproxy
   become: yes
