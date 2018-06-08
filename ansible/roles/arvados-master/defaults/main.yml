@@ -164,19 +164,19 @@ arvados_master_haproxy_final_queues:
     server_name: arvados_api_backend
     server_port: "{{ arvados_master_api_backend_port }}"
     minconn: 8
-    maxconn: 48
+    maxconn: 24
     fullconn: 256
   long:
     port: 7002
     server_name: arvados_api_backend
     server_port: "{{ arvados_master_api_backend_port }}"
-    minconn: 128
-    maxconn: 216
-    fullconn: 216
+    minconn: 64
+    maxconn: 110
+    fullconn: 110
   normal:
     port: 7000
     server_name: arvados_api_backend
     server_port: "{{ arvados_master_api_backend_port }}"
-    minconn: 32
-    maxconn: 96
-    fullconn: 1024
+    minconn: 16
+    maxconn: 48
+    fullconn: 256
