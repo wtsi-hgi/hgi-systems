@@ -83,7 +83,21 @@
         - gnupg
         - sudo
   when: ansible_os_family == 'FreeBSD'
- 
+
+
+- name: set dirty_background_ratio and dirty_ratio sysctls
+  become: yes
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - name: vm.dirty_background_ratio
+      value: 1
+    - name: vm.dirty_ratio
+      value: 2
+  loop_control:
+    label: "{{ item.name }}"
+
 - name: common root configuration not to be baked into images
   import_tasks: root-post-image-building.yml
   when: "not 'image-building' in group_names"
