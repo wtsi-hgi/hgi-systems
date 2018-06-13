@@ -615,6 +615,24 @@
     - name: arvados_db_delete_old_job_logs
       job: /var/www/arvados-api/current/script/delete_old_job_logs.sh
 
+- name: copy script to kill fat passenger tasks
+  become: yes
+  copy:
+    src: files/arvados_api_fat_passenger_killer.sh
+    dest: /var/www/arvados-api/current/script/arvados_api_fat_passenger_killer.sh
+    mode: 0770
+
+- name: set cron job to kill fat passenger tasks
+  become: yes
+  cron:
+    state: present
+    name: "arvados_api_fat_passenger_killer"
+    cron_file: "/etc/cron.d/arvados_api_fat_passenger_killer"
+    minute: "*"
+    hour: "*"
+    day: "*"
+    job: "/var/www/arvados-api/current/script/arvados_api_fat_passenger_killer.sh"
+
 ##############################################################################
 # crunch-dispatch-slurm (crunch v2 slurm dispatcher)
 ##############################################################################

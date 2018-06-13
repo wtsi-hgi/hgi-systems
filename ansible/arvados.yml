@@ -23,6 +23,22 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+
+- hosts: arvados-api-logs
+  tasks:
+    - name: configure arvados-api-logs
+      import_role:
+        name: arvados-api-logs
+      vars:
+        arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
+        arvados_master_remote_check_delegate: "{{ arvados_cluster_delegate }}"
+
+    - fail:
+
+
 - hosts: arvados
   tasks:
     - name: ensure arvados host are in the dockerers group
@@ -234,6 +250,18 @@
         name: arvados-master
       vars:
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
+        arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
+        arvados_master_remote_check_delegate: "{{ arvados_cluster_delegate }}"
+
+- hosts: arvados-api-logs
+  tasks:
+    - name: configure arvados-master
+      import_role:
+        name: arvados-master
+      vars:
         arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
