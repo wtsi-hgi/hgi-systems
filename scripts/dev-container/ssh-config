@@ -1,0 +1,24 @@
+Host *
+        StrictHostKeyChecking no
+        UserKnownHostsFile /dev/null
+
+Host eglyx arvados shell
+    HostName arvados-shell-eglyx.hgi.sanger.ac.uk
+    User mercury
+
+Host master api
+    HostName arvados-master-eglyx.hgi.sanger.ac.uk
+    User mercury
+
+Host wlly8
+    HostName arvados-shell-wlly8.hgi.sanger.ac.uk
+    User mercury
+
+Host gitlab-runner
+    HostName gitlab-runner-zeta-hgi-ci-01.hgi.sanger.ac.uk
+    User mercury
+
+Host api db
+    HostName arvados-api-db-eglyx
+    User mercury
+    ProxyCommand ssh -A mercury@eglyx nc arvados-api-db-eglyx %p %r
