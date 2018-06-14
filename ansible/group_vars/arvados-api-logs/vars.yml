@@ -1,0 +1,5 @@
+---
+
+arvados_master_cert: "{{ pem_wildcard_hgi_sanger_ac_uk_cert }}"
+arvados_master_key: "{{ pem_wildcard_hgi_sanger_ac_uk_key }}"
+
