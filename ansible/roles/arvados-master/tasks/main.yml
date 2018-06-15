@@ -627,6 +627,7 @@
   cron:
     state: present
     name: "arvados_api_fat_passenger_killer"
+    user: root
     cron_file: "/etc/cron.d/arvados_api_fat_passenger_killer"
     minute: "*"
     hour: "*"
