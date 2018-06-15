@@ -1,0 +1,73 @@
+global
+  log /dev/log  local0
+  log /dev/log  local1 notice
+  chroot /var/lib/haproxy
+  stats socket /run/haproxy/admin.sock mode 660 level admin
+  stats timeout 30s
+  user haproxy
+  group haproxy
+  daemon
+  maxconn 100000
+  
+defaults
+  log global
+  retries 3
+  option redispatch
+        timeout connect 5000 # ms
+        timeout client 10m
+        timeout server 10m
+        timeout queue 45s
+  maxconn 19500
+  mode  http
+  option  dontlognull
+
+frontend stats-front
+  bind *:9091
+  mode http
+  default_backend stats-back
+
+backend stats-back
+  mode http
+  balance roundrobin
+  stats uri /haproxy/stats
+
+{% for queue in arvados_master_haproxy_queues %}
+frontend {{ queue.name }}_arvados_api
+        bind 127.0.0.1:{{ queue.port }}
+        mode http
+        option  httplog
+        option forwardfor
+        default_backend {{ queue.name }}_arvados_api
+
+{% endfor %}
+
+{% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
+frontend {{ final_queue_name }}_final_queue
+        bind 127.0.0.1:{{ final_queue.port }}
+        mode http
+        option  httplog
+        option forwardfor
+        default_backend {{ final_queue_name }}_final_queue
+
+{% endfor %}
+
+{% for queue in arvados_master_haproxy_queues %}
+backend {{ queue.name }}_arvados_api
+        mode http
+        fullconn {{ queue.fullconn }}
+        balance roundrobin
+        option httpchk
+        server {{ queue.final_queue }}_final_queue-{{ queue.name }}_arvados_api      127.0.0.1:{{ arvados_master_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
+
+{% endfor %}
+
+{% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
+backend {{ final_queue_name }}_final_queue
+        mode http
+        fullconn {{ final_queue.fullconn }}
+        balance roundrobin
+        option httpchk
+        server {{ final_queue.server_name }}-{{ final_queue_name }}_final_queue      127.0.0.1:{{ final_queue.server_port }} minconn {{ final_queue.minconn }} maxconn {{ final_queue.maxconn }}
+
+{% endfor %}
+

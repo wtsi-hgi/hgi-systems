@@ -1,0 +1,104 @@
+# Copy this file to application.yml and edit to suit.
+#
+# Consult application.default.yml for the full list of configuration
+# settings.
+#
+# The order of precedence is:
+# 1. config/environments/{RAILS_ENV}.rb (deprecated)
+# 2. Section in application.yml corresponding to RAILS_ENV (e.g., development)
+# 3. Section in application.yml called "common"
+# 4. Section in application.default.yml corresponding to RAILS_ENV
+# 5. Section in application.default.yml called "common"
+
+production:
+  # Mandatory site configuration.  See application.default.yml and
+  # http://http://doc.arvados.org/install/install-api-server.html#configure_application
+  # for more information.
+  uuid_prefix: {{ arvados_cluster_id }}
+  secret_token: {{ arvados_cluster_api_secret_token }}
+  blob_signing_key: {{ arvados_cluster_GROUP_blob_signing_key }}
+  blob_signature_ttl: {{ arvados_master_blob_signature_ttl_s }}
+  sso_app_secret: {{ arvados_cluster_sso_app_secret }}
+  sso_app_id: {{ arvados_cluster_sso_app_id }}
+  sso_provider_url: "https://{{ arvados_cluster_sso_host }}"
+  workbench_address: "https://{{ arvados_cluster_workbench_host }}"
+  websocket_address: "wss://{{ arvados_cluster_ws_host }}/websocket"
+  git_repositories_dir: {{ arvados_master_git_repositories_dir }}
+  git_internal_dir: {{ arvados_master_git_internal_dir }}
+  git_repo_ssh_base: "git@{{ arvados_cluster_git_host }}:"
+  git_repo_https_base: "https://{{ arvados_cluster_git_host }}/"
+
+  # These two settings control how frequently log events are flushed to the
+  # database.  Log lines are buffered until either crunch_log_bytes_per_event
+  # has been reached or crunch_log_seconds_between_events has elapsed since
+  # the last flush.
+  crunch_log_bytes_per_event: 4096
+  crunch_log_seconds_between_events: 1
+
+  # The sample period for throttling logs, in seconds.
+  crunch_log_throttle_period: 1
+
+  # Maximum number of bytes that job can log over crunch_log_throttle_period
+  # before being silenced until the end of the period.
+  crunch_log_throttle_bytes: 65536
+
+  # Maximum number of lines that job can log over crunch_log_throttle_period
+  # before being silenced until the end of the period.
+  crunch_log_throttle_lines: 1024
+
+  # Maximum bytes that may be logged by a single job.  Log bytes that are
+  # silenced by throttling are not counted against this total.
+  crunch_limit_log_bytes_per_job: 1073741824
+
+  # Max items in each API response
+  max_items_per_response: 100000
+
+  docker_image_formats: ["v2"]
+
+  # When you run the db:delete_old_job_logs task, it will find jobs that
+  # have been finished for at least this many seconds, and delete their
+  # stderr logs from the logs table.
+  clean_job_log_rows_after: <%= 60.minutes %>
+
+  # When you run the db:delete_old_container_logs task, it will find
+  # containers that have been finished for at least this many seconds,
+  # and delete their stdout, stderr, arv-mount, crunch-run, and
+  # crunchstat logs from the logs table.
+  clean_container_log_rows_after: <%= 60.minutes %>
+
+  # Time to keep audit logs, in seconds. (An audit log is a row added
+  # to the "logs" table in the PostgreSQL database each time an
+  # Arvados object is created, modified, or deleted.)
+  #
+  # Currently, websocket event notifications rely on audit logs, so
+  # this should not be set lower than 600 (5 minutes).
+  #  max_audit_log_age: 1209600
+  max_audit_log_age: 1200
+
+  # Maximum number of log rows to delete in a single SQL transaction.
+  #
+  # If max_audit_log_delete_batch is 0, log entries will never be
+  # deleted by Arvados. Cleanup can be done by an external process
+  # without affecting any Arvados system processes, as long as very
+  # recent (<5 minutes old) logs are not deleted.
+  #
+  # 100000 is a reasonable batch size for most sites.
+  max_audit_log_delete_batch: 100000
+
+  max_request_size: {{ arvados_cluster_max_body_size_m * 1024 * 1024 }}
+
+common:
+  # Settings in this section will be used in all environments
+  # (development, production, test) except when overridden in the
+  # environment-specific sections above.
+  crunch_job_wrapper: :slurm_immediate
+
+  # The maximum number of compute nodes that can be in use simultaneously
+  # If this limit is reduced, any existing nodes with slot number >= new limit
+  # will not be counted against the new limit. In other words, the new limit
+  # won't be strictly enforced until those nodes with higher slot numbers
+  # go down.
+  max_compute_nodes: {{ arvados_cluster_GROUP_max_compute_nodes }}
+
+
+

@@ -11,6 +11,12 @@
 #   hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key: xxx
 #   mercury_hgi_arvados_google_service_account_json_key: xxx
 
+---
+
+hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_cert: "{{ pem_wildcard_hgi_sanger_ac_uk_cert }}"
+hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_key: "{{ pem_wildcard_hgi_sanger_ac_uk_key }}"
+
+
 hgi_credentials_mercury_google_uid: 112543019536584549283
 
 # FIXME: remove these once references are updated
