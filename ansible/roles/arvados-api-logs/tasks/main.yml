@@ -60,13 +60,22 @@
     - python-psycopg2
     - zlib1g-dev
 
+- name: set ownership of arvados-api dir
+  become: yes
+  file:
+    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    state: directory
+    owner: www-data
+    group: www-data
+    recurse: yes
+
 - name: ensure /usr/local/src directory exists
   become: yes
   file:
     path: /usr/local/src
     state: directory
     owner: "{{ ansible_user }}"
-    
+
 - name: download ruby source archive
   get_url:
     url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
@@ -107,13 +116,13 @@
 
 - name: add passenger apt signing key
   become: yes
-  apt_key: 
+  apt_key:
     keyserver: "{{ pgp_keyserver_url }}"
     id: 561F9B9CAC40B2F7
 
 - name: add arvados apt repository
   become: yes
-  apt_repository: 
+  apt_repository:
     repo: "deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main"
     state: present
 
@@ -192,6 +201,38 @@
   notify:
     - restart nginx
 
+- name: create systemd drop-in directory for nginx
+  become: yes
+  file:
+    path: /etc/systemd/system/nginx.service.d/
+    state: directory
+
+- name: add systemd drop-in for nginx to create required passenger run directories
+  become: yes
+  copy:
+    src: passenger-run-directories.conf
+    dest: /etc/systemd/system/nginx.service.d/10-passenger-run-directories.conf
+  register: nginx_service_drop_in
+
+- name: reload systemd to apply nginx service changes
+  become: yes
+  systemd:
+    daemon_reload: yes
+  when: nginx_service_drop_in.changed
+
+- name: install haproxy
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - haproxy
+  notify:
+    - restart haproxy
+    - restart rsyslog
+
 - name: create systemd nginx service directory
   become: yes
   file:
@@ -200,7 +241,7 @@
 
 - name: configure systemd nginx service override (number of files limit, etc)
   become: yes
-  template: 
+  template:
     src: systemd-nginx-override.conf.j2
     dest: /etc/systemd/system/nginx.service.d/override.conf
   notify:
@@ -208,7 +249,7 @@
 
 - name: make /var/www owned by www-data
   become: yes
-  file: 
+  file:
     path: /var/www
     owner: www-data
 
@@ -258,45 +299,45 @@
       include /etc/nginx/passenger.conf;
       include /etc/nginx/passenger_settings.conf;
       include /etc/nginx/netdata_logging.conf;
+      include /etc/nginx/haproxy_queues.conf;
   notify:
     - restart nginx
 
-# FIXME
-#- name: add arvados-api-backend nginx logging to netdata web_log.conf
-#  become: yes
-#  blockinfile:
-#    path: /etc/netdata/python.d/web_log.conf
-#    content: |
-#      nginx_arvados_api_backend:
-#        name: 'arvados api backend'
-#        path: '/var/log/nginx/arvados-api-backend-access.log'
-#        categories:
-#          # API discovery
-#          discovery                       : '^/discovery'
-#          # Permission and authentication
-#          api_client_authorizations       : '^/arvados/v1/api_client_authorizations'
-#          api_clients                     : '^/arvados/v1/api_clients'
-#          groups                          : '^/arvados/v1/groups'
-#          users                           : '^/arvados/v1/users'
-#          # System resources
-#          keep_services                   : '^/arvados/v1/keep_services'
-#          links                           : '^/arvados/v1/links'
-#          logs                            : '^/arvados/v1/logs'
-#          nodes                           : '^/arvados/v1/nodes'
-#          virtual_machines                : '^/arvados/v1/virtual_machines'
-#          # Data management
-#          collections                     : '^/arvados/v1/collections'
-#          repositories                    : '^/arvados/v1/repositories'
-#          # Container engine
-#          container_requests              : '^/arvados/v1/container_requests'
-#          containers                      : '^/arvados/v1/containers'
-#          workflows                       : '^/arvados/v1/workflows'
-#  notify:
-#    - restart netdata
+- name: add arvados-api-backend nginx logging to netdata web_log.conf
+  become: yes
+  blockinfile:
+    path: /etc/netdata/python.d/web_log.conf
+    content: |
+      nginx_arvados_api_backend:
+        name: 'arvados api backend'
+        path: '/var/log/nginx/arvados-api-backend-access.log'
+        categories:
+          # API discovery
+          discovery                       : '^/discovery'
+          # Permission and authentication
+          api_client_authorizations       : '^/arvados/v1/api_client_authorizations'
+          api_clients                     : '^/arvados/v1/api_clients'
+          groups                          : '^/arvados/v1/groups'
+          users                           : '^/arvados/v1/users'
+          # System resources
+          keep_services                   : '^/arvados/v1/keep_services'
+          links                           : '^/arvados/v1/links'
+          logs                            : '^/arvados/v1/logs'
+          nodes                           : '^/arvados/v1/nodes'
+          virtual_machines                : '^/arvados/v1/virtual_machines'
+          # Data management
+          collections                     : '^/arvados/v1/collections'
+          repositories                    : '^/arvados/v1/repositories'
+          # Container engine
+          container_requests              : '^/arvados/v1/container_requests'
+          containers                      : '^/arvados/v1/containers'
+          workflows                       : '^/arvados/v1/workflows'
+  notify:
+    - restart netdata
 
 - name: configure nginx include files
   become: yes
-  template: 
+  template:
     src: "{{ item }}.conf.j2"
     dest: "/etc/nginx/{{ item }}.conf"
   notify:
@@ -306,6 +347,36 @@
     - events
     - worker_limits
     - netdata_logging
+    - haproxy_queues
+
+- name: configure haproxy
+  become: yes
+  template:
+    src: "haproxy.cfg.j2"
+    dest: "/etc/haproxy/haproxy.cfg"
+  notify:
+   - restart haproxy
+   - restart rsyslog
+
+- name: add haproxy logging to netdata haproxy.conf
+  become: yes
+  blockinfile:
+    path: /etc/netdata/python.d/haproxy.conf
+    content: |
+      via_socket:
+        socket: '/var/run/haproxy/admin.sock'
+  notify:
+    - restart netdata
+
+- name: add netdata user to haproxy group
+  become: yes
+  user:
+    name: netdata
+    append: yes
+    groups:
+      - haproxy
+  notify:
+    - restart netdata
 
 - name: add PASSENGER_INSTANCE_REGISTRY_DIR env var to root .bash_profile
   become: yes
@@ -350,6 +421,9 @@
     - application.yml
     - database.yml
   register: arvados_master_REGISTER_conf_files
+  notify:
+    - restart crunch-dispatch-pipelines
+    - restart crunch-dispatch-jobs
 
 - name: dpkg-reconfigure arvados-api-server (this also initially creates the database)
   become: yes
@@ -432,7 +506,7 @@
 
 - name: create trusted workbench api client script
   become: yes
-  template: 
+  template:
     src: "create-workbench-api-client.rb.j2"
     dest: "{{ arvados_master_create_workbench_api_client_script }}"
     mode: 0700
@@ -458,7 +532,7 @@
     mode: 0700
     owner: www-data
   register: arvados_master_mercury_admin_user_script
-  
+
 - name: create mercury admin user
   become: yes
   become_user: www-data
@@ -469,6 +543,22 @@
     HOME: /var/www
     RAILS_ENV: production
   when: arvados_master_mercury_admin_user_script.changed
+
+- name: setup logrotate to rotate API logs
+  become: yes
+  import_role:
+    name: wtsi-hgi.ansible-logrotate
+  vars:
+    logrotate_scripts:
+      - name: arvados_api_db
+        path: "{{ arvados_master_api_data_dir }}/arvados-api/shared/log/*.log"
+        options:
+          - compress
+          - copytruncate
+          - hourly
+          - missingok
+          - size 1G
+          - rotate 36
 
 - name: create arvados passenger maintenance scripts for cron to run
   become: yes
@@ -482,7 +572,7 @@
 
 - name: enable arvados_api_passenger_restart.sh cron job
   become: yes
-  cron: 
+  cron:
     state: present
     name: "{{ item.name }}"
     cron_file: "/etc/cron.d/{{ item.name }}"
@@ -497,35 +587,35 @@
     - name: arvados_api_passenger_restart
       job: /var/www/arvados-api/current/script/arvados_api_passenger_restart.sh
 
-#- name: create arvados db maintenance scripts for cron to run
-#  become: yes
-#  template:
-#    src: "{{ item }}.j2"
-#    dest: "/var/www/arvados-api/current/script/{{ item }}"
-#    mode: 0750
-#    owner: www-data
-#  with_items:
-#    - delete_old_container_logs.sh
-#    - delete_old_job_logs.sh
+- name: create arvados db maintenance scripts for cron to run
+  become: yes
+  template:
+    src: "{{ item }}.j2"
+    dest: "/var/www/arvados-api/current/script/{{ item }}"
+    mode: 0750
+    owner: www-data
+  with_items:
+    - delete_old_container_logs.sh
+    - delete_old_job_logs.sh
 
-#- name: enable arvados db:delete_old_container_logs and db:deleta_old_job_logs cron jobs
-#  become: yes
-#  cron:
-#    state: present
-#    name: "{{ item.name }}"
-#    cron_file: "/etc/cron.d/{{ item.name }}"
-#    minute: "0"
-#    hour: "*/2"
-#    day: "*"
-#    month: "*"
-#    weekday: "*"
-#    user: www-data
-#    job: "{{ item.job }}"
-#  with_items:
-#    - name: arvados_db_delete_old_container_logs
-#      job: /var/www/arvados-api/current/script/delete_old_container_logs.sh
-#    - name: arvados_db_delete_old_job_logs
-#      job: /var/www/arvados-api/current/script/delete_old_job_logs.sh
+- name: enable arvados db:delete_old_container_logs and db:deleta_old_job_logs cron jobs
+  become: yes
+  cron:
+    state: present
+    name: "{{ item.name }}"
+    cron_file: "/etc/cron.d/{{ item.name }}"
+    minute: "0"
+    hour: "*/2"
+    day: "*"
+    month: "*"
+    weekday: "*"
+    user: www-data
+    job: "{{ item.job }}"
+  with_items:
+    - name: arvados_db_delete_old_container_logs
+      job: /var/www/arvados-api/current/script/delete_old_container_logs.sh
+    - name: arvados_db_delete_old_job_logs
+      job: /var/www/arvados-api/current/script/delete_old_job_logs.sh
 
 - name: copy script to kill fat passenger tasks
   become: yes

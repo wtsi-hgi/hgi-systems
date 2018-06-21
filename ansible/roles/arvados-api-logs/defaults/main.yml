@@ -1,4 +1,9 @@
-# arvados_master_remote_check_delegate
+# Required variables that must be defined:
+#   arvados_master_remote_check_delegate
+#   arvados_api_logs_master_private_ips
+#   arvados_api_logs_api_host
+
+---
 
 arvados_master_postgresql_package_version: 9.5+173ubuntu0.1
 arvados_master_postgresql_client_package_version: 9.5
@@ -27,3 +32,159 @@ arvados_master_blob_signature_ttl_s: 1209600
 
 arvados_master_nginx_worker_connections: 8192
 arvados_master_sysctl_somaxconn: 16384
+
+arvados_api_logs_apt_cache_valid_time: 3600
+arvados_api_logs_pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
+
+arvados_master_haproxy_queues:
+  - name: discovery
+    patterns:
+      - '"~*^/discovery"'
+    port: 5001
+    final_queue: fast
+    minconn: 4
+    maxconn: 24
+    fullconn: 128
+  - name: api_client_authorizations
+    patterns:
+      - '"~*^/arvados/v1/api_client_authorizations"'
+    port: 5002
+    final_queue: fast
+    minconn: 4
+    maxconn: 24
+    fullconn: 128
+  - name: api_clients
+    patterns:
+      - '"~*^/arvados/v1/api_clients"'
+    port: 5003
+    final_queue: fast
+    minconn: 4
+    maxconn: 24
+    fullconn: 128
+  - name: groups
+    patterns:
+      - '"~*^/arvados/v1/groups"'
+    port: 5004
+    final_queue: fast
+    minconn: 4
+    maxconn: 24
+    fullconn: 128
+  - name: users
+    patterns:
+      - '"~*^/arvados/v1/users"'
+    port: 5005
+    final_queue: fast
+    minconn: 4
+    maxconn: 24
+    fullconn: 128
+  - name: keep_services
+    patterns:
+      - '"~*^/arvados/v1/keep_services"'
+    port: 5006
+    final_queue: fast
+    minconn: 4
+    maxconn: 24
+    fullconn: 128
+  - name: links
+    patterns:
+      - '"~*^/arvados/v1/links"'
+    port: 5007
+    final_queue: normal
+    minconn: 8
+    maxconn: 64
+    fullconn: 512
+  - name: logs
+    patterns:
+      - '"~*^/arvados/v1/logs"'
+    port: 5008
+    final_queue: long
+    minconn: 8
+    maxconn: 128
+    fullconn: 256
+  - name: nodes
+    patterns:
+      - '"~*^/arvados/v1/nodes"'
+    port: 5009
+    final_queue: normal
+    minconn: 45
+    maxconn: 90
+    fullconn: 200
+  - name: virtual_machines
+    patterns:
+      - '"~*^/arvados/v1/virtual_machines"'
+    port: 5010
+    final_queue: normal
+    minconn: 8
+    maxconn: 64
+    fullconn: 512
+  - name: collections
+    patterns:
+      - '"~*^/arvados/v1/collections"'
+    port: 5011
+    final_queue: long
+    minconn: 16
+    maxconn: 128
+    fullconn: 256
+  - name: repositories
+    patterns:
+      - '"~*^/arvados/v1/repositories"'
+    port: 5012
+    final_queue: normal
+    minconn: 8
+    maxconn: 64
+    fullconn: 512
+  - name: container_requests
+    patterns:
+      - '"~*^/arvados/v1/container_requests"'
+    port: 5013
+    final_queue: long
+    minconn: 16
+    maxconn: 128
+    fullconn: 256
+  - name: containers
+    patterns:
+      - '"~*^/arvados/v1/containers"'
+    port: 5014
+    final_queue: long
+    minconn: 16
+    maxconn: 128
+    fullconn: 256
+  - name: workflows
+    patterns:
+      - '"~*^/arvados/v1/workflows"'
+    port: 5015
+    final_queue: normal
+    minconn: 8
+    maxconn: 64
+    fullconn: 512
+  - name: default
+    patterns:
+      - default
+    port: 5000
+    final_queue: normal
+    minconn: 8
+    maxconn: 64
+    fullconn: 512
+
+arvados_master_haproxy_final_queues:
+  fast:
+    port: 7001
+    server_name: arvados_api_backend
+    server_port: "{{ arvados_master_api_backend_port }}"
+    minconn: 8
+    maxconn: 24
+    fullconn: 256
+  long:
+    port: 7002
+    server_name: arvados_api_backend
+    server_port: "{{ arvados_master_api_backend_port }}"
+    minconn: 64
+    maxconn: 110
+    fullconn: 110
+  normal:
+    port: 7000
+    server_name: arvados_api_backend
+    server_port: "{{ arvados_master_api_backend_port }}"
+    minconn: 16
+    maxconn: 48
+    fullconn: 256

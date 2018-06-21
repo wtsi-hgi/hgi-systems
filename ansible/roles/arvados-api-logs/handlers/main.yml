@@ -5,6 +5,13 @@
     state: restarted
     daemon_reload: yes
 
+- name: restart haproxy
+  become: yes
+  systemd:
+    name: haproxy
+    state: restarted
+    daemon_reload: yes
+
 - name: restart rsyslog
   become: yes
   systemd:
