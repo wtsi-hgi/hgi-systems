@@ -23,10 +23,10 @@
 dependencies:
   - role: arvados-common
     vars:
-      arvados_cluster_api_host: "{{ arvados_cluster_api_host }}"
-      arvados_cluster_master_private_ips: "{{ arvados_cluster_master_private_ips }}"
-      all_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
-      pgp_keyserver_url: "{{ pgp_keyserver_url }}"
+      arvados_cluster_api_host: "{{ arvados_api_logs_api_host }}"
+      arvados_cluster_master_private_ips: "{{ arvados_api_logs_master_private_ips }}"
+      all_apt_cache_valid_time: "{{ arvados_api_logs_apt_cache_valid_time }}"
+      pgp_keyserver_url: "{{ arvados_api_logs_pgp_keyserver_url }}"
 
   - role: netdata
     vars:
