@@ -142,6 +142,43 @@ stages:
     - develop
     - staging-zeta-hgiarvados-wlly8
 
+.production-zeta-hgiarvados-bbpin-core: &production-zeta-hgiarvados-bbpin-core-def
+  variables:
+    ENV: "production"
+    REGION: "zeta"
+    SETUP: "hgiarvados-bbpin-core"
+  only:
+    - master
+    - production-zeta-hgiarvados-bbpin-core
+
+.staging-zeta-hgiarvados-bbpin-core: &staging-zeta-hgiarvados-bbpin-core-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta"
+    SETUP: "hgiarvados-bbpin-core"
+  only:
+    - develop
+    - staging-zeta-hgiarvados-bbpin-core
+
+.production-zeta-hgiarvados-bbpin: &production-zeta-hgiarvados-bbpin-def
+  variables:
+    ENV: "production"
+    REGION: "zeta"
+    SETUP: "hgiarvados-bbpin"
+  only:
+    - master
+    - production-zeta-hgiarvados-bbpin
+
+.staging-zeta-hgiarvados-bbpin: &staging-zeta-hgiarvados-bbpin-def
+  variables:
+    ENV: "staging"
+    REGION: "zeta"
+    SETUP: "hgiarvados-bbpin"
+  only:
+    - develop
+    - staging-zeta-hgiarvados-bbpin
+
+
 ###############################################################################
 # Stage: ci-setup
 ###############################################################################
@@ -232,6 +269,23 @@ openstack-vars-validate-staging-zeta-hgiarvados-wlly8:
   <<: *openstack-vars-validate-def
   <<: *staging-zeta-hgiarvados-wlly8-def
 
+openstack-vars-validate-production-zeta-hgiarvados-bbpin-core:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgiarvados-bbpin-core-def
+    
+openstack-vars-validate-staging-zeta-hgiarvados-bbpin-core:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgiarvados-bbpin-core-def
+
+openstack-vars-validate-production-zeta-hgiarvados-bbpin:
+  <<: *openstack-vars-validate-def
+  <<: *production-zeta-hgiarvados-bbpin-def
+    
+openstack-vars-validate-staging-zeta-hgiarvados-bbpin:
+  <<: *openstack-vars-validate-def
+  <<: *staging-zeta-hgiarvados-bbpin-def
+
+
 ###############################################################################
 # Stage: bootstrap
 ###############################################################################
@@ -254,6 +308,7 @@ openstack-vars-validate-staging-zeta-hgiarvados-wlly8:
 ansible-bootstrap-production-zeta-hgi:
   <<: *ansible-bootstrap-def
   <<: *production-zeta-hgi-core-def
+
 
 ###############################################################################
 # Stage: validate
@@ -325,6 +380,22 @@ terraform-validate-staging-zeta-hgiarvados-wlly8:
   <<: *terraform-validate-def
   <<: *staging-zeta-hgiarvados-wlly8-def
 
+terraform-validate-production-zeta-hgiarvados-bbpin-core:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgiarvados-bbpin-core-def
+
+terraform-validate-staging-zeta-hgiarvados-bbpin-core:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgiarvados-bbpin-core-def
+
+terraform-validate-production-zeta-hgiarvados-bbpin:
+  <<: *terraform-validate-def
+  <<: *production-zeta-hgiarvados-bbpin-def
+
+terraform-validate-staging-zeta-hgiarvados-bbpin:
+  <<: *terraform-validate-def
+  <<: *staging-zeta-hgiarvados-bbpin-def
+
 terraform-validate-modules:
   stage: validate
   tags:
@@ -333,6 +404,7 @@ terraform-validate-modules:
   script:
     - ci/terraform-fmt.sh "terraform/modules"
   dependencies: []
+
 
 ###############################################################################
 # Common Terraform setup
@@ -347,6 +419,7 @@ terraform-validate-modules:
     paths:
       - artifacts
     when: always
+
 
 ###############################################################################
 # Stage: terraform-core
@@ -382,6 +455,15 @@ terraform-staging-zeta-hgiarvados-wlly8-core:
   <<: *terraform-core-def
   <<: *staging-zeta-hgiarvados-wlly8-core-def
 
+terraform-production-zeta-hgiarvados-bbpin-core:
+  <<: *terraform-core-def
+  <<: *production-zeta-hgiarvados-bbpin-core-def
+
+terraform-staging-zeta-hgiarvados-bbpin-core:
+  <<: *terraform-core-def
+  <<: *staging-zeta-hgiarvados-bbpin-core-def
+
+
 ###############################################################################
 # Stage: terraform
 ###############################################################################
@@ -413,6 +495,14 @@ terraform-production-zeta-hgiarvados-wlly8:
 terraform-staging-zeta-hgiarvados-wlly8:
   <<: *terraform-def
   <<: *staging-zeta-hgiarvados-wlly8-def
+
+terraform-production-zeta-hgiarvados-bbpin:
+  <<: *terraform-def
+  <<: *production-zeta-hgiarvados-bbpin-def
+
+terraform-staging-zeta-hgiarvados-bbpin:
+  <<: *terraform-def
+  <<: *staging-zeta-hgiarvados-bbpin-def
 
 
 ###############################################################################
@@ -461,6 +551,15 @@ ansible-staging-zeta-hgiarvados-wlly8-core:
   <<: *ansible-core-def
   <<: *staging-zeta-hgiarvados-wlly8-core-def
 
+ansible-production-zeta-hgiarvados-bbpin-core:
+  <<: *ansible-core-def
+  <<: *production-zeta-hgiarvados-bbpin-core-def
+
+ansible-staging-zeta-hgiarvados-bbpin-core:
+  <<: *ansible-core-def
+  <<: *staging-zeta-hgiarvados-bbpin-core-def
+
+
 ###############################################################################
 # Stage: ansible
 ###############################################################################
@@ -493,6 +592,15 @@ ansible-staging-zeta-hgiarvados-wlly8:
   <<: *ansible-def
   <<: *staging-zeta-hgiarvados-wlly8-def
 
+ansible-production-zeta-hgiarvados-bbpin:
+  <<: *ansible-def
+  <<: *production-zeta-hgiarvados-bbpin-def
+
+ansible-staging-zeta-hgiarvados-bbpin:
+  <<: *ansible-def
+  <<: *staging-zeta-hgiarvados-bbpin-def
+
+
 ###############################################################################
 # Stage: sync
 ###############################################################################
@@ -506,4 +614,3 @@ github-sync:
   dependencies: []
   only:
     - master
-
