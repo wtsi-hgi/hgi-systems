@@ -1,0 +1,14 @@
+[docker-consul-cluster-zeta-hgiarvados-bbpin]
+docker-consul-cluster-zeta-hgiarvados-bbpin-docker-consul-cluster
+
+[docker-consul-clusters]
+docker-consul-cluster-zeta-hgiarvados-bbpin-docker-consul-cluster
+
+[infoblox-credentials:children]
+docker-consul-clusters
+
+[consul-credentials:children]
+docker-consul-clusters
+
+[non-hosts:children]
+docker-consul-clusters

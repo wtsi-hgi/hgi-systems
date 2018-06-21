@@ -58,6 +58,8 @@
 [terraform-ci-zeta-hgiarvados-core]
 [terraform-ci-zeta-hgiarvados-wlly8]
 [terraform-ci-zeta-hgiarvados-wlly8-core]
+[terraform-ci-zeta-hgiarvados-bbpin]
+[terraform-ci-zeta-hgiarvados-bbpin-core]
 [tf_type_openstack_compute_instance_v2]
 [consul-clusters]
 [arvados-clusters]
@@ -67,6 +69,7 @@
 [docker-consul-cluster-zeta-hgi]
 [docker-consul-cluster-zeta-hgiarvados]
 [docker-consul-cluster-zeta-hgiarvados-wlly8]
+[docker-consul-cluster-zeta-hgiarvados-bbpin]
 [spark-masters]
 [spark-computers]
 [sparkers]
@@ -208,6 +211,16 @@ arvados-clusters
 docker-consul-cluster-zeta-hgiarvados-wlly8
 
 [terraform-ci-zeta-hgiarvados-wlly8-core:children]
+canaries
+terraform
+
+[terraform-ci-zeta-hgiarvados-bbpin:children]
+canaries
+terraform
+arvados-clusters
+docker-consul-cluster-zeta-hgiarvados-bbpin
+
+[terraform-ci-zeta-hgiarvados-bbpin-core:children]
 canaries
 terraform
 

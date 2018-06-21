@@ -1,0 +1,1 @@
+../production/terraform-zeta-hgiarvados-bbpin-core-production.sh

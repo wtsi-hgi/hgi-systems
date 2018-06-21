@@ -57,6 +57,14 @@ variable "master_volume_size_gb" {
   default = 100
 }
 
+variable "api_logs_count" {
+  default = 1
+}
+
+variable "api_logs_flavour" {
+  default = "o1.large"
+}
+
 variable "api_db_flavour" {
   default = "m1.2xlarge"
 }
@@ -136,6 +144,25 @@ module "arvados-master" {
   image   = "${var.base_image}"
 
   volume_size_gb = "${var.master_volume_size_gb}"
+}
+
+module "arvados-api-logs" {
+  source = "../../api-logs/arvados-api-logs-v1"
+
+  env          = "${var.env}"
+  region       = "${var.region}"
+  setup        = "${var.setup}"
+  core_context = "${var.core_context}"
+  ssh_gateway  = "${var.ssh_gateway}"
+
+  arvados_cluster_id   = "${var.arvados_cluster_id}"
+  consul_datacenter    = "${var.consul_datacenter}"
+  extra_ansible_groups = "${var.extra_ansible_groups}"
+
+  count   = "${var.api_logs_count}"
+  flavour = "${var.api_logs_flavour}"
+  domain  = "${var.domain}"
+  image   = "${var.base_image}"
 }
 
 module "arvados-api-db" {
@@ -317,17 +344,18 @@ module "arvados-irobot" {
 
 output "hgi_instances" {
   value = {
-    external_dns    = "${merge(module.arvados-master.hgi_instance["external_dns"], module.arvados-api-db.hgi_instance["external_dns"], module.arvados-sso.hgi_instance["external_dns"], module.arvados-workbench.hgi_instance["external_dns"], module.arvados-keepproxy.hgi_instance["external_dns"], module.arvados-keep.hgi_instance["external_dns"], module.arvados-shell.hgi_instance["external_dns"], module.arvados-monitor.hgi_instance["external_dns"])}"
-    floating_ip     = "${merge(module.arvados-master.hgi_instance["floating_ip"], module.arvados-api-db.hgi_instance["floating_ip"], module.arvados-sso.hgi_instance["floating_ip"], module.arvados-workbench.hgi_instance["floating_ip"], module.arvados-keepproxy.hgi_instance["floating_ip"], module.arvados-keep.hgi_instance["floating_ip"], module.arvados-shell.hgi_instance["floating_ip"], module.arvados-monitor.hgi_instance["floating_ip"])}"
-    internal_ip     = "${merge(module.arvados-master.hgi_instance["internal_ip"], module.arvados-api-db.hgi_instance["internal_ip"], module.arvados-sso.hgi_instance["internal_ip"], module.arvados-workbench.hgi_instance["internal_ip"], module.arvados-keepproxy.hgi_instance["internal_ip"], module.arvados-keep.hgi_instance["internal_ip"], module.arvados-shell.hgi_instance["internal_ip"], module.arvados-monitor.hgi_instance["internal_ip"])}"
-    user            = "${merge(module.arvados-master.hgi_instance["user"], module.arvados-api-db.hgi_instance["user"], module.arvados-sso.hgi_instance["user"], module.arvados-workbench.hgi_instance["user"], module.arvados-keepproxy.hgi_instance["user"], module.arvados-keep.hgi_instance["user"], module.arvados-shell.hgi_instance["user"], module.arvados-monitor.hgi_instance["user"])}"
-    security_groups = "${merge(module.arvados-master.hgi_instance["security_groups"], module.arvados-api-db.hgi_instance["security_groups"], module.arvados-sso.hgi_instance["security_groups"], module.arvados-workbench.hgi_instance["security_groups"], module.arvados-keepproxy.hgi_instance["security_groups"], module.arvados-keep.hgi_instance["security_groups"], module.arvados-shell.hgi_instance["security_groups"], module.arvados-monitor.hgi_instance["security_groups"])}"
+    external_dns    = "${merge(module.arvados-master.hgi_instance["external_dns"], module.arvados-api-logs.hgi_instance["external_dns"], module.arvados-api-db.hgi_instance["external_dns"], module.arvados-sso.hgi_instance["external_dns"], module.arvados-workbench.hgi_instance["external_dns"], module.arvados-keepproxy.hgi_instance["external_dns"], module.arvados-keep.hgi_instance["external_dns"], module.arvados-shell.hgi_instance["external_dns"], module.arvados-monitor.hgi_instance["external_dns"])}"
+    floating_ip     = "${merge(module.arvados-master.hgi_instance["floating_ip"], module.arvados-api-logs.hgi_instance["floating_ip"], module.arvados-api-db.hgi_instance["floating_ip"], module.arvados-sso.hgi_instance["floating_ip"], module.arvados-workbench.hgi_instance["floating_ip"], module.arvados-keepproxy.hgi_instance["floating_ip"], module.arvados-keep.hgi_instance["floating_ip"], module.arvados-shell.hgi_instance["floating_ip"], module.arvados-monitor.hgi_instance["floating_ip"])}"
+    internal_ip     = "${merge(module.arvados-master.hgi_instance["internal_ip"], module.arvados-api-logs.hgi_instance["internal_ip"], module.arvados-api-db.hgi_instance["internal_ip"], module.arvados-sso.hgi_instance["internal_ip"], module.arvados-workbench.hgi_instance["internal_ip"], module.arvados-keepproxy.hgi_instance["internal_ip"], module.arvados-keep.hgi_instance["internal_ip"], module.arvados-shell.hgi_instance["internal_ip"], module.arvados-monitor.hgi_instance["internal_ip"])}"
+    user            = "${merge(module.arvados-master.hgi_instance["user"], module.arvados-api-logs.hgi_instance["user"], module.arvados-api-db.hgi_instance["user"], module.arvados-sso.hgi_instance["user"], module.arvados-workbench.hgi_instance["user"], module.arvados-keepproxy.hgi_instance["user"], module.arvados-keep.hgi_instance["user"], module.arvados-shell.hgi_instance["user"], module.arvados-monitor.hgi_instance["user"])}"
+    security_groups = "${merge(module.arvados-master.hgi_instance["security_groups"], module.arvados-api-logs.hgi_instance["security_groups"], module.arvados-api-db.hgi_instance["security_groups"], module.arvados-sso.hgi_instance["security_groups"], module.arvados-workbench.hgi_instance["security_groups"], module.arvados-keepproxy.hgi_instance["security_groups"], module.arvados-keep.hgi_instance["security_groups"], module.arvados-shell.hgi_instance["security_groups"], module.arvados-monitor.hgi_instance["security_groups"])}"
   }
 }
 
 output "hgi_instances_by_type" {
   value = {
     arvados-master    = "${module.arvados-master.hgi_instance}"
+    arvados-api-logs  = "${module.arvados-api-logs.hgi_instance}"
     arvados-api-db    = "${module.arvados-api-db.hgi_instance}"
     arvados-sso       = "${module.arvados-sso.hgi_instance}"
     arvados-workbench = "${module.arvados-workbench.hgi_instance}"
