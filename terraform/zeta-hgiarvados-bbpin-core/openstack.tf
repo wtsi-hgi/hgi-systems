@@ -4,8 +4,8 @@ module "openstack" {
   region                = "${var.region}"
   setup                 = "${var.setup}"
   mercury_keypair       = "${var.mercury_keypair}"
-  subnet                = "10.102.0.0/24"
-  gateway_ip            = "10.102.0.1"
+  subnet                = "10.103.0.0/24"
+  gateway_ip            = "10.103.0.1"
   dns_nameservers       = ["172.18.255.1", "172.18.255.2", "172.18.255.3"]
   host_routes           = []
   router_count          = 1
