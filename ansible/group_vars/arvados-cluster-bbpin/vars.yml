@@ -50,7 +50,7 @@ arvados_cluster_id: bbpin
 arvados_cluster_site_name: "HGI Arvados {{ arvados_cluster_id }}"
 
 arvados_cluster_domain: "hgi.sanger.ac.uk"
-arvados_cluster_consul_domain: "node.zeta-hgiarvados.consul"
+arvados_cluster_consul_domain: "node.zeta-hgiarvados-{{ arvados_cluster_id }}.consul"
 
 arvados_cluster_internal_nets:
   - 10.103.0.0/24
@@ -67,7 +67,7 @@ arvados_cluster_GROUP_s3_secret_key: "{{ s3_credentials['sanger-ceph-mercurykeep
 arvados_cluster_GROUP_s3_bucket: "arvados-keep-{{ arvados_cluster_id }}"
 arvados_cluster_GROUP_s3_replication: 3
 
-arvados_cluster_GROUP_consul_template_host: consul.zeta-hgiarvados.hgi.sanger.ac.uk
+arvados_cluster_GROUP_consul_template_host: consul.zeta-hgiarvados-{{ arvados_cluster_id }}.hgi.sanger.ac.uk
 
 # FIXME: Generic stuff below, figure out how to DRY this out
 
