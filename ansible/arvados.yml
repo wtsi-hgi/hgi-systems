@@ -24,6 +24,12 @@
 
 - hosts: arvados
   tasks:
+    - name: check that host is on Arvados cluster network
+      assert:
+        that: "ansible_all_ipv4_addresses | ipaddr(item) | length == 1"
+        msg: "None of the hosts IPv4 addresses {{ ansible_all_ipv4_addresses }} are on the network {{ item }}"
+      with_items: "{{ arvados_cluster_internal_nets }}"
+
     - name: ensure arvados host are in the dockerers group
       assert:
         that:
