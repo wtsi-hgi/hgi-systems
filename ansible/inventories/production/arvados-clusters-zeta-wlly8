@@ -1,10 +1,10 @@
 [netdata]
 
-[arvados-cluster-bbpin]
-arvados-cluster-bbpin-arvados-cluster
+[arvados-cluster-wlly8]
+arvados-cluster-wlly8-arvados-cluster
 
 [arvados-clusters]
-arvados-cluster-bbpin-arvados-cluster
+arvados-cluster-wlly8-arvados-cluster
 
 [hgi-credentials:children]
 arvados-clusters
