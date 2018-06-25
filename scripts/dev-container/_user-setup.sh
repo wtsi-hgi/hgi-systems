@@ -33,7 +33,8 @@ ssh-add ~/.ssh/*.key > /dev/null 2>&1
 >&2 echo "Adding SSH config"
 rm ~/.ssh/config
 ln -s /mnt/host/ssh-config ~/.ssh/config
->&2 echo "Note: you can now SSH to: $(grep -e ^Host ~/.ssh/config | grep -v '*' | sed 's/Host //g' | tr '\n' ' ')"
+
+dev-help
 
 >&2 echo "Starting shell (use 'dev-help' for help)..."
 bash
