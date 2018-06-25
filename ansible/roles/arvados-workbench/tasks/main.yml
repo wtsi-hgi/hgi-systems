@@ -111,6 +111,19 @@
     - nginx-extras
     - passenger
 
+- name: create systemd drop-in directory for nginx
+  become: yes
+  file:
+    path: /etc/systemd/system/nginx.service.d/
+    state: directory
+
+- name: add systemd drop-in for nginx to create required passenger run directories
+  become: yes
+  copy:
+    src: passenger-run-directories.conf
+    dest: /etc/systemd/system/nginx.service.d/10-passenger-run-directories.conf
+  register: nginx_service_drop_in
+
 - name: activate passenger in nginx configuration
   become: yes
   blockinfile:
