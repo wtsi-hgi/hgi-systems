@@ -66,8 +66,9 @@ backend {{ final_queue_name }}_final_queue
         mode http
         fullconn {{ final_queue.fullconn }}
         balance roundrobin
-        option httpchk
-        server {{ final_queue.server_name }}-{{ final_queue_name }}_final_queue      127.0.0.1:{{ final_queue.server_port }} minconn {{ final_queue.minconn }} maxconn {{ final_queue.maxconn }}
-
+        option httpchk GET /discovery/v1/apis/arvados/v1/rest
+        {% for server in final_queue.servers %}
+        server {{ server.server_name }}-{{ final_queue_name }}_final_queue      {% if server.server_address %}{{ server.server_address }}{% else %}127.0.0.1{% endif %}:{{ server.server_port }} minconn {{ server.minconn }} maxconn {{ server.maxconn }} check {% if server.backup %} backup {% endif %}
+        {% endfor %}
 {% endfor %}
 
