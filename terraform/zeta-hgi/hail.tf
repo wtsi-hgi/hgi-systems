@@ -10,7 +10,7 @@ module "hail-cluster-as45" {
 
   hail_cluster_id       = "as45"
   master_count          = 1
-  compute_count         = 5
+  compute_count         = 2
   master_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
   compute_image         = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
   master_flavour        = "o1.large"
