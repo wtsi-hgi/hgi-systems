@@ -1,0 +1,14 @@
+# Vault contains:
+#   hail_cluster_jupyter_token: xxx
+#   hail_cluster_ssh_key: xxx
+---
+
+hail_cluster_id: as45-2
+hail_cluster_hail_version: master-b385061
+hail_cluster_spark_build: 2.2.0-bin-hadoop2.8.2-netlib-lgpl-3033ec2b
+hail_cluster_hadoop_version: 2.8.2
+hail_cluster_anaconda_version: 5.1.0
+hail_cluster_python_version: 3
+
+hail_cluster_authorized_keys:
+  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQChr4SkTeqEfnkadMVWIGN4Ea0UBJZl33ZWPt3Sg4818GeVpXGLWuoWx5pPkrShoj7G2FIgPcP+elEdB0wakyUVRak0+l/LE2AFWBXE6eI6YGfYqPKd6BjaNmCRjXNf/CvgCDXti/suYVxwPXj4+ARsquPmnMvKXLeMu/qMUf/nGwvxKLV8tYs2A6V+L9ZCRySjFuWAIF39bnob6ddFYyoC8O7sCl/3vz1+CXIYXe6+Ru7bb+CY6/CnZyA9wXa+Y2+IXpyWp7h4mWIdC9OET1DAo8TW+fbsbvLFIcGXcPiIXMkhsbC6mEn8IvEhpqy48vBUbZREEyecmZ2GLIJbEEUT as45@mib110129i"
