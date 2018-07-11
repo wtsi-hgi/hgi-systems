@@ -20,6 +20,7 @@ module "arvados-cluster" {
   ssh_gateway            = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
   master_flavour         = "o1.4xlarge"
   api_db_flavour         = "o1.4xlarge"
+  api_logs_flavour       = "o1.4xlarge"
   sso_flavour            = "o1.large"
   workbench_flavour      = "o1.large"
   keepproxy_flavour      = "o1.xlarge"
