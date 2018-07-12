@@ -126,3 +126,6 @@
     - type: soft
       value: 262144
 
+- name: set arvados_common_ROLE_FACT_ran fact
+  set_fact:
+    arvados_common_ROLE_FACT_ran: yes

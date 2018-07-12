@@ -24,6 +24,3 @@
   include_tasks: main-once.yml
   when: not arvados_common_ROLE_FACT_ran is defined
 
-- name: set arvados_common_ROLE_FACT_ran fact
-  set_fact:
-    arvados_common_ROLE_FACT_ran: yes
