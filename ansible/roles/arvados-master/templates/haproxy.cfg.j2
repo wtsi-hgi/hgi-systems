@@ -13,10 +13,10 @@ defaults
   log global
   retries 3
   option redispatch
-        timeout connect 5000 # ms
-        timeout client 10m
-        timeout server 10m
-        timeout queue 45s
+  timeout connect 5000 # ms
+  timeout client 10m
+  timeout server 10m
+  timeout queue 45s
   maxconn 19500
   mode  http
   option  dontlognull
@@ -67,9 +67,10 @@ backend {{ final_queue_name }}_final_queue
         fullconn {{ final_queue.fullconn }}
         balance roundrobin
         option httpchk GET /discovery/v1/apis/arvados/v1/rest
-        {% for server in final_queue.servers %}
+{% for server in final_queue.servers %}
         server {{ server.server_name }}-{{ final_queue_name }}_final_queue      {% if "server_address" in server and server.server_address %}{{ server.server_address }}{% else %}127.0.0.1{% endif %}:{{ server.server_port }} minconn {{ server.minconn }} maxconn {{ server.maxconn }} check {% if "backup" in server and server.backup %} backup {% endif %}
 
-        {% endfor %}
+{% endfor %}
+
 {% endfor %}
 
