@@ -44,12 +44,6 @@
     src: "{{ arvados_api_db_data_dir }}/etc-postgresql"
     state: link
 
-- name: set consul template path
-  become: yes
-  copy:
-    content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
-    dest: "{{ arvados_api_db_consul_template_path_file }}"
-
 ################################################################################
 # arvados-api-db
 ################################################################################

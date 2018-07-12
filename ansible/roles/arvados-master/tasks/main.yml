@@ -45,12 +45,6 @@
     src: "{{ arvados_master_api_data_dir }}/arvados-api"
     state: link
 
-- name: set consul template path
-  become: yes
-  copy:
-    content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
-    dest: "{{ arvados_master_consul_template_path_file }}"
-
 ################################################################################
 # arvados-api
 ################################################################################

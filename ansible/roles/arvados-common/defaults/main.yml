@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Genome Research Ltd.
+# Copyright (c) 2018 Genome Research Ltd.
 #
 # Author: Joshua C. Randall <jcrandall@alum.mit.edu>
 #
@@ -18,11 +18,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ---
+# file: roles/arvados-common/defaults/main.yml
 
-# file: arvados_playbook_vars.yml
-
-arvados_PLAYBOOK_keep_blob_signing_key_file: "/etc/arvados-keep-blob-signing.key" 
-arvados_PLAYBOOK_keep_data_manager_api_token_file: "/etc/arvados-data-manager.token"
-arvados_PLAYBOOK_keep_s3_access_key_file: "/etc/arvados-keep-s3.access_key"
-arvados_PLAYBOOK_keep_s3_secret_key_file: "/etc/arvados-keep-s3.secret_key"
-arvados_PLAYBOOK_consul_template_path: "/etc/arvados_consul_template_path"
+###############################################################################
+# Variables that have no defaults and must be set
+###############################################################################
+#
+# arvados_common_consul_template_path_file:
+#   File containing the consul kv prefix to use for consul templates.
+#
+###############################################################################

@@ -36,7 +36,13 @@
           - "inventory_hostname in groups['dockerers']"
         msg: "arvados hosts must also be in group dockerers"
 
-- hosts: arvados!noconf
+    - name: run arvados-common role
+      import_role:
+        name: arvados-common
+      vars:
+        arvados_common_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
+
+- hosts: arvados:!noconf
   tasks:
     - name: ensure arvados host is in a cluster
       assert:
@@ -56,6 +62,7 @@
       import_role:
         name: arvados-monitor
       vars:
+        arvados_monitor_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_monitor_ssl_cert: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert }}"
         arvados_monitor_ssl_key: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key }}"
         arvados_monitor_server_name: "{{ cloud_resource_fqdn }}"
@@ -168,7 +175,7 @@
         name: arvados-api-db
       vars:
         arvados_api_db_data_dir: "{{ arvados_PLAYBOOK_api_db_data_mountpoint }}"
-        arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_api_db_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
 
@@ -229,7 +236,7 @@
         name: arvados-api-db
       vars:
         arvados_api_db_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
-        arvados_api_db_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_api_db_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
       when: "'arvados-api-dbs' in group_names"
@@ -241,7 +248,7 @@
         arvados_master_cert: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_cert }}"
         arvados_master_key: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_key }}"
         arvados_master_api_data_dir: "{{ arvados_PLAYBOOK_api_data_mountpoint }}"
-        arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_master_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
@@ -261,7 +268,7 @@
       vars:
         arvados_master_cert: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_cert }}"
         arvados_master_key: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_key }}"
-        arvados_master_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_master_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
@@ -281,7 +288,7 @@
       import_role:
         name: arvados-keep
       vars:
-        arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_keep_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
         arvados_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
         arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
@@ -293,12 +300,6 @@
         arvados_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
         arvados_keep_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
-
-    - name: create arvados consul template path file
-      become: yes
-      copy:
-        dest: /etc/arvados_consul_template_path
-        content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
 - hosts: arvados-keepproxies
   roles:
@@ -339,14 +340,14 @@
       import_role:
         name: arvados-compute-node
       vars:
-        arvados_compute_node_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_compute_node_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_compute_node_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
 
     - name: apply arvados-keep role
       import_role:
         name: arvados-keep
       vars:
-        arvados_keep_consul_template_path_file: /etc/arvados_consul_template_path
+        arvados_keep_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
         arvados_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
         arvados_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
         arvados_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
