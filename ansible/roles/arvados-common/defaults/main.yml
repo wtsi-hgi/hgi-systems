@@ -28,3 +28,5 @@
 #   File containing the consul kv prefix to use for consul templates.
 #
 ###############################################################################
+arvados_common_required_variables:
+  - arvados_common_consul_template_path_file

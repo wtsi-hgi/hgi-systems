@@ -20,6 +20,13 @@
 ---
 # file: roles/arvados-common/tasks/main-once.yml
 
+- name: ensure required variables are set
+  assert:
+    that:
+      - "{{ item }} is defined"
+      msg: "{{ item }} must be defined to call arvados-common role"
+  with_items: "{{ arvados_common_required_variables }}"
+
 - name: add arvados apt signing key
   apt_key: 
     keyserver: "{{ pgp_keyserver_url }}"
@@ -77,7 +84,7 @@
 - name: create arvados consul template path file
   become: yes
   copy:
-    dest: "{{ arvados_common_consul_template_path }}"
+    dest: "{{ arvados_common_consul_template_path_file }}"
     content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
     
 - name: create dnsmasq-arvados-api consul-template
