@@ -1,5 +1,5 @@
 server {
-  listen 127.0.0.1:{{ arvados_master_api_backend_port }} backlog={{ arvados_master_sysctl_somaxconn }};
+  listen 0.0.0.0:{{ arvados_master_api_backend_port }} backlog={{ arvados_master_sysctl_somaxconn }};
   server_name localhost-api;
 
   root /var/www/arvados-api/current/public;
