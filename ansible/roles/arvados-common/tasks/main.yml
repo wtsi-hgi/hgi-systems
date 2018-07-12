@@ -20,7 +20,115 @@
 ---
 # file: roles/arvados-common/tasks/main.yml
 
-- name: only run arvados-common tasks once
-  include_tasks: "main-once.yml"
+- name: run arvados-common tasks once
   when: not arvados_common_ROLE_FACT_ran is defined
-
+  block:
+    - name: ensure required variables are set
+      assert:
+        that:
+          - "{{ item }} is defined"
+        msg: "{{ item }} must be defined to call arvados-common role"
+      with_items: "{{ arvados_common_required_variables }}"
+    
+    - name: add arvados apt signing key
+      apt_key: 
+        keyserver: "{{ pgp_keyserver_url }}"
+        id: 1078ECD7
+      become: yes
+    
+    - name: add arvados apt repository
+      apt_repository: 
+        repo: "deb http://apt.arvados.org/ {{ ansible_distribution_release }} main"
+        state: present
+      become: yes
+    
+    - name: add arvados apt dev repository
+      apt_repository: 
+        repo: "deb http://apt.arvados.org/ {{ ansible_distribution_release }}-dev main"
+        state: present
+      become: yes
+    
+    - name: install prerequisite packages
+      become: yes
+      apt: 
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+        cache_valid_time: "{{ all_apt_cache_valid_time }}"
+      with_items:
+        - gawk
+        - g++
+        - gcc
+        - make
+        - libc6-dev
+        - libreadline6-dev
+        - zlib1g-dev
+        - libssl-dev
+        - libyaml-dev
+        - libsqlite3-dev
+        - sqlite3
+        - autoconf
+        - libgdbm-dev
+        - libncurses5-dev
+        - automake
+        - libtool
+        - bison
+        - pkg-config
+        - libffi-dev
+        - curl
+        - bundler
+    
+    - name: create /etc/arvados conf dir
+      become: yes
+      file:
+        path: /etc/arvados
+        state: directory
+    
+    - name: create arvados consul template path file
+      become: yes
+      copy:
+        dest: "{{ arvados_common_consul_template_path_file }}"
+        content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        
+    - name: create dnsmasq-arvados-api consul-template
+      become: yes
+      copy:
+        src: dnsmasq-arvados-api.ctmpl
+        dest: /etc/dnsmasq-arvados-api.ctmpl
+        mode: 0644
+      notify:
+        - reload consul-template
+    
+    - name: ensure consul-template.d exists
+      become: yes
+      file:
+        path: /etc/consul-template.d
+        state: directory
+        mode: 0700
+    
+    - name: configure consul-template to template out dnsmasq-arvados-api
+      become: yes
+      template:
+        src: dnsmasq-arvados-api.hcl.j2
+        dest: /etc/consul-template.d/50-dnsmasq-arvados-api.hcl
+        mode: 0644
+      notify:
+        - reload consul-template
+    
+    - name: increase number of open file limits for root
+      become: yes
+      pam_limits:
+        domain: root
+        use_max: yes
+        limit_type: "{{ item.type }}"
+        limit_item: nofile
+        value: "{{ item.value }}"
+      with_items:
+        - type: hard
+          value: 1048576
+        - type: soft
+          value: 262144
+    
+    - name: set arvados_common_ROLE_FACT_ran fact
+      set_fact:
+        arvados_common_ROLE_FACT_ran: yes

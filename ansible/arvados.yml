@@ -42,7 +42,6 @@
     - name: run arvados-common role
       import_role:
         name: arvados-common
-        private: true
       vars:
         arvados_common_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
 
