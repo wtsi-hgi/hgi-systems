@@ -24,6 +24,9 @@
 
 - hosts: arvados
   tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+
     - name: check that host is on Arvados cluster network
       assert:
         that: "ansible_all_ipv4_addresses | ipaddr(item) | length == 1"
@@ -52,6 +55,9 @@
 
 - hosts: arvados-monitors
   tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+
     - name: ensure arvados hosts are in the hgi-credentials group
       assert:
         that:
@@ -134,6 +140,9 @@
     arvados_PLAYBOOK_api_db_data_mountpoint: /mnt/arvados-api-db
     arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
   tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+
     - name: configure attached-openstack-volume for arvados api database
       import_role:
         name: attached-openstack-volume
@@ -198,6 +207,9 @@
     arvados_PLAYBOOK_api_data_mountpoint: /mnt/arvados-api-db
     arvados_PLAYBOOK_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
   tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+
     - name: configure attached-openstack-volume for arvados api database
       import_role:
         name: attached-openstack-volume
@@ -256,6 +268,9 @@
 
 - hosts: arvados-api-logs
   tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+
     - name: ensure hosts are in the netdata group
       assert:
         that:
@@ -284,6 +299,7 @@
   tasks:
     - name: include arvados playbook vars
       include_vars: arvados_playbook_vars.yml
+
     - name: apply arvados-keep role
       import_role:
         name: arvados-keep
