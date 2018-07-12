@@ -1,0 +1,4 @@
+{{ scratch.Set "template_path" (file "/etc/arvados_consul_template_path" | trimSpace) }}
+{{ with node (key (printf "%s/arvados_master_consul_node" (scratch.Get "template_path"))) }}{{ scratch.Set "ip" .Node.Address }}{{ end }}
+
+address=/{{ key (printf "%s/arvados_cluster_api_host" (scratch.Get "template_path")) }}/{{ scratch.Get "ip" }}
