@@ -112,7 +112,7 @@
   notify:
     - reload consul-template
 
-- name: increse number of open file limits for root
+- name: increase number of open file limits for root
   become: yes
   pam_limits:
     domain: root
