@@ -21,6 +21,6 @@
 # file: roles/arvados-common/tasks/main.yml
 
 - name: only run arvados-common tasks once
-  include_tasks: main-once.yml
+  include_tasks: "main-once.yml"
   when: not arvados_common_ROLE_FACT_ran is defined
 
