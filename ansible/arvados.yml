@@ -53,6 +53,50 @@
           - "arvados_cluster_id is defined"
         msg: arvados host must be a member of a cluster
 
+# set consul-template keys for arvados clusters early
+- hosts: arvados-clusters
+  gather_facts: no
+  tasks:
+    - name: include arvados playbook vars
+      include_vars: arvados_playbook_vars.yml
+
+    - name: set consul-template keys for cluster in consul kv
+      delegate_to: localhost
+      tags:
+        - slurm
+        - munge
+        - consul_kv
+      consul_kv:
+        key: "{{ arvados_cluster_consul_template_path }}/{{ item.key }}"
+        value: "{{ item.value }}"
+        state: present
+        token: "{{ arvados_cluster_consul_template_token }}"
+        host: "{{ arvados_cluster_consul_template_host }}"
+      with_items:
+        - key: munge_key_base64
+          value: "{{ arvados_cluster_munge_key_base64 }}"
+        - key: slurm_conf
+          value: "{{ lookup('template', 'slurm.conf.j2') }}"
+        - key: cgroup_conf
+          value: "{{ lookup('template', 'cgroup.conf.j2') }}"
+        - key: arvados_cluster_api_host
+          value: "{{ arvados_cluster_api_host }}"
+        - key: arvados_keep_config_yaml
+          value: "{{ lookup('template', 'arvados-keep-config.yaml.j2') }}"
+        - key: arvados_keep_node_keep_config_yaml
+          value: "{{ lookup('template', 'keep-node-arvados-keep-config.yaml.j2') }}"
+        - key: arvados_keep_blob_signing_key
+          value: "{{ arvados_cluster_keep_blob_signing_key }}"
+        - key: arvados_keep_data_manager_api_token
+          value: "{{ arvados_cluster_data_manager_api_token }}"
+        - key: arvados_keep_s3_access_key
+          value: "{{ arvados_cluster_keep_s3_access_key }}"
+        - key: arvados_keep_s3_secret_key
+          value: "{{ arvados_cluster_keep_s3_secret_key }}"
+        - key: arvados_master_consul_node
+          value: "arvados-master-{{ arvados_cluster_id }}"
+      when: "not 'image-building' in group_names"
+
 - hosts: arvados-monitors
   tasks:
     - name: include arvados playbook vars
