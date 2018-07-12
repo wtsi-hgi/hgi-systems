@@ -74,20 +74,30 @@
     path: /etc/arvados
     state: directory
 
-- name: add entry to /etc/hosts and /etc/cloud/templates/hosts.debian.tmpl for arvados api server
+- name: create dnsmasq-arvados-api consul-template
   become: yes
-  lineinfile: 
-    regexp: '{{ arvados_cluster_api_host }}$'
-    state: present
-    line: '{{ arvados_cluster_master_private_ips[0] }} {{ arvados_cluster_api_host }}'
-    path: "{{ item }}"
-    owner: root
-    group: root
+  copy:
+    src: dnsmasq-arvados-api.ctmpl
+    dest: /etc/dnsmasq-arvados-api.ctmpl
     mode: 0644
-  when: "not 'image-building' in group_names"
-  with_items:
-    - /etc/hosts
-    - /etc/cloud/templates/hosts.debian.tmpl
+  notify:
+    - reload consul-template
+
+- name: ensure consul-template.d exists
+  become: yes
+  file:
+    path: /etc/consul-template.d
+    state: directory
+    mode: 0700
+
+- name: configure consul-template to template out dnsmasq-arvados-api
+  become: yes
+  template:
+    src: dnsmasq-arvados-api.hcl.j2
+    dest: /etc/consul-template.d/50-dnsmasq-arvados-api.hcl
+    mode: 0644
+  notify:
+    - reload consul-template
 
 - name: increse number of open file limits for root
   become: yes
