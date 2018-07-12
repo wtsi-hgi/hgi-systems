@@ -24,7 +24,7 @@
   assert:
     that:
       - "{{ item }} is defined"
-      msg: "{{ item }} must be defined to call arvados-common role"
+    msg: "{{ item }} must be defined to call arvados-common role"
   with_items: "{{ arvados_common_required_variables }}"
 
 - name: add arvados apt signing key
