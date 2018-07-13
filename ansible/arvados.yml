@@ -67,11 +67,11 @@
         - munge
         - consul_kv
       consul_kv:
-        key: "{{ arvados_cluster_consul_template_path }}/{{ item.key }}"
+        key: "consul-template/arvados-cluster/{{ arvados_cluster_id }}/{{ item.key }}"
         value: "{{ item.value }}"
         state: present
-        token: "{{ arvados_cluster_consul_template_token }}"
-        host: "{{ arvados_cluster_consul_template_host }}"
+        token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
+        host: "{{ arvados_cluster_GROUP_consul_template_host }}"
       with_items:
         - key: munge_key_base64
           value: "{{ arvados_cluster_munge_key_base64 }}"
@@ -86,13 +86,13 @@
         - key: arvados_keep_node_keep_config_yaml
           value: "{{ lookup('template', 'keep-node-arvados-keep-config.yaml.j2') }}"
         - key: arvados_keep_blob_signing_key
-          value: "{{ arvados_cluster_keep_blob_signing_key }}"
+          value: "{{ arvados_cluster_GROUP_blob_signing_key }}"
         - key: arvados_keep_data_manager_api_token
-          value: "{{ arvados_cluster_data_manager_api_token }}"
+          value: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         - key: arvados_keep_s3_access_key
-          value: "{{ arvados_cluster_keep_s3_access_key }}"
+          value: "{{ arvados_cluster_GROUP_s3_access_key }}"
         - key: arvados_keep_s3_secret_key
-          value: "{{ arvados_cluster_keep_s3_secret_key }}"
+          value: "{{ arvados_cluster_GROUP_s3_secret_key }}"
         - key: arvados_master_consul_node
           value: "arvados-master-{{ arvados_cluster_id }}"
       when: "not 'image-building' in group_names"
