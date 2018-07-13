@@ -25,6 +25,6 @@ Volumes:
   ReadTimeout: 0s
   Region: "generic"
   S3Replication: {{ arvados_cluster_GROUP_s3_replication }}
-  SecretKeyFile: {{ arvados_cluster_GROUP_s3_secret_key_file }}
+  SecretKeyFile: {{ arvados_PLAYBOOK_keep_s3_secret_key_file }}
   Type: S3
   UnsafeDelete: true
