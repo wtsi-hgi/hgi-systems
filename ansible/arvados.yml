@@ -427,8 +427,6 @@
         arvados_cluster_consul_template_token: "{{ consul_credentials_GROUP_creds['consul-template'].token }}"
         arvados_cluster_consul_template_host: "{{ arvados_cluster_GROUP_consul_template_host }}"
         arvados_cluster_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
-        arvados_cluster_keep_blob_signing_key_file: "{{ arvados_PLAYBOOK_keep_blob_signing_key_file }}"
-        arvados_cluster_keep_data_manager_api_token_file: "{{ arvados_PLAYBOOK_keep_data_manager_api_token_file }}"
         arvados_cluster_keep_s3_access_key_file: "{{ arvados_PLAYBOOK_keep_s3_access_key_file }}"
         arvados_cluster_keep_s3_secret_key_file: "{{ arvados_PLAYBOOK_keep_s3_secret_key_file }}"
         arvados_cluster_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
@@ -439,6 +437,3 @@
         arvados_cluster_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
         arvados_cluster_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
         arvados_cluster_keep_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
-        # arvados_cluster_keep_max_buffers: "{{ ((ansible_memtotal_mb-512) // 64) }}"
-        arvados_cluster_compute_node_keep_max_buffers: 256 # m1.xlarge compute node can accomodate 16GiB of keep buffers?
-        arvados_cluster_keep_node_keep_max_buffers: 64 # o1.large keep nodes only have 8GB, limit keep buffers to 4GiB

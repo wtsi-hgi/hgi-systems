@@ -128,7 +128,7 @@ arvados_cluster_collections_host: "arvados-collections-{{ arvados_cluster_id }}.
 
 arvados_cluster_GROUP_max_compute_nodes: 200
 
-arvados_cluster_slurm_control_machine: "arvados-master-{{ arvados_cluster_id }}"
+arvados_cluster_GROUP_slurm_control_machine: "arvados-master-{{ arvados_cluster_id }}"
 
 #arvados_cluster_compute_nodes: "{{ groups['arvados-compute-nodes'] | intersect(groups[arvados_cluster_group_name]) | default([]) | sort | map('extract', hostvars) | list() }}"
 #arvados_cluster_compute_node_names: "{{ arvados_cluster_compute_nodes | map(attribute='cloud_resource_name') | list }}"

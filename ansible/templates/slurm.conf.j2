@@ -1,9 +1,9 @@
-ControlMachine={{ arvados_cluster_slurm_control_machine }}
+ControlMachine={{ arvados_cluster_GROUP_slurm_control_machine }}
 SlurmctldPort=6817
 SlurmdPort=6818
 AuthType=auth/munge
-StateSaveLocation={{ arvados_cluster_slurm_state_save_location }}
-SlurmdSpoolDir={{ arvados_cluster_slurm_spool_dir }}
+StateSaveLocation={{ arvados_PLAYBOOK_slurm_state_save_location }}
+SlurmdSpoolDir={{ arvados_PLAYBOOK_slurm_spool_dir }}
 SwitchType=switch/none
 MpiDefault=none
 SlurmctldPidFile=/var/run/slurm-llnl/slurmctld.pid

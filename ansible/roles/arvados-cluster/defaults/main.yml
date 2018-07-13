@@ -55,12 +55,6 @@
 # arvados_cluster_keep_s3_secret_key:
 #   S3 secret key for keep.
 #
-# arvados_cluster_keep_blob_signing_key_file:
-#   Path where keep block signing key is stored. 
-#
-# arvados_cluster_keep_data_manager_api_token_file:
-#   Path where keep data manager token is stored. 
-#
 # arvados_cluster_keep_s3_access_key_file:
 #   Path where keep S3 access key is stored.
 #
@@ -72,9 +66,3 @@
 ###############################################################################
 # Vars that have defaults that can be overridden
 ###############################################################################a
-arvados_cluster_slurm_state_save_location: /var/spool/slurm/slurm.state
-arvados_cluster_slurm_spool_dir: /var/spool/slurm/slurmd.spool
-arvados_cluster_keep_blob_signature_ttl_s: 1209600
-arvados_cluster_keep_max_buffers: 128
-arvados_cluster_keep_trash_check_interval: "24h0m0s"
-arvados_cluster_keep_trash_lifetime: "168h0m0s"

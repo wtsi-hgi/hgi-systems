@@ -24,6 +24,6 @@ dependencies:
   - role: arvados-common
   - role: slurm-master
     slurm_munge_key_base64: "{{ arvados_cluster_munge_key_base64 }}"
-    slurm_control_machine: "{{ arvados_cluster_slurm_control_machine }}"
+    slurm_control_machine: "{{ arvados_cluster_GROUP_slurm_control_machine }}"
     slurm_nodename_pattern: "{{ arvados_cluster_GROUP_compute_node_pattern }}" # FIXME move to playbook
     slurm_master_consul_template_path_file: "{{ arvados_slurm_master_consul_template_path_file }}"

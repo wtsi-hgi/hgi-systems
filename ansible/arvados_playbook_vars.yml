@@ -26,3 +26,13 @@ arvados_PLAYBOOK_keep_data_manager_api_token_file: "/etc/arvados-data-manager.to
 arvados_PLAYBOOK_keep_s3_access_key_file: "/etc/arvados-keep-s3.access_key"
 arvados_PLAYBOOK_keep_s3_secret_key_file: "/etc/arvados-keep-s3.secret_key"
 arvados_PLAYBOOK_consul_template_path: "/etc/arvados_consul_template_path"
+arvados_PLAYBOOK_slurm_state_save_location: /var/spool/slurm/slurm.state
+arvados_PLAYBOOK_slurm_spool_dir: /var/spool/slurm/slurmd.spool
+arvados_PLAYBOOK_keep_blob_signature_ttl_s: 1209600
+
+# arvados_PLAYBOOK_keep_max_buffers: "{{ ((ansible_memtotal_mb-512) // 64) }}"
+arvados_PLAYBOOK_compute_node_keep_max_buffers: 256 # m1.xlarge compute node can accomodate 16GiB of keep buffers?
+arvados_PLAYBOOK_keep_node_keep_max_buffers: 64 # o1.large keep nodes only have 8GB, limit keep buffers to 4GiB
+
+arvados_PLAYBOOK_keep_trash_check_interval: "24h0m0s"
+arvados_PLAYBOOK_keep_trash_lifetime: "168h0m0s"
