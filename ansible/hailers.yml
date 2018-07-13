@@ -79,7 +79,7 @@
           - "tf_type_openstack_compute_instance_v2_GROUP_volume_device != ''"
       when: inventory_hostname in groups['hail-masters']
     - name: configure attached openstack volume for hail master
-      import_role: 
+      import_role:
         name: attached-openstack-volume
       vars:
         attached_openstack_volume_vg: hail-vg
@@ -203,7 +203,7 @@
         hail_spark_hadoop_anonymous_buckets:
          - "{{ hail_tutorial_data_s3_bucket }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
-        hail_spark_executor_memory_gb: "{{ ((ansible_memtotal_mb * 0.9 | round) / 1024) | int }}"
+        hail_spark_executor_memory_gb: "{{ (((ansible_memtotal_mb | int) * 0.9 | round) / 1024) | int }}"
         ###############################################################################
         # General settings
         ###############################################################################
