@@ -157,6 +157,13 @@
     encoding: UTF8
     owner: "{{ arvados_cluster_db_user_api }}"
 
+- name: enable postgresql systemd service
+  become: yes
+  systemd:
+    name: "postgresql@{{ arvados_api_db_postgresql_version }}-arvados_api"
+    enabled: yes
+    daemon_reload: yes
+
 - name: create postgresql superuser for netdata monitoring
   become: yes
   become_user: postgres

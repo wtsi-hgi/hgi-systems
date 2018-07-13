@@ -1087,6 +1087,13 @@
   notify:
    - restart arvados-git-httpd
 
+- name: enable arvados-git-httpd systemd service
+  become: yes
+  systemd:
+    name: arvados-git-httpd
+    enabled: yes
+    daemon_reload: yes
+
 - name: configure nginx for arvados-git-httpd
   become: yes
   template:

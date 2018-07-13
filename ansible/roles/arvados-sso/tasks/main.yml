@@ -133,6 +133,13 @@
     encoding: UTF8
     owner: "{{ arvados_cluster_db_user_sso }}"
 
+- name: enable postgresql systemd service
+  become: yes
+  systemd:
+    name: "postgresql@{{ arvados_sso_postgresql_version }}-arvados_sso"
+    enabled: yes
+    daemon_reload: yes
+
 - name: ensure /usr/local/src directory exists
   become: yes
   file:

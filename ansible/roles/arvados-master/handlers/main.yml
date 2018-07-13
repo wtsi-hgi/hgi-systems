@@ -40,13 +40,6 @@
     state: restarted
     daemon_reload: yes
 
-- name: restart arvados-git-httpd
-  become: yes
-  systemd:
-    name: arvados-git-httpd
-    state: restarted
-    daemon_reload: yes
-
 - name: restart crunch-dispatch-slurm
   become: yes
   systemd:
