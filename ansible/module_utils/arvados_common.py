@@ -1,5 +1,7 @@
 #!/usr/bin/python2
 
+import json
+
 try:
     import arvados
     HAS_ARVADOS = True
@@ -66,7 +68,7 @@ class ResourceListException(Exception):
         :param filters:
         """
         self.filters = filters
-        super(ResourceListException, self).__init__("Failed to list resources using filters: %s" % self.filters)
+        super(ResourceListException, self).__init__("Failed to list resources using filters: %s" % json.dumps(self.filters))
 
 
 def _fail_if_missing_modules(module):
@@ -254,9 +256,9 @@ def process(obj_type, additional_argument_spec, filter_property, filter_value_mo
     try:
         getattr(api, obj_type)
     except AttributeError as e:
-        module.fail_json(msg="Arvados API does not appear to support objects of type %s: %s" 
+        module.fail_json(msg="Arvados API does not appear to support objects of type %s: %s"
                          % (obj_type, str(e)))
-        
+
     filter_value = module.params[filter_value_module_parameter]
     try:
         resource, exists = get_resource(obj_type, api, filter_property, filter_value)
@@ -280,20 +282,20 @@ def process(obj_type, additional_argument_spec, filter_property, filter_value_mo
         except ResourceUpdateException as e:
             module.fail_json(msg="Error while attempting to update %s %s=%s (%s): %s"
                                   % (obj_type, filter_property, filter_value,
-                                     ', '.join(["%s:%s" 
-                                                % (prop, property_updates[prop]) 
+                                     ', '.join(["%s:%s"
+                                                % (prop, property_updates[prop])
                                                 for prop in property_updates.keys()]), str(e)))
         except ResourceCreateException as e:
             module.fail_json(msg="Error while attempting to create %s %s=%s (%s): %s"
                                   % (obj_type, filter_property, filter_value,
-                                     ', '.join(["%s:%s" 
-                                                % (prop, resource[prop]) 
+                                     ', '.join(["%s:%s"
+                                                % (prop, resource[prop])
                                                 for prop in property_updates.keys()]), str(e)))
         except Exception as e:
             module.fail_json(msg="Error while committing %s %s=%s (%s): %s"
                                   % (obj_type, filter_property, filter_value,
-                                     ', '.join(["%s:%s" 
-                                                % (prop, property_updates[prop]) 
+                                     ', '.join(["%s:%s"
+                                                % (prop, property_updates[prop])
                                                 for prop in property_updates.keys()]), str(e)))
         module.exit_json(changed=True, msg="%s resource created: %s"
                          % (obj_type, ', '.join(["%s:%s"
