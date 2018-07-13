@@ -34,7 +34,7 @@
   tasks:
     - name: assert essential hail group membership
       assert:
-        that: 
+        that:
           - "inventory_hostname in groups['hail-masters'] or
              inventory_hostname in groups['hail-computers']"
         msg: "all hosts in hailers group must also be in group hail-masters and/or hail-computers"
@@ -203,7 +203,7 @@
         hail_spark_hadoop_anonymous_buckets:
          - "{{ hail_tutorial_data_s3_bucket }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
-        hail_spark_executor_memory_gb: 60 # FIXME make this depend on node flavour (in this case 64GB node -> 60g executor memory)
+        hail_spark_executor_memory_gb: "{{ ((ansible_memtotal_mb * 0.9 | round) / 1024) | int }}"
         ###############################################################################
         # General settings
         ###############################################################################

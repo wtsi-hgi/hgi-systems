@@ -29,8 +29,8 @@
 
 # SparkContext Configuration
 spark.master                             spark://{{ spark_master_host }}:{{ spark_master_port }}
-spark.sql.files.maxPartitionBytes        60000000000
-spark.sql.files.openCostInBytes          60000000000
+spark.sql.files.maxPartitionBytes        {{ hail_spark_executor_memory_gb * 1000**3 }}
+spark.sql.files.openCostInBytes          {{ hail_spark_executor_memory_gb * 1000**3 }}
 spark.jars				 {{ spark_jars }}
 spark.ui.reverseProxy			 true
 spark.ui.reverseProxyUrl		 https://{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}/{{ spark_master_external_path }}
