@@ -91,8 +91,8 @@ arvados_master_haproxy_queues:
     port: 5008
     final_queue: logs
     minconn: 8
-    maxconn: 128
-    fullconn: 256
+    maxconn: 1024
+    fullconn: 4096
   - name: nodes
     patterns:
       - '"~*^/arvados/v1/nodes"'
