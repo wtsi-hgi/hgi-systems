@@ -32,6 +32,7 @@
         that: "ansible_all_ipv4_addresses | ipaddr(item) | length == 1"
         msg: "None of the hosts IPv4 addresses {{ ansible_all_ipv4_addresses }} are on the network {{ item }}"
       with_items: "{{ arvados_cluster_internal_nets }}"
+      when: "not 'image-building' in group_names"
 
     - name: ensure arvados host are in the dockerers group
       assert:
@@ -52,6 +53,7 @@
         that:
           - "arvados_cluster_id is defined"
         msg: arvados host must be a member of a cluster
+        when: "not 'image-building' in group_names"
 
 # set consul-template keys for arvados clusters early
 - hosts: arvados-clusters
