@@ -29,7 +29,8 @@
           - "{{ item }} is defined"
         msg: "{{ item }} must be defined to call arvados-common role"
       with_items: "{{ arvados_common_required_variables }}"
-    
+      when: "not 'image-building' in group_names"
+
     - name: add arvados apt signing key
       apt_key: 
         keyserver: "{{ pgp_keyserver_url }}"
@@ -89,6 +90,7 @@
       copy:
         dest: "{{ arvados_common_consul_template_path_file }}"
         content: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+      when: "not 'image-building' in group_names"
         
     - name: create dnsmasq-arvados-api consul-template
       become: yes
