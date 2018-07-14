@@ -20,6 +20,13 @@
 ---
 # file: roles/arvados-cluster/tasks/main.yml
 
+- name: clear arvados discovery cache in case it is broken
+  delegate_to: "{{ arvados_cluster_delegate }}"
+  file:
+    path: "~/.cache/arvados"
+    state: absent
+  changed_when: false
+    
 - name: create keep_service entries for keep hosts
   delegate_to: "{{ arvados_cluster_delegate }}"
   arvados_keep_service:
