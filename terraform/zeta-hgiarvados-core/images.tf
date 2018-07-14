@@ -37,15 +37,15 @@ output "hgi-openstack-image-hgi-docker-xenial-4cb02ffa" {
   value = "${module.hgi-openstack-image-hgi-docker-xenial-4cb02ffa.image}"
 }
 
-module "hgi-openstack-image-hgi-arvados_compute-xenial-cb4ab41c" {
+module "hgi-openstack-image-hgi-arvados_compute-xenial-73646368" {
   source     = "../modules/hgi-openstack-image"
   env        = "${var.env}"
   region     = "${var.region}"
   setup      = "${var.setup}"
-  image_name = "hgi-arvados_compute-xenial-cb4ab41c"
+  image_name = "hgi-arvados_compute-xenial-73646368"
   image_user = "ubuntu"
 }
 
-output "hgi-openstack-image-hgi-arvados_compute-xenial-cb4ab41c" {
-  value = "${module.hgi-openstack-image-hgi-arvados_compute-xenial-cb4ab41c.image}"
+output "hgi-openstack-image-hgi-arvados_compute-xenial-73646368" {
+  value = "${module.hgi-openstack-image-hgi-arvados_compute-xenial-73646368.image}"
 }
