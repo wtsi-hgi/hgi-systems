@@ -114,8 +114,8 @@ arvados_master_haproxy_queues:
       - '"~*^/arvados/v1/collections"'
     port: 5011
     final_queue: long
-    minconn: 16
-    maxconn: 64
+    minconn: 64
+    maxconn: 96
     fullconn: 1024
   - name: repositories
     patterns:
