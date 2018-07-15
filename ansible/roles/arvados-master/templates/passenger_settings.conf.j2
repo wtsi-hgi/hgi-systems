@@ -2,8 +2,8 @@
     passenger_log_file /var/log/nginx/passenger.log;
     passenger_instance_registry_dir /var/run/nginx/passenger;
 
-    passenger_max_pool_size 100;
-    passenger_min_instances 100;
+    passenger_max_pool_size 125;
+    passenger_min_instances 125;
     passenger_pool_idle_time 3600; # default 300
     passenger_max_request_queue_size 5000;
     passenger_request_queue_overflow_status_code 513;
