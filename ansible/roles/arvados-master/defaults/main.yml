@@ -131,7 +131,7 @@ arvados_master_haproxy_queues:
     port: 5013
     final_queue: long
     minconn: 16
-    maxconn: 64
+    maxconn: 96
     fullconn: 1024
   - name: containers
     patterns:
@@ -139,7 +139,7 @@ arvados_master_haproxy_queues:
     port: 5014
     final_queue: long
     minconn: 16
-    maxconn: 64
+    maxconn: 96
     fullconn: 1024
   - name: workflows
     patterns:
