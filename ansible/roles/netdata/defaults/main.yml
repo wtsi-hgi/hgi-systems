@@ -15,4 +15,4 @@ netdata_health_alarm_notify_conf_location: /etc/netdata/health_alarm_notify.conf
 
 netdata_apt_cache_valid_time: 3600
 
-netdata_iproute_package: "{% if ansible_distribution == "Ubuntu" %}{% if ansible_distribution_version == "18.04" %}iproute2{% else %}iproute{% endif %}{% endif %}"
+netdata_iproute_package: "{% if ansible_distribution == 'Ubuntu' %}{% if ansible_distribution_version == '18.04' %}iproute2{% else %}iproute{% endif %}{% endif %}"
