@@ -1,3 +1,5 @@
+{% set hail_spark_executor_memory_bytes = ((hail_spark_executor_memory_gb | float) * 1000**3) | int %}
+
 # {{ ansible_managed }}
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
@@ -29,12 +31,12 @@
 
 # SparkContext Configuration
 spark.master                             spark://{{ spark_master_host }}:{{ spark_master_port }}
-spark.sql.files.maxPartitionBytes        {{ (hail_spark_executor_memory_gb | int) * 1000**3 }}
-spark.sql.files.openCostInBytes          {{ (hail_spark_executor_memory_gb | int) * 1000**3 }}
+spark.sql.files.maxPartitionBytes        {{ hail_spark_executor_memory_bytes }}
+spark.sql.files.openCostInBytes          {{ hail_spark_executor_memory_bytes }}
 spark.jars				 {{ spark_jars }}
 spark.ui.reverseProxy			 true
 spark.ui.reverseProxyUrl		 https://{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}/{{ spark_master_external_path }}
-spark.executor.memory			 {{ spark_executor_memory_gb }}g
+spark.executor.memory			 {{ hail_spark_executor_memory_bytes }}b
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath_list | join(':') }}
