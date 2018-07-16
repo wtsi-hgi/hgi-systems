@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export PASSENGER_INSTANCE_REGISTRY_DIR=/var/run/nginx/passenger
+export PATH=/usr/sbin:$PATH
 
 date=$(date)
 echo "arvados_api_stuck_passenger_killer running at ${date}" >> /var/log/arvados_api_stuck_passenger_killer.log
