@@ -42,7 +42,7 @@
     - curl
     - bash
     - curl
-    - iproute
+    - "{{ netdata_iproute_package }}"
     - python
     # Note: `arvados-shells` are installing a custom `python-pyyaml` deb, which is incompatible with `python-yaml`.
     # Removing `python-yaml` dependency, which is required for monitoring `beanstalkd`, to avoid this problem
