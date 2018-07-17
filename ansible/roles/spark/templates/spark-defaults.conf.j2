@@ -37,6 +37,8 @@ spark.jars				 {{ spark_jars }}
 spark.ui.reverseProxy			 true
 spark.ui.reverseProxyUrl		 https://{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}/{{ spark_master_external_path }}
 spark.executor.memory			 {{ hail_spark_executor_memory_bytes }}b
+spark.serializer                 org.apache.spark.serializer.KryoSerializer
+spark.kryo.registrator              is.hail.kryo.HailKryoRegistrator
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath_list | join(':') }}
