@@ -352,6 +352,33 @@ resource "openstack_compute_secgroup_v2" "irobot" {
   }
 }
 
+resource "openstack_compute_secgroup_v2" "webhook-router" {
+  provider    = "openstack"
+  name        = "webhook-router_${var.region}_${var.env}"
+  description = "Webhook router"
+
+  rule {
+    from_port   = 8001
+    to_port     = 8001
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  rule {
+    from_port   = 5601
+    to_port     = 5601
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+
+  rule {
+    from_port   = 8080
+    to_port     = 8084
+    ip_protocol = "tcp"
+    cidr        = "0.0.0.0/0"
+  }
+}
+
 output "security_group_ids" {
   value = {
     consul-client  = "${openstack_compute_secgroup_v2.consul-client.id}"
@@ -372,6 +399,7 @@ output "security_group_ids" {
     nfs-server     = "${openstack_compute_secgroup_v2.nfs-server.id}"
     krb5           = "${openstack_compute_secgroup_v2.krb5.id}"
     irobot         = "${openstack_compute_secgroup_v2.irobot.id}"
+    webhook-router = "${openstack_compute_secgroup_v2.webhook-router.id}"
   }
 }
 
