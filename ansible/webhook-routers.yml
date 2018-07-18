@@ -1,0 +1,9 @@
+---
+
+- import_playbook: hgi-preamble-playbook.yml
+
+- hosts: webhook-routers
+  tasks:
+    - name: import webhook-router role
+      import_role:
+        name: webhook-router

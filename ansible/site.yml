@@ -60,3 +60,4 @@
 - import_playbook: irobots.yml
 - import_playbook: hailers.yml
 - import_playbook: openstack-tenant-cleaners.yml
+- import_playbook: webhook-routers.yml
