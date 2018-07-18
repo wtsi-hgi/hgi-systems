@@ -1,7 +1,7 @@
 # Required variables that must be defined:
 #   arvados_master_remote_check_delegate
-#   arvados_api_logs_master_private_ips
-#   arvados_api_logs_api_host
+#   arvados_api_backend_master_private_ips
+#   arvados_api_backend_api_host
 
 ---
 
@@ -33,8 +33,8 @@ arvados_master_blob_signature_ttl_s: 1209600
 arvados_master_nginx_worker_connections: 8192
 arvados_master_sysctl_somaxconn: 16384
 
-arvados_api_logs_apt_cache_valid_time: 3600
-arvados_api_logs_pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
+arvados_api_backend_apt_cache_valid_time: 3600
+arvados_api_backend_pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
 arvados_master_haproxy_queues:
   - name: discovery

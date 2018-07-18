@@ -31,5 +31,5 @@ dependencies:
 
   - role: netdata
     vars:
-      netdata_consul_config_dir: "{{ arvados_api_logs_netdata_consul_config_dir }}"
-      netdata_consul_service_name: "{{ arvados_api_logs_netdata_consul_service_name }}"
+      netdata_consul_config_dir: "{{ arvados_api_backend_netdata_consul_config_dir }}"
+      netdata_consul_service_name: "{{ arvados_api_backend_netdata_consul_service_name }}"

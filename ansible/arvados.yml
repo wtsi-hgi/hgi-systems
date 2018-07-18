@@ -312,7 +312,7 @@
         arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
         arvados_master_remote_check_delegate: "{{ arvados_cluster_delegate }}"
 
-- hosts: arvados-api-logs
+- hosts: arvados-api-backends
   tasks:
     - name: include arvados playbook vars
       include_vars: arvados_playbook_vars.yml
@@ -323,9 +323,9 @@
           - "inventory_hostname in groups['netdata']"
         msg: "host must be in the 'netdata' group"
 
-    - name: configure arvados-api-logs
+    - name: configure arvados-api-backend
       import_role:
-        name: arvados-api-logs
+        name: arvados-api-backend
       vars:
         arvados_master_cert: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_cert }}"
         arvados_master_key: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_key }}"
@@ -334,12 +334,12 @@
         arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
         arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
         arvados_master_remote_check_delegate: "{{ arvados_cluster_delegate }}"
-        arvados_api_logs_netdata_consul_config_dir: "{{ netdata_GROUP_consul_config_dir }}"
-        arvados_api_logs_netdata_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_service_name }}"
-        arvados_api_logs_master_private_ips: "{{ arvados_cluster_master_private_ips }}"
-        arvados_api_logs_api_host: "{{ arvados_cluster_api_host }}"
-        arvados_api_logs_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
-        arvados_api_logs_pgp_keyserver_url: "{{ pgp_keyserver_url }}"
+        arvados_api_backend_netdata_consul_config_dir: "{{ netdata_GROUP_consul_config_dir }}"
+        arvados_api_backend_netdata_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_service_name }}"
+        arvados_api_backend_master_private_ips: "{{ arvados_cluster_master_private_ips }}"
+        arvados_api_backend_api_host: "{{ arvados_cluster_api_host }}"
+        arvados_api_backend_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
+        arvados_api_backend_pgp_keyserver_url: "{{ pgp_keyserver_url }}"
 
 - hosts: arvados-keeps
   tasks:
