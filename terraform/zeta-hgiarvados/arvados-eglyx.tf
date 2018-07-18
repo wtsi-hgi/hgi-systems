@@ -1,5 +1,5 @@
 module "arvados-cluster" {
-  source                 = "../modules/arvados-v2-cluster"
+  source                 = "../modules/arvados/v3/cluster"
   env                    = "${var.env}"
   region                 = "${var.region}"
   setup                  = "${var.setup}"
@@ -11,7 +11,7 @@ module "arvados-cluster" {
   consul_keys_datacenter = "${var.region}-hgi"                                                                                      # FIXME: keys are currently stored only in the hgi datacenter
   base_image             = "${data.terraform_remote_state.hgiarvados-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
   compute_node_image     = "${data.terraform_remote_state.hgiarvados-core.hgi-openstack-image-hgi-arvados_compute-xenial-73646368}"
-  api_logs_count         = 1
+  api_backend_count      = 1
   keepproxy_count        = 8
   keep_count             = 8
   monitor_count          = 1
@@ -20,7 +20,7 @@ module "arvados-cluster" {
   ssh_gateway            = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
   master_flavour         = "o1.4xlarge"
   api_db_flavour         = "o1.4xlarge"
-  api_logs_flavour       = "o1.4xlarge"
+  api_backend_flavour    = "o1.4xlarge"
   sso_flavour            = "o1.large"
   workbench_flavour      = "o1.large"
   keepproxy_flavour      = "o1.xlarge"
