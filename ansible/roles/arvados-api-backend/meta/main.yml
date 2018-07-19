@@ -1,0 +1,35 @@
+# Copyright (c) 2017 Genome Research Ltd.
+#
+# Author: Joshua C. Randall <jcrandall@alum.mit.edu>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+# file: roles/arvados-master/meta/main.yml
+
+dependencies:
+  - role: arvados-common
+  # FIXME: Variables need to be fixed in common role before these will work
+#    vars:
+#      arvados_cluster_api_host: "{{ arvados_api_logs_api_host }}"
+#      arvados_cluster_master_private_ips: "{{ arvados_api_logs_master_private_ips }}"
+#      all_apt_cache_valid_time: "{{ arvados_api_logs_apt_cache_valid_time }}"
+#      pgp_keyserver_url: "{{ arvados_api_logs_pgp_keyserver_url }}"
+
+  - role: netdata
+    vars:
+      netdata_consul_config_dir: "{{ arvados_api_backend_netdata_consul_config_dir }}"
+      netdata_consul_service_name: "{{ arvados_api_backend_netdata_consul_service_name }}"

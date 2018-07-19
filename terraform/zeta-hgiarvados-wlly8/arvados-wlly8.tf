@@ -1,5 +1,5 @@
 module "arvados-cluster" {
-  source                 = "../modules/arvados/cluster/arvados-cluster-v3"
+  source                 = "../modules/arvados/v3/cluster"
   env                    = "${var.env}"
   region                 = "${var.region}"
   setup                  = "${var.setup}"

@@ -1,5 +1,5 @@
 module "arvados-cluster" {
-  source                 = "../modules/arvados/cluster/arvados-cluster-v3"
+  source                 = "../modules/arvados/v3/cluster"
   env                    = "${var.env}"
   region                 = "${var.region}"
   setup                  = "${var.setup}"
@@ -16,7 +16,7 @@ module "arvados-cluster" {
   monitor_count          = 1
   compute_node_count     = 1
   irobot_count           = 0
-  api_logs_count         = 0
+  api_backend_count      = 0
   network_name           = "main"
   ssh_gateway            = "${data.terraform_remote_state.hgiarvados-bbpin-core.ssh_gateway}"
   master_flavour         = "o1.4xlarge"
@@ -29,7 +29,7 @@ module "arvados-cluster" {
   monitor_flavour        = "o1.medium"
   compute_node_flavour   = "m1.large"
   irobot_flavour         = "o1.medium"
-  api_logs_flavour       = "o1.large"
+  api_backend_flavour    = "o1.large"
   shell_names            = ["shell", "debugshell"]
   api_db_volume_size_gb  = 1000
   irobot_volume_size_gb  = 250

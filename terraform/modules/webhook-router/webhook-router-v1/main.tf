@@ -42,7 +42,7 @@ locals {
 }
 
 module "hgi-openstack-instance" {
-  source          = "../../hgi-openstack-instance"
+  source          = "../../hgi-openstack-instance/v1"
   env             = "${var.env}"
   region          = "${var.region}"
   setup           = "${var.setup}"

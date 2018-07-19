@@ -3,17 +3,22 @@ variable "region" {}
 variable "setup" {}
 
 variable "core_context" {
-  type    = "map"
-  default = {}
+  type = "map"
 }
 
-variable "hail_cluster_id" {}
+variable "shell_names" {
+  type    = "list"
+  default = ["shell"]
+}
+
 variable "count" {}
 variable "flavour" {}
 variable "domain" {}
+variable "arvados_cluster_id" {}
+variable "consul_datacenter" {}
 
 variable "volume_size_gb" {
-  default = 20
+  default = 10
 }
 
 variable "image" {
@@ -40,13 +45,14 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "hail-masters",
-    "hail-cluster-${var.hail_cluster_id}",
+    "arvados-shells",
+    "arvados-cluster-${var.arvados_cluster_id}",
+    "docker-consul-agents",
+    "docker-consul-cluster-${var.consul_datacenter}",
     "hgi-credentials",
   ]
 
-  name_format     = "${format("hail-%s-master", var.hail_cluster_id)}-%02d"
-  hostname_format = "${format("hail-%s-%s-master", var.region, var.hail_cluster_id)}-%02d"
+  hostname_format = "arvados-%s-${var.arvados_cluster_id}" # parameterized on shell_names rather than count
 }
 
 module "hgi-openstack-instance" {
@@ -59,11 +65,12 @@ module "hgi-openstack-instance" {
   floating_ip_p        = true
   volume_p             = true
   volume_size_gb       = "${var.volume_size_gb}"
-  name_format          = "${local.name_format}"
-  additional_dns_fqdns = ["${format("hail-%s.%s", var.hail_cluster_id, var.domain)}"]
+  name_format          = "${local.hostname_format}"
+  name_format_list     = "${var.shell_names}"
   domain               = "${var.domain}"
   flavour              = "${var.flavour}"
   hostname_format      = "${local.hostname_format}"
+  hostname_format_list = "${var.shell_names}"
   ssh_gateway          = "${var.ssh_gateway}"
   keypair_name         = "${var.keypair_name}"
   network_name         = "${var.network_name}"
@@ -73,13 +80,17 @@ module "hgi-openstack-instance" {
     "ping",
     "ssh",
     "https",
+    "consul-client",
+    "netdata",
     "tcp-local",
     "udp-local",
   ]
 
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
+
+  additional_dns_names = []
 }
 
-output "hgi_instances" {
+output "hgi_instance" {
   value = "${module.hgi-openstack-instance.hgi_instance}"
 }
