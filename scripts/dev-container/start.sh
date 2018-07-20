@@ -7,7 +7,7 @@ REPOSITORY_ROOT="$(cd ${SCRIPT_DIRECTORY} && git rev-parse --show-toplevel)"
 
 dwgsConfig=~/.dwgs-config.yml
 pullDockerImage=1
-dwgsLocation=docker-with-gitlab-secrets
+dwgsLocation=$(which docker-with-gitlab-secrets)
 
 usage() {
   cat <<-EOF
@@ -17,7 +17,7 @@ usage() {
 
 	options:
 	-c	docker-with-gitlab-secrets configuration file location [default: ${dwgsConfig}]
-	-d	docker-with-gitlab-secrets executable location [default: docker-with-gitlab-secrets (on path)]
+	-d	docker-with-gitlab-secrets executable location [default: ${dwgsLocation}]
 	-n	Set to not pull latest taos-dev Docker image on start [default: 0]
 	EOF
 }
