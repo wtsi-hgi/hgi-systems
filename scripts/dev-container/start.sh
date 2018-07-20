@@ -7,7 +7,7 @@ REPOSITORY_ROOT="$(cd ${SCRIPT_DIRECTORY} && git rev-parse --show-toplevel)"
 
 dwgsConfig=~/.dwgs-config.yml
 pullDockerImage=1
-dwgsLocation=$(which docker-with-gitlab-secrets)
+dwgsLocation=$(which docker-with-gitlab-secrets || echo "docker-with-gitlab-secrets not found on PATH")
 
 usage() {
   cat <<-EOF
