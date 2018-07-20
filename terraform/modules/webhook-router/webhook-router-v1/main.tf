@@ -36,8 +36,12 @@ variable "extra_ansible_groups" {
 }
 
 locals {
-  ansible_groups = [
+  router_ansible_groups = [
     "webhook-routers",
+  ]
+
+  master_ansible_groups = [
+    "webhook-masters",
   ]
 
   router_hostname_format = "webhook-router-%02d"
@@ -68,7 +72,7 @@ module "webhook-router" {
     "webhook-router",
   ]
 
-  ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
+  ansible_groups = "${distinct(concat(local.router_ansible_groups, var.extra_ansible_groups))}"
 }
 
 module "webhook-master" {
@@ -94,5 +98,5 @@ module "webhook-master" {
     "https",
   ]
 
-  ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
+  ansible_groups = "${distinct(concat(local.master_ansible_groups, var.extra_ansible_groups))}"
 }

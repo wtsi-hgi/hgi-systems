@@ -2,6 +2,12 @@
 
 - import_playbook: hgi-preamble-playbook.yml
 
+- hosts: webhook-masters
+  tasks:
+    - name: import webhook-master role
+      import_role:
+        name: webhook-master
+
 - hosts: webhook-routers
   tasks:
     - name: import webhook-router role

@@ -91,6 +91,8 @@
 [irobots]
 [github-to-gitlab]
 [system-monitoring]
+[webhook-masters]
+[webhook-routers]
 
 [hgs4:children]
 mesos-masters
