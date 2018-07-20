@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 set -eu -o pipefail
 
 >&2 echo "Removing old Terraform working directories"
@@ -27,7 +26,7 @@ eval $(ssh-agent) > /dev/null 2>&1
 ssh-add ~/.ssh/*.key > /dev/null 2>&1
 
 >&2 echo "Sourcing before scripts"
-. /mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d 2>&1 | sed 's/^/    /g'
+. /mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d 2> >(sed 's/^/  E:/g') > >(sed 's/^/  O:/g') # DO NOT USE A PIPELINE HERE OR THE VARS WILL BE SET IN SUBSHELL AND NOT PERSIST
 
 # Note: This must go after source scripts because 3-ssh.sh writes to `config` to turn off key checking
 >&2 echo "Adding SSH config"
@@ -36,5 +35,6 @@ ln -s /mnt/host/ssh-config ~/.ssh/config
 
 dev-help
 
->&2 echo "Starting shell (use 'dev-help' for help)..."
-bash
+# set bash options for interactive use
+set +euf +o pipefail
+>&2 echo "Startup complete (use 'dev-help' for help)..."

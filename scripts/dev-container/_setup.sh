@@ -16,5 +16,6 @@ cp /mnt/host/help.sh /usr/local/bin/dev-help
 cp /mnt/host/help.sh /usr/local/bin/heeeelllppp
 chmod 775 /usr/local/bin/dev-help /usr/local/bin/heeeelllppp
 
->&2 echo "Change to user ${HOST_USER_NAME}"
-HOME="/home/${HOST_USER_NAME}" su -p -l "${HOST_USER_NAME}" -s "${SCRIPT_DIRECTORY}/_user-setup.sh"
+>&2 echo "Change to user ${HOST_USER_NAME} and setup user environment"
+cp "${SCRIPT_DIRECTORY}/_user-setup.sh" "/home/${HOST_USER_NAME}/.bash_profile"
+HOME="/home/${HOST_USER_NAME}" su -p -l "${HOST_USER_NAME}"
