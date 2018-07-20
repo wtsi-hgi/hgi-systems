@@ -46,7 +46,7 @@
     state: link
 
 ################################################################################
-# arvados-api
+# arvados-api (install on master ONLY to perform admin functions as a backup)
 ################################################################################
 - name: install arvados api server prerequisites
   become: yes

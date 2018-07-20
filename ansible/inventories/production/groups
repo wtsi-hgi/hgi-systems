@@ -81,7 +81,7 @@
 [arvados-keepproxies]
 [arvados-keeps]
 [arvados-masters]
-[arvados-api-logs]
+[arvados-api-backends]
 [arvados-api-dbs]
 [arvados-ssos]
 [arvados-workbenches]
@@ -233,7 +233,7 @@ arvados-compute-nodes
 arvados-keepproxies
 arvados-keeps
 arvados-masters
-arvados-api-logs
+arvados-api-backends
 arvados-api-dbs
 arvados-ssos
 arvados-workbenches
