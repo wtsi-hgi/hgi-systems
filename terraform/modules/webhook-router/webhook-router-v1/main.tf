@@ -8,7 +8,9 @@ variable "core_context" {
 }
 
 variable "count" {}
-variable "flavour" {}
+variable "master_flavour" {}
+
+variable "router_flavour" {}
 variable "domain" {}
 
 variable "image" {
@@ -93,8 +95,4 @@ module "webhook-master" {
   ]
 
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
-}
-
-output "hgi_instances" {
-  value = "${module.hgi-openstack-instance.hgi_instance}"
 }
