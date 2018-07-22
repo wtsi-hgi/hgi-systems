@@ -30,6 +30,7 @@ arvados_api_backend_apt_cache_valid_time: 3600
 arvados_api_backend_pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
 arvados_api_backend_consul_config_dir: "/etc/consul.d"
+arvados_api_backend_consul_service_name: consul
 
 arvados_api_backend_haproxy_queues:
   - name: discovery

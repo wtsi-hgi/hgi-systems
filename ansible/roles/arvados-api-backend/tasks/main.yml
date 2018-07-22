@@ -568,6 +568,14 @@
     day: "*"
     job: "/var/www/arvados-api/current/script/arvados_api_stuck_passenger_killer.sh"
 
+- name: create config directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ arvados_api_backend_consul__config_dir }}"
+
 - name: create arvados-api-backend consul service configuration
   become: yes
   template:

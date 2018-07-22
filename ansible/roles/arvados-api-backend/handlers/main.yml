@@ -32,3 +32,11 @@
     name: runit
     state: restarted
     daemon_reload: yes
+
+- name: restart consul
+  become: yes
+  systemd:
+    name: "{{ arvados_api_backend_consul_service_name }}"
+    state: restarted
+  when: "not 'image-building' in group_names"
+
