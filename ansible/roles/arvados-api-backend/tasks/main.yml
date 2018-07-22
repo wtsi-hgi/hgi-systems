@@ -568,3 +568,11 @@
     day: "*"
     job: "/var/www/arvados-api/current/script/arvados_api_stuck_passenger_killer.sh"
 
+- name: create arvados-api-backend consul service configuration
+  become: yes
+  template:
+    src: consul-arvados-api-backend.json.j2
+    dest: "{{ arvados_api_backend_consul_config_dir }}/consul-arvados-api-backend.json"
+    owner: root
+  notify:
+    - restart consul

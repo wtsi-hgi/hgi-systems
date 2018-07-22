@@ -1,0 +1,12 @@
+{
+  "service": {
+    "name": "arvados-api-backend",
+    "port": {{ arvados_api_backend_api_backend_port }},
+    "checks": [
+      {
+        "http": "http://localhost:{{ arvados_api_backend_api_backend_port }}/discovery/v1/apis/arvados/v1/rest",
+        "interval": "60s"
+      }
+    ]
+  }
+}
