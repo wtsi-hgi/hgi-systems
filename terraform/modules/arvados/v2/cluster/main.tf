@@ -114,6 +114,13 @@ locals {
   consul_domain = "node.${var.consul_datacenter}.consul"
 }
 
+#resource "consul_keys" "cluster-" {
+#  key {
+#    path = "consul-template/arvados-cluster/%s"
+#    value = ""
+#  }
+#}
+
 module "arvados-master" {
   source = "../master"
 
