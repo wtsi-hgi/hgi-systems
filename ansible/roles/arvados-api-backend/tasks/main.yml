@@ -234,12 +234,6 @@
     path: /var/www
     owner: www-data
 
-- name: set shell for www-data user (required for git repo access using jobs api)
-  become: yes
-  user:
-    name: www-data
-    shell: /bin/bash
-
 - name: remove worker_connections from nginx events section
   become: yes
   lineinfile:
@@ -387,7 +381,6 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ arvados_api_backend_git_repositories_dir }}"
     - /var/www/arvados-api/current/tmp/cache
     - /var/run/nginx/passenger
   register: arvados_api_backend_REGISTER_create_dirs
@@ -402,8 +395,7 @@
     - database.yml
   register: arvados_api_backend_REGISTER_conf_files
   notify:
-    - restart crunch-dispatch-pipelines
-    - restart crunch-dispatch-jobs
+    - restart nginx
 
 - name: dpkg-reconfigure arvados-api-server (this also initially creates the database)
   become: yes
@@ -484,15 +476,6 @@
   notify:
    - restart nginx
 
-- name: create trusted workbench api client script
-  become: yes
-  template:
-    src: "create-workbench-api-client.rb.j2"
-    dest: "{{ arvados_api_backend_create_workbench_api_client_script }}"
-    mode: 0700
-    owner: www-data
-  register: arvados_api_backend_workbench_api_client_script
-
 - name: run script to create trusted workbench api client
   become: yes
   become_user: www-data
@@ -503,26 +486,6 @@
     HOME: /var/www
     RAILS_ENV: production
   when: arvados_api_backend_workbench_api_client_script.changed
-
-- name: create mercury admin user script
-  become: yes
-  template:
-    src: "create-mercury-admin-user.rb.j2"
-    dest: "{{ arvados_api_backend_create_mercury_admin_user_script }}"
-    mode: 0700
-    owner: www-data
-  register: arvados_api_backend_mercury_admin_user_script
-
-- name: create mercury admin user
-  become: yes
-  become_user: www-data
-  command: bundle exec rails runner "{{ arvados_api_backend_create_mercury_admin_user_script }}"
-  args:
-    chdir: /var/www/arvados-api/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
-  when: arvados_api_backend_mercury_admin_user_script.changed
 
 - name: setup logrotate to rotate API logs
   become: yes
@@ -566,36 +529,6 @@
   with_items:
     - name: arvados_api_passenger_restart
       job: /var/www/arvados-api/current/script/arvados_api_passenger_restart.sh
-
-# - name: create arvados db maintenance scripts for cron to run
-#   become: yes
-#   template:
-#     src: "{{ item }}.j2"
-#     dest: "/var/www/arvados-api/current/script/{{ item }}"
-#     mode: 0750
-#     owner: www-data
-#   with_items:
-#     - delete_old_container_logs.sh
-#     - delete_old_job_logs.sh
-
-# - name: enable arvados db:delete_old_container_logs and db:deleta_old_job_logs cron jobs
-#   become: yes
-#   cron:
-#     state: present
-#     name: "{{ item.name }}"
-#     cron_file: "/etc/cron.d/{{ item.name }}"
-#     minute: "0"
-#     hour: "*/2"
-#     day: "*"
-#     month: "*"
-#     weekday: "*"
-#     user: www-data
-#     job: "{{ item.job }}"
-#   with_items:
-#     - name: arvados_db_delete_old_container_logs
-#       job: /var/www/arvados-api/current/script/delete_old_container_logs.sh
-#     - name: arvados_db_delete_old_job_logs
-#       job: /var/www/arvados-api/current/script/delete_old_job_logs.sh
 
 - name: copy script to kill fat passenger tasks
   become: yes

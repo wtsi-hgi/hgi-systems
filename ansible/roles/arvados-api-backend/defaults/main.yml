@@ -14,18 +14,12 @@ arvados_api_backend_ruby_version: 2.3.4
 arvados_api_backend_key_file: /etc/arvados/ssl.key
 arvados_api_backend_cert_file: /etc/arvados/ssl.cert
 
-arvados_api_backend_git_home: /var/lib/arvados/git
-arvados_api_backend_git_repositories_dir: "{{ arvados_api_backend_git_home }}/repositories"
-arvados_api_backend_git_internal_dir: /var/lib/arvados/internal.git
 arvados_api_backend_superuser_token_file: /etc/arvados/superuser.token
 arvados_api_backend_crunch_dispatcher_token_file: /etc/arvados/crunch-dispatcher.token
 arvados_api_backend_data_manager_api_token_file: /etc/arvados/data-manager.token
-arvados_api_backend_create_workbench_api_client_script: /etc/arvados/create-workbench-api-client.rb
-arvados_api_backend_create_mercury_admin_user_script: /etc/arvados/create-mercury-admin-user.rb
 
 arvados_api_backend_api_backend_port: 8000
 arvados_api_backend_ws_backend_port: 9003
-arvados_api_backend_git_httpd_backend_port: 9001
 
 arvados_api_backend_api_data_dir: /var/arvados-api
 arvados_api_backend_blob_signature_ttl_s: 1209600
