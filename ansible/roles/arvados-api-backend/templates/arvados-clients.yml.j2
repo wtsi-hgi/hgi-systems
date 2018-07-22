@@ -1,6 +1,6 @@
 production:
-  gitolite_url: {{ arvados_master_git_repositories_dir }}/gitolite-admin.git
-  gitolite_tmp: {{ arvados_master_git_home }}
+  gitolite_url: {{ arvados_api_backend_git_repositories_dir }}/gitolite-admin.git
+  gitolite_tmp: {{ arvados_api_backend_git_home }}
   arvados_api_host: {{ arvados_cluster_api_host }}
   arvados_api_token: "{{ arvados_cluster_superuser_api_token }}"
   arvados_api_host_insecure: false

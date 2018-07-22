@@ -1,5 +1,5 @@
 upstream arvados-git-httpd {
-  server     127.0.0.1:{{ arvados_master_git_httpd_backend_port }};
+  server     127.0.0.1:{{ arvados_api_backend_git_httpd_backend_port }};
 }
 
 server {
@@ -10,8 +10,8 @@ server {
   proxy_read_timeout    300s;
 
   ssl                 on;
-  ssl_certificate     {{ arvados_master_cert_file }};
-  ssl_certificate_key {{ arvados_master_key_file }};
+  ssl_certificate     {{ arvados_api_backend_cert_file }};
+  ssl_certificate_key {{ arvados_api_backend_key_file }};
 
   # The server needs to accept potentially large refpacks from push clients.
   client_max_body_size 50m;

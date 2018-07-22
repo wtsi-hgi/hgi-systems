@@ -1,5 +1,5 @@
 map $uri $queue {{ '{' }}
-{% for queue in arvados_master_haproxy_queues %}
+{% for queue in arvados_api_backend_haproxy_queues %}
 {% for pattern in queue.patterns %}
   {{ pattern }} "{{ queue.name }}";
 {% endfor %}

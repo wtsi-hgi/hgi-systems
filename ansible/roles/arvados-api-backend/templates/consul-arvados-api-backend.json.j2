@@ -1,0 +1,12 @@
+{
+  "service": {
+    "name": "arvados-api-backend",
+    "port": 8000,
+    "checks": [
+      {
+        "http": "http://localhost:8000/discovery/v1/apis/arvados/v1/rest",
+        "interval": "60s"
+      }
+    ]
+  }
+}

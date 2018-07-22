@@ -1,5 +1,5 @@
 upstream arvados-ws {
-  server     127.0.0.1:{{ arvados_master_ws_backend_port }}  fail_timeout=10s;
+  server     127.0.0.1:{{ arvados_api_backend_ws_backend_port }}  fail_timeout=10s;
 }
 
 server {
@@ -10,8 +10,8 @@ server {
   proxy_read_timeout    300s;
 
   ssl                 on;
-  ssl_certificate     {{ arvados_master_cert_file }};
-  ssl_certificate_key {{ arvados_master_key_file }};
+  ssl_certificate     {{ arvados_api_backend_cert_file }};
+  ssl_certificate_key {{ arvados_api_backend_key_file }};
 
   index  index.html index.htm index.php;
 

@@ -28,6 +28,8 @@ arvados_master_blob_signature_ttl_s: 1209600
 arvados_master_nginx_worker_connections: 8192
 arvados_master_sysctl_somaxconn: 16384
 
+arvados_master_haproxy_ctmpl_file: /etc/haproxy.cfg.ctmpl
+
 arvados_master_haproxy_queues:
   - name: discovery
     patterns:

@@ -1,42 +1,42 @@
 # Required variables that must be defined:
-#   arvados_master_remote_check_delegate
+#   arvados_api_backend_remote_check_delegate
 #   arvados_api_backend_master_private_ips
 #   arvados_api_backend_api_host
 
 ---
 
-arvados_master_postgresql_package_version: 9.5+173ubuntu0.1
-arvados_master_postgresql_client_package_version: 9.5
-arvados_master_postgresql_version: "{{ arvados_master_postgresql_package_version | regex_replace('^([0-9]+[.][0-9]+).*$', '\\1') }}"
+arvados_api_backend_postgresql_package_version: 9.5+173ubuntu0.1
+arvados_api_backend_postgresql_client_package_version: 9.5
+arvados_api_backend_postgresql_version: "{{ arvados_api_backend_postgresql_package_version | regex_replace('^([0-9]+[.][0-9]+).*$', '\\1') }}"
 
-arvados_master_ruby_version: 2.3.4
+arvados_api_backend_ruby_version: 2.3.4
 
-arvados_master_key_file: /etc/arvados/ssl.key
-arvados_master_cert_file: /etc/arvados/ssl.cert
+arvados_api_backend_key_file: /etc/arvados/ssl.key
+arvados_api_backend_cert_file: /etc/arvados/ssl.cert
 
-arvados_master_git_home: /var/lib/arvados/git
-arvados_master_git_repositories_dir: "{{ arvados_master_git_home }}/repositories"
-arvados_master_git_internal_dir: /var/lib/arvados/internal.git
-arvados_master_superuser_token_file: /etc/arvados/superuser.token
-arvados_master_crunch_dispatcher_token_file: /etc/arvados/crunch-dispatcher.token
-arvados_master_data_manager_api_token_file: /etc/arvados/data-manager.token
-arvados_master_create_workbench_api_client_script: /etc/arvados/create-workbench-api-client.rb
-arvados_master_create_mercury_admin_user_script: /etc/arvados/create-mercury-admin-user.rb
+arvados_api_backend_git_home: /var/lib/arvados/git
+arvados_api_backend_git_repositories_dir: "{{ arvados_api_backend_git_home }}/repositories"
+arvados_api_backend_git_internal_dir: /var/lib/arvados/internal.git
+arvados_api_backend_superuser_token_file: /etc/arvados/superuser.token
+arvados_api_backend_crunch_dispatcher_token_file: /etc/arvados/crunch-dispatcher.token
+arvados_api_backend_data_manager_api_token_file: /etc/arvados/data-manager.token
+arvados_api_backend_create_workbench_api_client_script: /etc/arvados/create-workbench-api-client.rb
+arvados_api_backend_create_mercury_admin_user_script: /etc/arvados/create-mercury-admin-user.rb
 
-arvados_master_api_backend_port: 8000
-arvados_master_ws_backend_port: 9003
-arvados_master_git_httpd_backend_port: 9001
+arvados_api_backend_api_backend_port: 8000
+arvados_api_backend_ws_backend_port: 9003
+arvados_api_backend_git_httpd_backend_port: 9001
 
-arvados_master_api_data_dir: /var/arvados-api
-arvados_master_blob_signature_ttl_s: 1209600
+arvados_api_backend_api_data_dir: /var/arvados-api
+arvados_api_backend_blob_signature_ttl_s: 1209600
 
-arvados_master_nginx_worker_connections: 8192
-arvados_master_sysctl_somaxconn: 16384
+arvados_api_backend_nginx_worker_connections: 8192
+arvados_api_backend_sysctl_somaxconn: 16384
 
 arvados_api_backend_apt_cache_valid_time: 3600
 arvados_api_backend_pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 
-arvados_master_haproxy_queues:
+arvados_api_backend_haproxy_queues:
   - name: discovery
     patterns:
       - '"~*^/discovery"'
@@ -166,25 +166,25 @@ arvados_master_haproxy_queues:
     maxconn: 64
     fullconn: 512
 
-arvados_master_haproxy_final_queues:
+arvados_api_backend_haproxy_final_queues:
   fast:
     port: 7001
     server_name: arvados_api_backend
-    server_port: "{{ arvados_master_api_backend_port }}"
+    server_port: "{{ arvados_api_backend_api_backend_port }}"
     minconn: 8
     maxconn: 24
     fullconn: 256
   long:
     port: 7002
     server_name: arvados_api_backend
-    server_port: "{{ arvados_master_api_backend_port }}"
+    server_port: "{{ arvados_api_backend_api_backend_port }}"
     minconn: 64
     maxconn: 110
     fullconn: 110
   normal:
     port: 7000
     server_name: arvados_api_backend
-    server_port: "{{ arvados_master_api_backend_port }}"
+    server_port: "{{ arvados_api_backend_api_backend_port }}"
     minconn: 16
     maxconn: 48
     fullconn: 256

@@ -1,5 +1,5 @@
 server {
-  listen 0.0.0.0:{{ arvados_master_api_backend_port }} backlog={{ arvados_master_sysctl_somaxconn }};
+  listen 0.0.0.0:{{ arvados_api_backend_api_backend_port }} backlog={{ arvados_api_backend_sysctl_somaxconn }};
   server_name localhost-api;
 
   root /var/www/arvados-api/current/public;
@@ -22,7 +22,7 @@ server {
 }
 
 upstream api {
-  server     127.0.0.1:{{ arvados_master_api_backend_port }}  fail_timeout=10s;
+  server     127.0.0.1:{{ arvados_api_backend_api_backend_port }}  fail_timeout=10s;
 }
 
 proxy_http_version 1.1;
@@ -43,7 +43,7 @@ upstream haproxy_stats {
   server 127.0.0.1:9091;
 }
 
-{% for queue in arvados_master_haproxy_queues %}
+{% for queue in arvados_api_backend_haproxy_queues %}
 upstream haproxy_arvados_{{ queue.name }} {
   server 127.0.0.1:{{ queue.port }};
   keepalive 16;
@@ -51,12 +51,12 @@ upstream haproxy_arvados_{{ queue.name }} {
 {% endfor %}
 
 server {
-  listen       0.0.0.0:443 ssl backlog={{ arvados_master_sysctl_somaxconn }};
+  listen       0.0.0.0:443 ssl backlog={{ arvados_api_backend_sysctl_somaxconn }};
   server_name  {{ arvados_cluster_api_host }};
 
   ssl on;
-  ssl_certificate     {{ arvados_master_cert_file }};
-  ssl_certificate_key {{ arvados_master_key_file }};
+  ssl_certificate     {{ arvados_api_backend_cert_file }};
+  ssl_certificate_key {{ arvados_api_backend_key_file }};
 
   index  index.html index.htm index.php;
 
