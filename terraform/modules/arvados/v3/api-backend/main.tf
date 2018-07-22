@@ -53,7 +53,7 @@ locals {
     "udp-local",
   ]
 
-  hostname_format = "arvados-api-backend-${var.arvados_cluster_id}"
+  hostname_format = "arvados-api-backend-${var.arvados_cluster_id}-%0d"
 }
 
 module "hgi-openstack-instance" {
