@@ -47,8 +47,8 @@
       import_role:
         name: netdata
       vars:
-        netdata_consul_config_dir: "{{ docker_consul_agent_GROUP_config_dir }}"
-        netdata_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_service_name }}"
+        netdata_consul_config_dir: "{{ docker_consul_agents_GROUP_config_dir }}"
+        netdata_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agents_GROUP_service_name }}"
          # TODO: Enable
 #        netdata_alarm_slack_webhook_url_consul_key: "{{ netdata_PLAYBOOK_alarm_slack_webhook_url_consul_key }}"
 #        netdata_alarm_slack_recipients_consul_key: "{{ netdata_PLAYBOOK_alarm_slack_recipients_consul_key }}"

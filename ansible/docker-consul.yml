@@ -213,9 +213,9 @@
         docker_consul_agent_datacenter:  "{{ docker_consul_cluster_SPECIFIC_GROUP_datacenter }}"
         docker_consul_agent_acl_token:  "{{ consul_credentials_GROUP_creds['agent'].token }}"
         docker_consul_agent_encrypt:  "{{ consul_credentials_GROUP_encrypt }}"
-        docker_consul_agent_config_dir: "{{ docker_consul_agent_GROUP_config_dir }}"
+        docker_consul_agent_config_dir: "{{ docker_consul_agents_GROUP_config_dir }}"
         docker_consul_consul_docker_image: consul:1.0.7
-        docker_consul_agent_service_name: "{{ docker_consul_agent_GROUP_service_name }}"
+        docker_consul_agent_service_name: "{{ docker_consul_agents_GROUP_service_name }}"
 
 - hosts: docker-consul-servers, docker-consul-agents
   vars:
