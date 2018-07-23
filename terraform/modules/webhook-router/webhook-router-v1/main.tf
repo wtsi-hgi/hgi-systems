@@ -62,8 +62,6 @@ module "hgi-openstack-instance" {
     "ping",
     "ssh",
     "http",
-    "https",
-    "webhook-router"
   ]
 
   ansible_groups = "${distinct(concat(local.ansible_groups, var.extra_ansible_groups))}"
