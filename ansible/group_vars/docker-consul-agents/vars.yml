@@ -1,3 +1,4 @@
 ---
 
 docker_consul_agent_GROUP_service_name: docker-consul-agent
+docker_consul_agent_GROUP_config_dir: /etc/docker-consul-server-config.d

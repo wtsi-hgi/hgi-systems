@@ -327,14 +327,14 @@
       import_role:
         name: arvados-api-backend
       vars:
-        arvados_master_cert: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_cert }}"
-        arvados_master_key: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_key }}"
-        arvados_master_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
-        arvados_master_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
-        arvados_master_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
-        arvados_master_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
-        arvados_master_remote_check_delegate: "{{ arvados_cluster_delegate }}"
-        arvados_api_backend_consul_config_dir: "/etc/consul.d"
+        arvados_api_backend_cert: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_cert }}"
+        arvados_api_backend_key: "{{ hgi_credentials_GROUP_pem_wildcard_hgi_sanger_ac_uk_key }}"
+        arvados_api_backend_consul_template_path_file: "{{ arvados_PLAYBOOK_consul_template_path }}"
+        arvados_api_backend_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
+        arvados_api_backend_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
+        arvados_api_backend_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
+        arvados_api_backend_remote_check_delegate: "{{ arvados_cluster_delegate }}"
+        arvados_api_backend_consul_config_dir: "{{ '/etc/consul.d' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_config_dir }}"
         arvados_api_backend_consul_service_name: "{{ 'consul' if (inventory_hostname in groups['consul-agents']) else docker_consul_agent_GROUP_service_name }}"
         arvados_api_backend_master_private_ips: "{{ arvados_cluster_master_private_ips }}"
         arvados_api_backend_api_host: "{{ arvados_cluster_api_host }}"
