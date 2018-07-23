@@ -36,7 +36,7 @@ variable "extra_ansible_groups" {
 
 locals {
   ansible_groups = [
-    "arvados-api-backend",
+    "arvados-api-backends",
     "docker-consul-agents",
     "hgi-credentials",
     "arvados-cluster-${var.arvados_cluster_id}",
