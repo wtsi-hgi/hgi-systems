@@ -379,6 +379,13 @@
       [Service]
       Before=netdata.service
     dest: /etc/systemd/system/haproxy.service.d/10-before-netdata.conf
+  register: haproxy_service_drop_in
+
+- name: reload systemd to apply haproxy service changes
+  become: yes
+  systemd:
+    daemon_reload: yes
+  when: haproxy_service_drop_in.changed
   notify:
     - restart haproxy
     - restart netdata
