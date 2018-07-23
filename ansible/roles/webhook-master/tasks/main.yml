@@ -1,0 +1,32 @@
+---
+
+# TODO
+
+- name: install docker-compose
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - docker-compose
+
+- name: set max_map_count for elasticsearch
+  become: yes
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  with_items:
+    - name: vm.max_map_count
+      value: 262144
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: configure /etc/webhook-master-config.json
+  become: yes
+  template:
+    src: webhook-master-config.json.j2
+    dest: /etc/webhook-master-config.json
+  notify:
+    - restart webhook-master

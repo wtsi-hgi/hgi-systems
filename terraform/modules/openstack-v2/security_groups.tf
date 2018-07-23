@@ -366,6 +366,22 @@ resource "openstack_networking_secgroup_rule_v2" "nfs-server_nfs_udp" {
   remote_ip_prefix  = "10.0.0.0/8"
 }
 
+resource "openstack_networking_secgroup_v2" "webhook-router" {
+  provider    = "openstack"
+  name        = "webhook-router_${var.region}_${var.env}"
+  description = "Incoming webhook router access (port 8001)"
+}
+
+resource "openstack_networking_secgroup_rule_v2" "webhook-router" {
+  security_group_id = "${openstack_networking_secgroup_v2.webhook-router.id}"
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  protocol          = "tcp"
+  port_range_min    = 8001
+  port_range_max    = 8001
+  remote_ip_prefix  = "0.0.0.0/0"
+}
+
 locals {
   security_groups = {
     consul-client  = "${openstack_networking_secgroup_v2.consul-client.id}"
@@ -384,5 +400,6 @@ locals {
     keep-proxy     = "${openstack_networking_secgroup_v2.keep-proxy.id}"
     netdata        = "${openstack_networking_secgroup_v2.netdata.id}"
     nfs-server     = "${openstack_networking_secgroup_v2.nfs-server.id}"
+    webhook-router = "${openstack_networking_secgroup_v2.webhook-router.id}"
   }
 }

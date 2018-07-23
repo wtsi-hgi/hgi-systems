@@ -1,3 +1,3 @@
     use epoll;
-    worker_connections {{ arvados_master_nginx_worker_connections }};
+    worker_connections {{ arvados_api_backend_nginx_worker_connections }};
     multi_accept on;

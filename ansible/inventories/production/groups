@@ -81,7 +81,7 @@
 [arvados-keepproxies]
 [arvados-keeps]
 [arvados-masters]
-[arvados-api-logs]
+[arvados-api-backends]
 [arvados-api-dbs]
 [arvados-ssos]
 [arvados-workbenches]
@@ -91,6 +91,8 @@
 [irobots]
 [github-to-gitlab]
 [system-monitoring]
+[webhook-masters]
+[webhook-routers]
 
 [hgs4:children]
 mesos-masters
@@ -231,7 +233,7 @@ arvados-compute-nodes
 arvados-keepproxies
 arvados-keeps
 arvados-masters
-arvados-api-logs
+arvados-api-backends
 arvados-api-dbs
 arvados-ssos
 arvados-workbenches

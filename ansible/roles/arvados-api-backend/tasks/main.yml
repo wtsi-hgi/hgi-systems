@@ -50,14 +50,14 @@
     - libssl-dev
     - libxslt1.1
     - postgresql-client-common
-    - "postgresql-client-{{ arvados_master_postgresql_client_package_version }}"
+    - "postgresql-client-{{ arvados_api_backend_postgresql_client_package_version }}"
     - python-psycopg2
     - zlib1g-dev
 
 - name: set ownership of arvados-api dir
   become: yes
   file:
-    path: "{{ arvados_master_api_data_dir }}/arvados-api"
+    path: "{{ arvados_api_backend_api_data_dir }}/arvados-api"
     state: directory
     owner: www-data
     group: www-data
@@ -72,35 +72,35 @@
 
 - name: download ruby source archive
   get_url:
-    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_master_ruby_version }}.tar.gz
-    dest: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    url: http://cache.ruby-lang.org/pub/ruby/2.3/ruby-{{ arvados_api_backend_ruby_version }}.tar.gz
+    dest: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}.tar.gz
     checksum: sha256:98e18f17c933318d0e32fed3aea67e304f174d03170a38fd920c4fbe49fec0c3
 
 - name: expand ruby source archive
   unarchive:
-    src: /usr/local/src/ruby-{{ arvados_master_ruby_version }}.tar.gz
+    src: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}.tar.gz
     dest: /usr/local/src
     remote_src: true
-    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    creates: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}
 
 - name: configure ruby source
   command: ./configure --disable-install-rdoc
   args:
-    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/Makefile
-    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    creates: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}/Makefile
+    chdir: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}
 
 - name: build ruby
   command: make
   args:
-    creates: /usr/local/src/ruby-{{ arvados_master_ruby_version }}/ruby
-    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    creates: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}/ruby
+    chdir: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}
 
 - name: install ruby
   become: yes
   command: make install
   args:
     creates: /usr/local/bin/ruby
-    chdir: /usr/local/src/ruby-{{ arvados_master_ruby_version }}
+    chdir: /usr/local/src/ruby-{{ arvados_api_backend_ruby_version }}
 
 - name: install bundler
   become: yes
@@ -140,7 +140,7 @@
     - name: net.core.rmem_max
       value: 67108864
     - name: net.core.somaxconn
-      value: "{{ arvados_master_sysctl_somaxconn }}"
+      value: "{{ arvados_api_backend_sysctl_somaxconn }}"
     - name: net.core.wmem_max
       value: 67108864
     - name: net.ipv4.ip_local_port_range
@@ -233,12 +233,6 @@
   file:
     path: /var/www
     owner: www-data
-
-- name: set shell for www-data user (required for git repo access using jobs api)
-  become: yes
-  user:
-    name: www-data
-    shell: /bin/bash
 
 - name: remove worker_connections from nginx events section
   become: yes
@@ -379,7 +373,7 @@
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - arvados-api-server
-  register: arvados_master_REGISTER_install_api_server
+  register: arvados_api_backend_REGISTER_install_api_server
 
 - name: create directories for arvados
   become: yes
@@ -387,10 +381,9 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ arvados_master_git_repositories_dir }}"
     - /var/www/arvados-api/current/tmp/cache
     - /var/run/nginx/passenger
-  register: arvados_master_REGISTER_create_dirs
+  register: arvados_api_backend_REGISTER_create_dirs
 
 - name: arvados conf files
   become: yes
@@ -400,10 +393,9 @@
   with_items:
     - application.yml
     - database.yml
-  register: arvados_master_REGISTER_conf_files
+  register: arvados_api_backend_REGISTER_conf_files
   notify:
-    - restart crunch-dispatch-pipelines
-    - restart crunch-dispatch-jobs
+    - restart nginx
 
 - name: dpkg-reconfigure arvados-api-server (this also initially creates the database)
   become: yes
@@ -411,9 +403,9 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
   when: >-
-    arvados_master_REGISTER_install_api_server.changed or
-    arvados_master_REGISTER_create_dirs.changed or
-    arvados_master_REGISTER_conf_files.changed
+    arvados_api_backend_REGISTER_install_api_server.changed or
+    arvados_api_backend_REGISTER_create_dirs.changed or
+    arvados_api_backend_REGISTER_conf_files.changed
 
 - name: copy api token files
   become: yes
@@ -423,10 +415,10 @@
     owner: www-data
     mode: 0600
   with_items:
-    - { token: "{{ arvados_cluster_superuser_api_token }}", file: "{{ arvados_master_superuser_token_file }}" }
-    - { token: "{{ arvados_cluster_crunch_dispatcher_api_token }}", file: "{{ arvados_master_crunch_dispatcher_token_file }}" }
-    - { token: "{{ arvados_master_data_manager_api_token }}", file: "{{ arvados_master_data_manager_api_token_file }}" }
-  register: arvados_master_api_token_files
+    - { token: "{{ arvados_cluster_superuser_api_token }}", file: "{{ arvados_api_backend_superuser_token_file }}" }
+    - { token: "{{ arvados_cluster_crunch_dispatcher_api_token }}", file: "{{ arvados_api_backend_crunch_dispatcher_token_file }}" }
+    - { token: "{{ arvados_api_backend_data_manager_api_token }}", file: "{{ arvados_api_backend_data_manager_api_token_file }}" }
+  register: arvados_api_backend_api_token_files
 
 # FIXME remove after bugfix resolved: https://dev.arvados.org/issues/12671
 - name: copy custom create_superuser_token_hgi.rb script as upstream script is broken (12671)
@@ -449,16 +441,16 @@
     HOME: /var/www
     RAILS_ENV: production
   with_items:
-    - "{{ arvados_master_superuser_token_file }}"
-    - "{{ arvados_master_crunch_dispatcher_token_file }}"
-    - "{{ arvados_master_data_manager_api_token_file }}"
-  when: arvados_master_api_token_files.changed
+    - "{{ arvados_api_backend_superuser_token_file }}"
+    - "{{ arvados_api_backend_crunch_dispatcher_token_file }}"
+    - "{{ arvados_api_backend_data_manager_api_token_file }}"
+  when: arvados_api_backend_api_token_files.changed
 
 - name: copy ssl certificate
   become: yes
   copy:
-    content: "{{ arvados_master_cert }}"
-    dest: "{{ arvados_master_cert_file }}"
+    content: "{{ arvados_api_backend_cert }}"
+    dest: "{{ arvados_api_backend_cert_file }}"
     owner: root
     mode: 0600
   notify:
@@ -467,8 +459,8 @@
 - name: copy ssl key
   become: yes
   copy:
-    content: "{{ arvados_master_key }}"
-    dest: "{{ arvados_master_key_file }}"
+    content: "{{ arvados_api_backend_key }}"
+    dest: "{{ arvados_api_backend_key_file }}"
     owner: root
     mode: 0600
   notify:
@@ -484,45 +476,16 @@
   notify:
    - restart nginx
 
-- name: create trusted workbench api client script
-  become: yes
-  template:
-    src: "create-workbench-api-client.rb.j2"
-    dest: "{{ arvados_master_create_workbench_api_client_script }}"
-    mode: 0700
-    owner: www-data
-  register: arvados_master_workbench_api_client_script
-
 - name: run script to create trusted workbench api client
   become: yes
   become_user: www-data
-  command: bundle exec rails runner "{{ arvados_master_create_workbench_api_client_script }}"
+  command: bundle exec rails runner "{{ arvados_api_backend_create_workbench_api_client_script }}"
   args:
     chdir: /var/www/arvados-api/current
   environment:
     HOME: /var/www
     RAILS_ENV: production
-  when: arvados_master_workbench_api_client_script.changed
-
-- name: create mercury admin user script
-  become: yes
-  template:
-    src: "create-mercury-admin-user.rb.j2"
-    dest: "{{ arvados_master_create_mercury_admin_user_script }}"
-    mode: 0700
-    owner: www-data
-  register: arvados_master_mercury_admin_user_script
-
-- name: create mercury admin user
-  become: yes
-  become_user: www-data
-  command: bundle exec rails runner "{{ arvados_master_create_mercury_admin_user_script }}"
-  args:
-    chdir: /var/www/arvados-api/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
-  when: arvados_master_mercury_admin_user_script.changed
+  when: arvados_api_backend_workbench_api_client_script.changed
 
 - name: setup logrotate to rotate API logs
   become: yes
@@ -531,7 +494,7 @@
   vars:
     logrotate_scripts:
       - name: arvados_api_db
-        path: "{{ arvados_master_api_data_dir }}/arvados-api/shared/log/*.log"
+        path: "{{ arvados_api_backend_api_data_dir }}/arvados-api/shared/log/*.log"
         options:
           - compress
           - copytruncate
@@ -566,36 +529,6 @@
   with_items:
     - name: arvados_api_passenger_restart
       job: /var/www/arvados-api/current/script/arvados_api_passenger_restart.sh
-
-- name: create arvados db maintenance scripts for cron to run
-  become: yes
-  template:
-    src: "{{ item }}.j2"
-    dest: "/var/www/arvados-api/current/script/{{ item }}"
-    mode: 0750
-    owner: www-data
-  with_items:
-    - delete_old_container_logs.sh
-    - delete_old_job_logs.sh
-
-- name: enable arvados db:delete_old_container_logs and db:deleta_old_job_logs cron jobs
-  become: yes
-  cron:
-    state: present
-    name: "{{ item.name }}"
-    cron_file: "/etc/cron.d/{{ item.name }}"
-    minute: "0"
-    hour: "*/2"
-    day: "*"
-    month: "*"
-    weekday: "*"
-    user: www-data
-    job: "{{ item.job }}"
-  with_items:
-    - name: arvados_db_delete_old_container_logs
-      job: /var/www/arvados-api/current/script/delete_old_container_logs.sh
-    - name: arvados_db_delete_old_job_logs
-      job: /var/www/arvados-api/current/script/delete_old_job_logs.sh
 
 - name: copy script to kill fat passenger tasks
   become: yes
@@ -635,3 +568,19 @@
     day: "*"
     job: "/var/www/arvados-api/current/script/arvados_api_stuck_passenger_killer.sh"
 
+- name: create config directories
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ arvados_api_backend_consul__config_dir }}"
+
+- name: create arvados-api-backend consul service configuration
+  become: yes
+  template:
+    src: consul-arvados-api-backend.json.j2
+    dest: "{{ arvados_api_backend_consul_config_dir }}/consul-arvados-api-backend.json"
+    owner: root
+  notify:
+    - restart consul

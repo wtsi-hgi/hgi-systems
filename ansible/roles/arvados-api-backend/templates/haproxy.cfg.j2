@@ -31,7 +31,7 @@ backend stats-back
   balance roundrobin
   stats uri /haproxy/stats
 
-{% for queue in arvados_master_haproxy_queues %}
+{% for queue in arvados_api_backend_haproxy_queues %}
 frontend {{ queue.name }}_arvados_api
         bind 127.0.0.1:{{ queue.port }}
         mode http
@@ -41,7 +41,7 @@ frontend {{ queue.name }}_arvados_api
 
 {% endfor %}
 
-{% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
+{% for final_queue_name, final_queue in arvados_api_backend_haproxy_final_queues.items() %}
 frontend {{ final_queue_name }}_final_queue
         bind 127.0.0.1:{{ final_queue.port }}
         mode http
@@ -51,17 +51,17 @@ frontend {{ final_queue_name }}_final_queue
 
 {% endfor %}
 
-{% for queue in arvados_master_haproxy_queues %}
+{% for queue in arvados_api_backend_haproxy_queues %}
 backend {{ queue.name }}_arvados_api
         mode http
         fullconn {{ queue.fullconn }}
         balance roundrobin
         option httpchk
-        server {{ queue.final_queue }}_final_queue-{{ queue.name }}_arvados_api      127.0.0.1:{{ arvados_master_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
+        server {{ queue.final_queue }}_final_queue-{{ queue.name }}_arvados_api      127.0.0.1:{{ arvados_api_backend_haproxy_final_queues[queue.final_queue].port }} minconn {{ queue.minconn }} maxconn {{ queue.maxconn }}
 
 {% endfor %}
 
-{% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
+{% for final_queue_name, final_queue in arvados_api_backend_haproxy_final_queues.items() %}
 backend {{ final_queue_name }}_final_queue
         mode http
         fullconn {{ final_queue.fullconn }}

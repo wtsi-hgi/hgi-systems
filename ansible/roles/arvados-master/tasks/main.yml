@@ -46,7 +46,7 @@
     state: link
 
 ################################################################################
-# arvados-api
+# arvados-api (install on master ONLY to perform admin functions as a backup)
 ################################################################################
 - name: install arvados api server prerequisites
   become: yes
@@ -361,14 +361,25 @@
     - netdata_logging
     - haproxy_queues
   
-- name: configure haproxy
+- name: template out haproxy.cfg.ctmpl
   become: yes
   template:
-    src: "haproxy.cfg.j2"
-    dest: "/etc/haproxy/haproxy.cfg"
+    src: "haproxy.cfg.ctmpl.j2"
+    dest: "{{ arvados_master_haproxy_ctmpl_file }}"
   notify:
-   - restart haproxy
-   - restart rsyslog
+   - restart consul-template
+
+- name: configure consul-template
+  become: yes
+  template:
+    src: "{{ item }}.hcl.j2"
+    dest: "/etc/consul-template.d/{{ item }}.hcl"
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart consul-template
+  with_items:
+    - "100-haproxy"
    
 - name: add haproxy logging to netdata haproxy.conf
   become: yes
