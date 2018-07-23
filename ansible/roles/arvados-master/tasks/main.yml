@@ -401,6 +401,23 @@
   notify:
     - restart netdata
 
+- name: create haproxy service dropin directory
+  become: yes
+  file:
+    path: /etc/systemd/system/haproxy.service.d
+    state: directory
+
+- name: add systemd dropin for haproxy to ensure service starts before netdata
+  become: yes
+  copy:
+    content: |
+      [Service]
+      Before=netdata.service
+    dest: /etc/systemd/system/haproxy.service.d/10-before-netdata.conf
+  notify:
+    - restart haproxy
+    - restart netdata
+
 - name: add PASSENGER_INSTANCE_REGISTRY_DIR env var to root .bash_profile
   become: yes
   lineinfile:

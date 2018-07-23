@@ -274,6 +274,7 @@
       include /etc/nginx/passenger.conf;
       include /etc/nginx/passenger_settings.conf;
       include /etc/nginx/netdata_logging.conf;
+      include /etc/nginx/haproxy_queues.conf;
   notify:
     - restart nginx
 
@@ -323,6 +324,19 @@
     - netdata_logging
     - haproxy_queues
 
+- name: install haproxy
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
+  with_items:
+    - haproxy
+  notify:
+    - restart haproxy
+    - restart rsyslog
+
 - name: configure haproxy
   become: yes
   template:
@@ -350,6 +364,23 @@
     groups:
       - haproxy
   notify:
+    - restart netdata
+
+- name: create haproxy service dropin directory
+  become: yes
+  file:
+    path: /etc/systemd/system/haproxy.service.d
+    state: directory
+
+- name: add systemd dropin for haproxy to ensure service starts before netdata
+  become: yes
+  copy:
+    content: |
+      [Service]
+      Before=netdata.service
+    dest: /etc/systemd/system/haproxy.service.d/10-before-netdata.conf
+  notify:
+    - restart haproxy
     - restart netdata
 
 - name: add PASSENGER_INSTANCE_REGISTRY_DIR env var to root .bash_profile
