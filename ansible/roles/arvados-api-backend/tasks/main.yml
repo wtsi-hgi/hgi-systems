@@ -601,7 +601,7 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ arvados_api_backend_consul__config_dir }}"
+    - "{{ arvados_api_backend_consul_config_dir }}"
 
 - name: create arvados-api-backend consul service configuration
   become: yes
