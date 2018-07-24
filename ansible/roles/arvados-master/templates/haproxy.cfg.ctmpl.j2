@@ -72,7 +72,7 @@ backend {{ final_queue_name }}_final_queue
 
 {% endfor %}
 {{ '{{ range service "arvados-api-backend|any" }}' }}
-      server {{ '{{ .Node }}' }}-{{ final_queue_name }}_final_queue      {{ '{{ .Address }}:{{ .Port }}' }}  minconn {{ final_queue.backend_server_minconn }} maxconn {{ final_queue.backend_server_maxconn }} check
+        server {{ '{{ .Node }}' }}-{{ final_queue_name }}_final_queue      {{ '{{ .Address }}:{{ .Port }}' }}  minconn {{ final_queue.backend_server_minconn }} maxconn {{ final_queue.backend_server_maxconn }} check
 {{ '{{ end }}' }}
 
 {% endfor %}
