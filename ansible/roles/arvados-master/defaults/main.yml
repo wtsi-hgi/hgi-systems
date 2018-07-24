@@ -170,6 +170,8 @@ arvados_master_haproxy_final_queues:
         maxconn: 48
         backup: true
     fullconn: 256
+    backend_server_minconn: 16
+    backend_server_maxconn: 48
   fast:
     port: 7001
     servers:
@@ -179,6 +181,8 @@ arvados_master_haproxy_final_queues:
         maxconn: 24
         backup: true
     fullconn: 256
+    backend_server_minconn: 8
+    backend_server_maxconn: 24
   long:
     port: 7002
     servers:
@@ -188,6 +192,8 @@ arvados_master_haproxy_final_queues:
         maxconn: 96
         backup: true
     fullconn: 96
+    backend_server_minconn: 64
+    backend_server_maxconn: 96
   logs:
     port: 7003
     servers:
@@ -197,3 +203,5 @@ arvados_master_haproxy_final_queues:
         maxconn: 110
         backup: true
     fullconn: 4096
+    backend_server_minconn: 64
+    backend_server_maxconn: 110
