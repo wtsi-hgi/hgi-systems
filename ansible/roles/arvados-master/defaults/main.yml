@@ -168,6 +168,7 @@ arvados_master_haproxy_final_queues:
         server_port: "{{ arvados_master_api_backend_port }}"
         minconn: 16
         maxconn: 48
+        backup: true
     fullconn: 256
   fast:
     port: 7001
@@ -176,6 +177,7 @@ arvados_master_haproxy_final_queues:
         server_port: "{{ arvados_master_api_backend_port }}"
         minconn: 8
         maxconn: 24
+        backup: true
     fullconn: 256
   long:
     port: 7002
@@ -184,6 +186,7 @@ arvados_master_haproxy_final_queues:
         server_port: "{{ arvados_master_api_backend_port }}"
         minconn: 64
         maxconn: 96
+        backup: true
     fullconn: 96
   logs:
     port: 7003
@@ -193,9 +196,4 @@ arvados_master_haproxy_final_queues:
         minconn: 64
         maxconn: 110
         backup: true
-      - server_name: dedicated_arvados_logs_backend
-        server_address: "arvados-api-logs-{{ arvados_cluster_id }}.{{ arvados_cluster_consul_domain }}"
-        server_port: "{{ arvados_master_api_backend_port }}"
-        minconn: 128
-        maxconn: 1024
     fullconn: 4096
