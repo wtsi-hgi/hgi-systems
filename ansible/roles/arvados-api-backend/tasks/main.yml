@@ -53,6 +53,8 @@
     - "postgresql-client-{{ arvados_api_backend_postgresql_client_package_version }}"
     - python-psycopg2
     - zlib1g-dev
+    - python-xmltodict
+    - jq
 
 - name: set ownership of arvados-api dir
   become: yes
