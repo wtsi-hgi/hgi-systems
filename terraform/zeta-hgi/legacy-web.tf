@@ -1,5 +1,5 @@
 module "legacy-web" {
-  source          = "../modules/webserver/webserver-v1"
+  source          = "../modules/webserver/v1"
   count           = 1
   env             = "${var.env}"
   region          = "${var.region}"
