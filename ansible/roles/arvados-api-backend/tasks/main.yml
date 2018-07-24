@@ -410,7 +410,7 @@
     update_cache: yes
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
-    - arvados-api-server
+    - arvados-api-server=1.1.4.20180723133344-8
   register: arvados_api_backend_REGISTER_install_api_server
 
 - name: create directories for arvados
@@ -444,6 +444,14 @@
     arvados_api_backend_REGISTER_install_api_server.changed or
     arvados_api_backend_REGISTER_create_dirs.changed or
     arvados_api_backend_REGISTER_conf_files.changed
+
+- name: patch arvados-api server
+  become: yes
+  patch:
+    backup: yes
+    basedir: /var/www/arvados-api/current
+    src: hgi-integration-1.1.4.20180723133344-8.patch
+    strip: 3
 
 - name: copy api token files
   become: yes

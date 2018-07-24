@@ -1,0 +1,142 @@
+diff --git a/services/api/app/controllers/application_controller.rb b/services/api/app/controllers/application_controller.rb
+index ba7c07d..169f4d4 100644
+--- a/services/api/app/controllers/application_controller.rb
++++ b/services/api/app/controllers/application_controller.rb
+@@ -81,11 +81,17 @@ class ApplicationController < ActionController::Base
+   end
+ 
+   def default_url_options
++    options = {}
+     if Rails.configuration.host
+-      {:host => Rails.configuration.host}
+-    else
+-      {}
++      options[:host] = Rails.configuration.host
++    end
++    if Rails.configuration.port
++      options[:port] = Rails.configuration.port
++    end
++    if Rails.configuration.protocol
++      options[:protocol] = Rails.configuration.protocol
+     end
++    options
+   end
+ 
+   def index
+diff --git a/services/api/app/models/arvados_model.rb b/services/api/app/models/arvados_model.rb
+index b9edeae..b9374f2 100644
+--- a/services/api/app/models/arvados_model.rb
++++ b/services/api/app/models/arvados_model.rb
+@@ -108,6 +108,8 @@ class ArvadosModel < ActiveRecord::Base
+   end
+ 
+   def initialize raw_params={}, *args
++    ActiveRecord::Base.connection.execute("SET statement_timeout = #{Rails.configuration.database_statement_timeout}")
++    ActiveRecord::Base.connection.execute("SET lock_timeout = #{Rails.configuration.database_lock_timeout}")
+     super(self.class.permit_attribute_params(raw_params), *args)
+   end
+ 
+@@ -763,36 +765,51 @@ class ArvadosModel < ActiveRecord::Base
+     end
+   end
+ 
++  def is_audit_logging_enabled?
++    return Rails.configuration.max_audit_log_age == 0 &&
++           Rails.configuration.max_audit_log_delete_batch > 0
++  end
++
+   def log_start_state
+-    @old_attributes = Marshal.load(Marshal.dump(attributes))
+-    @old_logged_attributes = Marshal.load(Marshal.dump(logged_attributes))
++    if is_audit_logging_enabled?
++      @old_attributes = Marshal.load(Marshal.dump(attributes))
++      @old_logged_attributes = Marshal.load(Marshal.dump(logged_attributes))
++    end
+   end
+ 
+   def log_change(event_type)
+-    log = Log.new(event_type: event_type).fill_object(self)
+-    yield log
+-    log.save!
+-    log_start_state
++    if is_audit_logging_enabled?
++      log = Log.new(event_type: event_type).fill_object(self)
++      yield log
++      log.save!
++      log_start_state
++    end
+   end
+ 
+   def log_create
+-    log_change('create') do |log|
+-      log.fill_properties('old', nil, nil)
+-      log.update_to self
++    if is_audit_logging_enabled?
++      log_change('create') do |log|
++        log.fill_properties('old', nil, nil)
++        log.update_to self
++      end
+     end
+   end
+ 
+   def log_update
+-    log_change('update') do |log|
+-      log.fill_properties('old', etag(@old_attributes), @old_logged_attributes)
+-      log.update_to self
++    if is_audit_logging_enabled?
++      log_change('update') do |log|
++        log.fill_properties('old', etag(@old_attributes), @old_logged_attributes)
++        log.update_to self
++      end
+     end
+   end
+ 
+   def log_destroy
+-    log_change('delete') do |log|
+-      log.fill_properties('old', etag(@old_attributes), @old_logged_attributes)
+-      log.update_to nil
++    if is_audit_logging_enabled?
++      log_change('delete') do |log|
++        log.fill_properties('old', etag(@old_attributes), @old_logged_attributes)
++        log.update_to nil
++      end
+     end
+   end
+ end
+diff --git a/services/api/config/application.default.yml b/services/api/config/application.default.yml
+index f976a83..15216ce 100644
+--- a/services/api/config/application.default.yml
++++ b/services/api/config/application.default.yml
+@@ -93,10 +93,12 @@ common:
+   ### Overriding default advertised hostnames/URLs
+   ###
+ 
+-  # If not false, this is the hostname that will be used for root_url and
+-  # advertised in the discovery document.  By default, use the default Rails
+-  # logic for deciding on a hostname.
++  # If not false, this is the hostname, port, and protocol that will be used
++  # for root_url and advertised in the discovery document.  By default, use
++  # the default Rails logic for deciding on a hostname.
+   host: false
++  port: false
++  protocol: false
+ 
+   # Base part of SSH git clone url given with repository resources. If
+   # true, the default "git@git.(uuid_prefix).arvadosapi.com:" is
+@@ -211,6 +213,16 @@ common:
+   # "properties" hashes) are not counted against this limit.
+   max_index_database_read: 134217728
+ 
++  # Number of milliseconds a database statement may take before it is
++  # aborted. Applied to ActiveRecord queries in models. A value of zero
++  # turns this off.
++  database_statement_timeout: 0
++
++  # Number of milliseconds an attempt to acquire a database lock
++  # may take before it is aborted. Applied to ActiveRecord queries in
++  # models. A value of zero turns this off.
++  database_lock_timeout: 0
++
+   # Maximum number of items to return when responding to a APIs that
+   # can return partial result sets using limit and offset parameters
+   # (e.g., *.index, groups.contents). If a request specifies a "limit"
