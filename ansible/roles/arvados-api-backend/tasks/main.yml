@@ -452,6 +452,8 @@
     basedir: /var/www/arvados-api/current
     src: hgi-integration-1.1.4.20180723133344-8.patch
     strip: 3
+  notify:
+   - restart nginx
 
 - name: copy api token files
   become: yes
