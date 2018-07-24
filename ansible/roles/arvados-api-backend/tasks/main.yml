@@ -514,17 +514,6 @@
   notify:
    - restart nginx
 
-- name: run script to create trusted workbench api client
-  become: yes
-  become_user: www-data
-  command: bundle exec rails runner "{{ arvados_api_backend_create_workbench_api_client_script }}"
-  args:
-    chdir: /var/www/arvados-api/current
-  environment:
-    HOME: /var/www
-    RAILS_ENV: production
-  when: arvados_api_backend_workbench_api_client_script.changed
-
 - name: setup logrotate to rotate API logs
   become: yes
   import_role:
