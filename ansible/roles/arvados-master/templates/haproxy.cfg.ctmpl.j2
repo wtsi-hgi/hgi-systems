@@ -71,7 +71,7 @@ backend {{ final_queue_name }}_final_queue
         server {{ server.server_name }}-{{ final_queue_name }}_final_queue      {% if "server_address" in server and server.server_address %}{{ server.server_address }}{% else %}127.0.0.1{% endif %}:{{ server.server_port }} minconn {{ server.minconn }} maxconn {{ server.maxconn }} check {% if "backup" in server and server.backup %} backup {% endif %}
 
 {% endfor %}
-{{ '{{ range service "arvados-api-backend" }}' }}
+{{ '{{ range service "arvados-api-backend|any" }}' }}
       server {{ '{{ .Node }}' }}-{{ final_queue_name }}_final_queue      {{ '{{ .Address }}:{{ .Port }}' }}  minconn {{ final_queue.backend_server_minconn }} maxconn {{ final_queue.backend_server_maxconn }} check
 {{ '{{ end }}' }}
 
