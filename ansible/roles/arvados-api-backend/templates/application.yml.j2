@@ -23,8 +23,13 @@ production:
   sso_provider_url: "https://{{ arvados_cluster_sso_host }}"
   workbench_address: "https://{{ arvados_cluster_workbench_host }}"
   websocket_address: "wss://{{ arvados_cluster_ws_host }}/websocket"
+  host: {{ arvados_cluster_api_host }}
+  port: 443
+  protocol: https
   git_repo_ssh_base: "git@{{ arvados_cluster_git_host }}:"
   git_repo_https_base: "https://{{ arvados_cluster_git_host }}/"
+  database_statement_timeout: 300000
+  database_lock_timeout: 120000
 
   # These two settings control how frequently log events are flushed to the
   # database.  Log lines are buffered until either crunch_log_bytes_per_event
@@ -71,7 +76,7 @@ production:
   # Currently, websocket event notifications rely on audit logs, so
   # this should not be set lower than 600 (5 minutes).
   #  max_audit_log_age: 1209600
-  max_audit_log_age: 1200
+  max_audit_log_age: 0 # completely disable audit logging
 
   # Maximum number of log rows to delete in a single SQL transaction.
   #
@@ -81,7 +86,7 @@ production:
   # recent (<5 minutes old) logs are not deleted.
   #
   # 100000 is a reasonable batch size for most sites.
-  max_audit_log_delete_batch: 100000
+  max_audit_log_delete_batch: 100000 # must be nonzero to disable audit logging
 
   max_request_size: {{ arvados_cluster_max_body_size_m * 1024 * 1024 }}
 
