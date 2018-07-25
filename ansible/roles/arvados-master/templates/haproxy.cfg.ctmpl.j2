@@ -64,7 +64,6 @@ backend {{ queue.name }}_arvados_api
 {% for final_queue_name, final_queue in arvados_master_haproxy_final_queues.items() %}
 backend {{ final_queue_name }}_final_queue
         mode http
-        fullconn {{ final_queue.fullconn }}
         balance roundrobin
         option httpchk GET /discovery/v1/apis/arvados/v1/rest
 {% for server in final_queue.servers %}
