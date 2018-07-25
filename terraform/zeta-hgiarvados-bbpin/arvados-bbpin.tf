@@ -34,7 +34,7 @@
 #   api_db_volume_size_gb  = 1000
 #   irobot_volume_size_gb  = 250
 # }
-
 # output "arvados_bbpin_json" {
 #   value = "${jsonencode(module.arvados-cluster.hgi_instances)}"
 # }
+
