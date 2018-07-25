@@ -3,11 +3,8 @@
 set -euf -o pipefail
 dir=$1
 
-terraform_bin=$(which terraform)
-if [ -z "${terraform_bin}" ]; then
-  >&2 echo "terraform not in PATH, cannot run terraform fmt"
-  exit 1
-fi
+SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+terraform_bin="${SCRIPT_DIRECTORY}/terraform.sh"
 
 if [ \! -d "${dir}" ]; then
   >&2 echo "${dir} is not a directory, cannot run terraform fmt in it"

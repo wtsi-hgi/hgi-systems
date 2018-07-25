@@ -414,7 +414,7 @@ terraform-validate-modules:
     - docker
   image: mercury/taos
   script:
-    - OS_AUTH_VERSION=3 ci/terraform.sh
+    - OS_AUTH_VERSION=3 ci/terraform-plan-apply.sh
   artifacts:
     paths:
       - artifacts
