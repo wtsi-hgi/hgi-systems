@@ -17,7 +17,6 @@ defaults
   timeout client 10m
   timeout server 10m
   timeout queue 3m
-  maxconn 19500
   mode  http
   option  dontlognull
 
@@ -38,6 +37,7 @@ frontend {{ queue.name }}_arvados_api
         option  httplog
         option forwardfor
         default_backend {{ queue.name }}_arvados_api
+	maxconn {{ queue.maxconn }}
 
 {% endfor %}
 
@@ -48,6 +48,7 @@ frontend {{ final_queue_name }}_final_queue
         option  httplog
         option forwardfor
         default_backend {{ final_queue_name }}_final_queue
+	maxconn {{ final_queue.maxconn }}
 
 {% endfor %}
 
