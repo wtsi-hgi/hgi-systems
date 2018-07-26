@@ -74,7 +74,7 @@ server {
     proxy_pass            http://haproxy_arvados_$queue;
     proxy_redirect        off;
     proxy_connect_timeout 90s;
-    proxy_read_timeout    300s;
+    proxy_read_timeout    660s;
 
     proxy_buffers         8 32k;
     proxy_buffer_size     2k;
