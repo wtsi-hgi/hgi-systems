@@ -17,8 +17,8 @@ mkdir -p "${artifacts_dir}"
 echo "Listing contents of artifacts directory ${artifacts_dir}"
 artifacts=$(ls "${artifacts_dir}/")
 
-echo "Calling terraform-init-workspace.sh"
-${SCRIPT_DIRECTORY}/terraform-init-workspace.sh
+echo "Sourcing terraform-init-workspace.sh"
+. ${SCRIPT_DIRECTORY}/terraform-init-workspace.sh
 
 echo "Calling terraform plan"
 # FIXME: the -parallelism is to work around infoblox provider concurrency issues, fix this in provider and restore concurrent operations
