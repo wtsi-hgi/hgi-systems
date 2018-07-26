@@ -13,3 +13,9 @@
     - name: import webhook-router role
       import_role:
         name: webhook-router
+      vars:
+        webhook_router_frontend_url: "{{ webhook_router_GROUP_frontend_url }}"
+        webhook_router_configuration_url: "{{ webhook_router_GROUP_configuration_url }}"
+        webhook_router_routing_url: "{{ webhook_router_GROUP_routing_url }}"
+        webhook_router_admin_url: "{{ webhook_router_GROUP_admin_url }}"
+        webhook_router_additional_configuration: "{{ webhook_router_GROUP_additional_configuration }}"

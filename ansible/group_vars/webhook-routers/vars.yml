@@ -1,0 +1,11 @@
+# Defined in `vault.yml`:
+#   webhook_router_GROUP_secret_additional_configuration:
+#     (str) TODO
+
+---
+
+webhook_router_GROUP_frontend_url: http://webhook-router.hgi.sanger.ac.uk
+webhook_router_GROUP_configuration_url: http://webhook-router.hgi.sanger.ac.uk:8081
+webhook_router_GROUP_routing_url: https://webhook.sanger.ac.uk
+webhook_router_GROUP_admin_url: http://webhook-router.hgi.sanger.ac.uk:8083
+webhook_router_GROUP_additional_configuration: "{{ webhook_router_GROUP_secret_additional_configuration }}"

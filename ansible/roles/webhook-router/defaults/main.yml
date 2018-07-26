@@ -1,0 +1,22 @@
+# The following variables must be defined:
+#   webhook_router_frontend_url:
+#     (str) TODO
+#   webhook_router_configuration_url
+#     (str) TODO
+#   webhook_router_routing_url
+#     (str) TODO
+#   webhook_router_admin_url
+#     (str) TODO
+
+---
+
+webhook_router_repository: https://github.com/wtsi-hgi/webhook-router.git
+webhook_router_repository_version: 21e34d63a31c34a3b1a636c256e7e71bbca32f49
+
+webhook_router_install_location: /usr/local/src/webhook-router
+
+webhook_router_vm_max_map_count: 262144
+
+webhook_router_additional_configuration: {}
+
+webhook_router_apt_cache_valid_time: 3600

@@ -1,3 +1,47 @@
 ---
 
-# TODO
+- name: install apt dependencies
+  become: yes
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ webhook_router_apt_cache_valid_time }}"
+  with_items:
+    - docker-compose
+    - python-pip
+
+- name: install pip dependencies
+  become: yes
+  pip:
+    name: docker-py
+
+- name: tune sysctl parameters, as described in https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+  become: yes
+  sysctl:
+    name: vm.max_map_count
+    value: "{{ webhook_router_vm_max_map_count }}"
+
+- name: create install directory
+  become: yes
+  file:
+    path: "{{ webhook_router_install_location }}"
+    state: directory
+
+- name: clone webhook router source
+  become: yes
+  git:
+    repo: "{{ webhook_router_repository }}"
+    dest: "{{ webhook_router_install_location }}"
+    version: "{{ webhook_router_repository_version }}"
+
+- name: add configuration
+  become: yes
+  template:
+    src: config.json.j2
+    dest: "{{ webhook_router_install_location }}/config.json"
+    mode: 0600
+
+- name: run webhook router with docker-compose
+  docker_service:
+    project_src: "{{ webhook_router_install_location }}"

@@ -1,0 +1,9 @@
+{
+    "frontEnd": "{{ webhook_router_frontend_url }}"
+    "configServer": "{{ webhook_router_configuration_url }}",
+    "routingServer": "{{ webhook_router_routing_url }}",
+    "adminServer": "{{ webhook_router_admin_url }}",
+    {% for key, value in webhook_router_additional_configuration.items() %}
+    {{ key }}: {{ value }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
