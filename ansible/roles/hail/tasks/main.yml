@@ -196,6 +196,16 @@
     backrefs: yes
   notify: restart hail
 
+- name: comment out PYSPARK_SUBMIT_ARGS in hail setup_env
+  become: yes
+  become_user: "{{ hail_user }}"
+  lineinfile:
+    path: "{{ hail_prefix_dir }}/scripts/setup_env"
+    regexp: '^#?(export\s+PYSPARK_SUBMIT_ARGS=.*)$'
+    line: '#\1'
+    backrefs: yes
+  notify: restart hail
+
 - name: create link to jars directory expected by Hail
   become: yes
   file:
