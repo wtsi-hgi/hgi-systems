@@ -7,6 +7,7 @@ gitlab-freebsd-cloud-init-image-builder gitlab_project=hgi/freebsd-cloud-init-im
 
 [sanger-software-builder-gitlab]
 gitlab-sanger-hgi-hgi-software-builder gitlab_project=hgi/hgi-software-builder
+gitlab-sanger-hgi-arvados-build gitlab_project=hgi/hgi-arvados-build
 
 [gitlab-projects:children]
 sanger-image-builder-gitlab
@@ -32,6 +33,7 @@ hgi-systems-gitlab
 [consul-credentials:children]
 hgi-systems-gitlab
 sanger-image-builder-gitlab
+sanger-software-builder-gitlab
 
 [infoblox-credentials:children]
 hgi-systems-gitlab
