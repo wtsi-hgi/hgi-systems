@@ -26,6 +26,7 @@ gitlab-projects
 [hgi-credentials:children]
 hgi-systems-gitlab
 sanger-image-builder-gitlab
+sanger-software-builder-gitlab
 
 [terragrunt-locks-credentials:children]
 hgi-systems-gitlab
