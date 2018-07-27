@@ -11,7 +11,7 @@ module "arvados-cluster" {
   consul_keys_datacenter = "${var.region}-hgi"                                                                                      # FIXME: keys are currently stored only in the hgi datacenter
   base_image             = "${data.terraform_remote_state.hgiarvados-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
   compute_node_image     = "${data.terraform_remote_state.hgiarvados-core.hgi-openstack-image-hgi-arvados_compute-xenial-73646368}"
-  api_backend_count      = 8
+  api_backend_count      = 3
   keepproxy_count        = 8
   keep_count             = 8
   monitor_count          = 1
