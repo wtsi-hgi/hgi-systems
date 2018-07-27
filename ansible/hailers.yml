@@ -213,7 +213,7 @@
         hail_spark_hadoop_anonymous_buckets:
          - "{{ hail_tutorial_data_s3_bucket }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
-        hail_spark_executor_memory_gb: "{{ (((ansible_memtotal_mb | int) * 0.9) / 1024) }}"
+        hail_spark_executor_memory_gb: "{{ (((ansible_memtotal_mb | int)) / 1024) - 1 }}"
         ###############################################################################
         # General settings
         ###############################################################################
