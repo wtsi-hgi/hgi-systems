@@ -17,6 +17,9 @@ defaults
         timeout client 10m
         timeout server 10m
         timeout queue 45s
+	timeout check 30s
+  inter 60000
+  spread-checks 50
   maxconn 19500
   mode  http
   option  dontlognull
