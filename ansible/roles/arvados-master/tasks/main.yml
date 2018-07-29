@@ -430,18 +430,7 @@
   become: yes
   copy:
     dest: /etc/logrotate.d/haproxy
-    content: |
-      /var/log/haproxy.log {
-        hourly
-        rotate 12
-        missingok
-        notifempty
-        compress
-        delaycompress
-        postrotate
-            invoke-rc.d rsyslog rotate >/dev/null 2>&1 || true
-        endscript
-     }
+    src: logrotate_haproxy.conf
 
 - name: add PASSENGER_INSTANCE_REGISTRY_DIR env var to root .bash_profile
   become: yes
