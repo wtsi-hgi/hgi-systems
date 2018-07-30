@@ -16,7 +16,6 @@ module "hail-cluster-as45" {
   master_flavour        = "o1.large"
   compute_flavour       = "o1.large"
   master_volume_size_gb = 100
-  scratch_volume_p      = false
 }
 
 module "hail-cluster-as45-2" {
@@ -37,7 +36,6 @@ module "hail-cluster-as45-2" {
   master_flavour         = "o1.large"
   compute_flavour        = "o1.large"
   master_volume_size_gb  = 100
-  scratch_volume_size_gb = 100
 }
 
 module "hail-cluster-mercury" {
@@ -58,5 +56,4 @@ module "hail-cluster-mercury" {
   master_flavour         = "o1.medium"
   compute_flavour        = "o1.medium"
   master_volume_size_gb  = 20
-  scratch_volume_size_gb = 20
 }

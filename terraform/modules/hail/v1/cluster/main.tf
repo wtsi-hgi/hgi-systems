@@ -47,7 +47,7 @@ variable "compute_flavour" {
 }
 
 module "hail-master" {
-  source          = "../../master/hail-master-v2"
+  source          = "../../master/v2"
   hail_cluster_id = "${var.hail_cluster_id}"
   count           = "${var.master_count}"
   env             = "${var.env}"
@@ -63,7 +63,7 @@ module "hail-master" {
 }
 
 module "hail-compute" {
-  source          = "../../compute/hail-compute-v2"
+  source          = "../../compute/v2"
   hail_cluster_id = "${var.hail_cluster_id}"
   count           = "${var.compute_count}"
   env             = "${var.env}"
