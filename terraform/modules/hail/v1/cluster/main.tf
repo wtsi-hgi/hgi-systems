@@ -38,6 +38,10 @@ variable "master_volume_size_gb" {
   default = 100
 }
 
+variable "compute_volume_size_gb" {
+  default = 100
+}
+
 variable "compute_count" {
   default = 0
 }
@@ -47,7 +51,7 @@ variable "compute_flavour" {
 }
 
 module "hail-master" {
-  source          = "../../master/v2"
+  source          = "../master"
   hail_cluster_id = "${var.hail_cluster_id}"
   count           = "${var.master_count}"
   env             = "${var.env}"
@@ -63,7 +67,7 @@ module "hail-master" {
 }
 
 module "hail-compute" {
-  source          = "../../compute/v2"
+  source          = "../compute"
   hail_cluster_id = "${var.hail_cluster_id}"
   count           = "${var.compute_count}"
   env             = "${var.env}"
@@ -75,6 +79,7 @@ module "hail-compute" {
   network_name    = "main"
   ssh_gateway     = "${var.ssh_gateway}"
   flavour         = "${var.compute_flavour}"
+  volume_size_gb  = "${var.compute_volume_size_gb}"
 }
 
 output "hgi_instances" {

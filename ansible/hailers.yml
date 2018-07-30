@@ -30,7 +30,7 @@
     hailers_PLAYBOOK_s3_backup_bucket: "hail-backup"
     hailers_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
     hailers_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
-    hailers_PLAYBOOK_data_created_restore_indicator_file: ".data-created-restore"
+    hailers_PLAYBOOK_data_created_restore_indicator_file: ".created-restore"
     hailers_PLAYBOOK_scratch_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
     hailers_PLAYBOOK_scratch_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
     hailers_PLAYBOOK_scratch_server_data_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
@@ -104,6 +104,21 @@
         attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_data_created_restore_indicator_file }}"
       when: inventory_hostname in groups['hail-masters']
 
+    - name: configure attached-openstack-volume for scratch
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: consul-vg
+        attached_openstack_volume_vols:
+          - name: consul-data
+            size: "{{ ((hailers_PLAYBOOK_scratch_attached_volume_size_gb | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ hailers_PLAYBOOK_scratch_server_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ hailers_PLAYBOOK_scratch_attached_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_scratch_created_restore_indicator_file }}"
+      when: inventory_hostname not in groups['hail-masters']
+
     - name: get spark url and checksum from s3
       tags: s3
       import_role:
@@ -129,20 +144,6 @@
         s3_geturl_object: "hadoop-{{ hail_cluster_hadoop_version }}.tgz"
         s3_geturl_checksum_var: "hailers_PLAYBOOK_hadoop_tgz_checksum"
         s3_geturl_url_var: "hailers_PLAYBOOK_hadoop_tgz_url"
-
-    - name: configure attached-openstack-volume for scratch
-      import_role:
-        name: attached-openstack-volume
-      vars:
-        attached_openstack_volume_vg: consul-vg
-        attached_openstack_volume_vols:
-          - name: consul-data
-            size: "{{ ((hailers_PLAYBOOK_scratch_attached_volume_size_gb | int) * 1024) - 4 }}M"
-            fstype: xfs
-            mountpoint: "{{ hailers_PLAYBOOK_scratch_server_data_mountpoint }}"
-        attached_openstack_volumes:
-          - device: "{{ hailers_PLAYBOOK_scratch_attached_volume_device }}"
-        attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_scratch_created_restore_indicator_file }}"
 
     # TODO: Create and populate hail-tutorial-data S3 bucket.
     - name: import role hail

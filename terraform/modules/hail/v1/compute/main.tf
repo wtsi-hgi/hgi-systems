@@ -13,7 +13,7 @@ variable "flavour" {}
 variable "domain" {}
 
 variable "volume_size_gb" {
-  default = 20
+  default = 100
 }
 
 variable "image" {
@@ -63,6 +63,7 @@ module "hgi-openstack-instance" {
   keypair_name    = "${var.keypair_name}"
   network_name    = "${var.network_name}"
   image           = "${var.image}"
+  volume_size_gb  = "${var.volume_size_gb}"
 
   security_group_names = [
     "ping",
