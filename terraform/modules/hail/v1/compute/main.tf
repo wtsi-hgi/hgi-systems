@@ -63,6 +63,7 @@ module "hgi-openstack-instance" {
   keypair_name    = "${var.keypair_name}"
   network_name    = "${var.network_name}"
   image           = "${var.image}"
+  volume_p        = true
   volume_size_gb  = "${var.volume_size_gb}"
 
   security_group_names = [
