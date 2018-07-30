@@ -4,6 +4,14 @@ variable "network_id" {}
 variable "spark_cluster_id" {}
 variable "count" {}
 
+variable "scratch_volume_p" {
+  default = true
+}
+
+variable "scratch_volume_size_gb" {
+  default = 100
+}
+
 variable "security_group_ids" {
   type    = "map"
   default = {}
@@ -49,12 +57,14 @@ resource "openstack_networking_floatingip_v2" "spark-master" {
 }
 
 resource "openstack_compute_instance_v2" "spark-master" {
-  provider    = "openstack"
-  count       = "${var.count}"
-  name        = "spark-${var.spark_cluster_id}-master"
-  image_name  = "${var.image["name"]}"
-  flavor_name = "${var.flavour}"
-  key_pair    = "${var.key_pair_ids["mercury"]}"
+  provider       = "openstack"
+  count          = "${var.count}"
+  name           = "spark-${var.spark_cluster_id}-master"
+  image_name     = "${var.image["name"]}"
+  flavor_name    = "${var.flavour}"
+  key_pair       = "${var.key_pair_ids["mercury"]}"
+  volume_p       = "${var.scratch_volume_p}"
+  volume_size_gb = "${var.scratch_volume_size_gb}"
 
   security_groups = [
     "${var.security_group_ids["ping"]}",
