@@ -192,6 +192,8 @@
       value: 4096 16777216 67108864
     - name: net.ipv4.tcp_window_scaling
       value: 1
+    - name: net.nf_conntrack_max
+      value: 1048576
     - name: vm.min_free_kbytes
       value: 204800
     - name: vm.page-cluster
