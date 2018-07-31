@@ -234,19 +234,19 @@
         arvados_api_db_consul_template_path: "consul-template/arvados-cluster/{{ arvados_cluster_id }}"
         arvados_api_db_data_manager_api_token: "{{ arvados_cluster_GROUP_data_manager_api_token }}"
 
-    - name: setup API database backup to S3
-      import_role:
-        name: wtsi-hgi.ansible-postgres-s3-backup
-      vars:
-        postgres_s3_backup_s3_url: "https://{{ arvados_GROUP_backup_s3_host }}"
-        postgres_s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
-        postgres_s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
-        postgres_s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
-        postgres_s3_backup_s3_directory_in_bucket: "/arvados/{{ arvados_cluster_id }}/api/db"
-        # TODO: download S3 copy of minio (postgres_s3_backup_mc_download_source)
-        postgres_s3_backup_run_hour: 3,15
-        postgres_s3_backup_number_to_keep: 28
-        postgres_s3_backup_name_suffix: -api.sql.gz
+    # - name: setup API database backup to S3
+    #   import_role:
+    #     name: wtsi-hgi.ansible-postgres-s3-backup
+    #   vars:
+    #     postgres_s3_backup_s3_url: "https://{{ arvados_GROUP_backup_s3_host }}"
+    #     postgres_s3_backup_s3_access_key: "{{ arvados_GROUP_backup_s3_access_key }}"
+    #     postgres_s3_backup_s3_secret_key: "{{ arvados_GROUP_backup_s3_secret_key }}"
+    #     postgres_s3_backup_s3_bucket: "{{ arvados_GROUP_backup_s3_backup_bucket }}"
+    #     postgres_s3_backup_s3_directory_in_bucket: "/arvados/{{ arvados_cluster_id }}/api/db"
+    #     # TODO: download S3 copy of minio (postgres_s3_backup_mc_download_source)
+    #     postgres_s3_backup_run_hour: 3,15
+    #     postgres_s3_backup_number_to_keep: 28
+    #     postgres_s3_backup_name_suffix: -api.sql.gz
 
 - hosts: arvados-masters
   vars:
