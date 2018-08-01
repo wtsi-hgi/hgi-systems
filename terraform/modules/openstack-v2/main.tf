@@ -40,7 +40,7 @@ locals {
 # Look up external network id from name
 ###############################################################################
 data "openstack_networking_network_v2" "external_network" {
-  name = "${var.external_network_name}"
+  name     = "${var.external_network_name}"
   external = true
 }
 
