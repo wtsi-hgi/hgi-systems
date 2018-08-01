@@ -26,11 +26,10 @@ set +e
 ${terraform_bin} plan -input=false -out plan -parallelism=${PARALLELISM}
 plan_exit_status=$?
 set -e
-echo "Copying plan to artifacts"
-cp plan "${ARTIFACTS_DIR}/"
 
 if [[ ${plan_exit_status} -eq 0 ]]; then
-    echo "Terraform plan was successful"
+    echo "Terraform plan was successful, copying plan to artifacts"
+    cp plan "${ARTIFACTS_DIR}/"
     echo "Generating human readable ${ENV}.tfstate.txt artifact"
     (${terraform_bin} show -no-color > "${ENV}.tfstate.txt")
     cp "${ENV}.tfstate.txt" "${ARTIFACTS_DIR}"
