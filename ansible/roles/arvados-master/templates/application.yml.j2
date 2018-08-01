@@ -41,11 +41,11 @@ production:
   crunch_log_seconds_between_events: 1
 
   # The sample period for throttling logs, in seconds.
-  crunch_log_throttle_period: 1
+  crunch_log_throttle_period: 60
 
   # Maximum number of bytes that job can log over crunch_log_throttle_period
   # before being silenced until the end of the period.
-  crunch_log_throttle_bytes: 65536
+  crunch_log_throttle_bytes: 1024
 
   # Maximum number of lines that job can log over crunch_log_throttle_period
   # before being silenced until the end of the period.
