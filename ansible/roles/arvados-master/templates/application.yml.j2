@@ -38,14 +38,14 @@ production:
   # has been reached or crunch_log_seconds_between_events has elapsed since
   # the last flush.
   crunch_log_bytes_per_event: 4096
-  crunch_log_seconds_between_events: 1
+  crunch_log_seconds_between_events: 60
 
   # The sample period for throttling logs, in seconds.
   crunch_log_throttle_period: 60
 
   # Maximum number of bytes that job can log over crunch_log_throttle_period
   # before being silenced until the end of the period.
-  crunch_log_throttle_bytes: 1024
+  crunch_log_throttle_bytes: 4096
 
   # Maximum number of lines that job can log over crunch_log_throttle_period
   # before being silenced until the end of the period.
