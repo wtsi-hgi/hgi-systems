@@ -13,25 +13,33 @@ export CI_PROJECT_DIR=/mnt/host/hgi-systems/
 
 >&2 echo "Setup Git"
 # Note: copying the below files so that they can be changed
-cp /mnt/host/.gitconfig ~/.gitconfig
-cp /mnt/host/.gitignore_global ~/.gitignore_global
+test -e /mnt/host/.gitconfig && cp /mnt/host/.gitconfig ~/.gitconfig || true
+test -e /mnt/host/.gitignore_global && cp /mnt/host/.gitignore_global ~/.gitignore_global || true
 git config --global core.excludesfile ~/.gitignore_global
 
->&2 echo "Setting SSH keys"
-mkdir -p ~/.ssh
-echo "${SSH_PRIVATE_KEY}" | sed 's/\\n/\n/g' > ~/.ssh/10-ci.key
-ln -s /mnt/host/id_rsa ~/.ssh/0-${HOST_USER_NAME}.key
-chmod -R 700 ~/.ssh
-eval $(ssh-agent) > /dev/null 2>&1
-ssh-add ~/.ssh/*.key > /dev/null 2>&1
+if [[ -e /mnt/host/id_rsa ]]; then
+	>&2 echo "Setting SSH keys"
+	mkdir -p ~/.ssh
+	echo "${SSH_PRIVATE_KEY}" | sed 's/\\n/\n/g' > ~/.ssh/10-ci.key
+	ln -s /mnt/host/id_rsa ~/.ssh/0-${HOST_USER_NAME}.key
+	chmod -R 700 ~/.ssh
+	eval $(ssh-agent) > /dev/null 2>&1
+	ssh-add ~/.ssh/*.key > /dev/null 2>&1
+else
+	>&2 echo "You have no id_rsa ssh key"
+fi
 
 >&2 echo "Sourcing before scripts"
 . /mnt/host/hgi-systems/ci/source-before-scripts.sh /mnt/host/hgi-systems/ci/before_scripts.d 2> >(sed 's/^/  E:/g') > >(sed 's/^/  O:/g') # DO NOT USE A PIPELINE HERE OR THE VARS WILL BE SET IN SUBSHELL AND NOT PERSIST
 
 # Note: This must go after source scripts because 3-ssh.sh writes to `config` to turn off key checking
->&2 echo "Adding SSH config"
-rm ~/.ssh/config
-ln -s /mnt/host/ssh-config ~/.ssh/config
+if [[ -e ~/.ssh/config ]]; then
+	>&2 echo "Adding SSH config"
+	rm ~/.ssh/config
+	ln -s /mnt/host/ssh-config ~/.ssh/config
+else
+	>&2 echo "You have no ~/.ssh/config"
+fi
 
 dev-help
 
