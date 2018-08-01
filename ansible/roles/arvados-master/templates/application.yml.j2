@@ -31,7 +31,7 @@ production:
   git_repo_ssh_base: "git@{{ arvados_cluster_git_host }}:"
   git_repo_https_base: "https://{{ arvados_cluster_git_host }}/"
   database_statement_timeout: 300000
-  database_lock_timeout: 120000
+  database_lock_timeout: 150000
 
   # These two settings control how frequently log events are flushed to the
   # database.  Log lines are buffered until either crunch_log_bytes_per_event
