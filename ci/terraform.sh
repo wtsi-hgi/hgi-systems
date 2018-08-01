@@ -19,10 +19,12 @@ ${terraform_bin} "$@"
 tf_exit_status=$?
 set -e
 
-if [[ -d "${ARTIFACTS_DIR+}" ]]; then
-    if [[ -e crash.log ]]; then
+if [[ -e crash.log ]]; then
+    if [[ -d "${ARTIFACTS_DIR+}" ]]; then
 	echo "Copying crash.log to artifacts dir ${ARTIFACTS_DIR}"
 	cp crash.log "${ARTIFACTS_DIR}/"
+    else
+	echo "ARTIFACTS_DIR not set, not copying crash.log anywhere"
     fi
 fi
 
