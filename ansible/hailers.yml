@@ -29,7 +29,7 @@
     hailers_PLAYBOOK_s3_secret_key: "{{ hgi_software_s3_credentials['s3_secret_key'] }}"
     hailers_PLAYBOOK_s3_backup_bucket: "hail-backup"
     hailers_PLAYBOOK_data_backup_path: "hail/{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}{{ hail_master_data_dir }}"
-    hailers_PLAYBOOK_data_dir: "/mnt/{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}"
+    hailers_PLAYBOOK_data_dir: "/mnt/nfs-share"
     hailers_PLAYBOOK_data_created_restore_indicator_file: ".created-restore"
     hailers_PLAYBOOK_scratch_attached_volume_size_gb: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_size if tf_id is defined else openstack_instances_GROUP_volume_size }}"
     hailers_PLAYBOOK_scratch_attached_volume_device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device if tf_id is defined else openstack_instances_GROUP_volume_device }}"
@@ -117,7 +117,7 @@
         attached_openstack_volumes:
           - device: "{{ hailers_PLAYBOOK_scratch_attached_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: "{{ hailers_PLAYBOOK_scratch_created_restore_indicator_file }}"
-      when: inventory_hostname not in groups['hail-masters']
+      when: inventory_hostname in groups['hail-computers']
 
     - name: get spark url and checksum from s3
       tags: s3
@@ -233,6 +233,7 @@
          - "{{ hail_tutorial_data_s3_bucket }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
         hail_spark_executor_memory_gb: "{{ (((ansible_memtotal_mb | int)) / 1024) * 0.75 }}"   # See http://spark.apache.org/docs/latest/hardware-provisioning.html#local-disks
+        hail_spark_local_directory: "{{ hailers_PLAYBOOK_scratch_server_data_mountpoint }}"
         ###############################################################################
         # General settings
         ###############################################################################

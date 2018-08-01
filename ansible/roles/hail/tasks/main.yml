@@ -78,6 +78,7 @@
       spark_hadoop_default_s3a_endpoint: "cog.sanger.ac.uk"
       spark_hadoop_anonymous_buckets: "{{ hail_spark_hadoop_anonymous_buckets }}"
       spark_executor_memory_gb: "{{ hail_spark_executor_memory_gb }}"
+      spark_local_directory: "{{ hail_spark_local_directory }}"
       ###############################################################################
       # Master server settings
       ###############################################################################
@@ -217,6 +218,7 @@
   set_fact:
     hail_master_data_dir: "{{ hail_master_data_dir }}"
 
+# It is unclear to me why this is required... CN
 - name: set hail_data_dir as a fact on all nodes
   set_fact:
     hail_data_dir: "{{ hail_master_data_dir }}"
@@ -225,7 +227,7 @@
 - name: create hail data directory
   become: yes
   file:
-    path: "{{ hail_data_dir }}"
+    path: "{{ hail_master_data_dir }}"
     state: directory
     mode: 0700
     owner: "{{ hail_user }}"
@@ -237,7 +239,7 @@
 - name: mount hail data dir (on non-master nodes)
   become: yes
   mount:
-    name: "{{ hail_data_dir }}"
+    path: "{{ hail_master_data_dir }}"
     src: "{{ hail_master_host }}:{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
     fstype: nfs
     opts: defaults,intr,nofail
@@ -249,7 +251,7 @@
 - name: link /data to data dir for convenience
   become: yes
   file:
-    src: "{{ hail_data_dir }}"
+    src: "{{ hail_master_data_dir }}"
     dest: "/data"
     state: link
 

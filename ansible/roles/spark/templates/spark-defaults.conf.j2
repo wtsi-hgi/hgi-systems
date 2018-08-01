@@ -29,15 +29,16 @@
 # spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
 
 # SparkContext Configuration
-spark.master                             spark://{{ spark_master_host }}:{{ spark_master_port }}
-spark.sql.files.maxPartitionBytes        {{ hail_spark_executor_memory_bytes }}
-spark.sql.files.openCostInBytes          {{ hail_spark_executor_memory_bytes }}
-spark.jars				 {{ spark_jars }}
-spark.ui.reverseProxy			 true
-spark.ui.reverseProxyUrl		 https://{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}/{{ spark_master_external_path }}
-spark.executor.memory			 {{ hail_spark_executor_memory_bytes }}b
-spark.serializer                 org.apache.spark.serializer.KryoSerializer
-spark.kryo.registrator              is.hail.kryo.HailKryoRegistrator
+spark.master                            spark://{{ spark_master_host }}:{{ spark_master_port }}
+spark.sql.files.maxPartitionBytes       {{ hail_spark_executor_memory_bytes }}
+spark.sql.files.openCostInBytes         {{ hail_spark_executor_memory_bytes }}
+spark.jars				                {{ spark_jars }}
+spark.ui.reverseProxy			        true
+spark.ui.reverseProxyUrl		        https://{{ spark_master_external_hostname }}.{{ spark_master_external_domain }}/{{ spark_master_external_path }}
+spark.executor.memory			        {{ hail_spark_executor_memory_bytes }}b
+spark.serializer                        org.apache.spark.serializer.KryoSerializer
+spark.kryo.registrator                  is.hail.kryo.HailKryoRegistrator
+spark.local.dir                         {{ spark_local_directory }}
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath_list | join(':') }}
