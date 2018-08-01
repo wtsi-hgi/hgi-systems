@@ -141,11 +141,6 @@ def main():
             for runner_id in to_add:
                 project.runners.create({"runner_id": runner_id})
             if disable_shared_runners:
-                # Fixes https://github.com/wtsi-hgi/hgi-systems/issues/9 by working around issue with GitLab library:
-                # https://github.com/gpocentek/python-gitlab/issues/250
-                del project.name
-                del project.public
-                del project.visibility_level
                 project.shared_runners_enabled = False
                 project.save()
             assert {runner.id for runner in project.runners.list(all=True, scope="specific")} == required_runner_ids
