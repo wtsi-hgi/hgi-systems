@@ -203,7 +203,7 @@
 - name: copy docker registry cert
   become: yes
   copy:
-    content: "{{ gitlab_runner_docker_registry_cert_file }}"
+    content: "{{ gitlab_runner_docker_registry_cert }}"
     dest: "{{ gitlab_runner_docker_registry_cert_file }}"
     owner: root
     mode: 0600
