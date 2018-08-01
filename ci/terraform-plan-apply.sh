@@ -12,10 +12,10 @@ ensureSet CI_PROJECT_DIR REGION SETUP ENV ANSIBLE_VAULT_PASSWORD TERRAFORM_CONSU
 
 terraform_bin="${SCRIPT_DIRECTORY}/terraform.sh"
 
-artifacts_dir="${CI_PROJECT_DIR}/artifacts"
-mkdir -p "${artifacts_dir}"
-echo "Listing contents of artifacts directory ${artifacts_dir}"
-artifacts=$(ls "${artifacts_dir}/")
+export ARTIFACTS_DIR="${CI_PROJECT_DIR}/artifacts"
+mkdir -p "${ARTIFACTS_DIR}"
+echo "Listing contents of artifacts directory ${ARTIFACTS_DIR}"
+artifacts=$(ls "${ARTIFACTS_DIR}/")
 
 echo "Sourcing terraform-init-workspace.sh"
 . ${SCRIPT_DIRECTORY}/terraform-init-workspace.sh
@@ -27,16 +27,16 @@ ${terraform_bin} plan -input=false -out plan -parallelism=${PARALLELISM}
 plan_exit_status=$?
 set -e
 echo "Copying plan to artifacts"
-cp plan "${artifacts_dir}/"
+cp plan "${ARTIFACTS_DIR}/"
 
 if [[ ${plan_exit_status} -eq 0 ]]; then
     echo "Terraform plan was successful"
     echo "Generating human readable ${ENV}.tfstate.txt artifact"
     (${terraform_bin} show -no-color > "${ENV}.tfstate.txt")
-    cp "${ENV}.tfstate.txt" "${artifacts_dir}"
+    cp "${ENV}.tfstate.txt" "${ARTIFACTS_DIR}"
     echo "Generating human-readable plan.txt artifact"
     ${terraform_bin} show -no-color plan > plan.txt
-    cp plan.txt "${artifacts_dir}/"
+    cp plan.txt "${ARTIFACTS_DIR}/"
 else
     >&2 echo "Terraform plan failed: ${plan_exit_status}"
     exit ${plan_exit_status}
