@@ -50,3 +50,4 @@ spark.hadoop.fs.s3a.endpoint             {{ spark_hadoop_default_s3a_endpoint }}
 {% for bucket in spark_hadoop_anonymous_buckets %}
 spark.hadoop.fs.s3a.bucket.{{ bucket }}.aws.credentials.provider	org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider
 {% endfor %}
+spark.hadoop.fs.s3a.connection.maximum          100
