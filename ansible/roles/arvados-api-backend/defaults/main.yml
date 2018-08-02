@@ -2,6 +2,7 @@
 #   arvados_api_backend_remote_check_delegate
 #   arvados_api_backend_master_private_ips
 #   arvados_api_backend_api_host
+#   arvados_api_backend_cluster_id
 
 ---
 

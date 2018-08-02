@@ -340,6 +340,7 @@
         arvados_api_backend_api_host: "{{ arvados_cluster_api_host }}"
         arvados_api_backend_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
         arvados_api_backend_pgp_keyserver_url: "{{ pgp_keyserver_url }}"
+        arvados_api_backend_cluster_id: "{{ arvados_cluster_id }}"
 
 - hosts: arvados-keeps
   tasks:

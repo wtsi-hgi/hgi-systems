@@ -1,6 +1,7 @@
 {
   "service": {
     "name": "arvados-api-backend",
+    "tags": ["{{ arvados_api_backend_cluster_id }}"],
     "port": {{ arvados_api_backend_api_backend_port }},
     "checks": [
       {
