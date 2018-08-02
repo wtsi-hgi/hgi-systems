@@ -113,8 +113,8 @@ arvados_master_haproxy_queues:
     patterns:
       - '"~*^/arvados/v1/containers"'
     port: 5014
-    final_queue: long
-    maxconn: 2048
+    final_queue: normal
+    maxconn: 1024
   - name: workflows
     patterns:
       - '"~*^/arvados/v1/workflows"'
@@ -137,8 +137,8 @@ arvados_master_haproxy_final_queues:
         minconn: 1
         maxconn: 2
         backup: true
-    backend_server_minconn: 2
-    backend_server_maxconn: 8
+    backend_server_minconn: 24
+    backend_server_maxconn: 48
     maxconn: 1024
   fast:
     port: 7001
@@ -148,8 +148,8 @@ arvados_master_haproxy_final_queues:
         minconn: 1
         maxconn: 1
         backup: true
-    backend_server_minconn: 2
-    backend_server_maxconn: 6
+    backend_server_minconn: 8
+    backend_server_maxconn: 16
     maxconn: 512
   long:
     port: 7002
@@ -159,8 +159,8 @@ arvados_master_haproxy_final_queues:
         minconn: 1
         maxconn: 2
         backup: true
-    backend_server_minconn: 16
-    backend_server_maxconn: 72
+    backend_server_minconn: 48
+    backend_server_maxconn: 96
     maxconn: 2048
   logs:
     port: 7003
@@ -170,6 +170,6 @@ arvados_master_haproxy_final_queues:
         minconn: 2
         maxconn: 4
         backup: true
-    backend_server_minconn: 32
-    backend_server_maxconn: 112
+    backend_server_minconn: 16
+    backend_server_maxconn: 64
     maxconn: 4096
