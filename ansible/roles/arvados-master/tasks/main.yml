@@ -636,14 +636,14 @@
   with_items:
     - arvados_api_passenger_restart.sh
 
-- name: enable arvados_api_passenger_restart.sh cron job
+- name: enable arvados_api_passenger_restart.sh and crunch-dispatch-slurm cron jobs
   become: yes
   cron: 
     state: present
     name: "{{ item.name }}"
     cron_file: "/etc/cron.d/{{ item.name }}"
     minute: "0"
-    hour: "6"
+    hour: "{{ item.hour }}"
     day: "*"
     month: "*"
     weekday: "*"
@@ -652,6 +652,10 @@
   with_items:
     - name: arvados_api_passenger_restart
       job: /var/www/arvados-api/current/script/arvados_api_passenger_restart.sh
+      hour: "6"
+    - name: crunch_dispatch_slurm_restart
+      job: systemctl restart crunch-dispatch-slurm
+      hour: "*"
 
 - name: create arvados db maintenance scripts for cron to run
   become: yes
