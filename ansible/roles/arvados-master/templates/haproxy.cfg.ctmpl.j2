@@ -1,4 +1,4 @@
-{{ '{{ scratch.Set "arvados_api_backend_count" (service "arvados-api-backend" | len) }}' }}
+{{ '{{ scratch.Set "arvados_api_backend_count" (service "arvados-api-backend|any" | len) }}' }}
 
 global
   log /dev/log  local0
