@@ -24,6 +24,6 @@ autovacuum_multixact_freeze_max_age = 400000000        # maximum multixact age
 autovacuum_vacuum_cost_delay = 20ms     # default vacuum cost delay for
                                         # autovacuum, in milliseconds;
                                         # -1 means use vacuum_cost_delay
-autovacuum_vacuum_cost_limit = 100000   # default vacuum cost limit for 
+autovacuum_vacuum_cost_limit = 10000    # default vacuum cost limit for 
                                         # autovacuum, -1 means use
-                                        # vacuum_cost_limit
+                                        # vacuum_cost_limit. range up to 10000.
