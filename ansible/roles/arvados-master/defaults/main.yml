@@ -96,7 +96,7 @@ arvados_master_haproxy_queues:
       - '"~*^/arvados/v1/collections"'
     port: 5011
     final_queue: long
-    maxconn: 2048
+    maxconn: 4096
   - name: repositories
     patterns:
       - '"~*^/arvados/v1/repositories"'
@@ -108,7 +108,7 @@ arvados_master_haproxy_queues:
       - '"~*^/arvados/v1/container_requests"'
     port: 5013
     final_queue: long
-    maxconn: 2048
+    maxconn: 4096
   - name: containers
     patterns:
       - '"~*^/arvados/v1/containers"'
