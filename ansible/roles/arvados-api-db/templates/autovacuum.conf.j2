@@ -5,9 +5,9 @@ autovacuum = on                         # Enable autovacuum subprocess?  'on'
                                         # requires track_counts to also be on.
 log_autovacuum_min_duration = 100       # -1 disables, 0 logs all actions and
                                         # their durations, > 0 logs only
-                                        # actions running at least this number9
+                                        # actions running at least this number
                                         # of milliseconds.
-autovacuum_max_workers = 4              # max number of autovacuum subprocesses9
+autovacuum_max_workers = 32             # max number of autovacuum subprocesses
                                         # (change requires restart)
 autovacuum_naptime = 10                 # time between autovacuum runs (s)
 autovacuum_vacuum_threshold = 50        # min number of row updates before
@@ -24,6 +24,6 @@ autovacuum_multixact_freeze_max_age = 400000000        # maximum multixact age
 autovacuum_vacuum_cost_delay = 20ms     # default vacuum cost delay for
                                         # autovacuum, in milliseconds;
                                         # -1 means use vacuum_cost_delay
-autovacuum_vacuum_cost_limit = 10000    # default vacuum cost limit for 
+autovacuum_vacuum_cost_limit = 100000   # default vacuum cost limit for 
                                         # autovacuum, -1 means use
                                         # vacuum_cost_limit
