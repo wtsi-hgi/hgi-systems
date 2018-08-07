@@ -50,12 +50,12 @@ while true; do
           if(hms_n>2) {
             s += hms_a[1]*60*60;
           }
-          s += hms_a[hms_n-1];
+          s += hms_a[hms_n-1]*60;
           s += hms_a[hms_n];
           print s;
        }
 EOF
-							   ))
+	      						   ))
 	squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
 	echo "CHART SLURM.squeue_${status}_job_runtime_min_mean_max squeue_${status}_job_runtime_min_mean_max 'squeue ${status} job runtime min/max' seconds runtime_min_mean_max ${status} line ${priority} ${desired_update_every_s}"
 	for dim in min mean max; do 
