@@ -2,6 +2,7 @@
 
 update_every_ns=$(($1*1000000000))
 priority=100000
+desired_update_every_s=2
 
 squeue_ok=$(squeue --usage > /dev/null && echo "ok")
 if [[ "${squeue_ok}" != "ok" ]]; then
@@ -20,14 +21,13 @@ while true; do
     done
 
     # collect and print the data
-    squeue_data=$(squeue -ho "%T %M")
+    squeue_data=$(squeue -t all -ho "%T %M")
 
     # squeue status (jobs)
     # by status: PENDING, RUNNING, COMPLETING, etc
-    echo "CHART SLURM.squeue_job_status squeue_job_status 'squeue job status' jobs squeue job_status stacked ${priority} 10"
+    echo "CHART SLURM.squeue_job_status squeue_job_status 'squeue job status' jobs squeue job_status stacked ${priority} ${desired_update_every_s}"
     squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
-    squeue_status_dimensions=$(echo "${squeue_status}" | awk '{print $2}')
-    for dim in ${squeue_status_dimensions}; do
+    for dim in RUNNING FAILED CONFIGURING SUSPENDED COMPLETING CANCELLED COMPLETED PENDING TIMEOUT PREEMPTED NODE_FAIL SPECIAL_EXIT; do
 	echo "DIMENSION ${dim}"
     done
     echo "BEGIN SLURM.squeue_job_status"
@@ -56,7 +56,7 @@ while true; do
 EOF
 							))
     squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
-    echo "CHART SLURM.squeue_running_job_runtime_min_max squeue_running_job_runtime_min_max 'squeue running job runtime min/max' seconds squeue running_job_runtime_min_max line ${priority} 10"
+    echo "CHART SLURM.squeue_running_job_runtime_min_max squeue_running_job_runtime_min_max 'squeue running job runtime min/max' seconds squeue running_job_runtime_min_max line ${priority} ${desired_update_every_s}"
     for dim in min max; do 
 	echo "DIMENSION ${dim}"
     done
@@ -78,7 +78,7 @@ EOF
 					 )
     echo "END"
 
-    echo "CHART SLURM.squeue_running_job_runtime_quartiles squeue_running_job_runtime_quartiles 'squeue running job runtime mean/quartiles' seconds squeue running_job_runtime_quartiles line ${priority} 10"
+    echo "CHART SLURM.squeue_running_job_runtime_quartiles squeue_running_job_runtime_quartiles 'squeue running job runtime mean/quartiles' seconds squeue running_job_runtime_quartiles line ${priority} ${desired_update_every_s}"
     for dim in mean q5 q25 median q75 q95; do
 	echo "DIMENSION ${dim}"
     done
