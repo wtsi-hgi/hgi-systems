@@ -12,13 +12,14 @@ ProctrackType=proctrack/pgid
 CacheGroups=0
 ReturnToService=2
 TaskPlugin=task/cgroup
+MaxJobCount=100000
 #
 # TIMERS
 SlurmctldTimeout=300
 SlurmdTimeout=300
 MessageTimeout=60
 InactiveLimit=0
-MinJobAge=300
+MinJobAge=3600
 KillWait=30
 Waittime=0
 #
