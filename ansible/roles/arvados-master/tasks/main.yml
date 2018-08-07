@@ -1182,3 +1182,12 @@
   notify:
    - restart nginx
 
+- name: install slurm plugin for netdata
+  become: yes 
+  copy:
+    src: slurm-squeue.plugin
+    dest: /usr/libexec/netdata/plugins.d/slurm-squeue.plugin
+    mode: 0755
+  notify:
+   - restart netdata
+

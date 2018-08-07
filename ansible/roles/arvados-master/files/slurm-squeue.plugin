@@ -1,0 +1,107 @@
+#!/bin/bash
+
+update_every_ns=$(($1*1000000000))
+priority=100000
+
+squeue_ok=$(squeue --usage > /dev/null && echo "ok")
+if [[ "${squeue_ok}" != "ok" ]]; then
+    >&2 echo "squeue not functional, disabling slurm-squeue.plugin"
+    echo "DISABLE"
+    exit 1
+fi
+
+while true; do
+    # align schedule with netdata daemon so we don't miss data points
+    now_ns=$(date +%s%N)
+    next_run_ns=$((${now_ns} - (${now_ns} % ${update_every_ns}) + ${update_every_ns}))
+    while [[ ${now_ns} -lt ${next_run_ns} ]]; do
+	sleep $(bc -l <<< "(${next_run_ns}-${now_ns})/1000000000")
+	now_ns=$(date +%s%N)
+    done
+
+    # collect and print the data
+    squeue_data=$(squeue -ho "%T %M")
+
+    # squeue status (jobs)
+    # by status: PENDING, RUNNING, COMPLETING, etc
+    echo "CHART SLURM.squeue_job_status squeue_job_status 'squeue job status' jobs squeue job_status stacked ${priority} 10"
+    squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
+    squeue_status_dimensions=$(echo "${squeue_status}" | awk '{print $2}')
+    for dim in ${squeue_status_dimensions}; do
+	echo "DIMENSION ${dim}"
+    done
+    echo "BEGIN SLURM.squeue_job_status"
+    echo "${squeue_status}" | awk '{print "SET "$2" = "$1}'
+    echo "END"
+
+    # squeue runtime (seconds)
+    # by min, mean, median, max
+    squeue_runtime_s=$(echo "${squeue_data}" | awk -f <(cat <<'EOF'
+      $1 == "RUNNING" {
+        s = 0;
+        dhms = $2;
+        dhms_n = split(dhms, dhms_a, "-"); 
+        if(dhms_n>1) {
+          s += dhms_a[1]*24*60*60;
+        }
+        hms = dhms_a[dhms_n];
+        hms_n = split(hms, hms_a, ":");
+        if(hms_n>2) {
+          s += hms_a[1]*60*60;
+        }
+        s += hms_a[hms_n-1];
+        s += hms_a[hms_n];
+        print s;
+     }
+EOF
+							))
+    squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
+    echo "CHART SLURM.squeue_running_job_runtime_min_max squeue_running_job_runtime_min_max 'squeue running job runtime min/max' seconds squeue running_job_runtime_min_max line ${priority} 10"
+    for dim in min max; do 
+	echo "DIMENSION ${dim}"
+    done
+    echo "BEGIN SLURM.squeue_running_job_runtime_min_max"
+    echo "${squeue_runtime_s}" | awk -f <(cat <<'EOF'
+      BEGIN {
+        n = 0;
+        total = 0;
+      } 
+      {
+        runtimes[++n] = $1;
+      } 
+      END {
+        n = asort(runtimes)
+        print "SET min = "(runtimes[1]);
+        print "SET max = "(runtimes[n]);
+      }
+EOF
+					 )
+    echo "END"
+
+    echo "CHART SLURM.squeue_running_job_runtime_quartiles squeue_running_job_runtime_quartiles 'squeue running job runtime mean/quartiles' seconds squeue running_job_runtime_quartiles line ${priority} 10"
+    for dim in mean q5 q25 median q75 q95; do
+	echo "DIMENSION ${dim}"
+    done
+    echo "BEGIN SLURM.squeue_running_job_runtime_quartiles"
+    echo "${squeue_runtime_s}" | awk -f <(cat <<'EOF'
+      BEGIN {
+        n = 0;
+        total = 0;
+      } 
+      {
+        runtimes[++n] = $1;
+        total += $1;
+      } 
+      END {
+        n = asort(runtimes)
+        print "SET mean = "(total/n); 
+        print "SET q5 = "((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2);
+        print "SET q25 = "((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2); 
+        print "SET median = "((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2);
+        print "SET q75 = "((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2); 
+        print "SET q95 = "((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2);
+      }
+EOF
+					 )
+    echo "END"
+done
