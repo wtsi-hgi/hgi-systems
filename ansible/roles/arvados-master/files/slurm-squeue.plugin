@@ -5,7 +5,7 @@ priority=100000
 desired_update_every_s=2
 
 # value to add to 0s times so they show up on the chart
-zero_s_delta=0.001
+zero_ms_delta=1
 
 squeue_ok=$(squeue --usage > /dev/null && echo "ok")
 if [[ "${squeue_ok}" != "ok" ]]; then
@@ -21,11 +21,11 @@ for dim in "${dimensions[@]}"; do
 done
 
 for status in RUNNING FAILED COMPLETED; do 
-	echo "CHART SLURM.squeue_${status}_job_runtime_min_mean_max squeue_${status}_job_runtime_min_mean_max 'squeue ${status} job runtime min/max' seconds runtime_min_mean_max ${status} line ${priority} ${desired_update_every_s}"
+	echo "CHART SLURM.squeue_${status}_job_runtime_min_mean_max squeue_${status}_job_runtime_min_mean_max 'squeue ${status} job runtime min/max' milliseconds runtime_min_mean_max ${status} line ${priority} ${desired_update_every_s}"
 	for dim in min mean max; do 
 	    echo "DIMENSION ${dim}"
 	done
-	echo "CHART SLURM.squeue_${status}_job_runtime_percentiles squeue_${status}_job_runtime_percentiles 'squeue ${status} job runtime percentiles' seconds runtime_percentiles ${status} line ${priority} ${desired_update_every_s}"
+	echo "CHART SLURM.squeue_${status}_job_runtime_percentiles squeue_${status}_job_runtime_percentiles 'squeue ${status} job runtime percentiles' milliseconds runtime_percentiles ${status} line ${priority} ${desired_update_every_s}"
 	for dim in q1 q5 q10 q25 median q75 q90 q95 q99; do
 	    echo "DIMENSION ${dim}"
 	done
@@ -84,9 +84,9 @@ EOF
         } 
         END {
           n = asort(runtimes)
-          printf("SET min = %.3f\n", (runtimes[1]+(${zero_s_delta})));
-          printf("SET mean = %.3f\n", (total/n));
-          printf("SET max = %.3f\n", (runtimes[n]));
+          printf("SET min = %.3f\n", (1000*runtimes[1]+(${zero_ms_delta})));
+          printf("SET mean = %.3f\n", (1000*total/n));
+          printf("SET max = %.3f\n", (1000*runtimes[n]));
         }
 EOF
 					     )
@@ -104,15 +104,15 @@ EOF
         } 
         END {
           n = asort(runtimes)
-          printf("SET q1 = %.3f\n", (((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2)+(${zero_s_delta})));
-          printf("SET q5 = %.3f\n", (((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2)+(${zero_s_delta})));
-          printf("SET q10 = %.3f\n", (((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2)+(${zero_s_delta})));
-          printf("SET q25 = %.3f\n", (((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2)+(${zero_s_delta}))); 
-          printf("SET median = %.3f\n", (((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2)+(${zero_s_delta})));
-          printf("SET q75 = %.3f\n", (((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2)+(${zero_s_delta}))); 
-          printf("SET q90 = %.3f\n", (((runtimes[int(9*n/10)]+runtimes[(int(9*n/10)+(0!=(n%10)))])/2)+(${zero_s_delta})));
-          printf("SET q95 = %.3f\n", (((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2)+(${zero_s_delta})));
-          printf("SET q99 = %.3f\n", (((runtimes[int(99*n/100)]+runtimes[(int(99*n/100)+(0!=(n%100)))])/2)+(${zero_s_delta})));
+          printf("SET q1 = %.3f\n", (1000*((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2)+(${zero_ms_delta})));
+          printf("SET q5 = %.3f\n", (1000*((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2)+(${zero_ms_delta})));
+          printf("SET q10 = %.3f\n", (1000*((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2)+(${zero_ms_delta})));
+          printf("SET q25 = %.3f\n", (1000*((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2)+(${zero_ms_delta}))); 
+          printf("SET median = %.3f\n", (1000*((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2)+(${zero_ms_delta})));
+          printf("SET q75 = %.3f\n", (1000*((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2)+(${zero_ms_delta}))); 
+          printf("SET q90 = %.3f\n", (1000*((runtimes[int(9*n/10)]+runtimes[(int(9*n/10)+(0!=(n%10)))])/2)+(${zero_ms_delta})));
+          printf("SET q95 = %.3f\n", (1000*((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2)+(${zero_ms_delta})));
+          printf("SET q99 = %.3f\n", (1000*((runtimes[int(99*n/100)]+runtimes[(int(99*n/100)+(0!=(n%100)))])/2)+(${zero_ms_delta})));
         }
 EOF
 					     )
