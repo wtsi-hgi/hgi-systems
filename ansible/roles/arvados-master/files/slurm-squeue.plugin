@@ -4,12 +4,32 @@ update_every_ns=$(($1*1000000000))
 priority=100000
 desired_update_every_s=2
 
+# value to add to 0s times so they show up on the chart
+zero_s_delta=0.001
+
 squeue_ok=$(squeue --usage > /dev/null && echo "ok")
 if [[ "${squeue_ok}" != "ok" ]]; then
     >&2 echo "squeue not functional, disabling slurm-squeue.plugin"
     echo "DISABLE"
     exit 1
 fi
+
+echo "CHART SLURM.squeue_job_status squeue_job_status 'squeue job status' jobs job_status job_status stacked ${priority} ${desired_update_every_s}"
+dimensions=(RUNNING FAILED CONFIGURING SUSPENDED COMPLETING CANCELLED COMPLETED TIMEOUT PENDING PREEMPTED NODE_FAIL SPECIAL_EXIT)
+for dim in "${dimensions[@]}"; do
+    echo "DIMENSION ${dim}"
+done
+
+for status in RUNNING FAILED COMPLETED; do 
+	echo "CHART SLURM.squeue_${status}_job_runtime_min_mean_max squeue_${status}_job_runtime_min_mean_max 'squeue ${status} job runtime min/max' seconds runtime_min_mean_max ${status} line ${priority} ${desired_update_every_s}"
+	for dim in min mean max; do 
+	    echo "DIMENSION ${dim}"
+	done
+	echo "CHART SLURM.squeue_${status}_job_runtime_percentiles squeue_${status}_job_runtime_percentiles 'squeue ${status} job runtime percentiles' seconds runtime_percentiles ${status} line ${priority} ${desired_update_every_s}"
+	for dim in q1 q5 q10 q25 median q75 q90 q95 q99; do
+	    echo "DIMENSION ${dim}"
+	done
+done
 
 while true; do
     # align schedule with netdata daemon so we don't miss data points
@@ -24,12 +44,7 @@ while true; do
     squeue_data=$(squeue -t all -ho "%T %M")
 
     # squeue status (jobs)
-    echo "CHART SLURM.squeue_job_status squeue_job_status 'squeue job status' jobs job_status job_status stacked ${priority} ${desired_update_every_s}"
-    dimensions=(RUNNING FAILED CONFIGURING SUSPENDED COMPLETING CANCELLED COMPLETED TIMEOUT PENDING PREEMPTED NODE_FAIL SPECIAL_EXIT)
     squeue_status=$( ((echo "${squeue_data}" | awk '{print $1}'); for dim in "${dimensions[@]}"; do echo "${dim}"; done) | sort | uniq -c)
-    for dim in "${dimensions[@]}"; do
-	echo "DIMENSION ${dim}"
-    done
     echo "BEGIN SLURM.squeue_job_status"
     echo "${squeue_status}" | awk '{print "SET "$2" = "($1-1)}'
     echo "END"
@@ -57,23 +72,19 @@ while true; do
 EOF
 	      						   ))
 	squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
-	echo "CHART SLURM.squeue_${status}_job_runtime_min_mean_max squeue_${status}_job_runtime_min_mean_max 'squeue ${status} job runtime min/max' seconds runtime_min_mean_max ${status} line ${priority} ${desired_update_every_s}"
-	for dim in min mean max; do 
-	    echo "DIMENSION ${dim}"
-	done
 	echo "BEGIN SLURM.squeue_${status}_job_runtime_min_mean_max"
-	echo "${squeue_runtime_s}" | awk -f <(cat <<'EOF'
+	echo "${squeue_runtime_s}" | awk -f <(cat <<EOF
         BEGIN {
           n = 0;
           total = 0;
         } 
         {
-          runtimes[++n] = $1;
-          total += $1;
+          runtimes[++n] = \$1;
+          total += \$1;
         } 
         END {
           n = asort(runtimes)
-          printf("SET min = %.3f\n", (runtimes[1]+(1/1000)));
+          printf("SET min = %.3f\n", (runtimes[1]+(${zero_s_delta})));
           printf("SET mean = %.3f\n", (total/n));
           printf("SET max = %.3f\n", (runtimes[n]));
         }
@@ -81,31 +92,27 @@ EOF
 					     )
 	echo "END"
 	
-	echo "CHART SLURM.squeue_${status}_job_runtime_percentiles squeue_${status}_job_runtime_percentiles 'squeue ${status} job runtime percentiles' seconds runtime_percentiles ${status} line ${priority} ${desired_update_every_s}"
-	for dim in q1 q5 q10 q25 median q75 q90 q95 q99; do
-	    echo "DIMENSION ${dim}"
-	done
 	echo "BEGIN SLURM.squeue_${status}_job_runtime_percentiles"
-	echo "${squeue_runtime_s}" | awk -f <(cat <<'EOF'
+	echo "${squeue_runtime_s}" | awk -f <(cat <<EOF
         BEGIN {
           n = 0;
           total = 0;
         } 
         {
-          runtimes[++n] = $1;
-          total += $1;
+          runtimes[++n] = \$1;
+          total += \$1;
         } 
         END {
           n = asort(runtimes)
-          printf("SET q1 = %.3f\n", (((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2)+(1/1000000000)));
-          printf("SET q5 = %.3f\n", (((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2)+(1/1000000000)));
-          printf("SET q10 = %.3f\n", (((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2)+(1/1000000000)));
-          printf("SET q25 = %.3f\n", (((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2)+(1/1000000000))); 
-          printf("SET median = %.3f\n", (((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2)+(1/1000000000)));
-          printf("SET q75 = %.3f\n", (((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2)+(1/1000000000))); 
-          printf("SET q90 = %.3f\n", (((runtimes[int(9*n/10)]+runtimes[(int(9*n/10)+(0!=(n%10)))])/2)+(1/1000000000)));
-          printf("SET q95 = %.3f\n", (((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2)+(1/1000000000)));
-          printf("SET q99 = %.3f\n", (((runtimes[int(99*n/100)]+runtimes[(int(99*n/100)+(0!=(n%100)))])/2)+(1/1000000000)));
+          printf("SET q1 = %.3f\n", (((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2)+(${zero_s_delta})));
+          printf("SET q5 = %.3f\n", (((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2)+(${zero_s_delta})));
+          printf("SET q10 = %.3f\n", (((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2)+(${zero_s_delta})));
+          printf("SET q25 = %.3f\n", (((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2)+(${zero_s_delta}))); 
+          printf("SET median = %.3f\n", (((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2)+(${zero_s_delta})));
+          printf("SET q75 = %.3f\n", (((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2)+(${zero_s_delta}))); 
+          printf("SET q90 = %.3f\n", (((runtimes[int(9*n/10)]+runtimes[(int(9*n/10)+(0!=(n%10)))])/2)+(${zero_s_delta})));
+          printf("SET q95 = %.3f\n", (((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2)+(${zero_s_delta})));
+          printf("SET q99 = %.3f\n", (((runtimes[int(99*n/100)]+runtimes[(int(99*n/100)+(0!=(n%100)))])/2)+(${zero_s_delta})));
         }
 EOF
 					     )
