@@ -24,14 +24,14 @@ while true; do
     squeue_data=$(squeue -t all -ho "%T %M")
 
     # squeue status (jobs)
-    # by status: PENDING, RUNNING, COMPLETING, etc
     echo "CHART SLURM.squeue_job_status squeue_job_status 'squeue job status' jobs squeue job_status stacked ${priority} ${desired_update_every_s}"
-    squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
-    for dim in RUNNING FAILED CONFIGURING SUSPENDED COMPLETING CANCELLED COMPLETED PENDING TIMEOUT PREEMPTED NODE_FAIL SPECIAL_EXIT; do
+    dimensions=(RUNNING FAILED CONFIGURING SUSPENDED COMPLETING CANCELLED COMPLETED TIMEOUT PENDING PREEMPTED NODE_FAIL SPECIAL_EXIT)
+    squeue_status=$( ((echo "${squeue_data}" | awk '{print $1}'); for dim in "${dimensions[@]}"; do echo "${dim}"; done) | sort | uniq -c)
+    for dim in "${dimensions[@]}"; do
 	echo "DIMENSION ${dim}"
     done
     echo "BEGIN SLURM.squeue_job_status"
-    echo "${squeue_status}" | awk '{print "SET "$2" = "$1}'
+    echo "${squeue_status}" | awk '{print "SET "$2" = "($1-1)}'
     echo "END"
 
     # squeue runtime (seconds)
