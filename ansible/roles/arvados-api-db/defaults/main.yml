@@ -1,4 +1,8 @@
+---
+
 arvados_api_db_postgresql_package_version: 9.5+173ubuntu0.1
 arvados_api_db_postgresql_version: "{{ arvados_api_db_postgresql_package_version | regex_replace('^([0-9]+[.][0-9]+).*$', '\\1') }}"
 
 arvados_api_db_data_dir: /var/arvados-api-db
+
+arvados_api_db_sysctl_somaxconn: 16384
