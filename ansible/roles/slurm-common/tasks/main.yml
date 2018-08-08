@@ -23,13 +23,31 @@
 - name: install slurm and munge (apt)
   tags: slurm
   become: yes
-  apt: name={{ item }} state=present update_cache=yes cache_valid_time={{ all_apt_cache_valid_time }}
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - slurm-llnl
     - munge
   when: ansible_os_family == 'Debian'
   notify:
     - reload slurm
+
+- name: create slurmd service dropin directory
+  become: yes
+  file:
+    path: /etc/systemd/system/slurmd.service.d
+    state: directory
+
+- name: add systemd dropin for slurmd to ensure service starts after docker
+  become: yes
+  copy:
+    content: |
+      [Unit]
+      After=docker.service
+    dest: /etc/systemd/system/slurmd.service.d/10-after-docker.conf
 
 - name: ensure state save location exists
   become: yes
