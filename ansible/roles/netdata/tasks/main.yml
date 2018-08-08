@@ -71,39 +71,52 @@
     chdir: /usr/local/src/netdata
   when: netdata_git_source.changed
 
-- name: create config directories
-  become: yes
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ netdata_consul_config_dir }}"
-    - "{{ netdata_consul_template_directory }}"
-    - "{{ netdata_consul_health_alarm_notify_template_template | dirname }}"
-
-- name: create netdata consul service configuration
-  become: yes
-  template:
-    src: consul-netdata.json.j2
-    dest: "{{ netdata_consul_config_dir }}/consul-netdata.json"
-    owner: root
-  notify:
-    - restart consul
-
-- name: setup health alarm notifications
+- name: configure Netdata service in consul Consul
+  when: netdata_consul_support
   block:
-    - name: add consul template for health alarm script
+    - name: create config directories
+      become: yes
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ netdata_consul_config_dir }}"
+
+    - name: create netdata consul service configuration
       become: yes
       template:
-        src: health-alarm-notify.hcl.j2
-        dest: "{{ netdata_consul_template_directory }}/100-health-alarm-notify.hcl"
+        src: consul-netdata.json.j2
+        dest: "{{ netdata_consul_config_dir }}/consul-netdata.json"
+        owner: root
       notify:
-       - restart consul-template
+        - restart consul
+      when: netdata_consul_support
 
-    - name: create health alarm notify template template
+# FIXME: This is not yet working with consul-template
+- name: configure health alarms using Consul
+  when: netdata_consul_support and netdata_alarm_slack_webhook_url_consul_key is defined and netdata_alarm_slack_recipients_consul_key is defined
+  block:
+    - name: create config directories
       become: yes
-      template:
-        src: health-alarm-notify.conf.ctmpl.j2
-        dest: "{{ netdata_consul_health_alarm_notify_template_template }}"
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ netdata_consul_template_directory }}"
+        - "{{ netdata_consul_health_alarm_notify_template_template | dirname }}"
 
-  when: netdata_alarm_slack_webhook_url_consul_key is defined and netdata_alarm_slack_recipients_consul_key is defined
+    - name: setup health alarm notifications
+      block:
+        - name: add consul template for health alarm script
+          become: yes
+          template:
+            src: health-alarm-notify.hcl.j2
+            dest: "{{ netdata_consul_template_directory }}/100-health-alarm-notify.hcl"
+          notify:
+           - restart consul-template
+
+        - name: create health alarm notify template template
+          become: yes
+          template:
+            src: health-alarm-notify.conf.ctmpl.j2
+            dest: "{{ netdata_consul_health_alarm_notify_template_template }}"
