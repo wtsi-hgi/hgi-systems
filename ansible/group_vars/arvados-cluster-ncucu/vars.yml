@@ -143,3 +143,5 @@ arvados_cluster_GROUP_compute_node_names_lookup_args: "start=1 count={{ arvados_
 arvados_cluster_GROUP_compute_node_names: "{{ lookup('sequence', arvados_cluster_GROUP_compute_node_names_lookup_args, wantlist=True) }}"
 
 arvados_cluster_delegate: "{{ arvados_cluster_shells[0]['inventory_hostname'] }}"
+
+arvados_cluster_exists: "{{ arvados_cluster_shells | length > 0 }}"
