@@ -737,6 +737,7 @@
     cache_valid_time: "{{ all_apt_cache_valid_time }}"
   with_items:
     - crunch-dispatch-slurm
+    - bc
 
 - name: set crunch-dispatch-slum to start on boot
   become: yes
