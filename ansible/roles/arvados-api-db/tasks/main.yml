@@ -191,7 +191,7 @@
     - name: net.core.rmem_max
       value: 67108864
     - name: net.core.somaxconn
-      value: "{{ arvados_master_sysctl_somaxconn }}"
+      value: "{{ arvados_api_db_sysctl_somaxconn }}"
     - name: net.core.wmem_max
       value: 67108864
     - name: net.ipv4.ip_local_port_range
