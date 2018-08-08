@@ -440,3 +440,4 @@
         arvados_cluster_keep_s3_replication: "{{ arvados_cluster_GROUP_s3_replication }}"
         arvados_cluster_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
         arvados_cluster_keep_blob_signature_ttl_s: "{{ arvados_cluster_GROUP_blog_signature_ttl_s }}"
+      when: arvados_cluster_shells | length > 0
