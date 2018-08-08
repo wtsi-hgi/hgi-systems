@@ -79,14 +79,15 @@ EOF
           total = 0;
         } 
         {
-          runtimes[++n] = \$1;
-          total += \$1;
+          time_ms = (1000*\$1 + ${zero_ms_delta});
+          runtimes[++n] = time_ms;
+          total += time_ms;
         } 
         END {
           n = asort(runtimes)
-          printf("SET min = %.3f\n", (1000*runtimes[1]+(${zero_ms_delta})));
-          printf("SET mean = %.3f\n", (1000*total/n));
-          printf("SET max = %.3f\n", (1000*runtimes[n]));
+          printf("SET min = %.3f\n", (runtimes[1]));
+          printf("SET mean = %.3f\n", (total/n));
+          printf("SET max = %.3f\n", (runtimes[n]));
         }
 EOF
 					     )
@@ -99,20 +100,21 @@ EOF
           total = 0;
         } 
         {
-          runtimes[++n] = \$1;
-          total += \$1;
+          time_ms = (1000 * \$1 + ${zero_ms_delta});
+          runtimes[++n] = time_ms;
+          total += time_ms;
         } 
         END {
           n = asort(runtimes)
-          printf("SET q1 = %.3f\n", (1000*((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2)+(${zero_ms_delta})));
-          printf("SET q5 = %.3f\n", (1000*((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2)+(${zero_ms_delta})));
-          printf("SET q10 = %.3f\n", (1000*((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2)+(${zero_ms_delta})));
-          printf("SET q25 = %.3f\n", (1000*((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2)+(${zero_ms_delta}))); 
-          printf("SET median = %.3f\n", (1000*((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2)+(${zero_ms_delta})));
-          printf("SET q75 = %.3f\n", (1000*((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2)+(${zero_ms_delta}))); 
-          printf("SET q90 = %.3f\n", (1000*((runtimes[int(9*n/10)]+runtimes[(int(9*n/10)+(0!=(n%10)))])/2)+(${zero_ms_delta})));
-          printf("SET q95 = %.3f\n", (1000*((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2)+(${zero_ms_delta})));
-          printf("SET q99 = %.3f\n", (1000*((runtimes[int(99*n/100)]+runtimes[(int(99*n/100)+(0!=(n%100)))])/2)+(${zero_ms_delta})));
+          printf("SET q1 = %.3f\n", ((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2));
+          printf("SET q5 = %.3f\n", ((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2));
+          printf("SET q10 = %.3f\n", ((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2));
+          printf("SET q25 = %.3f\n", ((runtimes[int(n/4)]+runtimes[(int(n/4)+(0!=(n%4)))])/2));
+          printf("SET median = %.3f\n", ((runtimes[int(n/2)]+runtimes[(int(n/2)+(n%2))])/2));
+          printf("SET q75 = %.3f\n", ((runtimes[int(3*n/4)]+runtimes[(int(3*n/4)+(0!=(n%4)))])/2));
+          printf("SET q90 = %.3f\n", ((runtimes[int(9*n/10)]+runtimes[(int(9*n/10)+(0!=(n%10)))])/2));
+          printf("SET q95 = %.3f\n", ((runtimes[int(19*n/20)]+runtimes[(int(19*n/20)+(0!=(n%20)))])/2));
+          printf("SET q99 = %.3f\n", ((runtimes[int(99*n/100)]+runtimes[(int(99*n/100)+(0!=(n%100)))])/2));
         }
 EOF
 					     )
