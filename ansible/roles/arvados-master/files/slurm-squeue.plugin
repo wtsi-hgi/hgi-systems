@@ -52,7 +52,7 @@ while true; do
     for status in RUNNING FAILED COMPLETED; do 
 	# squeue runtime (seconds)
 	# by min, mean, max
-	squeue_runtime_s=$(echo "${squeue_data}" | awk -f <(cat <<EOF
+	squeue_runtime_ms=$(echo "${squeue_data}" | awk -f <(cat <<EOF
         \$1 == "${status}" {
           s = 0;
           dhms = \$2;
@@ -67,24 +67,28 @@ while true; do
           }
           s += hms_a[hms_n-1]*60;
           s += hms_a[hms_n];
-          print s;
+          print (1000*s + ${zero_ms_delta});
        }
 EOF
 	      						   ))
 	squeue_status=$(echo "${squeue_data}" | awk '{print $1}' | sort | uniq -c)
 	echo "BEGIN SLURM.squeue_${status}_job_runtime_min_mean_max"
-	echo "${squeue_runtime_s}" | awk -f <(cat <<EOF
+	echo "${squeue_runtime_ms}" | awk -f <(cat <<EOF
         BEGIN {
           n = 0;
           total = 0;
         } 
-        {
-          time_ms = (1000*\$1 + ${zero_ms_delta});
-          runtimes[++n] = time_ms;
+        \$1 > 0 {
+          time_ms = \$1;
+          n += 1;
+          runtimes[n] = time_ms;
           total += time_ms;
         } 
         END {
-          n = asort(runtimes)
+          asort(runtimes)
+          if(n==0) {
+            n = 1;
+          }
           printf("SET min = %.3f\n", (runtimes[1]));
           printf("SET mean = %.3f\n", (total/n));
           printf("SET max = %.3f\n", (runtimes[n]));
@@ -94,18 +98,22 @@ EOF
 	echo "END"
 	
 	echo "BEGIN SLURM.squeue_${status}_job_runtime_percentiles"
-	echo "${squeue_runtime_s}" | awk -f <(cat <<EOF
+	echo "${squeue_runtime_ms}" | awk -f <(cat <<EOF
         BEGIN {
           n = 0;
           total = 0;
         } 
-        {
-          time_ms = (1000 * \$1 + ${zero_ms_delta});
-          runtimes[++n] = time_ms;
+        \$1 > 0 {
+          time_ms = \$1;
+          n += 1;
+          runtimes[n] = time_ms;
           total += time_ms;
         } 
         END {
-          n = asort(runtimes)
+          asort(runtimes)
+          if(n==0) {
+            n = 1;
+          }
           printf("SET q1 = %.3f\n", ((runtimes[int(n/100)]+runtimes[(int(n/100)+(0!=(n%100)))])/2));
           printf("SET q5 = %.3f\n", ((runtimes[int(n/20)]+runtimes[(int(n/20)+(0!=(n%20)))])/2));
           printf("SET q10 = %.3f\n", ((runtimes[int(n/10)]+runtimes[(int(n/10)+(0!=(n%10)))])/2));
