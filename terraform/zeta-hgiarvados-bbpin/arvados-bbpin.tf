@@ -23,7 +23,6 @@ module "arvados-cluster" {
   sso_flavour            = "o1.large"
   workbench_flavour      = "o1.large"
   keepproxy_flavour      = "o1.large"
-  keep_flavour           = "o1.large"
   shell_flavour          = "o1.large"
   monitor_flavour        = "o1.medium"
   compute_node_flavour   = "m1.large"
@@ -32,8 +31,8 @@ module "arvados-cluster" {
   shell_names            = ["shell"]
   api_db_volume_size_gb  = 1000
   irobot_volume_size_gb  = 250
- }
- output "arvados_bbpin_json" {
-   value = "${jsonencode(module.arvados-cluster.hgi_instances)}"
- }
+}
 
+output "arvados_bbpin_json" {
+  value = "${jsonencode(module.arvados-cluster.hgi_instances)}"
+}
