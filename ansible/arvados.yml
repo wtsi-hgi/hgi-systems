@@ -365,8 +365,12 @@
         arvados_keep_blob_signing_key: "{{ arvados_cluster_GROUP_blob_signing_key }}"
 
 - hosts: arvados-keepproxies
-  roles:
-    - arvados-keepproxy
+  tasks:
+    - name: configure arvados-keepproxy
+      import_role:
+        name: arvados-keepproxy
+      vars:
+        arvados_keepproxy_backend_port: "{{ '25108' if (inventory_hostname in groups['arvados-keeps']) else '25107' }}"
 
 - hosts: arvados-workbenches
   tasks:
