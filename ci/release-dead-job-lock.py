@@ -6,7 +6,8 @@ from logging import StreamHandler
 from urllib.parse import urlparse
 
 from consullock.managers import ConsulLockManager
-from gitlab import Gitlab, sys
+from gitlab import Gitlab
+import sys
 
 logger = logging.getLogger(__name__)
 logger.addHandler(StreamHandler())
