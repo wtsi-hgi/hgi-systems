@@ -1,5 +1,5 @@
 module "consul-server" {
-  source            = "../modules/docker-consul-server"
+  source            = "../modules/docker-consul-server/v1"
   count             = 3
   env               = "${var.env}"
   region            = "${var.region}"
