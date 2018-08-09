@@ -96,23 +96,24 @@ EOF
 }
 
 module "hgi-openstack-instance" {
-  source          = "../../../hgi-openstack-instance/v1"
-  env             = "${var.env}"
-  region          = "${var.region}"
-  setup           = "${var.setup}"
-  core_context    = "${var.core_context}"
-  count           = "${var.count}"
-  floating_ip_p   = false
-  volume_p        = false
-  volume_size_gb  = "${var.volume_size_gb}"
-  name_format     = "${local.hostname_format}"
-  domain          = "${var.domain}"
-  flavour         = "${var.flavour}"
-  hostname_format = "${local.hostname_format}"
-  ssh_gateway     = "${var.ssh_gateway}"
-  keypair_name    = "${var.keypair_name}"
-  network_name    = "${var.network_name}"
-  image           = "${var.image}"
+  source                  = "../../../hgi-openstack-instance/v2"
+  env                     = "${var.env}"
+  region                  = "${var.region}"
+  setup                   = "${var.setup}"
+  core_context            = "${var.core_context}"
+  count                   = "${var.count}"
+  floating_ip_p           = false
+  volume_p                = false
+  volume_size_gb          = "${var.volume_size_gb}"
+  name_format             = "${local.hostname_format}"
+  domain                  = "${var.domain}"
+  flavour                 = "${var.flavour}"
+  hostname_format         = "${local.hostname_format}"
+  ssh_gateway             = "${var.ssh_gateway}"
+  keypair_name            = "${var.keypair_name}"
+  network_name            = "${var.network_name}"
+  image                   = "${var.image}"
+  auto_anti_affinity_name = "arvados-compute-node-anti-affinity-${var.arvados_cluster_id}"
 
   cloud_config_shell_script = "${data.template_file.ansible-cc-script.rendered}"
 
