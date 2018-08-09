@@ -48,7 +48,7 @@ locals {
     "hgi-credentials",
   ]
 
-  name_format = "arvados-keep-${var.arvados_cluster_id}-%02d"
+  name_format     = "arvados-keep-${var.arvados_cluster_id}-%02d"
   hostname_format = "arvados-keepproxy-${var.arvados_cluster_id}-%02d"
 }
 
