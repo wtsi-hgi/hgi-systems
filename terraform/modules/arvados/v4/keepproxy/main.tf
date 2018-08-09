@@ -48,6 +48,7 @@ locals {
     "hgi-credentials",
   ]
 
+  name_format = "arvados-keep-${var.arvados_cluster_id}-%02d"
   hostname_format = "arvados-keepproxy-${var.arvados_cluster_id}-%02d"
 }
 
@@ -61,7 +62,7 @@ module "hgi-openstack-instance" {
   floating_ip_p   = true
   volume_p        = true
   volume_size_gb  = "${var.volume_size_gb}"
-  name_format     = "${local.hostname_format}"
+  name_format     = "${local.name_format}"
   domain          = "${var.domain}"
   flavour         = "${var.flavour}"
   hostname_format = "${local.hostname_format}"
@@ -84,7 +85,6 @@ module "hgi-openstack-instance" {
   additional_dns_names = [
     "arvados-download-${var.arvados_cluster_id}",
     "arvados-collections-${var.arvados_cluster_id}",
-    "arvados-keep-${var.arvados_cluster_id}",
   ]
 }
 
