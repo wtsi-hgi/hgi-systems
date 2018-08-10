@@ -31,6 +31,7 @@
 - name: set cloud_resource facts phase II
   set_fact:
     cloud_resource_fqdn: "{{ cloud_resource_name }}{% if ((tf_type_openstack_compute_instance_v2_GROUP_floating_ip | default(os_public_v4) | default('')) != '') %}.hgi.sanger.ac.uk{% else %}.node.{{ cloud_resource_tenant }}.consul{% endif %}"
+    cloud_resource_fqdn_consul: "{{ cloud_resource_name }}.node.{{ cloud_resource_tenant }}.consul"
 
 - name: set cloud_resource_ROLE_FACT_ran fact
   set_fact:
