@@ -1,0 +1,22 @@
+---
+
+- name: import aptly apt repository key
+  become: yes
+  apt_key:
+    keyserver: pool.sks-keyservers.net
+    id: ED75B5A4483DA07C
+
+- name: add aptly debian repository
+  become: yes
+  apt_repository:
+    repo: deb http://repo.aptly.info/ squeeze main
+    update_cache: yes
+
+- name: install apt requirements
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: "{{ aptly_apt_cache_valid_time }}"
+  with_items:
+    - aptly

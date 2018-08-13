@@ -37,6 +37,12 @@
             mountpoint: "{{ arvados_PLAYBOOK_data_mountpoint }}"
         attached_openstack_volumes:
           - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
-        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+        attached_openstack_volume_fs_create_indicator_file: .created
+
+    - name: import aptly role
+      import_role:
+        name: aptly
+      vars:
+        aptly_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
 
     # Install and configure aptly...
