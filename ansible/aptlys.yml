@@ -23,7 +23,7 @@
 
 - hosts: aptlys
   vars:
-    arvados_PLAYBOOK_data_mountpoint: /mnt/apt-data
+    aptly_PLAYBOOK_data_mountpoint: /mnt/apt-data
   tasks:
     - name: configure attached-openstack-volume for apt data
       import_role:
@@ -34,7 +34,7 @@
           - name: aptlys-data
             size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
             fstype: xfs
-            mountpoint: "{{ arvados_PLAYBOOK_data_mountpoint }}"
+            mountpoint: "{{ aptly_PLAYBOOK_data_mountpoint }}"
         attached_openstack_volumes:
           - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
         attached_openstack_volume_fs_create_indicator_file: .created
@@ -44,5 +44,6 @@
         name: aptly
       vars:
         aptly_apt_cache_valid_time: "{{ all_apt_cache_valid_time }}"
+        aptly_data_directory: "{{ aptly_PLAYBOOK_data_mountpoint }}"
 
     # Install and configure aptly...
