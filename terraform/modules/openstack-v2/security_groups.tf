@@ -136,7 +136,7 @@ resource "openstack_networking_secgroup_rule_v2" "http-cogs" {
   ethertype         = "IPv4"
   protocol          = "tcp"
   port_range_min    = 8000
-  port_range_max    = 8000
+  port_range_max    = 8100
   remote_ip_prefix  = "0.0.0.0/0"
 }
 

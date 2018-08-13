@@ -142,7 +142,7 @@ resource "openstack_compute_secgroup_v2" "http-cogs" {
 
   rule {
     from_port   = 8000
-    to_port     = 8000
+    to_port     = 8100
     ip_protocol = "tcp"
     cidr        = "0.0.0.0/0"
   }
