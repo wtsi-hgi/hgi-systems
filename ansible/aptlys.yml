@@ -1,0 +1,42 @@
+# Copyright (c) 2018 Genome Research Ltd.
+#
+# Author: Colin Nolan <cn13@sanger.ac.uk>
+#
+# This file is part of hgi-systems.
+#
+# hgi-systems is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation; either version 3 of the License, or (at your option) any later
+# version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <http://www.gnu.org/licenses/>.
+#
+---
+
+- import_playbook: hgi-preamble-playbook.yml
+
+- hosts: aptlys
+  vars:
+    arvados_PLAYBOOK_data_mountpoint: /mnt/apt-data
+  tasks:
+    - name: configure attached-openstack-volume for apt data
+      import_role:
+        name: attached-openstack-volume
+      vars:
+        attached_openstack_volume_vg: aptlys-vg
+        attached_openstack_volume_vols:
+          - name: aptlys-data
+            size: "{{ ((tf_type_openstack_compute_instance_v2_GROUP_volume_size | int) * 1024) - 4 }}M"
+            fstype: xfs
+            mountpoint: "{{ arvados_PLAYBOOK_data_mountpoint }}"
+        attached_openstack_volumes:
+          - device: "{{ tf_type_openstack_compute_instance_v2_GROUP_volume_device }}"
+        attached_openstack_volume_fs_create_indicator_file: "{{ arvados_GROUP_s3_backup_restore_indicator_file }}"
+
+    # Install and configure aptly...
