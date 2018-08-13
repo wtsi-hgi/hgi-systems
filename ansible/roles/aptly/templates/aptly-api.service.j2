@@ -1,0 +1,9 @@
+[Unit]
+Description=Aptly REST API service
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/bin/bash -c 'aptly api serve'
+
+[Install]
+WantedBy=multi-user.target

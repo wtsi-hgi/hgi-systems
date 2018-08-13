@@ -2,3 +2,4 @@
 
 aptly_apt_cache_valid_time: 3600
 aptly_data_directory: "{{ ansible_env.HOME }}/.aptly"
+aptly_api_service_name: aptly-api

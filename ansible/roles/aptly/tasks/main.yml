@@ -26,3 +26,18 @@
   template:
     src: aptly.conf.j2
     dest: /etc/aptly.conf
+  notify: restart_aptly_api
+
+- name: configure aptly REST API systemd service
+  become: yes
+  template:
+    src: "aptly-api.service.j2"
+    dest: "/etc/systemd/system/{{ aptly_api_service_name }}.service"
+  notify: restart_aptly_api
+
+- name: start aptly REST api
+  become: yes
+  systemd:
+    name: "{{ aptly_api_service_name }}"
+    state: started
+    daemon_reload: yes
