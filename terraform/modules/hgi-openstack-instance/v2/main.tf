@@ -177,7 +177,7 @@ resource "openstack_compute_instance_v2" "instance" {
   }
 
   scheduler_hints {
-    group = "${local.auto_anti_affinity_p ? (element(openstack_compute_servergroup_v2.auto-anti-affinity.*.id, 0)) : ""}"
+    group = "${local.auto_anti_affinity_p ? (element(coalescelist(openstack_compute_servergroup_v2.auto-anti-affinity.*.id, list("")), 0)) : ""}"
   }
 
   user_data = "${data.template_cloudinit_config.cloudinit.*.rendered[count.index]}"
