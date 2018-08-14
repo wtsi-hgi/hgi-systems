@@ -64,7 +64,6 @@ module "hail-master" {
   ssh_gateway             = "${var.ssh_gateway}"
   flavour                 = "${var.master_flavour}"
   volume_size_gb          = "${var.master_volume_size_gb}"
-  auto_anti_affinity_name = ""
 }
 
 module "hail-compute" {
