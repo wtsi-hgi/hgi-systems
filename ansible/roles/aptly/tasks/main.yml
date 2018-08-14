@@ -9,6 +9,8 @@
 - name: add aptly debian repository
   become: yes
   apt_repository:
+    # "Please don't worry about squeeze part in repo name: aptly package should work on Debian squeeze+, Ubuntu 10.0+."
+    # (source: https://www.aptly.info/download/)
     repo: deb http://repo.aptly.info/ squeeze main
     update_cache: yes
 
@@ -41,3 +43,6 @@
     name: "{{ aptly_api_service_name }}"
     state: started
     daemon_reload: yes
+
+# TODO: Configure Aptly
+# TODO: nginx proxy
