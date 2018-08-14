@@ -51,19 +51,19 @@ variable "compute_flavour" {
 }
 
 module "hail-master" {
-  source                  = "../master"
-  hail_cluster_id         = "${var.hail_cluster_id}"
-  count                   = "${var.master_count}"
-  env                     = "${var.env}"
-  region                  = "${var.region}"
-  setup                   = "${var.setup}"
-  core_context            = "${var.core_context}"
-  domain                  = "${var.domain}"
-  image                   = "${var.master_image}"
-  network_name            = "main"
-  ssh_gateway             = "${var.ssh_gateway}"
-  flavour                 = "${var.master_flavour}"
-  volume_size_gb          = "${var.master_volume_size_gb}"
+  source          = "../master"
+  hail_cluster_id = "${var.hail_cluster_id}"
+  count           = "${var.master_count}"
+  env             = "${var.env}"
+  region          = "${var.region}"
+  setup           = "${var.setup}"
+  core_context    = "${var.core_context}"
+  domain          = "${var.domain}"
+  image           = "${var.master_image}"
+  network_name    = "main"
+  ssh_gateway     = "${var.ssh_gateway}"
+  flavour         = "${var.master_flavour}"
+  volume_size_gb  = "${var.master_volume_size_gb}"
 }
 
 module "hail-compute" {
