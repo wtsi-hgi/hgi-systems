@@ -20,7 +20,7 @@ module "hail-cluster-as45" {
 }
 
 module "hail-cluster-as45-2" {
-  source       = "../modules/hail/v1/cluster"
+  source       = "../modules/hail/v2/cluster"
   env          = "${var.env}"
   region       = "${var.region}"
   setup        = "${var.setup}"
