@@ -50,24 +50,24 @@ locals {
 }
 
 module "hgi-openstack-instance" {
-  source               = "../../../hgi-openstack-instance/v2"
-  env                  = "${var.env}"
-  region               = "${var.region}"
-  setup                = "${var.setup}"
-  core_context         = "${var.core_context}"
-  count                = "${var.count}"
-  floating_ip_p        = true
-  volume_p             = true
-  volume_size_gb       = "${var.volume_size_gb}"
-  name_format          = "${local.name_format}"
-  additional_dns_fqdns = ["${format("hail-%s.%s", var.hail_cluster_id, var.domain)}"]
-  domain               = "${var.domain}"
-  flavour              = "${var.flavour}"
-  hostname_format      = "${local.hostname_format}"
-  ssh_gateway          = "${var.ssh_gateway}"
-  keypair_name         = "${var.keypair_name}"
-  network_name         = "${var.network_name}"
-  image                = "${var.image}"
+  source                  = "../../../hgi-openstack-instance/v2"
+  env                     = "${var.env}"
+  region                  = "${var.region}"
+  setup                   = "${var.setup}"
+  core_context            = "${var.core_context}"
+  count                   = "${var.count}"
+  floating_ip_p           = true
+  volume_p                = true
+  volume_size_gb          = "${var.volume_size_gb}"
+  name_format             = "${local.name_format}"
+  additional_dns_fqdns    = ["${format("hail-%s.%s", var.hail_cluster_id, var.domain)}"]
+  domain                  = "${var.domain}"
+  flavour                 = "${var.flavour}"
+  hostname_format         = "${local.hostname_format}"
+  ssh_gateway             = "${var.ssh_gateway}"
+  keypair_name            = "${var.keypair_name}"
+  network_name            = "${var.network_name}"
+  image                   = "${var.image}"
   auto_anti_affinity_name = "hail-anti-affinity-${var.hail_cluster_id}"
 
   security_group_names = [

@@ -49,22 +49,22 @@ locals {
 }
 
 module "hgi-openstack-instance" {
-  source          = "../../../hgi-openstack-instance/v2"
-  env             = "${var.env}"
-  region          = "${var.region}"
-  setup           = "${var.setup}"
-  core_context    = "${var.core_context}"
-  count           = "${var.count}"
-  name_format     = "${local.hostname_format}"
-  domain          = "${var.domain}"
-  flavour         = "${var.flavour}"
-  hostname_format = "${local.hostname_format}"
-  ssh_gateway     = "${var.ssh_gateway}"
-  keypair_name    = "${var.keypair_name}"
-  network_name    = "${var.network_name}"
-  image           = "${var.image}"
-  volume_p        = true
-  volume_size_gb  = "${var.volume_size_gb}"
+  source                  = "../../../hgi-openstack-instance/v2"
+  env                     = "${var.env}"
+  region                  = "${var.region}"
+  setup                   = "${var.setup}"
+  core_context            = "${var.core_context}"
+  count                   = "${var.count}"
+  name_format             = "${local.hostname_format}"
+  domain                  = "${var.domain}"
+  flavour                 = "${var.flavour}"
+  hostname_format         = "${local.hostname_format}"
+  ssh_gateway             = "${var.ssh_gateway}"
+  keypair_name            = "${var.keypair_name}"
+  network_name            = "${var.network_name}"
+  image                   = "${var.image}"
+  volume_p                = true
+  volume_size_gb          = "${var.volume_size_gb}"
   auto_anti_affinity_name = "hail-anti-affinity-${var.hail_cluster_id}"
 
   security_group_names = [
