@@ -79,6 +79,7 @@
       spark_hadoop_anonymous_buckets: "{{ hail_spark_hadoop_anonymous_buckets }}"
       spark_executor_memory_gb: "{{ hail_spark_executor_memory_gb }}"
       spark_local_directory: "{{ hail_spark_local_directory }}"
+      spark_executor_instances: "{{ hail_spark_executor_instances }}"
       ###############################################################################
       # Master server settings
       ###############################################################################

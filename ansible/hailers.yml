@@ -234,6 +234,7 @@
         # XXX: There's currently no easy way to attach 2 volumes to an instance with our Terraform so master node
         # (which is also a worker) has its scratch on the shared NFS volume :(
         hail_spark_local_directory: "{{ hailers_PLAYBOOK_scratch_data_volume_mountpoint if inventory_hostname in groups['hail-computers'] else hailers_PLAYBOOK_data_dir + '/.master-scratch' }}"
+        hail_spark_executor_instances: "{{ ansible_processor_vcpus / 8 | floor }}"
         ###############################################################################
         # General settings
         ###############################################################################
