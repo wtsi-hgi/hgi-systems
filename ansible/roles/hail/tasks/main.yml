@@ -80,6 +80,7 @@
       spark_executor_memory_gb: "{{ hail_spark_executor_memory_gb }}"
       spark_local_directory: "{{ hail_spark_local_directory }}"
       spark_executor_instances: "{{ hail_spark_executor_instances }}"
+      spark_driver_memory_gb: "{{ hail_spark_driver_memory_gb }}"
       ###############################################################################
       # Master server settings
       ###############################################################################

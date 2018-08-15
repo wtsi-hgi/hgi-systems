@@ -63,12 +63,11 @@
 # hail_tutorial_data_s3_bucket:
 #   Publicly accessible tutorial data
 #
-###############################################################################
-# Optional variables with no defaults
-###############################################################################
-#
 # hail_spark_executor_instances:
 #   number of executors per worker
+#
+# hail_spark_driver_memory_gb:
+#   amount of memory the Spark driver is to use in GB
 #
 ###############################################################################
 

@@ -20,13 +20,11 @@
 # Default system properties included when running spark-submit.
 # This is useful for setting default environmental settings.
 
-# Example:
-# spark.master                     spark://master:7077
-# spark.eventLog.enabled           true
-# spark.eventLog.dir               hdfs://namenode:8021/directory
-# spark.serializer                 org.apache.spark.serializer.KryoSerializer
-# spark.driver.memory              5g
-# spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
+# Driver configuration
+{% if hail_spark_driver_memory_gb is defined %}
+# Gets used by Java as value for `-Xmx` so must abide by Java's required formats
+spark.driver.memory                     {{ [hail_spark_driver_memory_gb | float | round(0, 'floor') | int, 1] | max }}g
+{% endif %}
 
 # SparkContext Configuration
 spark.master                            spark://{{ spark_master_host }}:{{ spark_master_port }}
@@ -39,7 +37,7 @@ spark.executor.memory			        {{ hail_spark_executor_memory_bytes }}b
 spark.serializer                        org.apache.spark.serializer.KryoSerializer
 spark.kryo.registrator                  is.hail.kryo.HailKryoRegistrator
 spark.local.dir                         {{ spark_local_directory }}
-{ % if spark_executor_instances is defined %}
+{% if spark_executor_instances is defined %}
 spark.executor.instances                {{ spark_executor_instances }}
 {% endif %}
 

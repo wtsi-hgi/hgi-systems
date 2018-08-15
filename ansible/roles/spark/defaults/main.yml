@@ -52,6 +52,9 @@
 # spark_executor_instances:
 #   number of executors per worker
 #
+# spark_driver_memory_gb:
+#   amount of memory the Spark driver is to use in GB
+#
 ###############################################################################
 
 ###############################################################################

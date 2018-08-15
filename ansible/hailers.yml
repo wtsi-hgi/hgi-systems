@@ -33,6 +33,7 @@
     hailers_PLAYBOOK_data_created_restore_indicator_file: ".created-restore"
     hailers_PLAYBOOK_scratch_data_volume_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
     hailers_PLAYBOOK_scratch_created_restore_indicator_file: ".created-restore"
+    hailers_PLAYBOOK_recommended_spark_memory: "{{ ((((ansible_memtotal_mb | int)) / 1024) * 0.75) }}"    # https://spark.apache.org/docs/latest/hardware-provisioning.html#memory
   tasks:
     - name: assert essential hail group membership
       assert:
@@ -230,11 +231,12 @@
         hail_spark_hadoop_anonymous_buckets:
          - "{{ hail_tutorial_data_s3_bucket }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
-        hail_spark_executor_memory_gb: "{{ (((ansible_memtotal_mb | int)) / 1024) * 0.75 }}"   # See http://spark.apache.org/docs/latest/hardware-provisioning.html#local-disks
+        hail_spark_executor_memory_gb: "{{ (hailers_PLAYBOOK_recommended_spark_memory) if (inventory_hostname not in groups['hail-masters']) else (((hailers_PLAYBOOK_recommended_spark_memory | float) * 0.75) ) }}"   # See http://spark.apache.org/docs/latest/hardware-provisioning.html#local-disks
         # XXX: There's currently no easy way to attach 2 volumes to an instance with our Terraform so master node
         # (which is also a worker) has its scratch on the shared NFS volume :(
         hail_spark_local_directory: "{{ hailers_PLAYBOOK_scratch_data_volume_mountpoint if inventory_hostname in groups['hail-computers'] else hailers_PLAYBOOK_data_dir + '/.master-scratch' }}"
-        hail_spark_executor_instances: "{{ ansible_processor_vcpus / 8 | floor }}"
+        hail_spark_executor_instances: "{{ [((ansible_processor_vcpus | int) / 8 | round(0, 'floor')) | int, 1] | max }}"
+        hail_spark_driver_memory_gb: "{{ ((hailers_PLAYBOOK_recommended_spark_memory | float) * 0.25) }}"
         ###############################################################################
         # General settings
         ###############################################################################
