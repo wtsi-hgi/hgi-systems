@@ -3,7 +3,8 @@ Description=Aptly REST API service
 
 [Service]
 TimeoutStartSec=0
-ExecStart=/bin/bash -c 'aptly api serve'
+# Note: `-no-lock` implies locking only upon operation: http://disq.us/p/1jhuw42
+ExecStart=/bin/bash -c 'aptly api serve -no-lock'
 
 [Install]
 WantedBy=multi-user.target

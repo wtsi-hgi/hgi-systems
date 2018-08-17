@@ -22,6 +22,7 @@
     cache_valid_time: "{{ aptly_apt_cache_valid_time }}"
   with_items:
     - aptly
+    - nginx
 
 - name: create aptly configuration
   become: yes
@@ -29,6 +30,12 @@
     src: aptly.conf.j2
     dest: /etc/aptly.conf
   notify: restart_aptly_api
+
+- name: ensure aptly configuration does not exist in home directory (overrides /etc configuration)
+  become: yes
+  file:
+    path: "{{ ansible_env.HOME }}/.aptly.conf"
+    state: absent
 
 - name: configure aptly REST API systemd service
   become: yes
@@ -44,5 +51,50 @@
     state: started
     daemon_reload: yes
 
+- name: check if aptly repo has been created
+  become: yes
+  aptly_repo:
+    name: "{{ item.name }}"
+    options: "{{ item.options }}"     # TODO: Does this still work if `options` are not defined?
+    aptly_binary: "{{ aptly_aptly_binary_location }}"
+
+- name: copy ssl certificate
+  become: yes
+  copy:
+    content: "{{ aptly_api_cert }}"
+    dest: "{{ aptly_api_cert_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart_nginx
+
+- name: copy ssl key
+  become: yes
+  copy:
+    content: "{{ aptly_api_key }}"
+    dest: "{{ aptly_api_key_file }}"
+    owner: root
+    mode: 0600
+  notify:
+   - restart_nginx
+
+- name: configure nginx
+  become: yes
+  template:
+    src: "aptly-api.nginx.conf.j2"
+    dest: /etc/nginx/conf.d/aptly-api.nginx.conf
+    mode: 0700
+    owner: www-data
+  notify:
+   - restart_nginx
+
+
+
 # TODO: Configure Aptly
-# TODO: nginx proxy
+# TODO: nginx proxy with basic auth
+# TODO: nginx serve published packages
+
+
+
+
+# Client: https://github.com/sepulworld/aptly_cli

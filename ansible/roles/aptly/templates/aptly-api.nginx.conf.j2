@@ -1,0 +1,34 @@
+server {
+  listen       0.0.0.0:443 ssl backlog={{ arvados_master_sysctl_somaxconn }};
+  server_name  {{ arvados_cluster_api_host }};
+
+  ssl on;
+  ssl_certificate     {{ aptly_api_cert_file }};
+  ssl_certificate_key {{ aptly_api_key_file }};
+
+  index  index.html index.htm index.php;
+
+  # Refer to the comment about this setting in the server section above.
+  client_max_body_size {{ arvados_cluster_max_body_size_m }}m;
+
+  location /haproxy/stats {
+    proxy_pass            http://haproxy_stats;
+    proxy_redirect        off;
+  }
+
+  location / {
+    proxy_pass            http://localhost;
+    proxy_redirect        off;
+    proxy_connect_timeout 90s;
+    proxy_read_timeout    660s;
+
+    proxy_buffers         8 32k;
+    proxy_buffer_size     2k;
+
+    proxy_set_header      X-Forwarded-Proto https;
+    proxy_set_header      Host $http_host;
+    proxy_set_header      X-External-Client $external_client;
+    proxy_set_header      X-Real-IP $remote_addr;
+    proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
