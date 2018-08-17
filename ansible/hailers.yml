@@ -33,7 +33,14 @@
     hailers_PLAYBOOK_data_created_restore_indicator_file: ".created-restore"
     hailers_PLAYBOOK_scratch_data_volume_mountpoint: "/mnt/{% if tf_id is defined %}{{ tf_type_openstack_compute_instance_v2_GROUP_volume_name }}{% else %}{{ openstack_instances_GROUP_volume_name }}{% endif %}"
     hailers_PLAYBOOK_scratch_created_restore_indicator_file: ".created-restore"
-    hailers_PLAYBOOK_recommended_spark_memory: "{{ ((((ansible_memtotal_mb | int)) / 1024) * 0.75) }}"    # https://spark.apache.org/docs/latest/hardware-provisioning.html#memory
+    # For memory requirements, see: http://spark.apache.org/docs/latest/hardware-provisioning.html#memory
+    hailers_PLAYBOOK_recommended_spark_memory: "{{ ((((ansible_memtotal_mb | int)) / 1024) * 0.75) }}"
+    hailers_PLAYBOOK_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
+    # If there are only 1 node in the cluster, make it both the master and computer. Else, the master is not a computer
+    # because it needs more memory for the driver, which comes at the expense of the executor memory on _all_ computers
+    # (Spark forces the same configuration for all workers)
+    _hailers_PLAYBOOK_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
+    hailers_PLAYBOOK_computer_host_list: "{{ (_hailers_PLAYBOOK_computer_host_list | union(hailers_PLAYBOOK_master_host_list)) if ((hailers_PLAYBOOK_master_host_list | length) + (_hailers_PLAYBOOK_computer_host_list | length) == 1) else (_hailers_PLAYBOOK_computer_host_list) }}"
   tasks:
     - name: assert essential hail group membership
       assert:
@@ -156,8 +163,8 @@
         hail_ssh_key: "{{ hail_cluster_ssh_key }}"
         hail_ssl_cert: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_cert }}"
         hail_ssl_key: "{{ hgi_credentials_pem_wildcard_hgi_sanger_ac_uk_key }}"
-        hail_master_host_list: "{{ (groups['hail-masters'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
-        hail_computer_host_list: "{{ (groups['hail-computers'] | map('extract', hostvars) | selectattr('hail_cluster_id', 'equalto', hail_cluster_id)) | map(attribute='inventory_hostname') | list() }}"
+        hail_master_host_list: "{{ hailers_PLAYBOOK_master_host_list }}"
+        hail_computer_host_list: "{{ hailers_PLAYBOOK_computer_host_list }}"
         hail_master_data_dir: "{{ hailers_PLAYBOOK_data_dir }}"
         hail_master_external_hostname: "hail-{{ hail_cluster_id }}"
         hail_master_external_domain: "hgi.sanger.ac.uk"
@@ -231,12 +238,12 @@
         hail_spark_hadoop_anonymous_buckets:
          - "{{ hail_tutorial_data_s3_bucket }}"
         hail_master_host: "{{ hostvars[hail_master_host_list[0]]['cloud_resource_private_ip'] }}"
-        hail_spark_executor_memory_gb: "{{ (hailers_PLAYBOOK_recommended_spark_memory) if (inventory_hostname not in groups['hail-masters']) else (((hailers_PLAYBOOK_recommended_spark_memory | float) * 0.75) ) }}"   # See http://spark.apache.org/docs/latest/hardware-provisioning.html#local-disks
+        hail_spark_executor_memory_gb: "{{ (hailers_PLAYBOOK_recommended_spark_memory) if ((hailers_PLAYBOOK_master_host_list | length) + (_hailers_PLAYBOOK_computer_host_list | length) != 1) else (((hailers_PLAYBOOK_recommended_spark_memory | float) * 0.75)) }}"
+        hail_spark_driver_memory_gb: "{{ ((hailers_PLAYBOOK_recommended_spark_memory | float) * 0.25) if (inventory_hostname in hailers_PLAYBOOK_computer_host_list) else (hailers_PLAYBOOK_recommended_spark_memory) }}"
         # XXX: There's currently no easy way to attach 2 volumes to an instance with our Terraform so master node
         # (which is also a worker) has its scratch on the shared NFS volume :(
         hail_spark_local_directory: "{{ hailers_PLAYBOOK_scratch_data_volume_mountpoint if inventory_hostname in groups['hail-computers'] else hailers_PLAYBOOK_data_dir + '/.master-scratch' }}"
         hail_spark_executor_instances: "{{ [((ansible_processor_vcpus | int) / 8 | round(0, 'floor')) | int, 1] | max }}"
-        hail_spark_driver_memory_gb: "{{ ((hailers_PLAYBOOK_recommended_spark_memory | float) * 0.25) }}"
         ###############################################################################
         # General settings
         ###############################################################################

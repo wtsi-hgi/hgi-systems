@@ -187,6 +187,7 @@
     enabled: yes
     state: started
     daemon_reload: yes
+  when: spark_worker_p
 
 - name: give spark user NOPASSWD sudo ability to control spark service
   become: yes
