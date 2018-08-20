@@ -1,5 +1,13 @@
 ---
 
+- name: validate mandatory variables
+  no_log: true
+  assert:
+    that: item | mandatory
+  with_items:
+    - "{{ aptly_api_basic_auth_username }}"
+    - "{{ aptly_api_basic_auth_password }}"
+
 - name: import aptly apt repository key
   become: yes
   apt_key:
@@ -23,6 +31,18 @@
   with_items:
     - aptly
     - nginx
+    - python-passlib
+
+- name: create required directories
+  become: yes
+  file:
+    path: "{{ item | dirname }}"
+    state: directory
+  with_items:
+    - "{{ aptly_data_directory_location }}"
+    - "{{ aptly_api_ssl_cert_file_location }}"
+    - "{{ aptly_api_ssl_key_file_location }}"
+    - "{{ aptly_api_password_file_location }}"
 
 - name: create aptly configuration
   become: yes
@@ -57,26 +77,35 @@
     name: "{{ item.name }}"
     options: "{{ item.options }}"     # TODO: Does this still work if `options` are not defined?
     aptly_binary: "{{ aptly_aptly_binary_location }}"
+  with_items: "{{ aptly_repositories }}"
 
-- name: copy ssl certificate
-  become: yes
-  copy:
-    content: "{{ aptly_api_cert }}"
-    dest: "{{ aptly_api_cert_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart_nginx
+- name: prepare for SSL
+  when: aptly_api_ssl_enabled
+  block:
+    - name: copy ssl certificate
+      become: yes
+      copy:
+        content: "{{ aptly_api_ssl_cert }}"
+        dest: "{{ aptly_api_ssl_cert_file_location }}"
+        owner: root
+        mode: 0600
+      notify: restart_nginx
 
-- name: copy ssl key
+    - name: copy ssl key
+      become: yes
+      copy:
+        content: "{{ aptly_api_ssl_key }}"
+        dest: "{{ aptly_api_ssl_key_file_location }}"
+        owner: root
+        mode: 0600
+      notify: restart_nginx
+
+- name: expose aptly.sock to www-data
   become: yes
-  copy:
-    content: "{{ aptly_api_key }}"
-    dest: "{{ aptly_api_key_file }}"
-    owner: root
-    mode: 0600
-  notify:
-   - restart_nginx
+  file:
+    path: /var/run/aptly.sock
+    mode: 0660
+    group: www-data
 
 - name: configure nginx
   become: yes
@@ -85,13 +114,29 @@
     dest: /etc/nginx/conf.d/aptly-api.nginx.conf
     mode: 0700
     owner: www-data
-  notify:
-   - restart_nginx
+  notify: restart_nginx
+
+- name: disable "default" nginx site from running on port 80
+  become: yes
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart_nginx
+
+- name: write basic auth password
+  become: yes
+  htpasswd:
+    path: "{{ aptly_api_password_file_location }}"
+    name: "{{ aptly_api_basic_auth_username }}"
+    password: "{{ aptly_api_basic_auth_password }}"
+    owner: root
+    group: www-data
+    mode: 0640
+  notify: restart_nginx
 
 
 
 # TODO: Configure Aptly
-# TODO: nginx proxy with basic auth
 # TODO: nginx serve published packages
 
 

@@ -1,7 +1,12 @@
+# Variables that must be defined:
+#   aptly_api_basic_auth_username:
+#     (str) username to authenticate with for API access
+#   aptly_api_basic_auth_password:
+#     (str) password to authenticate with for API access
+
 ---
 
-aptly_data_directory: "{{ ansible_env.HOME }}/.aptly"
-aptly_api_service_name: aptly-api
+aptly_data_directory_location: "{{ ansible_env.HOME }}/.aptly"
 aptly_aptly_binary_location: /usr/bin/aptly
 
 # e.g.
@@ -14,10 +19,10 @@ aptly_repositories: []
 
 aptly_apt_cache_valid_time: 3600
 
-
-
-aptly_api_cert:
-aptly_api_key:
-
-aptly_api_cert_file: /etc/ssl.cert
-aptly_api_key_file: /etc/ssl.key
+aptly_api_service_name: aptly-api
+aptly_api_ssl_enabled: "{{ aptly_api_ssl_cert != '' and aptly_api_ssl_key != '' }}"
+aptly_api_ssl_cert: ""
+aptly_api_ssl_key: ""
+aptly_api_ssl_cert_file_location: /etc/ssl.cert
+aptly_api_ssl_key_file_location: /etc/ssl.key
+aptly_api_password_file_location: /etc/aptly/aptly-rest-api.htpasswd
