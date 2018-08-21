@@ -19,7 +19,7 @@
 # - Planner Cost Constants -
 
 seq_page_cost = 1.0                     # measured on an arbitrary scale
-random_page_cost = 2.0                  # same scale as above
+random_page_cost = 1.5                  # same scale as above
 #cpu_tuple_cost = 0.01                  # same scale as above
 #cpu_index_tuple_cost = 0.005           # same scale as above
 #cpu_operator_cost = 0.0025             # same scale as above
@@ -37,7 +37,7 @@ effective_cache_size = 200GB
 
 # - Other Planner Options -
 
-default_statistics_target = 250        # range 1-10000
+default_statistics_target = 1000        # range 1-10000
 #constraint_exclusion = partition       # on, off, or partition
 #cursor_tuple_fraction = 0.1            # range 0.0-1.0
 #from_collapse_limit = 8
