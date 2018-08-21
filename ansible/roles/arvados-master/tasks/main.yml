@@ -655,7 +655,7 @@
       hour: "6"
     - name: crunch_dispatch_slurm_restart
       job: systemctl restart crunch-dispatch-slurm
-      hour: "*"
+      hour: "*/3"
 
 - name: create arvados db maintenance scripts for cron to run
   become: yes
