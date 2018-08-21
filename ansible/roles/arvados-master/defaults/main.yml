@@ -170,6 +170,6 @@ arvados_master_haproxy_final_queues:
         minconn: 2
         maxconn: 4
         backup: true
-    backend_server_minconn: 96
-    backend_server_maxconn: 192
+    backend_server_minconn: 8
+    backend_server_maxconn: 32
     maxconn: 4096
