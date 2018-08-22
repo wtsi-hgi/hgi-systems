@@ -8,6 +8,7 @@
 
 aptly_data_directory_location: "{{ ansible_env.HOME }}/.aptly"
 aptly_aptly_binary_location: /usr/bin/aptly
+aptly_publish_location: /var/aptly/public
 
 # e.g.
 # aptly_repositories:

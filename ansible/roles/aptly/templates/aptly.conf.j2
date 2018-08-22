@@ -8,15 +8,20 @@
     "dependencyFollowAllVariants": false,
     "dependencyFollowSource": false,
     "dependencyVerboseResolve": false,
-    "gpgDisableSign": false,
-    "gpgDisableVerify": false,
+    "gpgDisableSign": true,
+    "gpgDisableVerify": true,
     "gpgProvider": "gpg",
     "downloadSourcePackages": false,
     "skipLegacyPool": true,
     "ppaDistributorID": "ubuntu",
     "ppaCodename": "",
     "skipContentsPublishing": false,
-    "FileSystemPublishEndpoints": {},
+    "FileSystemPublishEndpoints": {
+        "public": {
+            "rootDir": "{{ aptly_publish_location }}",
+            "linkMethod": "symlink"
+        }
+    },
     "S3PublishEndpoints": {},
     "SwiftPublishEndpoints": {}
 }

@@ -43,6 +43,7 @@
     - "{{ aptly_api_ssl_cert_file_location }}"
     - "{{ aptly_api_ssl_key_file_location }}"
     - "{{ aptly_api_password_file_location }}"
+    - "{{ aptly_publish_location }}"
 
 - name: create aptly configuration
   become: yes
