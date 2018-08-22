@@ -11,8 +11,9 @@ aptly_aptly_binary_location: /usr/bin/aptly
 
 # e.g.
 # aptly_repositories:
-#  - name: hgi-arvados
+#  - name: my-repository
 #    options:
+#      comment: some comment
 #      distribution: jessie
 #      component: main
 aptly_repositories: []

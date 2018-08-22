@@ -47,5 +47,11 @@
         aptly_data_directory: "{{ aptly_PLAYBOOK_data_mountpoint }}"
         aptly_api_basic_auth_username: TODO
         aptly_api_basic_auth_password: TODO
+        aptly_repositories:
+         - name: hgi-arvados
+           options:
+             comment: HGI built Arvados packages
+             distribution: jessie
+             component: main
 
     # TODO: Install and configure aptly...

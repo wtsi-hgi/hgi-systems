@@ -71,12 +71,14 @@
     state: started
     daemon_reload: yes
 
-- name: check if aptly repo has been created
+- name: create aptly repository
   become: yes
   aptly_repo:
     name: "{{ item.name }}"
-    options: "{{ item.options }}"     # TODO: Does this still work if `options` are not defined?
+    options: "{{ item.options }}"
     aptly_binary: "{{ aptly_aptly_binary_location }}"
+  vars:
+    ansible_python_interpreter: python3
   with_items: "{{ aptly_repositories }}"
 
 - name: prepare for SSL
@@ -136,7 +138,6 @@
 
 
 
-# TODO: Configure Aptly
 # TODO: nginx serve published packages
 
 
