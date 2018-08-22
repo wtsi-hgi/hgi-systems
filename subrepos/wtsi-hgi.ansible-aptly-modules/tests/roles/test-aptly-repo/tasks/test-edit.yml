@@ -1,0 +1,35 @@
+---
+
+- name: create repository
+  aptly_repo:
+    name: test-edit
+    options:
+      comment: "comment-1"
+      component: "component-1"
+      distribution: "distribution-1"
+  register: test_edit
+
+- name: check that repository was created
+  assert:
+    that:
+      - test_edit.changed
+      - test_edit.change == "created"
+      - test_edit.options.get("comment") == "comment-1"
+      - test_edit.options.get("component") == "component-1"
+      - test_edit.options.get("distribution") == "distribution-1"
+
+- name: edit repository
+  aptly_repo:
+    name: test-edit
+    options:
+      comment: "comment-2"
+  register: test_edit
+
+- name: check that repository was edited
+  assert:
+    that:
+      - test_edit.changed
+      - test_edit.change == "edited"
+      - test_edit.options.get("comment") == "comment-2"
+      - test_edit.options.get("component") == "component-1"
+      - test_edit.options.get("distribution") == "distribution-1"

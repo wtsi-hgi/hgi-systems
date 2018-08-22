@@ -1,0 +1,18 @@
+---
+
+version: "3"
+
+services:
+  test-runner:
+    container_name: aptly-test-runner
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test.runner
+    depends_on:
+      - aptly-test-instance
+
+  aptly-test-instance:
+    container_name: aptly-test-instance
+    build:
+      context: ../../
+      dockerfile: tests/docker/Dockerfile.test.target

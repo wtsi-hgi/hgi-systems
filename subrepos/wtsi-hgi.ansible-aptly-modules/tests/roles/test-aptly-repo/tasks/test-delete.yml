@@ -1,0 +1,36 @@
+---
+
+- name: create repository
+  aptly_repo:
+    name: test-delete
+    state: present
+  register: test_delete
+
+- name: check that repository was created
+  assert:
+    that:
+      - test_delete.changed
+      - test_delete.change == "created"
+
+- name: delete repository
+  aptly_repo:
+    name: test-delete
+    state: absent
+  register: test_delete
+
+- name: check that repository was deleted
+  assert:
+    that:
+      - test_delete.changed
+      - test_delete.change == "deleted"
+
+- name: delete repository again
+  aptly_repo:
+    name: test-delete
+    state: absent
+  register: test_delete
+
+- name: check that repository deletion is idempotent
+  assert:
+    that:
+      - not test_delete.changed

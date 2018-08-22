@@ -1,0 +1,9 @@
+---
+
+- hosts: targets
+  tasks:
+    - name: run aptly-repo tests
+      import_role:
+        name: test-aptly-repo
+      vars:
+        ansible_python_interpreter: /usr/bin/python3

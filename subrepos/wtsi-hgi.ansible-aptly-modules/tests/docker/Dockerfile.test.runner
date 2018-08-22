@@ -1,0 +1,22 @@
+FROM python:3
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        sshpass \
+        curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > /opt/wait-for-it.sh \
+    && chmod 0777 /opt/wait-for-it.sh
+
+WORKDIR /aptly-tests
+ADD tests/runner-requirements.txt tests/runner-requirements.txt
+RUN pip --disable-pip-version-check install -r tests/runner-requirements.txt
+ADD . .
+
+ADD tests/docker/run-runner.sh /
+RUN chmod 0777 /run-runner.sh
+
+ENV ANSIBLE_HOST_KEY_CHECKING=False
+
+CMD ["/run-runner.sh"]

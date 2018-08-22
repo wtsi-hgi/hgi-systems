@@ -1,0 +1,27 @@
+FROM ubuntu:bionic
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+         openssh-server \
+         python \
+         python3 \
+         sshpass \
+         gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-key adv --keyserver pool.sks-keyservers.net --recv-keys ED75B5A4483DA07C
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+         aptly \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN sed -ri "s/^#?\s*PermitRootLogin\s+.*/PermitRootLogin yes/" /etc/ssh/sshd_config \
+    && sed -ri "s/^UsePAM yes/#UsePAM yes/g" /etc/ssh/sshd_config
+RUN mkdir /var/run/sshd
+ARG root_password=root
+RUN echo "root:${root_password}" | chpasswd
+EXPOSE 22
+
+ADD tests/docker/run-target.sh /run-target.sh
+
+CMD ["./run-target.sh"]

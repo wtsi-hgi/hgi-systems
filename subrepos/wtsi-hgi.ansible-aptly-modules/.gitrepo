@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/wtsi-hgi/ansible-aptly-modules.git
+	branch = master
+	commit = fa2d1976fec5fea780c5bfb61c9974151aea2b18
+	parent = 4bf120fe73500b7eb5582c6b38c7300f1a43f190
+	cmdver = 0.3.1

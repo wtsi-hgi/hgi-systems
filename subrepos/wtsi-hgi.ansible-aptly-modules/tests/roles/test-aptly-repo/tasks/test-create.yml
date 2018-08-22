@@ -1,0 +1,24 @@
+---
+
+- name: create repository without options
+  aptly_repo:
+    name: test-create-no-options
+    state: present
+  register: test_create_no_options
+
+- name: check that no-options repository was created
+  assert:
+    that:
+      - test_create_no_options.changed
+      - test_create_no_options.change == 'created'
+
+- name: create repository without options again
+  aptly_repo:
+    name: test-create-no-options
+    state: present
+  register: test_create_no_options
+
+- name: check repository creation is idempotent
+  assert:
+    that:
+      - not test_create_no_options.changed
