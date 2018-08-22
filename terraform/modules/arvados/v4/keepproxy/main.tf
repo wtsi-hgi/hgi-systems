@@ -41,7 +41,7 @@ variable "extra_ansible_groups" {
 locals {
   ansible_groups = [
     "arvados-keepproxies",
-    "keep-service",
+    "arvados-keeps",
     "arvados-cluster-${var.arvados_cluster_id}",
     "docker-consul-agents",
     "docker-consul-cluster-${var.consul_datacenter}",
