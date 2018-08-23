@@ -653,9 +653,9 @@
     - name: arvados_api_passenger_restart
       job: /var/www/arvados-api/current/script/arvados_api_passenger_restart.sh
       hour: "6"
-    - name: crunch_dispatch_slurm_restart
-      job: systemctl restart crunch-dispatch-slurm
-      hour: "*"
+#    - name: crunch_dispatch_slurm_restart
+#      job: systemctl restart crunch-dispatch-slurm
+#      hour: "*"
 
 - name: create arvados db maintenance scripts for cron to run
   become: yes
