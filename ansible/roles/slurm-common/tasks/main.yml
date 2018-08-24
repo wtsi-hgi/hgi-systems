@@ -126,3 +126,28 @@
   notify:
     - reload consul-template
 
+- name: create munge service dropin directory
+  become: yes
+  file:
+    path: /etc/systemd/system/munge.service.d
+    state: directory
+
+- name: add systemd dropin for munge to run it with 10 threads
+  become: yes
+  copy:
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=-/usr/sbin/munged --num-threads 10
+    dest: /etc/systemd/system/munge.service.d/10-execstart-10-threads.conf
+  register: munge_service_drop_in
+
+- name: reload systemd to apply munge service changes
+  become: yes
+  systemd:
+    daemon_reload: yes
+  when: munge_service_drop_in.changed
+  notify:
+    - restart munge
+    - restart netdata
+
