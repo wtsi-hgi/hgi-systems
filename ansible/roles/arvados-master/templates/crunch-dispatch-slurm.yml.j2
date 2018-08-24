@@ -14,5 +14,6 @@ CrunchRunCommand:
   - crunch-run
   - "-cgroup-parent-subsystem=memory"
 ReserveExtraRAM: 536870912
-PrioritySpread: 1
+PrioritySpread: 10
+NiceLimit: 10000
 BatchSize: 10000
