@@ -142,7 +142,7 @@ data "template_file" "cloud-config-init-script" {
   template = "${file("${path.module}/scripts/init.cfg.tpl")}"
 
   vars {
-    CLOUDINIT_HOSTNAME = "${local.name_formatted_p ? (local.name_format_list_p ? format(local.name_format, element(local.name_format_list_never_empty, count.index)) : format(local.name_format, count.index + 1)) : local.name_format}"
+    CLOUDINIT_HOSTNAME = "${local.name_formatted_p ? (local.name_format_list_p ? format(var.name_format, element(local.name_format_list_never_empty, count.index)) : format(var.name_format, count.index + 1)) : var.name_format}"
     CLOUDINIT_DOMAIN   = "${var.domain}"
   }
 }
