@@ -1,6 +1,6 @@
 module "webhook-router" {
   source         = "../modules/webhook-router/webhook-router-v1"
-  count          = 1
+  count          = 0
   env            = "${var.env}"
   region         = "${var.region}"
   setup          = "${var.setup}"

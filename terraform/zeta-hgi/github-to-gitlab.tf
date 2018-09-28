@@ -1,6 +1,6 @@
 module "github-to-gitlab" {
   source       = "../modules/github-to-gitlab/github-to-gitlab-v2"
-  count        = 1
+  count        = 0
   env          = "${var.env}"
   region       = "${var.region}"
   setup        = "${var.setup}"
