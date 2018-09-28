@@ -25,7 +25,7 @@ module "arvados-cluster" {
   workbench_flavour      = "o1.large"
   keepproxy_flavour      = "o1.xlarge"
   keep_flavour           = "o1.xlarge"
-  shell_flavour          = "o1.large"
+  shell_flavour          = "o1.xlarge"
   monitor_flavour        = "o1.medium"
   compute_node_flavour   = "m1.xlarge"
   shell_names            = ["shell", "debugshell"]
