@@ -31,6 +31,11 @@ production:
   database_statement_timeout: 300000
   database_lock_timeout: 150000
 
+  # Interval (seconds) between trash sweeps. During a trash sweep,
+  # collections are marked as trash if their trash_at time has
+  # arrived, and deleted if their delete_at time has arrived.
+  trash_sweep_interval: {{ arvados_api_backend_trash_sweep_interval }}
+
   # These two settings control how frequently log events are flushed to the
   # database.  Log lines are buffered until either crunch_log_bytes_per_event
   # has been reached or crunch_log_seconds_between_events has elapsed since

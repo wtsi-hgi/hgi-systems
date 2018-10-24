@@ -33,6 +33,9 @@ arvados_api_backend_pgp_keyserver_url: hkp://keyserver.ubuntu.com:80
 arvados_api_backend_consul_config_dir: "/etc/consul.d"
 arvados_api_backend_consul_service_name: consul
 
+# Set to -1 to disable trash sweep
+arvados_api_backend_trash_sweep_interval: 60
+
 arvados_api_backend_haproxy_queues:
   - name: discovery
     patterns:
