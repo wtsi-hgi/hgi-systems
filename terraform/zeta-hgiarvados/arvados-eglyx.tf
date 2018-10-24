@@ -15,7 +15,7 @@ module "arvados-cluster" {
   keepproxy_count        = 8
   keep_count             = 8
   monitor_count          = 1
-  compute_node_count     = 5
+  compute_node_count     = 20
   network_name           = "main"
   ssh_gateway            = "${data.terraform_remote_state.hgiarvados-core.ssh_gateway}"
   master_flavour         = "o1.2xlarge"
