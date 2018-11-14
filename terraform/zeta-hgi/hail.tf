@@ -40,8 +40,8 @@ module "hail-cluster-as45-2" {
   compute_volume_size_gb = 100
 }
 
-module "hail-cluster-mercury" {
-  source       = "../modules/hail/v1/cluster"
+module "hail-cluster-as45-3" {
+  source       = "../modules/hail/v2/cluster"
   env          = "${var.env}"
   region       = "${var.region}"
   setup        = "${var.setup}"
@@ -50,13 +50,13 @@ module "hail-cluster-mercury" {
   domain       = "hgi.sanger.ac.uk"
   network_name = "main"
 
-  hail_cluster_id        = "mercury"
+  hail_cluster_id        = "as45-3"
   master_count           = 1
   compute_count          = 1
-  master_image           = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-3ddcb29b}"
-  compute_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-3ddcb29b}"
-  master_flavour         = "o1.medium"
-  compute_flavour        = "o1.medium"
-  master_volume_size_gb  = 20
-  compute_volume_size_gb = 20
+  master_image           = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
+  compute_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
+  master_flavour         = "o1.3xlarge"
+  compute_flavour        = "o1.3xlarge"
+  master_volume_size_gb  = 100
+  compute_volume_size_gb = 100
 }
