@@ -141,6 +141,7 @@
     - libnetlib-java
     - r-base
     - nfs-common
+    - liblz4-dev
 
 - include_tasks: conda-6096-patch.yml
 
@@ -164,15 +165,24 @@
         dest: "{{ hail_temp_dir }}"
         version: "{{ hail_version_commit }}"
 
+    - name: check if Hail is in a `hail` subdirectory (a change in newer hail versions)
+      stat:
+        path: "{{ hail_temp_dir }}/hail"
+      register: hail_subdirectory
+
+    - name: set location of Hail code
+      set_fact:
+        hail_code_directory: "{{ hail_temp_dir }}/{{ 'hail' if hail_subdirectory.stat.exists else '' }}"
+
     - name: compile Hail
       command: "./gradlew -Dspark.version={{ hail_spark_version }} shadowJar archiveZip"
       args:
-        chdir: "{{ hail_temp_dir }}"
+        chdir: "{{ hail_code_directory }}"
 
     # Note: Currently (Ansible 2.3) `copy`'s `remote_src` does not support recursive copying
     - name: install Hail
       become: yes
-      command: "mv {{ hail_temp_dir }} {{ hail_prefix_dir }}"
+      command: "mv {{ hail_code_directory }} {{ hail_prefix_dir }}"
       notify: restart hail
 
   when: not hail_installed.stat.exists

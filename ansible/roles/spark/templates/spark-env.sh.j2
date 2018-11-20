@@ -33,6 +33,8 @@ SPARK_LOCAL_IP={{ spark_local_ip }}
 # - SPARK_CLASSPATH, default classpath entries to append
 # - SPARK_LOCAL_DIRS, storage directories to use on this node for shuffle and RDD data
 # - MESOS_NATIVE_JAVA_LIBRARY, to point to your libmesos.so if you use Mesos
+# XXX: It is unclear why the `spark.local.dir` configuration is not being read but setting this here works around that
+SPARK_LOCAL_DIRS={{ spark_local_directory }}
 
 # Options read in YARN client mode
 # - HADOOP_CONF_DIR, to point Spark towards Hadoop configuration files
