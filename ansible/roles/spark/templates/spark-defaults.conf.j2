@@ -40,6 +40,7 @@ spark.local.dir                         {{ spark_local_directory }}
 {% if spark_executor_instances is defined %}
 spark.executor.instances                {{ spark_executor_instances }}
 {% endif %}
+spark.driver.maxResultSize              {{ spark_driver_max_result_size }}
 
 # Extra classpaths (instead of using deprecated SPARK_CLASSPATH)
 spark.executor.extraClassPath		 {{ spark_executor_extra_classpath_list | join(':') }}
