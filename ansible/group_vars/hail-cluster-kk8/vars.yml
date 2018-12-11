@@ -1,0 +1,14 @@
+# Vault contains:
+#   hail_cluster_jupyter_token: xxx
+#   hail_cluster_ssh_key: xxx
+---
+
+hail_cluster_id: kk8
+hail_cluster_hail_version: master-a2eaf89
+hail_cluster_spark_build: 2.2.0-bin-hadoop2.8.2-netlib-lgpl-3033ec2b
+hail_cluster_hadoop_version: 2.8.2
+hail_cluster_anaconda_version: 5.1.0
+hail_cluster_python_version: 3
+
+hail_cluster_authorized_keys:
+  - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1LhWfvRGgc5deJLO9FRaqlfJ6rRY0Obd66lLH5pySlzpwzmwmSKJFHd7PSXtwzf3tb7zwfnljCIE4aQ094vx8INL3QDwqiL4seCDc7F+KIdc4v/mk4K+7XJxkVSj4GhC8GN30ZVWwKJole8YrV3ZvhaRXGrJbp9tHfVFx1IlHpNjnC5mOoksmyPjF+7kTFzAbHaJOjyBu81FpgIVoA0LqKOgHktpf/dcFXmLHEmolfZbqeT+P13ZPtQMz6ymesYjEbD7MmJQRED5NkjfcOtWCXdeJ0G3wyAJG7MlercY6UA0YZiHUkl0ePQqnq0/2BMHq69M5UttNryWnYOEyQNeF kk8@farm3-head2"
