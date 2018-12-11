@@ -10,4 +10,5 @@ hail_cluster_hadoop_version: 2.8.2
 hail_cluster_anaconda_version: 5.1.0
 hail_cluster_python_version: 3
 
-hail_cluster_authorized_keys: []
+hail_cluster_authorized_keys:
+  - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAtDgb1QvCjq0JW1n+mS3jPOK0k5g4dVpBjmOyv4iyP9dpXrnbGVEeyAjGlZ/8up+5mqGLHtJ+FHGUHwnGwXzsBw3TfI2hATjGuhAq51B/trKkhGbfNbn1rc6VU3W6KtzwY4Noye9VTALfJL/vKFH3GKc7/GQdtddu5LGh05OCYjtrsxGF3ZYWEW8N9862G+ufRrM3uFhmHy3BkyhNEBKE/4OpQxCgc4Cq1mi+3/4jr//rejnU4WUlQcfuX2f/Gb8e+E/pfHff9C+ygV8llNNtySrG6FTk4RJFmAJDlck7Ib91Wq64visJJxc7PaHUWIPYDfVlivazuDLRrVpSijIivQ== kw8@sanger.ac.uk"
