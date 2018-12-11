@@ -20,6 +20,37 @@
 ---
 # file: roles/hail/tasks/main.yml
 
+- name: create hail group
+  become: yes
+  group:
+    name: "{{ hail_group }}"
+
+- name: create hail user account
+  become: yes
+  user:
+    name: "{{ hail_user }}"
+    group: "{{ hail_group }}"
+    shell: /bin/bash
+
+- name: make Spark directory writable for Hail/Spark user
+  become: yes
+  file:
+    path: "{{ hail_spark_local_directory }}"
+    group: "{{ hail_user }}"
+    mode: 0770
+
+- name: set authorized keys for hail
+  become: yes
+  authorized_key:
+    user: "{{ hail_user }}"
+    manage_dir: yes
+    state: present
+    key: "{{ item }}"
+  with_items:
+    - "{{ lookup('sshpubkey', hail_ssh_key) }} {{ hail_user }}@{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}"
+    - "{{ hail_authorized_keys }}"
+
+
 - name: import spark role
   tags: s3
   import_role:
@@ -97,29 +128,6 @@
       # General settings
       ###############################################################################
       spark_apt_cache_valid_time: "{{ hail_apt_cache_valid_time }}"
-
-- name: create hail group
-  become: yes
-  group:
-    name: "{{ hail_group }}"
-
-- name: create hail user account
-  become: yes
-  user:
-    name: "{{ hail_user }}"
-    group: "{{ hail_group }}"
-    shell: /bin/bash
-
-- name: set authorized keys for hail
-  become: yes
-  authorized_key:
-    user: "{{ hail_user }}"
-    manage_dir: yes
-    state: present
-    key: "{{ item }}"
-  with_items:
-    - "{{ lookup('sshpubkey', hail_ssh_key) }} {{ hail_user }}@{{ hail_master_external_hostname }}.{{ hail_master_external_domain }}"
-    - "{{ hail_authorized_keys }}"
 
 - name: install apt prerequisites
   become: yes
