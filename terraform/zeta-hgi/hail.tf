@@ -61,7 +61,6 @@ module "hail-cluster-as45-3" {
   compute_volume_size_gb = 100
 }
 
-
 module "hail-cluster-kk8" {
   source       = "../modules/hail/v2/cluster"
   env          = "${var.env}"
