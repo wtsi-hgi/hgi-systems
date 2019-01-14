@@ -36,6 +36,7 @@
   become: yes
   file:
     path: "{{ hail_spark_local_directory }}"
+    state: directory
     group: "{{ hail_user }}"
     mode: 0770
 
@@ -91,13 +92,13 @@
       # Spark settings
       ###############################################################################
       spark_jars: "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
-      spark_executor_extra_classpath_list: 
+      spark_executor_extra_classpath_list:
         - "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
         - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-core-1.10.6.jar"
         - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-kms-1.10.6.jar"
         - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-s3-1.10.6.jar"
         - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/hadoop-aws-2.8.2.jar"
-      spark_driver_extra_classpath_list: 
+      spark_driver_extra_classpath_list:
         - "{{ hail_prefix_dir }}/build/libs/hail-all-spark.jar"
         - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-core-1.10.6.jar"
         - "{{ spark_hadoop_prefix_dir }}/share/hadoop/tools/lib/aws-java-sdk-kms-1.10.6.jar"
@@ -238,11 +239,11 @@
   set_fact:
     hail_master_data_dir: "{{ hail_master_data_dir }}"
 
-# It is unclear to me why this is required... CN
-- name: set hail_data_dir as a fact on all nodes
-  set_fact:
-    hail_data_dir: "{{ hail_master_data_dir }}"
-#   hail_data_dir: "{% if hail_master_p %}{{ hail_master_data_dir }}{% else %}{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}{% endif %}"
+# XXX: It is unclear to me why this is required... CN
+#- name: set hail_data_dir as a fact on all nodes
+#  set_fact:
+#    hail_data_dir: "{{ hail_master_data_dir }}"
+##   hail_data_dir: "{% if hail_master_p %}{{ hail_master_data_dir }}{% else %}{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}{% endif %}"
 
 - name: create hail data directory
   become: yes
@@ -260,7 +261,8 @@
   become: yes
   mount:
     path: "{{ hail_master_data_dir }}"
-    src: "{{ hail_master_host }}:{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+#    src: "{{ hail_master_host }}:{{ hostvars[hail_master_host_list[0]]['hail_master_data_dir'] }}"
+    src: "{{ hail_master_host }}:{{ hail_master_data_dir }}"
     fstype: nfs
     opts: defaults,intr,nofail
     dump: 0
