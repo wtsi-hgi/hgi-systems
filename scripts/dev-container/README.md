@@ -23,6 +23,7 @@ It offers the advantages that developers:
 - docker (for HGI members: use hgs4 or OpenStack instance)
 - Python 3.6+ with the [docker-with-gitlab-secrets](https://github.com/wtsi-hgi/docker-with-gitlab-secrets) package (for HGI members on network
 machines use `module add module add hgi/dockerwithgitlabsecrets/latest` else `pip install dockerwithgitlabsecrets`)
+- bash 4+
 - docker-with-gitlab-secrets configuration for [hgi-systems](https://github.com/wtsi-hgi/hgi-systems), e.g.
   ```
   gitlab:
