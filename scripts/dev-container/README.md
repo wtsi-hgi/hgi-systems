@@ -42,7 +42,7 @@ Usage: start.sh [options]
 Start hgi-systems development container
 
 options:
--c      docker-with-gitlab-secrets configuration file location [default: /Users/cn13/.dwgs-config.yml]
+-c      docker-with-gitlab-secrets configuration file location [default: ~/.dwgs-config.yml]
 -d      docker-with-gitlab-secrets executable location [default: docker-with-gitlab-secrets (on path)]
 -n      Set to not pull latest taos-dev Docker image on start [default: 0]
 ```
