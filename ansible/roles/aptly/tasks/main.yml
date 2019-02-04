@@ -126,16 +126,16 @@
     state: absent
   notify: restart_nginx
 
-- name: write basic auth password
-  become: yes
-  htpasswd:
-    path: "{{ aptly_api_password_file_location }}"
-    name: "{{ aptly_api_basic_auth_username }}"
-    password: "{{ aptly_api_basic_auth_password }}"
-    owner: root
-    group: www-data
-    mode: 0640
-  notify: restart_nginx
+#- name: write basic auth password
+#  become: yes
+#  htpasswd:
+#    path: "{{ aptly_api_password_file_location }}"
+#    name: "{{ aptly_api_basic_auth_username }}"
+#    password: "{{ aptly_api_basic_auth_password }}"
+#    owner: root
+#    group: www-data
+#    mode: 0640
+#  notify: restart_nginx
 
 
 
