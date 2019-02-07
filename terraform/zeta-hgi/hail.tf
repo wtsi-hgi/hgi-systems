@@ -134,7 +134,7 @@ module "hail-cluster-vvi2" {
   domain       = "hgi.sanger.ac.uk"
   network_name = "main"
 
-  hail_cluster_id        = "vvi"
+  hail_cluster_id        = "vvi2"
   master_count           = 1
   compute_count          = 2
   master_image           = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
