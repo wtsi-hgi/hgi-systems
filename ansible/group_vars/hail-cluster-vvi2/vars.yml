@@ -1,0 +1,15 @@
+# Vault contains:
+#   hail_cluster_jupyter_token: xxx
+#   hail_cluster_ssh_key: xxx
+---
+
+hail_cluster_id: vvi2
+hail_cluster_hail_version: master-a2eaf89
+hail_cluster_spark_build: 2.2.0-bin-hadoop2.8.2-netlib-lgpl-3033ec2b
+hail_cluster_hadoop_version: 2.8.2
+hail_cluster_anaconda_version: 5.1.0
+hail_cluster_python_version: 3
+
+hail_cluster_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC33E9dReKYHouMSEmSktP3FpGlKiOMcYPVafwIlLkfkdsWOEAOlZZgPUivGqlrhO6swhyB4E/ZxRslT1JWxbq2yt78LbOmkykuiPP0FB1LjGChpx4SwLLDeP9XDaf5Mj5dljp2YWpPYXjEZs7s0hQNXNwJUOUDCGKhTD/F/y7UIpalYxRg4dOlbMcnVJM01f38eLA0bUx1XwERO7gusdX7rwlok/ToilQqIvvbU4bPnK/2JsShX9uQiol/Tk1z5vvF4ezwacS2UwqnksyrIvsivBndrXnN/Ap78lKfuxI1hm1421/GJtadJ1x7+48uwHQUC7oHALf2NWkLwo9XK4KyiSuQJQjhg/lTqm9aaVcPrjcKSX7RyD6PMx+LSxXzUJKqJuxYzVrH3MNr3aD6tEs/4fz0rXALJAi1aQ7PucTSf1hVqlI4hxN7UyfV9cBy/ViLrnLp3HX63MgrtmUgxVm9Mv6krJW/cspJxpbPzHjxx6wtr/0kFbw9affBgNNzth2p8HquK4XiGE19PsuqNBFxLfF0AtYTAlaDn2fZNYqMVaMepUrTV0ZF2WyFoPSkJal7MKw5Xqt5nB5MJnbVDuaRxz35DROHwYauCTsRV5eRMXpvsYd3FUVAGGU9P3N+bPctj2METZS+L3gpXPnVEMqm0D5p4BrP5PY5c1zSlrjlow== mercury@localhost
+
