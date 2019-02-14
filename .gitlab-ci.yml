@@ -253,37 +253,37 @@ openstack-vars-validate-staging-zeta-hgiarvados:
   <<: *openstack-vars-validate-def
   <<: *staging-zeta-hgiarvados-def
 
-openstack-vars-validate-production-zeta-hgiarvados-wlly8-core:
-  <<: *openstack-vars-validate-def
-  <<: *production-zeta-hgiarvados-wlly8-core-def
-    
-openstack-vars-validate-staging-zeta-hgiarvados-wlly8-core:
-  <<: *openstack-vars-validate-def
-  <<: *staging-zeta-hgiarvados-wlly8-core-def
-
-openstack-vars-validate-production-zeta-hgiarvados-wlly8:
-  <<: *openstack-vars-validate-def
-  <<: *production-zeta-hgiarvados-wlly8-def
-    
-openstack-vars-validate-staging-zeta-hgiarvados-wlly8:
-  <<: *openstack-vars-validate-def
-  <<: *staging-zeta-hgiarvados-wlly8-def
-
-openstack-vars-validate-production-zeta-hgiarvados-bbpin-core:
-  <<: *openstack-vars-validate-def
-  <<: *production-zeta-hgiarvados-bbpin-core-def
-    
-openstack-vars-validate-staging-zeta-hgiarvados-bbpin-core:
-  <<: *openstack-vars-validate-def
-  <<: *staging-zeta-hgiarvados-bbpin-core-def
-
-openstack-vars-validate-production-zeta-hgiarvados-bbpin:
-  <<: *openstack-vars-validate-def
-  <<: *production-zeta-hgiarvados-bbpin-def
-    
-openstack-vars-validate-staging-zeta-hgiarvados-bbpin:
-  <<: *openstack-vars-validate-def
-  <<: *staging-zeta-hgiarvados-bbpin-def
+#openstack-vars-validate-production-zeta-hgiarvados-wlly8-core:
+#  <<: *openstack-vars-validate-def
+#  <<: *production-zeta-hgiarvados-wlly8-core-def
+#    
+#openstack-vars-validate-staging-zeta-hgiarvados-wlly8-core:
+#  <<: *openstack-vars-validate-def
+#  <<: *staging-zeta-hgiarvados-wlly8-core-def
+#
+#openstack-vars-validate-production-zeta-hgiarvados-wlly8:
+#  <<: *openstack-vars-validate-def
+#  <<: *production-zeta-hgiarvados-wlly8-def
+#    
+#openstack-vars-validate-staging-zeta-hgiarvados-wlly8:
+#  <<: *openstack-vars-validate-def
+#  <<: *staging-zeta-hgiarvados-wlly8-def
+#
+#openstack-vars-validate-production-zeta-hgiarvados-bbpin-core:
+#  <<: *openstack-vars-validate-def
+#  <<: *production-zeta-hgiarvados-bbpin-core-def
+#    
+#openstack-vars-validate-staging-zeta-hgiarvados-bbpin-core:
+#  <<: *openstack-vars-validate-def
+#  <<: *staging-zeta-hgiarvados-bbpin-core-def
+#
+#openstack-vars-validate-production-zeta-hgiarvados-bbpin:
+#  <<: *openstack-vars-validate-def
+#  <<: *production-zeta-hgiarvados-bbpin-def
+#    
+#openstack-vars-validate-staging-zeta-hgiarvados-bbpin:
+#  <<: *openstack-vars-validate-def
+#  <<: *staging-zeta-hgiarvados-bbpin-def
 
 
 ###############################################################################
@@ -364,37 +364,37 @@ terraform-validate-staging-zeta-hgiarvados:
   <<: *terraform-validate-def
   <<: *staging-zeta-hgiarvados-def
 
-terraform-validate-production-zeta-hgiarvados-wlly8-core:
-  <<: *terraform-validate-def
-  <<: *production-zeta-hgiarvados-wlly8-core-def
-    
-terraform-validate-staging-zeta-hgiarvados-wlly8-core:
-  <<: *terraform-validate-def
-  <<: *staging-zeta-hgiarvados-wlly8-core-def
-
-terraform-validate-production-zeta-hgiarvados-wlly8:
-  <<: *terraform-validate-def
-  <<: *production-zeta-hgiarvados-wlly8-def
-    
-terraform-validate-staging-zeta-hgiarvados-wlly8:
-  <<: *terraform-validate-def
-  <<: *staging-zeta-hgiarvados-wlly8-def
-
-terraform-validate-production-zeta-hgiarvados-bbpin-core:
-  <<: *terraform-validate-def
-  <<: *production-zeta-hgiarvados-bbpin-core-def
-
-terraform-validate-staging-zeta-hgiarvados-bbpin-core:
-  <<: *terraform-validate-def
-  <<: *staging-zeta-hgiarvados-bbpin-core-def
-
-terraform-validate-production-zeta-hgiarvados-bbpin:
-  <<: *terraform-validate-def
-  <<: *production-zeta-hgiarvados-bbpin-def
-
-terraform-validate-staging-zeta-hgiarvados-bbpin:
-  <<: *terraform-validate-def
-  <<: *staging-zeta-hgiarvados-bbpin-def
+#terraform-validate-production-zeta-hgiarvados-wlly8-core:
+#  <<: *terraform-validate-def
+#  <<: *production-zeta-hgiarvados-wlly8-core-def
+#    
+#terraform-validate-staging-zeta-hgiarvados-wlly8-core:
+#  <<: *terraform-validate-def
+#  <<: *staging-zeta-hgiarvados-wlly8-core-def
+#
+#terraform-validate-production-zeta-hgiarvados-wlly8:
+#  <<: *terraform-validate-def
+#  <<: *production-zeta-hgiarvados-wlly8-def
+#    
+#terraform-validate-staging-zeta-hgiarvados-wlly8:
+#  <<: *terraform-validate-def
+#  <<: *staging-zeta-hgiarvados-wlly8-def
+#
+#terraform-validate-production-zeta-hgiarvados-bbpin-core:
+#  <<: *terraform-validate-def
+#  <<: *production-zeta-hgiarvados-bbpin-core-def
+#
+#terraform-validate-staging-zeta-hgiarvados-bbpin-core:
+#  <<: *terraform-validate-def
+#  <<: *staging-zeta-hgiarvados-bbpin-core-def
+#
+#terraform-validate-production-zeta-hgiarvados-bbpin:
+#  <<: *terraform-validate-def
+#  <<: *production-zeta-hgiarvados-bbpin-def
+#
+#terraform-validate-staging-zeta-hgiarvados-bbpin:
+#  <<: *terraform-validate-def
+#  <<: *staging-zeta-hgiarvados-bbpin-def
 
 terraform-validate-modules:
   stage: validate
@@ -447,21 +447,21 @@ terraform-staging-zeta-hgiarvados-core:
   <<: *terraform-core-def
   <<: *staging-zeta-hgiarvados-core-def
 
-terraform-production-zeta-hgiarvados-wlly8-core:
-  <<: *terraform-core-def
-  <<: *production-zeta-hgiarvados-wlly8-core-def
-
-terraform-staging-zeta-hgiarvados-wlly8-core:
-  <<: *terraform-core-def
-  <<: *staging-zeta-hgiarvados-wlly8-core-def
-
-terraform-production-zeta-hgiarvados-bbpin-core:
-  <<: *terraform-core-def
-  <<: *production-zeta-hgiarvados-bbpin-core-def
-
-terraform-staging-zeta-hgiarvados-bbpin-core:
-  <<: *terraform-core-def
-  <<: *staging-zeta-hgiarvados-bbpin-core-def
+#terraform-production-zeta-hgiarvados-wlly8-core:
+#  <<: *terraform-core-def
+#  <<: *production-zeta-hgiarvados-wlly8-core-def
+#
+#terraform-staging-zeta-hgiarvados-wlly8-core:
+#  <<: *terraform-core-def
+#  <<: *staging-zeta-hgiarvados-wlly8-core-def
+#
+#terraform-production-zeta-hgiarvados-bbpin-core:
+#  <<: *terraform-core-def
+#  <<: *production-zeta-hgiarvados-bbpin-core-def
+#
+#terraform-staging-zeta-hgiarvados-bbpin-core:
+#  <<: *terraform-core-def
+#  <<: *staging-zeta-hgiarvados-bbpin-core-def
 
 
 ###############################################################################
@@ -488,21 +488,21 @@ terraform-staging-zeta-hgiarvados:
   <<: *terraform-def
   <<: *staging-zeta-hgiarvados-def
 
-terraform-production-zeta-hgiarvados-wlly8:
-  <<: *terraform-def
-  <<: *production-zeta-hgiarvados-wlly8-def
-
-terraform-staging-zeta-hgiarvados-wlly8:
-  <<: *terraform-def
-  <<: *staging-zeta-hgiarvados-wlly8-def
-
-terraform-production-zeta-hgiarvados-bbpin:
-  <<: *terraform-def
-  <<: *production-zeta-hgiarvados-bbpin-def
-
-terraform-staging-zeta-hgiarvados-bbpin:
-  <<: *terraform-def
-  <<: *staging-zeta-hgiarvados-bbpin-def
+#terraform-production-zeta-hgiarvados-wlly8:
+#  <<: *terraform-def
+#  <<: *production-zeta-hgiarvados-wlly8-def
+#
+#terraform-staging-zeta-hgiarvados-wlly8:
+#  <<: *terraform-def
+#  <<: *staging-zeta-hgiarvados-wlly8-def
+#
+#terraform-production-zeta-hgiarvados-bbpin:
+#  <<: *terraform-def
+#  <<: *production-zeta-hgiarvados-bbpin-def
+#
+#terraform-staging-zeta-hgiarvados-bbpin:
+#  <<: *terraform-def
+#  <<: *staging-zeta-hgiarvados-bbpin-def
 
 
 ###############################################################################
@@ -535,29 +535,29 @@ ansible-staging-zeta-hgi-core:
   <<: *ansible-core-def
   <<: *staging-zeta-hgi-core-def
 
-ansible-production-zeta-hgiarvados-core:
-  <<: *ansible-core-def
-  <<: *production-zeta-hgiarvados-core-def
-
-ansible-staging-zeta-hgiarvados-core:
-  <<: *ansible-core-def
-  <<: *staging-zeta-hgiarvados-core-def
-
-ansible-production-zeta-hgiarvados-wlly8-core:
-  <<: *ansible-core-def
-  <<: *production-zeta-hgiarvados-wlly8-core-def
-
-ansible-staging-zeta-hgiarvados-wlly8-core:
-  <<: *ansible-core-def
-  <<: *staging-zeta-hgiarvados-wlly8-core-def
-
-ansible-production-zeta-hgiarvados-bbpin-core:
-  <<: *ansible-core-def
-  <<: *production-zeta-hgiarvados-bbpin-core-def
-
-ansible-staging-zeta-hgiarvados-bbpin-core:
-  <<: *ansible-core-def
-  <<: *staging-zeta-hgiarvados-bbpin-core-def
+#ansible-production-zeta-hgiarvados-core:
+#  <<: *ansible-core-def
+#  <<: *production-zeta-hgiarvados-core-def
+#
+#ansible-staging-zeta-hgiarvados-core:
+#  <<: *ansible-core-def
+#  <<: *staging-zeta-hgiarvados-core-def
+#
+#ansible-production-zeta-hgiarvados-wlly8-core:
+#  <<: *ansible-core-def
+#  <<: *production-zeta-hgiarvados-wlly8-core-def
+#
+#ansible-staging-zeta-hgiarvados-wlly8-core:
+#  <<: *ansible-core-def
+#  <<: *staging-zeta-hgiarvados-wlly8-core-def
+#
+#ansible-production-zeta-hgiarvados-bbpin-core:
+#  <<: *ansible-core-def
+#  <<: *production-zeta-hgiarvados-bbpin-core-def
+#
+#ansible-staging-zeta-hgiarvados-bbpin-core:
+#  <<: *ansible-core-def
+#  <<: *staging-zeta-hgiarvados-bbpin-core-def
 
 
 ###############################################################################
@@ -576,29 +576,29 @@ ansible-staging-zeta-hgi:
   <<: *ansible-def
   <<: *staging-zeta-hgi-def
 
-ansible-production-zeta-hgiarvados:
-  <<: *ansible-def
-  <<: *production-zeta-hgiarvados-def
-
-ansible-staging-zeta-hgiarvados:
-  <<: *ansible-def
-  <<: *staging-zeta-hgiarvados-def
-
-ansible-production-zeta-hgiarvados-wlly8:
-  <<: *ansible-def
-  <<: *production-zeta-hgiarvados-wlly8-def
-
-ansible-staging-zeta-hgiarvados-wlly8:
-  <<: *ansible-def
-  <<: *staging-zeta-hgiarvados-wlly8-def
-
-ansible-production-zeta-hgiarvados-bbpin:
-  <<: *ansible-def
-  <<: *production-zeta-hgiarvados-bbpin-def
-
-ansible-staging-zeta-hgiarvados-bbpin:
-  <<: *ansible-def
-  <<: *staging-zeta-hgiarvados-bbpin-def
+#ansible-production-zeta-hgiarvados:
+#  <<: *ansible-def
+#  <<: *production-zeta-hgiarvados-def
+#
+#ansible-staging-zeta-hgiarvados:
+#  <<: *ansible-def
+#  <<: *staging-zeta-hgiarvados-def
+#
+#ansible-production-zeta-hgiarvados-wlly8:
+#  <<: *ansible-def
+#  <<: *production-zeta-hgiarvados-wlly8-def
+#
+#ansible-staging-zeta-hgiarvados-wlly8:
+#  <<: *ansible-def
+#  <<: *staging-zeta-hgiarvados-wlly8-def
+#
+#ansible-production-zeta-hgiarvados-bbpin:
+#  <<: *ansible-def
+#  <<: *production-zeta-hgiarvados-bbpin-def
+#
+#ansible-staging-zeta-hgiarvados-bbpin:
+#  <<: *ansible-def
+#  <<: *staging-zeta-hgiarvados-bbpin-def
 
 
 ###############################################################################
