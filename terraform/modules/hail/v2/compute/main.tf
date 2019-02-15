@@ -38,6 +38,10 @@ variable "extra_ansible_groups" {
   default = []
 }
 
+variable "auto_anti_affinity_p" {
+  default = true
+}
+
 locals {
   ansible_groups = [
     "hail-computers",
@@ -65,7 +69,7 @@ module "hgi-openstack-instance" {
   image                   = "${var.image}"
   volume_p                = true
   volume_size_gb          = "${var.volume_size_gb}"
-  auto_anti_affinity_name = "hail-anti-affinity-${var.hail_cluster_id}"
+  auto_anti_affinity_name = "${var.auto_anti_affinity_p ? "hail-anti-affinity-${var.hail_cluster_id}" : ""}"
 
   security_group_names = [
     "ping",

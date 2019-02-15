@@ -50,6 +50,10 @@ variable "compute_flavour" {
   default = "o1.large"
 }
 
+variable "compute_auto_anti_affinity_p" {
+  default = true
+}
+
 module "hail-master" {
   source          = "../master"
   hail_cluster_id = "${var.hail_cluster_id}"
@@ -67,19 +71,20 @@ module "hail-master" {
 }
 
 module "hail-compute" {
-  source          = "../compute"
-  hail_cluster_id = "${var.hail_cluster_id}"
-  count           = "${var.compute_count}"
-  env             = "${var.env}"
-  region          = "${var.region}"
-  setup           = "${var.setup}"
-  core_context    = "${var.core_context}"
-  domain          = "${var.domain}"
-  image           = "${var.compute_image}"
-  network_name    = "main"
-  ssh_gateway     = "${var.ssh_gateway}"
-  flavour         = "${var.compute_flavour}"
-  volume_size_gb  = "${var.compute_volume_size_gb}"
+  source               = "../compute"
+  hail_cluster_id      = "${var.hail_cluster_id}"
+  count                = "${var.compute_count}"
+  env                  = "${var.env}"
+  region               = "${var.region}"
+  setup                = "${var.setup}"
+  core_context         = "${var.core_context}"
+  domain               = "${var.domain}"
+  image                = "${var.compute_image}"
+  network_name         = "main"
+  ssh_gateway          = "${var.ssh_gateway}"
+  flavour              = "${var.compute_flavour}"
+  volume_size_gb       = "${var.compute_volume_size_gb}"
+  auto_anti_affinity_p = "${var.compute_auto_anti_affinity_p}"
 }
 
 output "hgi_instances" {
