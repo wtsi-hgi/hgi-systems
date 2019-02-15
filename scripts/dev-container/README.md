@@ -21,8 +21,9 @@ It offers the advantages that developers:
 ## Prerequisites
 - git
 - docker (for HGI members: use hgs4 or OpenStack instance)
-- [docker-with-gitlab-secrets](https://github.com/wtsi-hgi/docker-with-gitlab-secrets) (for HGI members on network
+- Python 3.6+ with the [docker-with-gitlab-secrets](https://github.com/wtsi-hgi/docker-with-gitlab-secrets) package (for HGI members on network
 machines use `module add module add hgi/dockerwithgitlabsecrets/latest` else `pip install dockerwithgitlabsecrets`)
+- bash 4+
 - docker-with-gitlab-secrets configuration for [hgi-systems](https://github.com/wtsi-hgi/hgi-systems), e.g.
   ```
   gitlab:
@@ -42,7 +43,7 @@ Usage: start.sh [options]
 Start hgi-systems development container
 
 options:
--c      docker-with-gitlab-secrets configuration file location [default: /Users/cn13/.dwgs-config.yml]
+-c      docker-with-gitlab-secrets configuration file location [default: ~/.dwgs-config.yml]
 -d      docker-with-gitlab-secrets executable location [default: docker-with-gitlab-secrets (on path)]
 -n      Set to not pull latest taos-dev Docker image on start [default: 0]
 ```
