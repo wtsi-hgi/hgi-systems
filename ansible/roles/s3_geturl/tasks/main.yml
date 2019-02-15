@@ -40,8 +40,13 @@
     aws_access_key: "{{ s3_geturl_access_key }}"
     aws_secret_key: "{{ s3_geturl_secret_key }}"
     object: "{{ s3_geturl_object }}"
+    expiration: 7200
   register: s3_geturl_url_reg
   changed_when: False
+
+- name: debug signed URL expiry, according to the server
+  debug:
+    msg: "URL expiry: {{ s3_geturl_url_reg.expiry }}"
 
 - name: set facts
   set_fact: "{{ s3_geturl_checksum_var }}={{ s3_geturl_checksum_reg.contents }} {{ s3_geturl_url_var }}={{ s3_geturl_url_reg.url }}"
