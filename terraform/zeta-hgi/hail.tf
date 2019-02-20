@@ -55,8 +55,8 @@ module "hail-cluster-as45-3" {
   compute_count          = 15
   master_image           = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
   compute_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
-  master_flavour         = "m2.3xlarge"
-  compute_flavour        = "m2.3xlarge"
+  master_flavour         = "o1.2xlarge"
+  compute_flavour        = "o1.2xlarge"
   master_volume_size_gb  = 100
   compute_volume_size_gb = 100
 }
