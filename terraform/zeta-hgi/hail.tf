@@ -50,15 +50,15 @@ module "hail-cluster-as45-4" {
   domain       = "hgi.sanger.ac.uk"
   network_name = "main"
 
-  hail_cluster_id        = "as45-4"
-  master_count           = 1
-  compute_count          = 40
-  master_image           = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
-  compute_image          = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
-  master_flavour         = "m1.medium"
-  compute_flavour        = "m1.medium"
-  master_volume_size_gb  = 100
-  compute_volume_size_gb = 100
+  hail_cluster_id              = "as45-4"
+  master_count                 = 1
+  compute_count                = 40
+  master_image                 = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
+  compute_image                = "${data.terraform_remote_state.hgi-core.hgi-openstack-image-hgi-docker-xenial-4cb02ffa}"
+  master_flavour               = "m1.medium"
+  compute_flavour              = "m1.medium"
+  master_volume_size_gb        = 100
+  compute_volume_size_gb       = 100
   compute_auto_anti_affinity_p = false
 }
 
